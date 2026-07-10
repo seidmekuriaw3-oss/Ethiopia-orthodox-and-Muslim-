@@ -1,0 +1,1590 @@
+{% extends "base.html" %}
+
+{% block title %}Home - SEMIRA FASHION{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/slider.css') }}">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&display=swap">
+<style>
+    /* ══ ADS CAROUSEL ══ */
+    .ads-crsl-wrap {
+        margin: 24px 14px 6px;
+        position: relative;
+    }
+    .ads-crsl-viewport {
+        overflow: hidden;
+        border-radius: 18px;
+    }
+    .ads-crsl-track {
+        display: flex;
+        gap: 12px;
+        transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        will-change: transform;
+        cursor: grab;
+        user-select: none;
+        -webkit-user-select: none;
+    }
+    .ads-crsl-track.ads-dragging {
+        transition: none;
+        cursor: grabbing;
+    }
+    .ads-crsl-slide {
+        flex: 0 0 calc(23% - 9px);
+        min-width: 0;
+        border-radius: 18px;
+        overflow: hidden;
+        position: relative;
+        aspect-ratio: 4/5;
+        background: #111;
+        box-shadow: 0 6px 24px rgba(0,0,0,0.22);
+        display: block;
+        text-decoration: none;
+        cursor: pointer;
+    }
+    .ads-crsl-slide img,
+    .ads-crsl-slide video {
+        position: absolute; inset: 0;
+        width: 100%; height: 100%;
+        object-fit: cover; display: block;
+    }
+    .ads-crsl-overlay {
+        position: absolute; inset: 0; z-index: 2;
+        background: linear-gradient(to top,
+            rgba(0,0,0,0.92) 0%,
+            rgba(0,0,0,0.55) 40%,
+            rgba(0,0,0,0.15) 65%,
+            transparent 100%);
+    }
+    .ads-crsl-caption {
+        position: absolute; bottom: 0; left: 0; right: 0;
+        z-index: 3; padding: 28px 14px 16px;
+        color: #fff;
+        pointer-events: none;
+    }
+    .ads-crsl-caption h3 {
+        font-size: 13px; font-weight: 900; margin: 0 0 9px;
+        line-height: 1.35; color: #fff;
+        text-shadow: 0 2px 10px rgba(0,0,0,1), 0 1px 3px rgba(0,0,0,0.9);
+    }
+    .ads-crsl-caption p {
+        font-size: 11px; margin: 0 0 9px;
+        color: rgba(255,255,255,0.95); line-height: 1.4;
+        text-shadow: 0 1px 5px rgba(0,0,0,0.9);
+    }
+    .ads-crsl-chip {
+        display: inline-block;
+        background: rgba(255,255,255,0.95); color: #0d5c35;
+        padding: 5px 13px; border-radius: 30px;
+        font-weight: 800; font-size: 11px;
+        pointer-events: all; text-decoration: none;
+    }
+    .ads-crsl-play {
+        position: absolute; inset: 0; z-index: 4;
+        display: flex; align-items: center; justify-content: center;
+        pointer-events: none;
+    }
+    .ads-crsl-play-icon {
+        width: 50px; height: 50px;
+        background: rgba(255,255,255,0.2);
+        border: 3px solid rgba(255,255,255,0.9);
+        border-radius: 50%;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 18px; color: white;
+        backdrop-filter: blur(6px);
+        transition: transform 0.2s, background 0.2s;
+    }
+    .ads-crsl-slide:hover .ads-crsl-play-icon,
+    .ads-crsl-slide:active .ads-crsl-play-icon {
+        transform: scale(1.1);
+        background: rgba(255,255,255,0.32);
+    }
+    /* dots */
+    .ads-crsl-dots {
+        display: flex; justify-content: center; gap: 7px;
+        margin-top: 12px;
+    }
+    .ads-crsl-dot {
+        width: 8px; height: 8px; border-radius: 4px;
+        background: rgba(26,122,74,0.2);
+        cursor: pointer; transition: all 0.3s ease;
+        border: none; padding: 0;
+    }
+    .ads-crsl-dot.on {
+        width: 22px; background: #1a7a4a;
+    }
+    /* gradient bg card icon */
+    .ads-crsl-grad-icon {
+        position: absolute; inset: 0;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 80px; opacity: 0.3;
+    }
+    @media (max-width: 640px) {
+        .ads-crsl-wrap { margin: 20px 10px 6px; }
+        .ads-crsl-slide { flex: 0 0 calc(44% - 6px); }
+    }
+
+    /* ══ STORIES VIEWER ══ */
+    .ads-stories-overlay {
+        position: fixed; inset: 0; z-index: 9999;
+        background: #000;
+        display: none;
+        flex-direction: column;
+        touch-action: none;
+        overscroll-behavior: none;
+    }
+    .ads-stories-overlay.open { display: flex; }
+
+    /* top progress bars */
+    .ads-stories-bars {
+        position: absolute; top: 0; left: 0; right: 0;
+        display: flex; gap: 4px; padding: 14px 14px 0;
+        z-index: 12; pointer-events: none;
+    }
+    .ads-stories-bar {
+        flex: 1; height: 3px; border-radius: 2px;
+        background: rgba(255,255,255,0.3); overflow: hidden;
+    }
+    .ads-stories-bar-fill {
+        height: 100%; background: #fff; width: 0%; border-radius: 2px;
+    }
+
+    /* header row */
+    .ads-stories-header {
+        position: absolute; top: 26px; left: 14px; right: 14px;
+        z-index: 12; display: flex; align-items: center; justify-content: space-between;
+    }
+    .ads-stories-logo {
+        font-size: 13px; font-weight: 800; color: #fff;
+        text-shadow: 0 1px 6px rgba(0,0,0,0.6);
+        display: flex; align-items: center; gap: 6px;
+    }
+    .ads-stories-close {
+        width: 38px; height: 38px;
+        background: rgba(0,0,0,0.35); border: 1.5px solid rgba(255,255,255,0.4);
+        border-radius: 50%; color: white; font-size: 18px;
+        display: flex; align-items: center; justify-content: center;
+        cursor: pointer; backdrop-filter: blur(4px);
+    }
+
+    /* media fills screen */
+    .ads-stories-media {
+        position: absolute; inset: 0; overflow: hidden;
+    }
+
+    /* gradient overlay bottom */
+    .ads-stories-bottom {
+        position: absolute; bottom: 0; left: 0; right: 0;
+        background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.4) 50%, transparent 100%);
+        padding: 60px 20px 50px; z-index: 12; color: #fff;
+    }
+    .ads-stories-bottom h2 {
+        font-size: 22px; font-weight: 900; margin: 0 0 10px; line-height: 1.3;
+        text-shadow: 0 2px 10px rgba(0,0,0,0.8);
+    }
+    .ads-stories-bottom p {
+        font-size: 14px; margin: 0 0 18px; opacity: 0.92; line-height: 1.5;
+        text-shadow: 0 1px 6px rgba(0,0,0,0.8);
+    }
+    .ads-stories-shop-btn {
+        display: inline-flex; align-items: center; gap: 6px;
+        background: #fff; color: #0d5c35;
+        padding: 11px 24px; border-radius: 30px;
+        font-weight: 800; font-size: 14px;
+        text-decoration: none;
+        box-shadow: 0 4px 18px rgba(0,0,0,0.3);
+    }
+
+    /* swipe down hint */
+    .ads-stories-hint {
+        position: absolute; bottom: 12px; left: 0; right: 0; z-index: 11;
+        text-align: center; color: rgba(255,255,255,0.45); font-size: 11px;
+        pointer-events: none;
+    }
+
+    /* tap nav zones (invisible) */
+    .ads-stories-nav {
+        position: absolute; top: 0; bottom: 0;
+        width: 35%; z-index: 11;
+    }
+    .ads-stories-nav.left  { left: 0; }
+    .ads-stories-nav.right { right: 0; }
+    
+    /* About Section */
+    .about-section {
+        background: var(--bg-white, white);
+        border-radius: 20px;
+        padding: 40px;
+        margin: 40px 0;
+        text-align: center;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    }
+    .about-section h2 {
+        color: var(--primary, #1a7a4a);
+        margin-bottom: 20px;
+    }
+    .about-section p {
+        color: var(--text-muted, #666);
+        line-height: 1.6;
+        max-width: 800px;
+        margin: 0 auto;
+    }
+    
+    /* ═══════════════════════════════════════════════════
+       HERO — Modern · Islamic · Habesha Fashion
+       ═══════════════════════════════════════════════════ */
+    .hero {
+        position: relative;
+        background: linear-gradient(170deg,
+            #021a0d 0%, #083320 18%, #0f5232 45%, #0b4228 72%, #021a0d 100%);
+        color: white;
+        text-align: center;
+        padding: 72px 28px 60px;
+        border-radius: 20px;
+        margin-bottom: 40px;
+        overflow: hidden;
+        border: 1px solid rgba(212,175,55,0.28);
+        box-shadow:
+            0 0 0 1px rgba(212,175,55,0.07),
+            0 16px 60px rgba(0,0,0,0.5),
+            inset 0 1px 0 rgba(255,255,255,0.04);
+    }
+    /* Gold shimmer top line — animated sweep */
+    .hero::before {
+        content: '';
+        position: absolute;
+        top: 0; left: 0; right: 0; height: 2px;
+        background: linear-gradient(90deg,
+            transparent 0%,
+            #7a5c0a 10%,
+            #d4af37 25%,
+            #fff9c4 38%,
+            #f5e070 50%,
+            #fff9c4 62%,
+            #d4af37 75%,
+            #7a5c0a 90%,
+            transparent 100%);
+        background-size: 250% 100%;
+        background-position: -100% 0;
+        animation: goldSweep 2.8s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        z-index: 3;
+    }
+    @keyframes goldSweep {
+        0%   { background-position: -100% 0; }
+        100% { background-position: 200%  0; }
+    }
+    /* Islamic diamond-lattice overlay */
+    .hero::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background-image:
+            linear-gradient(45deg,  rgba(212,175,55,0.065) 25%, transparent 25%),
+            linear-gradient(-45deg, rgba(212,175,55,0.065) 25%, transparent 25%),
+            linear-gradient(45deg,  transparent 75%, rgba(212,175,55,0.065) 75%),
+            linear-gradient(-45deg, transparent 75%, rgba(212,175,55,0.065) 75%);
+        background-size: 36px 36px;
+        background-position: 0 0, 0 18px, 18px -18px, -18px 0;
+        pointer-events: none;
+        z-index: 0;
+    }
+    .hero h1, .hero p, .hero-gold-divider { position: relative; z-index: 1; }
+    .hero-glow, .hero-btm, .hero-ornament { position: absolute !important; }
+    .hero h1 {
+        font-size: 2.5rem;
+        margin-bottom: 6px;
+        text-shadow: 0 2px 24px rgba(0,0,0,0.55);
+        letter-spacing: 1px;
+    }
+    .hero-gold-divider {
+        color: #d4af37;
+        font-size: 14px;
+        letter-spacing: 12px;
+        margin: 10px 0 18px;
+        text-shadow: 0 0 14px rgba(212,175,55,0.65);
+    }
+    .hero p { font-size: 1.08rem; opacity: 0.93; margin-bottom: 6px; }
+    /* Floating ornaments */
+    .hero-ornament {
+        position: absolute; z-index: 1;
+        opacity: 0.15; pointer-events: none;
+        animation: hfloat 7s ease-in-out infinite;
+    }
+    .hero-ornament.tl { top: 12px;  left: 14px; }
+    .hero-ornament.tr { top: 12px;  right: 14px; animation-delay: -3.5s; }
+    .hero-ornament.bl { bottom: 12px; left: 14px; animation-delay: -1.8s; }
+    .hero-ornament.br { bottom: 12px; right: 14px; animation-delay: -5s; }
+    @keyframes hfloat {
+        0%,100% { transform: translateY(0) rotate(0deg); }
+        50%      { transform: translateY(-5px) rotate(9deg); }
+    }
+    /* Glow spots */
+    .hero-glow {
+        position: absolute; border-radius: 50%; pointer-events: none; z-index: 0;
+    }
+    .hero-glow.gl {
+        width: 260px; height: 260px;
+        background: radial-gradient(circle, rgba(212,175,55,0.09) 0%, transparent 70%);
+        top: -80px; left: -80px;
+    }
+    .hero-glow.gr {
+        width: 200px; height: 200px;
+        background: radial-gradient(circle, rgba(34,196,110,0.07) 0%, transparent 70%);
+        bottom: -50px; right: -50px;
+    }
+    /* Bottom gold line */
+    .hero-btm {
+        position: absolute; bottom: 0; left: 0; right: 0; height: 1px; z-index: 2;
+        background: linear-gradient(90deg,
+            transparent, rgba(212,175,55,0.35) 30%,
+            rgba(212,175,55,0.65) 50%,
+            rgba(212,175,55,0.35) 70%, transparent);
+    }
+    
+    /* ── Category photo grid ── */
+    .cat-photo-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+        gap: 12px;
+        margin-bottom: 36px;
+    }
+    .cat-photo-card {
+        position: relative;
+        border-radius: 16px;
+        overflow: hidden;
+        aspect-ratio: 3/4;
+        text-decoration: none;
+        color: white;
+        cursor: pointer;
+        box-shadow: 0 4px 14px rgba(0,0,0,0.14);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        display: block;
+    }
+    .cat-photo-card:hover {
+        transform: translateY(-5px) scale(1.03);
+        box-shadow: 0 12px 32px rgba(0,0,0,0.24);
+    }
+    .cat-photo-img {
+        position: absolute;
+        inset: 0; width: 100%; height: 100%;
+        object-fit: cover;
+        transition: transform 0.45s ease;
+    }
+    .cat-photo-card:hover .cat-photo-img { transform: scale(1.1); }
+    .cat-photo-emoji {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(135deg, #1a7a4a, #0f5232);
+        display: flex; align-items: center; justify-content: center;
+        font-size: 46px;
+    }
+    .cat-photo-overlay {
+        position: absolute; inset: 0;
+        background: linear-gradient(to top,
+            rgba(0,0,0,0.80) 0%, rgba(0,0,0,0.16) 55%, transparent 100%);
+        transition: background 0.3s;
+    }
+    .cat-photo-card:hover .cat-photo-overlay {
+        background: linear-gradient(to top,
+            rgba(10,62,34,0.90) 0%, rgba(10,62,34,0.32) 55%, transparent 100%);
+    }
+    .cat-photo-card::after {
+        content: '';
+        position: absolute; top: 0; left: 0; right: 0; height: 2px;
+        background: linear-gradient(90deg, transparent, #d4af37, transparent);
+        opacity: 0; transition: opacity 0.3s; z-index: 2;
+    }
+    .cat-photo-card:hover::after { opacity: 1; }
+    .cat-photo-name {
+        position: absolute; bottom: 0; left: 0; right: 0;
+        padding: 8px 6px 10px;
+        font-size: 11px; font-weight: 700;
+        text-align: center; line-height: 1.3;
+        text-shadow: 0 1px 8px rgba(0,0,0,0.95);
+        z-index: 1;
+    }
+    .cat-photo-badge {
+        position: absolute; top: 6px; left: 7px;
+        font-size: 18px; z-index: 1;
+        text-shadow: 0 1px 4px rgba(0,0,0,0.7);
+    }
+    @media (max-width: 768px) {
+        .cat-photo-grid { grid-template-columns: repeat(3, 1fr); gap: 9px; }
+        .cat-photo-name { font-size: 10px; }
+    }
+    @media (min-width: 769px) {
+        .cat-photo-grid { grid-template-columns: repeat(5, 1fr); gap: 16px; }
+        .cat-photo-name { font-size: 13px; }
+    }
+
+    .btn-outline {
+        padding: 8px 16px;
+        background: var(--bg-white, white);
+        border-radius: 25px;
+        text-decoration: none;
+        color: #1a7a4a;
+        border: 1px solid #1a7a4a;
+        transition: all 0.3s;
+    }
+    .btn-outline:hover {
+        background: #1a7a4a;
+        color: white;
+        transform: translateY(-2px);
+    }
+    /* ══════════════════════════════════════════
+       PRODUCT CARD — Modern & Professional
+       Mobile: 2 cols  |  Desktop: 6 cols
+       ══════════════════════════════════════════ */
+    .product-card {
+        display: block;
+        text-decoration: none !important;
+        color: inherit !important;
+        background: var(--bg-white, #fff);
+        border-radius: 14px;
+        overflow: hidden;
+        position: relative;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.07);
+        transition: transform 0.22s ease, box-shadow 0.22s ease;
+        cursor: pointer;
+    }
+    .product-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 10px 28px rgba(26,122,74,0.18);
+    }
+    /* — Image area — */
+    .pc-img {
+        position: relative;
+        height: 140px;
+        background: #f0f0f0;
+        overflow: hidden;
+    }
+    .pc-img img {
+        width: 100%; height: 100%;
+        object-fit: cover;
+        transition: transform 0.35s ease;
+        display: block;
+    }
+    .product-card:hover .pc-img img { transform: scale(1.08); }
+
+    /* Hover overlay shimmer */
+    .pc-img::after {
+        content: '';
+        position: absolute; inset: 0;
+        background: linear-gradient(160deg, transparent 60%, rgba(26,122,74,0.12) 100%);
+        opacity: 0; transition: opacity 0.25s;
+        pointer-events: none;
+    }
+    .product-card:hover .pc-img::after { opacity: 1; }
+
+    /* — Badges — */
+    .pc-badge {
+        position: absolute;
+        padding: 3px 7px;
+        border-radius: 20px;
+        font-size: 9px; font-weight: 800;
+        color: white; line-height: 1.4;
+        z-index: 2; letter-spacing: 0.3px;
+    }
+    .pc-badge-sale { top: 6px; right: 6px; background: #e53935; }
+    .pc-badge-new  { top: 6px; left: 6px;
+        background: linear-gradient(135deg,#1a7a4a,#2ecc71); }
+
+    /* — Cart button — */
+    .pc-cart-btn {
+        position: absolute; bottom: 7px; right: 7px;
+        background: #1a7a4a; color: white; border: none;
+        width: 30px; height: 30px; border-radius: 50%;
+        font-size: 13px; cursor: pointer;
+        display: flex; align-items: center; justify-content: center;
+        box-shadow: 0 3px 8px rgba(26,122,74,0.35);
+        z-index: 3;
+        transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+        opacity: 0.85;
+    }
+    .product-card:hover .pc-cart-btn {
+        opacity: 1;
+        transform: scale(1.1);
+        box-shadow: 0 4px 12px rgba(26,122,74,0.5);
+    }
+    .pc-cart-btn:hover { background: #0f5232; }
+
+    /* — Body — */
+    .pc-body {
+        padding: 8px 9px 10px;
+        border-top: 1px solid rgba(0,0,0,0.04);
+    }
+    .pc-name {
+        font-size: 12px; margin: 0 0 4px;
+        color: var(--text-color, #222);
+        line-height: 1.35; font-weight: 600;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+        line-clamp: 2;
+        overflow: hidden;
+    }
+    .pc-price-row { display: flex; align-items: baseline; gap: 5px; }
+    .pc-price { font-size: 13px; font-weight: 800; color: #1a7a4a; }
+    .pc-compare {
+        font-size: 10px; color: #aaa;
+        text-decoration: line-through;
+    }
+
+    /* — Grid — */
+    /* Products Grid - Mobile: 2, Desktop: 6 */
+    .products-grid {
+        display: grid !important;
+        gap: 12px !important;
+        margin-top: 20px !important;
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+    @media (min-width: 540px) {
+        .products-grid { grid-template-columns: repeat(3, 1fr) !important; gap: 14px !important; }
+        .pc-img { height: 150px; }
+    }
+    @media (min-width: 900px) {
+        .products-grid { grid-template-columns: repeat(6, 1fr) !important; gap: 18px !important; }
+        .pc-img { height: 170px; }
+        .pc-name { font-size: 13px; }
+        .pc-price { font-size: 14px; }
+        .pc-badge { font-size: 10px; }
+        .pc-cart-btn { width: 34px; height: 34px; font-size: 15px; bottom: 8px; right: 8px; }
+        .pc-body { padding: 10px 11px 12px; }
+    }
+
+    /* Dark mode */
+    @media (prefers-color-scheme: dark) {
+        .product-card { background: #1e1e2e; box-shadow: 0 2px 10px rgba(0,0,0,0.25); }
+        .pc-name { color: #eee; }
+        .pc-body { border-top-color: rgba(255,255,255,0.06); }
+        .about-section { background: #16213e; }
+    }
+
+    /* ══ HORIZONTAL SCROLL STRIP ══ */
+    .hscroll-section { margin: 32px 0; }
+    .hscroll-header {
+        display: flex; align-items: center; justify-content: space-between;
+        margin-bottom: 14px;
+    }
+    .hscroll-title {
+        font-size: clamp(16px,4vw,22px); font-weight: 800;
+        color: #0a3e22; margin: 0; letter-spacing: -0.3px;
+    }
+    .hscroll-see-all {
+        font-size: 13px; font-weight: 700; color: #1a7a4a;
+        text-decoration: none; display: flex; align-items: center; gap: 3px;
+        padding: 5px 12px; border: 1.5px solid #1a7a4a;
+        border-radius: 20px; transition: all 0.2s; white-space: nowrap;
+    }
+    .hscroll-see-all:hover { background: #1a7a4a; color: #fff; }
+
+    .hscroll-outer { position: relative; }
+    .hscroll-track {
+        display: flex; gap: 12px;
+        overflow-x: auto; scroll-snap-type: x mandatory;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none; padding-bottom: 6px;
+    }
+    .hscroll-track::-webkit-scrollbar { display: none; }
+
+    /* Nav arrows — desktop only */
+    .hscroll-arr {
+        display: none;
+        position: absolute; top: 50%; transform: translateY(-50%);
+        width: 36px; height: 36px; border-radius: 50%;
+        background: #fff; border: none;
+        box-shadow: 0 3px 12px rgba(0,0,0,0.18);
+        font-size: 18px; cursor: pointer; z-index: 5;
+        align-items: center; justify-content: center;
+        color: #0a3e22; transition: background 0.2s;
+    }
+    .hscroll-arr:hover { background: #1a7a4a; color: #fff; }
+    .hscroll-arr.left  { left: -18px; }
+    .hscroll-arr.right { right: -18px; }
+    @media (min-width: 640px) { .hscroll-arr { display: flex; } }
+
+    /* Cards */
+    .hsc {
+        flex: 0 0 150px; scroll-snap-align: start;
+        border-radius: 14px; overflow: hidden;
+        background: #fff; text-decoration: none; color: inherit;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.09);
+        transition: transform 0.22s, box-shadow 0.22s;
+        display: flex; flex-direction: column;
+    }
+    .hsc:hover { transform: translateY(-4px); box-shadow: 0 8px 24px rgba(0,0,0,0.15); }
+    .hsc-img {
+        position: relative; width: 100%;
+        padding-top: 133%; /* 3:4 portrait */
+        overflow: hidden; background: #f0f4f0;
+        flex-shrink: 0;
+    }
+    .hsc-img img {
+        position: absolute; inset: 0; width: 100%; height: 100%;
+        object-fit: cover; transition: transform 0.4s;
+    }
+    .hsc:hover .hsc-img img { transform: scale(1.07); }
+    .hsc-fallback {
+        position: absolute; inset: 0;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 36px; background: linear-gradient(135deg,#e8f5ee,#f0faf4);
+    }
+    .hsc-badge-sale {
+        position: absolute; top: 8px; left: 8px;
+        background: #e53935; color: #fff;
+        font-size: 10px; font-weight: 800; border-radius: 20px;
+        padding: 2px 7px; z-index: 2;
+    }
+    .hsc-badge-new {
+        position: absolute; top: 8px; right: 8px;
+        background: linear-gradient(135deg,#1a7a4a,#22a060); color: #fff;
+        font-size: 10px; font-weight: 800; border-radius: 20px;
+        padding: 2px 7px; z-index: 2;
+    }
+    .hsc-cart-btn {
+        position: absolute; bottom: 8px; right: 8px;
+        width: 30px; height: 30px; border-radius: 50%;
+        background: #1a7a4a; color: #fff; border: none;
+        font-size: 14px; cursor: pointer; z-index: 2;
+        display: flex; align-items: center; justify-content: center;
+        opacity: 0; transform: scale(0.8);
+        transition: opacity 0.2s, transform 0.2s, background 0.2s;
+    }
+    .hsc:hover .hsc-cart-btn { opacity: 1; transform: scale(1); }
+    .hsc-body { padding: 8px 9px 10px; flex: 1; }
+    .hsc-name {
+        font-size: 11.5px; font-weight: 600; color: #222;
+        line-height: 1.35; margin: 0 0 5px;
+        display: -webkit-box; -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2; line-clamp: 2; overflow: hidden;
+    }
+    .hsc-price { font-size: 13px; font-weight: 800; color: #1a7a4a; }
+    .hsc-compare { font-size: 10px; color: #bbb; text-decoration: line-through; margin-left: 4px; }
+    @media (min-width: 640px) {
+        .hscroll-track { gap: 16px; }
+        .hsc { flex: 0 0 168px; }
+    }
+    @media (prefers-color-scheme: dark) {
+        .hsc { background: #1e1e2e; }
+        .hsc-name { color: #eee; }
+    }
+    @media (max-width: 768px) {
+        .hero { padding: 44px 16px 36px !important; border-radius: 16px; }
+        .hero h1 { font-size: 1.65rem !important; letter-spacing: 0.5px; }
+        .hero p { font-size: 0.95rem !important; }
+        .hero-ornament { opacity: 0.1 !important; }
+        .hero-ornament.bl, .hero-ornament.br { bottom: 8px; }
+        .about-section { padding: 30px 20px; }
+    }
+    @media (min-width: 769px) {
+        .hero { padding: 88px 60px 72px; border-radius: 24px; }
+        .hero h1 { font-size: 3rem; }
+        .hero-ornament { opacity: 0.22 !important; width: 72px !important; height: 72px !important; }
+        .hero-ornament.tl { top: 20px; left: 24px; }
+        .hero-ornament.tr { top: 20px; right: 24px; }
+        .hero-ornament.bl { bottom: 20px; left: 24px; }
+        .hero-ornament.br { bottom: 20px; right: 24px; }
+    }
+
+    .idc-wrap {
+        margin: 36px 0;
+        background: linear-gradient(160deg,#f0faf4 0%,#fdfffe 55%,#f2f8f4 100%);
+        border-radius: 18px;
+        border: 1px solid #d4ead8;
+        padding: 22px 18px 18px;
+    }
+    .idc-head { text-align:center; margin-bottom:16px; }
+    .idc-head h2 {
+        font-size:clamp(15px,2.5vw,19px); font-weight:800; color:#1a2e1e;
+        margin:0 0 3px; display:flex; align-items:center; justify-content:center; gap:8px;
+    }
+    .idc-arabic-sub {
+        font-family:'Amiri',serif; font-size:13px; color:#4a8a5e;
+        display:block; margin-bottom:3px;
+    }
+    .idc-head p { font-size:11px; color:#6a8f70; margin:0; }
+    .idc-slider-outer {
+        position:relative; max-width:340px; margin:0 auto 16px;
+        overflow:hidden; border-radius:14px;
+    }
+    .idc-slider-track {
+        display:flex;
+        transition:transform .52s cubic-bezier(.4,0,.2,1);
+        will-change:transform;
+    }
+    .idc-card {
+        min-width:100%; width:100%;
+        background:#fff; border-radius:14px; padding:16px 16px 14px;
+        box-shadow:0 4px 24px rgba(26,122,74,.1);
+        border:1px solid rgba(26,122,74,.12);
+        display:flex; flex-direction:column;
+        box-sizing:border-box;
+    }
+    .idc-card-head { display:flex; align-items:center; gap:7px; margin-bottom:10px; }
+    .idc-card-icon {
+        width:30px; height:30px; border-radius:8px;
+        background:linear-gradient(135deg,#1a7a4a,#0f5232);
+        display:flex; align-items:center; justify-content:center;
+        font-size:14px; flex-shrink:0;
+    }
+    .idc-card-lbl { font-size:11px; font-weight:700; color:#6a8f70; text-transform:uppercase; letter-spacing:1px; }
+    .idc-card-link {
+        margin-top:auto; padding-top:12px;
+        font-size:12px; color:#1a7a4a; font-weight:700;
+        text-decoration:none; display:flex; align-items:center; gap:5px;
+        border-top:1px solid #edf6ef;
+    }
+    .idc-card-link:hover { color:#0f5232; }
+    .idc-slider-arr {
+        position:absolute; top:50%; transform:translateY(-50%);
+        width:34px; height:34px; border-radius:50%;
+        background:rgba(255,255,255,.92); border:1px solid rgba(26,122,74,.2);
+        color:#1a7a4a; font-size:18px; cursor:pointer;
+        display:flex; align-items:center; justify-content:center;
+        box-shadow:0 2px 10px rgba(0,0,0,.1); z-index:10;
+        transition:all .2s; user-select:none;
+    }
+    .idc-slider-arr:hover { background:#1a7a4a; color:#fff; }
+    .idc-slider-arr.left  { left:10px; }
+    .idc-slider-arr.right { right:10px; }
+    .idc-slider-dots {
+        display:flex; align-items:center; justify-content:center;
+        gap:8px; margin-bottom:20px;
+    }
+    .idc-slider-dot {
+        width:8px; height:8px; border-radius:50%;
+        background:rgba(26,122,74,.2); border:1px solid rgba(26,122,74,.2);
+        cursor:pointer; transition:all .25s;
+    }
+    .idc-slider-dot.on {
+        background:#1a7a4a; border-color:#1a7a4a;
+        transform:scale(1.3); box-shadow:0 0 6px rgba(26,122,74,.4);
+    }
+
+    .idc-prayer-list { display:flex; flex-direction:column; gap:6px; flex:1; }
+    .idc-prayer-row {
+        display:flex; align-items:center; justify-content:space-between;
+        padding:7px 10px; border-radius:9px;
+        background:#f7fbf8; border-left:3px solid transparent; transition:all .18s;
+    }
+    .idc-prayer-row.pnext { background:rgba(26,122,74,.09); border-left-color:#1a7a4a; }
+    .idc-prayer-row.pcurr { background:rgba(201,168,76,.1); border-left-color:#c9a84c; }
+    .idc-pname { font-size:13px; font-weight:600; color:#2a4a2e; display:flex; align-items:center; gap:5px; }
+    .idc-ptime { font-size:13px; font-weight:700; color:#1a7a4a; font-variant-numeric:tabular-nums; }
+
+    .idc-hijri-body { text-align:center; flex:1; padding:2px 0 8px; }
+    .idc-hijri-day { font-size:42px; font-weight:900; color:#1a7a4a; line-height:1; margin-bottom:3px; }
+    .idc-hijri-month { font-size:14px; font-weight:600; color:#2a4a2e; margin-bottom:2px; }
+    .idc-hijri-year { font-size:11px; color:#8aaa8e; margin-bottom:10px; }
+    .idc-next-event {
+        background:rgba(26,122,74,.06); border-radius:9px;
+        padding:8px 12px; font-size:11px; color:#5a7a60;
+        border:1px solid rgba(26,122,74,.1);
+    }
+    .idc-next-event strong { color:#1a7a4a; }
+
+    .idc-compass-body { display:flex; flex-direction:column; align-items:center; flex:1; gap:6px; padding:2px 0 8px; }
+    .idc-compass-svg { width:80px; height:80px; }
+    .idc-bearing { font-size:20px; font-weight:800; color:#1a7a4a; letter-spacing:-1px; text-align:center; }
+    .idc-bearing-sub { font-size:10px; color:#8aaa8e; text-align:center; }
+
+    .idc-ayah-body { flex:1; display:flex; flex-direction:column; }
+    .idc-ayah-text {
+        font-family:'Amiri','Traditional Arabic',serif;
+        font-size:clamp(16px,2.6vw,21px); color:#1a2e1e;
+        line-height:1.9; text-align:right; direction:rtl; unicode-bidi:embed;
+        flex:1; padding:4px 0 12px; border-bottom:1px solid #edf6ef;
+    }
+    .idc-ayah-ref { font-size:11px; color:#8aaa8e; margin-top:8px; display:flex; align-items:center; gap:5px; }
+
+    .idc-cta { text-align:center; padding-top:4px; }
+    .idc-cta a {
+        display:inline-flex; align-items:center; gap:7px;
+        background:linear-gradient(135deg,#1a7a4a,#0f5232); color:#fff;
+        text-decoration:none; padding:9px 22px; border-radius:30px;
+        font-weight:700; font-size:12px;
+        transition:transform .22s,box-shadow .22s;
+        box-shadow:0 4px 16px rgba(26,122,74,.28);
+    }
+    .idc-cta a:hover { transform:translateY(-2px); box-shadow:0 8px 24px rgba(26,122,74,.38); }
+
+    @media (max-width:640px) {
+        .idc-wrap { padding:16px 10px 14px; }
+        .idc-hijri-day { font-size:34px; }
+        .idc-compass-svg { width:64px; height:64px; }
+        .idc-slider-outer { max-width:100%; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="hero">
+    <!-- Ambient glows -->
+    <div class="hero-glow gl"></div>
+    <div class="hero-glow gr"></div>
+    <!-- Bottom gold line -->
+    <div class="hero-btm"></div>
+    <!-- Islamic 8-pointed star — top corners -->
+    <svg class="hero-ornament tl" width="58" height="58" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <polygon points="30,0 34.97,18 51.2,8.8 42,25.03 60,30 42,34.97 51.2,51.2 34.97,42 30,60 25.03,42 8.8,51.2 18,34.97 0,30 18,25.03 8.8,8.8 25.03,18" fill="rgba(212,175,55,0.15)" stroke="#d4af37" stroke-width="1.4"/>
+        <circle cx="30" cy="30" r="4.5" fill="#d4af37"/>
+    </svg>
+    <svg class="hero-ornament tr" width="58" height="58" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <polygon points="30,0 34.97,18 51.2,8.8 42,25.03 60,30 42,34.97 51.2,51.2 34.97,42 30,60 25.03,42 8.8,51.2 18,34.97 0,30 18,25.03 8.8,8.8 25.03,18" fill="rgba(212,175,55,0.15)" stroke="#d4af37" stroke-width="1.4"/>
+        <circle cx="30" cy="30" r="4.5" fill="#d4af37"/>
+    </svg>
+    <!-- Habesha cross — bottom corners -->
+    <svg class="hero-ornament bl" width="46" height="46" viewBox="0 0 46 46" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <line x1="23" y1="4" x2="23" y2="42" stroke="#d4af37" stroke-width="2.2" stroke-linecap="round"/>
+        <line x1="4" y1="23" x2="42" y2="23" stroke="#d4af37" stroke-width="2.2" stroke-linecap="round"/>
+        <rect x="17" y="17" width="12" height="12" stroke="#d4af37" stroke-width="1.4" transform="rotate(45,23,23)" fill="rgba(212,175,55,0.12)"/>
+        <circle cx="23" cy="23" r="3.5" fill="#d4af37"/>
+        <circle cx="23" cy="6"  r="2" fill="#d4af37" opacity="0.7"/>
+        <circle cx="23" cy="40" r="2" fill="#d4af37" opacity="0.7"/>
+        <circle cx="6"  cy="23" r="2" fill="#d4af37" opacity="0.7"/>
+        <circle cx="40" cy="23" r="2" fill="#d4af37" opacity="0.7"/>
+    </svg>
+    <svg class="hero-ornament br" width="46" height="46" viewBox="0 0 46 46" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <line x1="23" y1="4" x2="23" y2="42" stroke="#d4af37" stroke-width="2.2" stroke-linecap="round"/>
+        <line x1="4" y1="23" x2="42" y2="23" stroke="#d4af37" stroke-width="2.2" stroke-linecap="round"/>
+        <rect x="17" y="17" width="12" height="12" stroke="#d4af37" stroke-width="1.4" transform="rotate(45,23,23)" fill="rgba(212,175,55,0.12)"/>
+        <circle cx="23" cy="23" r="3.5" fill="#d4af37"/>
+        <circle cx="23" cy="6"  r="2" fill="#d4af37" opacity="0.7"/>
+        <circle cx="23" cy="40" r="2" fill="#d4af37" opacity="0.7"/>
+        <circle cx="6"  cy="23" r="2" fill="#d4af37" opacity="0.7"/>
+        <circle cx="40" cy="23" r="2" fill="#d4af37" opacity="0.7"/>
+    </svg>
+
+    <h1>👗 SEMIRA FASHION</h1>
+    <div class="hero-gold-divider">✦ &nbsp; ✦ &nbsp; ✦</div>
+    <p>{{ t.quality_tagline }}</p>
+    <p>{{ t.free_shipping_msg }}</p>
+</div>
+
+<!-- ==================== ADS CAROUSEL ==================== -->
+{% if ads %}
+{% set vid_exts = ('.mp4', '.webm', '.mov', '.avi', '.ogg') %}
+{% set grad_list = ['135deg,#1a7a4a,#0f5232','135deg,#667eea,#764ba2','135deg,#f093fb,#f5576c','135deg,#f5a623,#e08e0b','135deg,#00b09b,#96c93d'] %}
+{% set icon_list = ['🎉','✨','🚚','👶','🌟'] %}
+
+<div class="ads-crsl-wrap">
+    <div class="ads-crsl-viewport">
+        <div class="ads-crsl-track" id="adsCrslTrack">
+        {% for ad in ads %}
+            {% set is_video = (ad.image and ad.image|trim != '' and ad.image.lower().endswith(vid_exts)) or (ad.media_url and ad.media_url|trim != '' and ad.media_url.lower().endswith(vid_exts)) %}
+            {% set video_src = (url_for('static', filename=ad.image) if (ad.image and ad.image|trim != '' and ad.image.lower().endswith(vid_exts)) else ad.media_url) if is_video else '' %}
+            {% set poster_src = url_for('static', filename=ad.image.replace('.mp4','_poster.jpg').replace('.webm','_poster.jpg').replace('.mov','_poster.jpg')) if (is_video and ad.image) else '' %}
+            {% set is_image = ad.image and ad.image|trim != '' and not is_video %}
+            {% set ad_title = localized_ad_title(ad) or ('🎉 ' ~ t.promo) %}
+            {% set ad_desc  = localized_ad_description(ad) %}
+            {% set ad_link  = ad.link if ad.link else url_for('customer.products') %}
+
+            {% if is_video %}
+            {# ── VIDEO slide ── #}
+            <div class="ads-crsl-slide"
+                 onclick="adsStoriesOpen({{ loop.index0 }})"
+                 data-type="video"
+                 data-src="{{ video_src }}"
+                 data-poster="{{ poster_src }}"
+                 data-title="{{ ad_title | e }}"
+                 data-desc="{{ ad_desc | e if ad_desc else '' }}"
+                 data-link="{{ ad_link }}"
+                 data-gradient=""
+                 data-icon="">
+                <video autoplay muted loop playsinline poster="{{ poster_src }}">
+                    <source src="{{ video_src }}" type="video/mp4">
+                </video>
+                <div class="ads-crsl-overlay"></div>
+                <div class="ads-crsl-play"><div class="ads-crsl-play-icon">▶</div></div>
+                <div class="ads-crsl-caption">
+                    <h3>{{ ad_title }}</h3>
+                    <a class="ads-crsl-chip" href="{{ ad_link }}" onclick="event.stopPropagation()">{{ t.shop_now }}</a>
+                </div>
+            </div>
+
+            {% elif is_image %}
+            {# ── IMAGE slide ── #}
+            <div class="ads-crsl-slide"
+                 onclick="adsStoriesOpen({{ loop.index0 }})"
+                 data-type="image"
+                 data-src="{{ url_for('static', filename=ad.image) }}"
+                 data-poster=""
+                 data-title="{{ ad_title | e }}"
+                 data-desc="{{ ad_desc | e if ad_desc else '' }}"
+                 data-link="{{ ad_link }}"
+                 data-gradient=""
+                 data-icon="">
+                <img src="{{ url_for('static', filename=ad.image) }}" alt="{{ ad_title }}" loading="lazy">
+                <div class="ads-crsl-overlay"></div>
+                <div class="ads-crsl-caption">
+                    <h3>{{ ad_title }}</h3>
+                    {% if ad_desc %}<p>{{ ad_desc }}</p>{% endif %}
+                    <a class="ads-crsl-chip" href="{{ ad_link }}" onclick="event.stopPropagation()">{{ t.shop_now }}</a>
+                </div>
+            </div>
+
+            {% else %}
+            {# ── GRADIENT slide ── #}
+            <div class="ads-crsl-slide"
+                 onclick="adsStoriesOpen({{ loop.index0 }})"
+                 data-type="gradient"
+                 data-src=""
+                 data-poster=""
+                 data-title="{{ ad_title | e }}"
+                 data-desc="{{ ad_desc | e if ad_desc else '' }}"
+                 data-link="{{ ad_link }}"
+                 data-gradient="{{ grad_list[loop.index0 % grad_list|length] }}"
+                 data-icon="{{ icon_list[loop.index0 % icon_list|length] }}"
+                 style="background:linear-gradient({{ grad_list[loop.index0 % grad_list|length] }});">
+                <div class="ads-crsl-grad-icon">{{ icon_list[loop.index0 % icon_list|length] }}</div>
+                <div class="ads-crsl-overlay"></div>
+                <div class="ads-crsl-caption">
+                    <h3>{{ ad_title }}</h3>
+                    {% if ad_desc %}<p>{{ ad_desc }}</p>{% endif %}
+                    <a class="ads-crsl-chip" href="{{ ad_link }}" onclick="event.stopPropagation()">{{ t.shop_now }}</a>
+                </div>
+            </div>
+            {% endif %}
+        {% endfor %}
+        </div>
+    </div>
+    {% if ads|length > 1 %}
+    <div class="ads-crsl-dots" id="adsCrslDots"></div>
+    {% endif %}
+</div>
+
+{# ── STORIES VIEWER OVERLAY ── #}
+<div class="ads-stories-overlay" id="adsStoriesOverlay">
+    <div class="ads-stories-bars" id="adsStoriesBars"></div>
+    <div class="ads-stories-header">
+        <div class="ads-stories-logo">👗 SEMIRA FASHION</div>
+        <button class="ads-stories-close" onclick="adsStoriesClose()">✕</button>
+    </div>
+    <div class="ads-stories-media" id="adsStoriesMedia"></div>
+    <div class="ads-stories-nav left"  id="adsStoriesLeft"></div>
+    <div class="ads-stories-nav right" id="adsStoriesRight"></div>
+    <div class="ads-stories-bottom" id="adsStoriesBottom">
+        <h2 id="adsStoriesTitle"></h2>
+        <p  id="adsStoriesDesc" style="display:none;"></p>
+        <a  id="adsStoriesBtn" href="#" class="ads-stories-shop-btn">{{ t.shop_now }}</a>
+    </div>
+    <div class="ads-stories-hint">↕ ወደ ታች ጥቅጥቅ ለመዝጋት</div>
+</div>
+
+{% endif %}
+
+<!-- Categories -->
+<div style="margin-bottom: 12px;">
+    <h2>📂 {{ t.categories }}</h2>
+</div>
+<div class="cat-photo-grid">
+    {% for cat in categories %}
+    <a href="{{ url_for('customer.category_products', category_id=cat.id) }}" class="cat-photo-card">
+        {% if cat.image %}
+            <img class="cat-photo-img" src="{{ url_for('static', filename=cat.image) }}" alt="{{ category_name(cat) }}" loading="lazy">
+        {% else %}
+            <div class="cat-photo-emoji">{{ cat.icon or '👗' }}</div>
+        {% endif %}
+        <div class="cat-photo-overlay"></div>
+        {% if cat.icon %}<span class="cat-photo-badge">{{ cat.icon }}</span>{% endif %}
+        <div class="cat-photo-name">{{ category_name(cat) }}</div>
+    </a>
+    {% endfor %}
+    <a href="{{ url_for('customer.products') }}" class="cat-photo-card">
+        <div class="cat-photo-emoji" style="background:linear-gradient(135deg,#d4af37,#8b6914);">🛍️</div>
+        <div class="cat-photo-overlay"></div>
+        <div class="cat-photo-name">{{ t.all }}</div>
+    </a>
+</div>
+
+<!-- Featured Products — Horizontal Scroll -->
+<div class="hscroll-section">
+    <div class="hscroll-header">
+        <h2 class="hscroll-title">⭐ {{ t.featured_products }}</h2>
+        <a href="{{ url_for('customer.products') }}" class="hscroll-see-all">ሁሉም ያሉ →</a>
+    </div>
+    <div class="hscroll-outer" id="featOuter">
+        <button class="hscroll-arr left"  onclick="hscrollNav('featTrack',-1)">&#8249;</button>
+        <button class="hscroll-arr right" onclick="hscrollNav('featTrack', 1)">&#8250;</button>
+        <div class="hscroll-track" id="featTrack">
+        {% for product in featured_products %}
+        {% set disc = ((product.compare_price|float - product.price|float) / product.compare_price|float * 100)|round|int if (product.compare_price and product.compare_price|float > product.price|float) else 0 %}
+        <a href="{{ url_for('customer.product_detail', product_id=product.id) }}" class="hsc" data-product-id="{{ product.id }}">
+            <div class="hsc-img">
+                {% if product.thumbnail and product.thumbnail != '' %}
+                    <img src="{{ url_for('static', filename=product.thumbnail) }}" alt="{{ product_name(product) }}" loading="lazy"
+                         onerror="this.onerror=null;this.style.display='none';this.nextElementSibling.style.display='flex';">
+                    <div class="hsc-fallback" style="display:none;">👗</div>
+                {% else %}
+                    <div class="hsc-fallback">👗</div>
+                {% endif %}
+                {% if disc > 0 %}<span class="hsc-badge-sale">-{{ disc }}%</span>{% endif %}
+                {% if product.is_new %}<span class="hsc-badge-new">NEW</span>{% endif %}
+                <button class="hsc-cart-btn" onclick="event.preventDefault();event.stopPropagation();addToCart('{{ product.id }}',1,this)" title="{{ t.add_to_cart }}">🛒</button>
+            </div>
+            <div class="hsc-body">
+                <p class="hsc-name">{{ product_name(product) }}</p>
+                <div>
+                    <span class="hsc-price">{{ format_price(product.price) }}</span>
+                    {% if disc > 0 %}<span class="hsc-compare">{{ format_price(product.compare_price) }}</span>{% endif %}
+                </div>
+            </div>
+        </a>
+        {% endfor %}
+        </div>
+    </div>
+</div>
+
+<!-- ወድ ሰሚራ Clothing Banner -->
+<a href="{{ url_for('customer.wede_semira') }}" style="
+    display: flex; align-items: center; justify-content: space-between;
+    background: linear-gradient(135deg, #8b1a6b 0%, #c2185b 45%, #ff6b9d 100%);
+    color: white; border-radius: 20px; padding: 28px 32px;
+    text-decoration: none; margin: 36px 0;
+    box-shadow: 0 8px 28px rgba(194,24,91,0.25);
+    transition: all 0.3s; flex-wrap: wrap; gap: 16px;
+    " onmouseover="this.style.transform='translateY(-4px)';this.style.boxShadow='0 14px 40px rgba(194,24,91,0.35)'"
+       onmouseout="this.style.transform='';this.style.boxShadow='0 8px 28px rgba(194,24,91,0.25)'">
+    <div style="display:flex;align-items:center;gap:20px;">
+        <span style="font-size:52px;line-height:1;">👗</span>
+        <div>
+            <div style="font-size:11px;font-weight:700;letter-spacing:1.5px;opacity:0.8;text-transform:uppercase;margin-bottom:4px;">NEW SECTION</div>
+            <h3 style="margin:0 0 6px 0;font-size:clamp(18px,3vw,26px);font-weight:900;line-height:1.2;">ሰሚራ የሴቶች እና የልጆች ልብስ እስቶር</h3>
+            <p style="margin:0;font-size:14px;opacity:0.9;">
+                {% if lang == 'am' %}ዘመናዊ ፋሽን — ወሎ ደሴ ኩታበር{% elif lang == 'ar' %}ملابس النساء والأطفال{% else %}Women's & Children's Clothing Store{% endif %}
+            </p>
+        </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:12px;flex-shrink:0;">
+        <span style="background:rgba(255,255,255,0.2);padding:4px 14px;border-radius:20px;font-size:12px;font-weight:700;">👶 {% if lang == 'am' %}የልጆች ልብስ{% else %}Kids{% endif %}</span>
+        <span style="font-size:28px;">→</span>
+    </div>
+</a>
+
+<!-- New Arrivals — Horizontal Scroll -->
+{% if new_products and new_products|length > 0 %}
+<div class="hscroll-section">
+    <div class="hscroll-header">
+        <h2 class="hscroll-title">✨ {{ t.new_arrivals }}</h2>
+        <a href="{{ url_for('customer.products') }}" class="hscroll-see-all">ሁሉም ያሉ →</a>
+    </div>
+    <div class="hscroll-outer" id="newOuter">
+        <button class="hscroll-arr left"  onclick="hscrollNav('newTrack',-1)">&#8249;</button>
+        <button class="hscroll-arr right" onclick="hscrollNav('newTrack', 1)">&#8250;</button>
+        <div class="hscroll-track" id="newTrack">
+        {% for product in new_products %}
+        {% set disc = ((product.compare_price|float - product.price|float) / product.compare_price|float * 100)|round|int if (product.compare_price and product.compare_price|float > product.price|float) else 0 %}
+        <a href="{{ url_for('customer.product_detail', product_id=product.id) }}" class="hsc" data-product-id="{{ product.id }}">
+            <div class="hsc-img">
+                {% if product.thumbnail and product.thumbnail != '' %}
+                    <img src="{{ url_for('static', filename=product.thumbnail) }}" alt="{{ product_name(product) }}" loading="lazy"
+                         onerror="this.onerror=null;this.style.display='none';this.nextElementSibling.style.display='flex';">
+                    <div class="hsc-fallback" style="display:none;">👗</div>
+                {% else %}
+                    <div class="hsc-fallback">👗</div>
+                {% endif %}
+                {% if disc > 0 %}<span class="hsc-badge-sale">-{{ disc }}%</span>{% endif %}
+                <span class="hsc-badge-new">NEW ✨</span>
+                <button class="hsc-cart-btn" onclick="event.preventDefault();event.stopPropagation();addToCart('{{ product.id }}',1,this)" title="{{ t.add_to_cart }}">🛒</button>
+            </div>
+            <div class="hsc-body">
+                <p class="hsc-name">{{ product_name(product) }}</p>
+                <div>
+                    <span class="hsc-price">{{ format_price(product.price) }}</span>
+                    {% if disc > 0 %}<span class="hsc-compare">{{ format_price(product.compare_price) }}</span>{% endif %}
+                </div>
+            </div>
+        </a>
+        {% endfor %}
+        </div>
+    </div>
+</div>
+{% endif %}
+
+{% if hijri_home %}
+<div class="idc-wrap">
+    <div class="idc-head">
+        <span class="idc-arabic-sub">الزاوية الإسلامية</span>
+        <h2>🕌 Islamic Corner</h2>
+        <p>Prayer times, Hijri calendar, Qibla direction & daily Qur'an — for our Muslim customers</p>
+    </div>
+
+    <div class="idc-slider-outer" id="idc-slider-outer">
+        <button class="idc-slider-arr left" onclick="idcNav(-1)">&#8249;</button>
+        <button class="idc-slider-arr right" onclick="idcNav(1)">&#8250;</button>
+
+        <div class="idc-slider-track" id="idc-track">
+
+            <div class="idc-card">
+                <div class="idc-card-head">
+                    <div class="idc-card-icon">🕐</div>
+                    <span class="idc-card-lbl">Prayer Times</span>
+                </div>
+                <div class="idc-prayer-list" id="idc-prayer-list">
+                    <div style="font-size:12px;color:#a0b8a4;text-align:center;padding:14px 0;">Loading…</div>
+                </div>
+                <a href="{{ url_for('islamic.islamic_suite') }}#prayer" class="idc-card-link">
+                    Full Prayer Schedule →
+                </a>
+            </div>
+
+            <div class="idc-card">
+                <div class="idc-card-head">
+                    <div class="idc-card-icon">📅</div>
+                    <span class="idc-card-lbl">Hijri Calendar</span>
+                </div>
+                <div class="idc-hijri-body">
+                    <div class="idc-hijri-day">{{ hijri_home.day }}</div>
+                    <div class="idc-hijri-month">{{ hijri_home.month }}</div>
+                    <div class="idc-hijri-year">{{ hijri_home.year }} AH</div>
+                    {% if next_event %}
+                    <div class="idc-next-event">
+                        {{ next_event.icon }}
+                        {% if next_event.is_today %}
+                            <strong>{{ next_event.name }}</strong> — Today!
+                        {% elif next_event.days_away == 1 %}
+                            <strong>{{ next_event.name }}</strong> — Tomorrow
+                        {% else %}
+                            <strong>{{ next_event.name }}</strong> in {{ next_event.days_away }} days
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                </div>
+                <a href="{{ url_for('islamic.islamic_suite') }}#calendar" class="idc-card-link">
+                    Full Hijri Calendar →
+                </a>
+            </div>
+
+            <div class="idc-card">
+                <div class="idc-card-head">
+                    <div class="idc-card-icon">🧭</div>
+                    <span class="idc-card-lbl">Qibla Direction</span>
+                </div>
+                <div class="idc-compass-body">
+                    <svg class="idc-compass-svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="50" cy="50" r="47" fill="#f7fbf8" stroke="#d4ead8" stroke-width="1.5"/>
+                        <circle cx="50" cy="50" r="38" fill="none" stroke="#edf6ef" stroke-width="1"/>
+                        <line x1="50" y1="12" x2="50" y2="18" stroke="#d4ead8" stroke-width="1.5"/>
+                        <line x1="88" y1="50" x2="82" y2="50" stroke="#d4ead8" stroke-width="1"/>
+                        <line x1="50" y1="88" x2="50" y2="82" stroke="#d4ead8" stroke-width="1"/>
+                        <line x1="12" y1="50" x2="18" y2="50" stroke="#d4ead8" stroke-width="1"/>
+                        <text x="50" y="11" text-anchor="middle" font-size="9" font-weight="700" fill="#1a7a4a" font-family="system-ui,sans-serif">N</text>
+                        <text x="91" y="53" text-anchor="middle" font-size="7" fill="#a0c0a8" font-family="system-ui,sans-serif">E</text>
+                        <text x="50" y="97" text-anchor="middle" font-size="7" fill="#a0c0a8" font-family="system-ui,sans-serif">S</text>
+                        <text x="9" y="53" text-anchor="middle" font-size="7" fill="#a0c0a8" font-family="system-ui,sans-serif">W</text>
+                        <g id="idc-compass-needle" style="transform-origin:50px 50px;transform:rotate(4.6deg)">
+                            <polygon points="50,14 46,50 54,50" fill="#1a7a4a"/>
+                            <polygon points="50,86 46,50 54,50" fill="#d4ead8"/>
+                            <circle cx="50" cy="50" r="4" fill="white" stroke="#1a7a4a" stroke-width="1.5"/>
+                        </g>
+                    </svg>
+                    <div class="idc-bearing" id="idc-bearing-val">4.6°</div>
+                    <div class="idc-bearing-sub" id="idc-bearing-sub">from ወሎ ደሴ ኩታበር · North</div>
+                </div>
+                <a href="{{ url_for('islamic.islamic_suite') }}#qibla" class="idc-card-link">
+                    Interactive Compass →
+                </a>
+            </div>
+
+            <div class="idc-card">
+                <div class="idc-card-head">
+                    <div class="idc-card-icon">📖</div>
+                    <span class="idc-card-lbl">Daily Ayah</span>
+                </div>
+                <div class="idc-ayah-body">
+                    {% if daily_ayah and daily_ayah.text %}
+                    <div class="idc-ayah-text">{{ daily_ayah.text }}</div>
+                    <div class="idc-ayah-ref">
+                        <span>📖</span>
+                        <span>{{ daily_ayah.surah_name }} — {{ daily_ayah.surah_num }}:{{ daily_ayah.ayah_num }}</span>
+                    </div>
+                    {% else %}
+                    <div style="font-size:13px;color:#a0b8a4;text-align:center;padding:20px 0;flex:1;">
+                        بِسۡمِ ٱللَّهِ ٱلرَّحۡمَٰنِ ٱلرَّحِيمِ
+                    </div>
+                    {% endif %}
+                </div>
+                <a href="{{ url_for('islamic.islamic_suite') }}#quran" class="idc-card-link">
+                    Read Full Qur'an →
+                </a>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="idc-slider-dots" id="idc-dots">
+        <div class="idc-slider-dot on" onclick="idcGoTo(0)"></div>
+        <div class="idc-slider-dot" onclick="idcGoTo(1)"></div>
+        <div class="idc-slider-dot" onclick="idcGoTo(2)"></div>
+        <div class="idc-slider-dot" onclick="idcGoTo(3)"></div>
+    </div>
+
+    <div class="idc-cta">
+        <a href="{{ url_for('islamic.islamic_suite') }}">
+            🕌 Open Full Islamic Suite
+        </a>
+    </div>
+</div>
+{% endif %}
+
+<!-- Recently Viewed Section -->
+{% if recently_viewed_products and recently_viewed_products|length > 0 %}
+<div style="margin-top: 40px;">
+    <h2 style="display:flex; align-items:center; gap:10px;">
+        🕐 {% if lang == 'am' %}የቅርብ ጊዜ ምርቶች{% elif lang == 'ar' %}المنتجات المشاهدة مؤخراً{% else %}Recently Viewed{% endif %}
+    </h2>
+    <div class="products-grid">
+        {% for product in recently_viewed_products %}
+        {% set disc = ((product.compare_price|float - product.price|float) / product.compare_price|float * 100)|round|int if (product.compare_price and product.compare_price|float > product.price|float) else 0 %}
+        <a href="{{ url_for('customer.product_detail', product_id=product.id) }}" class="product-card" data-product-id="{{ product.id }}">
+            <div class="pc-img">
+                {% if product.thumbnail and product.thumbnail != '' %}
+                    <img src="{{ url_for('static', filename=product.thumbnail) }}" alt="{{ product_name(product) }}" loading="lazy"
+                         onerror="this.onerror=null;this.style.display='none';this.parentElement.querySelector('.pc-fallback').style.display='flex';">
+                    <div class="pc-fallback" style="display:none;position:absolute;inset:0;align-items:center;justify-content:center;font-size:36px;">👗</div>
+                {% else %}
+                    <div style="display:flex;align-items:center;justify-content:center;height:100%;font-size:36px;">👗</div>
+                {% endif %}
+                {% if disc > 0 %}<span class="pc-badge pc-badge-sale">-{{ disc }}%</span>{% endif %}
+                <button class="pc-cart-btn" onclick="event.preventDefault();event.stopPropagation();addToCart('{{ product.id }}',1,this)" title="{{ t.add_to_cart }}">🛒</button>
+            </div>
+            <div class="pc-body">
+                <p class="pc-name">{{ product_name(product) }}</p>
+                <div class="pc-price-row">
+                    <span class="pc-price">{{ format_price(product.price) }}</span>
+                    {% if disc > 0 %}<span class="pc-compare">{{ format_price(product.compare_price) }}</span>{% endif %}
+                </div>
+            </div>
+        </a>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+
+<!-- About Section (Desktop only - shown based on platform) -->
+{% if show_about %}
+<div class="about-section">
+    <h2>🏢 About SEMIRA FASHION</h2>
+    <p>
+        SEMIRA FASHION is a leading fashion store in Ethiopia, offering high-quality 
+        clothing at competitive prices. With multiple branches across the country, we serve 
+        thousands of satisfied customers. Our mission is to provide comfortable, stylish, 
+        and stylish clothing that makes every occasion special.
+    </p>
+    <p style="margin-top: 15px;">
+        🇪🇹 Proudly serving Ethiopia since 2000 | 9 branches nationwide | Thousands of happy customers
+    </p>
+</div>
+{% endif %}
+
+<!-- Admin Link -->
+<div style="text-align: center; margin-top: 40px; padding: 20px;">
+    {% if not session.get('admin') and not session.get('is_admin') %}
+    <a href="{{ url_for('admin.admin_login') }}" style="display: inline-flex; align-items: center; gap: 8px; background: #1a1a2e; color: #d4af37; padding: 12px 24px; border-radius: 30px; text-decoration: none; font-weight: bold;">
+        👑 Admin Login
+    </a>
+    {% endif %}
+    {% if session.get('admin') or session.get('is_admin') %}
+    <a href="{{ url_for('admin.dashboard') }}" style="display: inline-flex; align-items: center; gap: 8px; background: #1a1a2e; color: #d4af37; padding: 12px 24px; border-radius: 30px; text-decoration: none; font-weight: bold;">
+        👑 Go to Admin Panel
+    </a>
+    {% endif %}
+</div>
+
+<script>
+function hscrollNav(trackId, dir) {
+    var track = document.getElementById(trackId);
+    if (!track) return;
+    var card = track.querySelector('.hsc');
+    var step = card ? (card.offsetWidth + 12) * 3 : 480;
+    track.scrollBy({ left: dir * step, behavior: 'smooth' });
+}
+
+(function() {
+    var PICONS = {Fajr:'🌙',Dhuhr:'☀️',Asr:'🌤️',Maghrib:'🌅',Isha:'🌃'};
+    var PORDER = ['Fajr','Dhuhr','Asr','Maghrib','Isha'];
+    function toMin(s) { var p=s.split(':'); return +p[0]*60 + +p[1]; }
+    function compassDir(deg) {
+        var dirs = ['N','NNE','NE','ENE','E','ESE','SE','SSE','S','SSW','SW','WSW','W','WNW','NW','NNW'];
+        return dirs[Math.round(deg/22.5) % 16];
+    }
+    function renderPrayers(times) {
+        var now = new Date();
+        var cur = now.getHours()*60 + now.getMinutes();
+        var nextP = null;
+        for (var i=0; i<PORDER.length; i++) {
+            if (toMin(times[PORDER[i]]) > cur) { nextP = PORDER[i]; break; }
+        }
+        if (!nextP) nextP = PORDER[0];
+        var currP = null;
+        for (var j=PORDER.length-1; j>=0; j--) {
+            if (toMin(times[PORDER[j]]) <= cur) { currP = PORDER[j]; break; }
+        }
+        var el = document.getElementById('idc-prayer-list');
+        if (!el) return;
+        el.innerHTML = PORDER.map(function(p) {
+            var cls = p===nextP ? 'pnext' : (p===currP ? 'pcurr' : '');
+            return '<div class="idc-prayer-row '+cls+'">'
+                + '<span class="idc-pname">'+PICONS[p]+' '+p+'</span>'
+                + '<span class="idc-ptime">'+times[p]+'</span>'
+                + '</div>';
+        }).join('');
+    }
+    function loadPrayers() {
+        fetch('/api/islamic/prayer-times?lat=8.9806&lng=38.7578')
+            .then(function(r){ return r.json(); })
+            .then(function(d){ if(d.success) renderPrayers(d.times); })
+            .catch(function(){});
+    }
+    function loadQibla() {
+        fetch('/api/islamic/qibla-direction?lat=8.9806&lng=38.7578')
+            .then(function(r){ return r.json(); })
+            .then(function(d){
+                if (!d.success) return;
+                var b = d.bearing;
+                var val = document.getElementById('idc-bearing-val');
+                var sub = document.getElementById('idc-bearing-sub');
+                var needle = document.getElementById('idc-compass-needle');
+                if (val) val.textContent = b.toFixed(1)+'°';
+                if (sub) sub.textContent = 'from ወሎ ደሴ ኩታበር · '+compassDir(b);
+                if (needle) needle.style.transform = 'rotate('+b+'deg)';
+            })
+            .catch(function(){});
+    }
+    var idcIdx = 0;
+    var idcTotal = 4;
+    var idcTimer;
+    function idcGoTo(n) {
+        idcIdx = (n + idcTotal) % idcTotal;
+        var track = document.getElementById('idc-track');
+        if (track) track.style.transform = 'translateX(-' + (idcIdx * 100) + '%)';
+        var dots = document.querySelectorAll('.idc-slider-dot');
+        dots.forEach(function(d, i) { d.classList.toggle('on', i === idcIdx); });
+    }
+    window.idcGoTo = idcGoTo;
+    window.idcNav = function(dir) {
+        clearInterval(idcTimer);
+        idcGoTo(idcIdx + dir);
+        idcTimer = setInterval(function(){ idcGoTo(idcIdx + 1); }, 3500);
+    };
+    document.addEventListener('DOMContentLoaded', function() {
+        if (document.getElementById('idc-prayer-list')) {
+            loadPrayers();
+            loadQibla();
+        }
+        var outer = document.getElementById('idc-slider-outer');
+        if (!outer) return;
+        idcTimer = setInterval(function(){ idcGoTo(idcIdx + 1); }, 3500);
+        var tsx = 0;
+        outer.addEventListener('touchstart', function(e){ tsx = e.touches[0].clientX; }, {passive:true});
+        outer.addEventListener('touchend', function(e){
+            var dx = tsx - e.changedTouches[0].clientX;
+            if (Math.abs(dx) > 40) { clearInterval(idcTimer); idcGoTo(idcIdx + (dx > 0 ? 1 : -1)); idcTimer = setInterval(function(){ idcGoTo(idcIdx + 1); }, 3500); }
+        }, {passive:true});
+    });
+})();
+
+    /* ══ ADS CAROUSEL ══ */
+    (function() {
+        var track = document.getElementById('adsCrslTrack');
+        if (!track) return;
+        var slides = Array.from(track.querySelectorAll('.ads-crsl-slide'));
+        var dotsWrap = document.getElementById('adsCrslDots');
+        var n = slides.length;
+        if (!n) return;
+        var cur = 0, autoTimer = null;
+        var dragStartX = 0, dragStartTx = 0, isDragging = false, didDrag = false;
+
+        var dots = slides.map(function(_, i) {
+            if (!dotsWrap) return null;
+            var d = document.createElement('button');
+            d.className = 'ads-crsl-dot' + (i === 0 ? ' on' : '');
+            d.addEventListener('click', function() { goTo(i); resetAuto(); });
+            dotsWrap.appendChild(d);
+            return d;
+        });
+
+        function slideW() {
+            return slides[0] ? slides[0].getBoundingClientRect().width + 12 : 0;
+        }
+        function setTx(px, anim) {
+            track.style.transition = anim ? 'transform 0.5s cubic-bezier(0.4,0,0.2,1)' : 'none';
+            track.style.transform = 'translateX(-' + Math.max(0, px) + 'px)';
+        }
+        function goTo(i) {
+            cur = ((i % n) + n) % n;
+            setTx(cur * slideW(), true);
+            dots.forEach(function(d, j) { if (d) d.classList.toggle('on', j === cur); });
+        }
+        function startAuto() { clearInterval(autoTimer); autoTimer = setInterval(function(){ goTo(cur+1); }, 4200); }
+        function resetAuto() { startAuto(); }
+        function stopAuto()  { clearInterval(autoTimer); }
+
+        /* drag/swipe on carousel (NOT on stories open clicks) */
+        track.addEventListener('mousedown', function(e) {
+            isDragging = true; didDrag = false;
+            dragStartX = e.clientX; dragStartTx = cur * slideW();
+            track.classList.add('ads-dragging'); stopAuto();
+        });
+        document.addEventListener('mouseup', function(e) {
+            if (!isDragging) return;
+            isDragging = false; track.classList.remove('ads-dragging');
+            var diff = dragStartX - e.clientX;
+            if (Math.abs(diff) > 50) { didDrag = true; diff > 0 ? goTo(cur+1) : goTo(cur-1); }
+            else { setTx(cur * slideW(), true); }
+            resetAuto();
+            setTimeout(function(){ didDrag = false; }, 100);
+        });
+        document.addEventListener('mousemove', function(e) {
+            if (!isDragging) return;
+            didDrag = Math.abs(dragStartX - e.clientX) > 5;
+            setTx(dragStartTx + (dragStartX - e.clientX), false);
+        });
+        var tsx = 0;
+        track.addEventListener('touchstart', function(e) {
+            tsx = e.touches[0].clientX; stopAuto(); didDrag = false;
+        }, {passive:true});
+        track.addEventListener('touchmove', function(e) {
+            var diff = tsx - e.touches[0].clientX;
+            if (Math.abs(diff) > 8) { didDrag = true; setTx(cur*slideW()+diff, false); }
+        }, {passive:true});
+        track.addEventListener('touchend', function(e) {
+            var diff = tsx - e.changedTouches[0].clientX;
+            if (Math.abs(diff) > 40) { diff > 0 ? goTo(cur+1) : goTo(cur-1); }
+            else { setTx(cur*slideW(), true); }
+            resetAuto();
+            setTimeout(function(){ didDrag = false; }, 100);
+        }, {passive:true});
+
+        /* intercept slide click — ignore if it was a drag */
+        slides.forEach(function(slide, i) {
+            slide.addEventListener('click', function(e) {
+                if (didDrag) { e.stopImmediatePropagation(); e.preventDefault(); }
+            }, true);
+        });
+
+        track.addEventListener('mouseenter', stopAuto);
+        track.addEventListener('mouseleave', startAuto);
+        window.addEventListener('resize', function(){ setTx(cur*slideW(), false); });
+        startAuto();
+    })();
+
+    /* ══ STORIES VIEWER ══ */
+    (function() {
+        var overlay  = document.getElementById('adsStoriesOverlay');
+        if (!overlay) return;
+        var barsWrap = document.getElementById('adsStoriesBars');
+        var mediaEl  = document.getElementById('adsStoriesMedia');
+        var titleEl  = document.getElementById('adsStoriesTitle');
+        var descEl   = document.getElementById('adsStoriesDesc');
+        var btnEl    = document.getElementById('adsStoriesBtn');
+        var slides   = Array.from(document.querySelectorAll('.ads-crsl-slide'));
+        var n = slides.length;
+        var cur = 0, stTimer = null, bars = [];
+        var DURATION = 5500;
+
+        function buildBars() {
+            barsWrap.innerHTML = ''; bars = [];
+            for (var i = 0; i < n; i++) {
+                var bar = document.createElement('div');
+                bar.className = 'ads-stories-bar';
+                var fill = document.createElement('div');
+                fill.className = 'ads-stories-bar-fill';
+                bar.appendChild(fill);
+                barsWrap.appendChild(bar);
+                bars.push(fill);
+            }
+        }
+
+        function animBar(idx, dur) {
+            var f = bars[idx]; if (!f) return;
+            f.style.transition = 'none'; f.style.width = '0%';
+            requestAnimationFrame(function(){ requestAnimationFrame(function(){
+                f.style.transition = 'width '+dur+'ms linear'; f.style.width = '100%';
+            }); });
+        }
+
+        function showStory(index) {
+            clearTimeout(stTimer);
+            cur = ((index % n) + n) % n;
+            bars.forEach(function(b, i){
+                b.style.transition = 'none';
+                b.style.width = i < cur ? '100%' : '0%';
+            });
+            var s = slides[cur];
+            var type = s.dataset.type;
+            mediaEl.innerHTML = '';
+            titleEl.textContent = s.dataset.title || '';
+            var desc = s.dataset.desc || '';
+            descEl.textContent = desc; descEl.style.display = desc ? '' : 'none';
+            btnEl.href = s.dataset.link || '#';
+
+            if (type === 'video') {
+                var v = document.createElement('video');
+                v.src = s.dataset.src;
+                if (s.dataset.poster) v.poster = s.dataset.poster;
+                v.autoplay = true; v.controls = false; v.playsinline = true;
+                v.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#000;';
+                mediaEl.appendChild(v);
+                v.addEventListener('loadedmetadata', function(){
+                    var dur = Math.min((v.duration||10)*1000, 60000);
+                    animBar(cur, dur);
+                    stTimer = setTimeout(function(){ showStory(cur+1); }, dur+150);
+                });
+                v.play().catch(function(){});
+            } else if (type === 'image') {
+                var img = document.createElement('img');
+                img.src = s.dataset.src;
+                img.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;object-fit:cover;';
+                mediaEl.appendChild(img);
+                animBar(cur, DURATION);
+                stTimer = setTimeout(function(){ showStory(cur+1); }, DURATION);
+            } else {
+                var div = document.createElement('div');
+                div.style.cssText = 'position:absolute;inset:0;background:linear-gradient('+(s.dataset.gradient||'135deg,#1a7a4a,#0f5232')+');display:flex;align-items:center;justify-content:center;font-size:110px;';
+                div.textContent = s.dataset.icon || '🎉';
+                mediaEl.appendChild(div);
+                animBar(cur, DURATION);
+                stTimer = setTimeout(function(){ showStory(cur+1); }, DURATION);
+            }
+        }
+
+        window.adsStoriesOpen = function(index) {
+            buildBars();
+            overlay.classList.add('open');
+            document.body.style.overflow = 'hidden';
+            showStory(index || 0);
+        };
+        window.adsStoriesClose = function() {
+            clearTimeout(stTimer);
+            overlay.classList.remove('open');
+            document.body.style.overflow = '';
+            mediaEl.innerHTML = '';
+        };
+
+        document.getElementById('adsStoriesLeft').addEventListener('click', function(){ showStory(cur-1); });
+        document.getElementById('adsStoriesRight').addEventListener('click', function(){ showStory(cur+1); });
+
+        /* swipe down to close */
+        var stsy = 0;
+        overlay.addEventListener('touchstart', function(e){ stsy = e.touches[0].clientY; }, {passive:true});
+        overlay.addEventListener('touchend', function(e){
+            var dy = e.changedTouches[0].clientY - stsy;
+            if (dy > 70) { adsStoriesClose(); }
+        }, {passive:true});
+
+        document.addEventListener('keydown', function(e){
+            if (!overlay.classList.contains('open')) return;
+            if (e.key === 'Escape')     adsStoriesClose();
+            if (e.key === 'ArrowRight') showStory(cur+1);
+            if (e.key === 'ArrowLeft')  showStory(cur-1);
+        });
+    })();
+</script>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/slider.js') }}"></script>
+{% endblock %}

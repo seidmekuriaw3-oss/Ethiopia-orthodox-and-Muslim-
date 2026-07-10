@@ -1,0 +1,2048 @@
+<!DOCTYPE html>
+<html lang="{{ lang }}"{% if session.get('lang') == 'ar' %} dir="rtl"{% endif %}>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="description" content="SEMIRA FASHION - Quality fashion at affordable prices in ወሎ ደሴ ኩታበር, Ethiopia">
+    <meta name="keywords" content="fashion, clothing, ልብስ, semira fashion, ወሎ ደሴ ኩታበር, የሴቶች ልብስ, የልጆች ልብስ">
+    <meta name="author" content="SEMIRA FASHION">
+    <meta name="theme-color" content="#061510">
+    
+    <title>{% block title %}SEMIRA FASHION{% endblock %}</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='images/favicon.ico') }}">
+    <link rel="apple-touch-icon" href="{{ url_for('static', filename='images/logo.svg') }}">
+    
+    <!-- Google Fonts: Amharic (Noto Serif Ethiopic) + Arabic (Noto Naskh Arabic) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Ethiopic:wght@400;600;700&family=Noto+Naskh+Arabic:wght@400;600;700&display=swap" rel="stylesheet">
+
+    <!-- CSS Files -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/responsive.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bottom-nav.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/hamburger.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/icons.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/premium.css') }}">
+    
+    <!-- Clear only legacy v1 cache keys to avoid conflicts with current SW -->
+    <script>
+    if (typeof caches !== 'undefined') {
+        var legacyKeys = ['ethiosadat-v1', 'semira-v1', 'static-v1', 'pages-v1'];
+        legacyKeys.forEach(function(k) { caches.delete(k); });
+    }
+    </script>
+
+    {% block extra_css %}
+    <style>
+        /* RTL Support */
+        [dir="rtl"] {
+            direction: rtl;
+            text-align: right;
+        }
+        [dir="rtl"] .header-container {
+            flex-direction: row-reverse;
+        }
+        [dir="rtl"] .search-box {
+            order: 2;
+        }
+        [dir="rtl"] .desktop-nav {
+            order: 1;
+        }
+        [dir="rtl"] .left {
+            right: auto;
+            left: 0;
+        }
+        [dir="rtl"] .right {
+            left: auto;
+            right: 0;
+        }
+        [dir="rtl"] button,
+        [dir="rtl"] input {
+            text-align: right;
+        }
+    </style>
+    {% endblock %}
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+</head>
+<body>
+
+<!-- ==================== HEADER ==================== -->
+<header class="header">
+    <div class="header-container">
+        <!-- Logo -->
+        <div class="logo" onclick="location.href='/';">
+            <img src="{{ url_for('static', filename='images/mylogo.png') }}" alt="SEMIRA FASHION Logo">
+        </div>
+
+        <!-- Search Box -->
+        <div class="search-box">
+            <svg class="search-icon-left" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            </svg>
+            <input type="text" id="search-input" placeholder="{{ t.search }}" autocomplete="off"
+                   onkeydown="if(event.key==='Enter') searchProducts(this.value)">
+            <button class="search-btn" onclick="searchProducts(document.getElementById('search-input').value)" aria-label="Search">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="9 18 15 12 9 6"/>
+                </svg>
+            </button>
+        </div>
+
+        <!-- Desktop Navigation -->
+        <div class="desktop-nav">
+            <a href="{{ url_for('customer.index') }}" class="nav-icon-btn {% if request.endpoint == 'customer.index' %}active{% endif %}" title="{% if lang == 'am' %}መነሻ{% else %}Home{% endif %}">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>
+                </svg>
+            </a>
+            <a href="{{ url_for('customer.branches') }}" class="nav-icon-btn {% if request.endpoint == 'branches' %}active{% endif %}" title="{% if lang == 'am' %}ቅርንጫፎቻችን{% elif lang == 'ar' %}فروعنا{% else %}Our Branches{% endif %}">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>
+                </svg>
+            </a>
+            <a href="{{ url_for('cart.view_cart') }}" class="nav-icon-btn cart-link {% if request.endpoint == 'cart.view_cart' %}active{% endif %}" title="{% if lang == 'am' %}ጋሪ{% else %}Cart{% endif %}">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
+                    <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+                </svg>
+                <span id="desktop-cart-count" class="cart-count" style="display:none;">0</span>
+            </a>
+            {% if session.get('user_id') %}
+            <a href="{{ url_for('customer.dashboard', tab='notifs') }}" class="nav-icon-btn" id="desktopBellLink" title="{% if lang == 'am' %}ማሳወቂያዎች{% else %}Notifications{% endif %}">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+                </svg>
+                <span id="desktopBellBadge" style="display:none;position:absolute;top:4px;right:4px;background:#ef4444;color:#fff;border-radius:50%;font-size:9px;font-weight:700;width:16px;height:16px;align-items:center;justify-content:center;line-height:1;">0</span>
+            </a>
+            {% endif %}
+        </div>
+
+        <!-- Mobile Icons -->
+        <div class="header-icons">
+            <a href="{{ url_for('cart.view_cart') }}" class="nav-icon-btn mobile-cart cart-link" title="Cart">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
+                    <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+                </svg>
+                <span id="cart-count" class="cart-count" style="display:none;">0</span>
+            </a>
+            {% if session.get('user_id') %}
+            <a href="{{ url_for('customer.dashboard', tab='notifs') }}" class="nav-icon-btn" id="mobileBellLink">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+                </svg>
+                <span id="mobileBellBadge" style="display:none;position:absolute;top:4px;right:4px;background:#ef4444;color:#fff;border-radius:50%;font-size:9px;font-weight:700;width:16px;height:16px;align-items:center;justify-content:center;line-height:1;">0</span>
+            </a>
+            {% endif %}
+            <button class="hamburger-btn" onclick="openHamburgerMenu()" aria-label="Menu">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+                    <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+                </svg>
+                <span>MENU</span>
+            </button>
+        </div>
+    </div>
+</header>
+
+<!-- ==================== HAMBURGER MENU OVERLAY ==================== -->
+<div id="hamburgerOverlay" class="hamburger-overlay" onclick="closeHamburgerMenu()"></div>
+
+<!-- ==================== HAMBURGER MENU PANEL ==================== -->
+<div id="hamburgerPanel" class="hamburger-panel">
+    <div class="menu-header">
+        <button class="close-menu" onclick="closeHamburgerMenu()">✕</button>
+        <div class="user-avatar">
+            {% if session.get('user_id') or session.get('admin') %}
+                👤
+            {% else %}
+                🛋️
+            {% endif %}
+        </div>
+        <h3>
+            {% if session.get('user_name') %}
+                {{ session.get('user_name') }}
+            {% elif session.get('admin') %}
+                Admin User
+            {% else %}
+                Welcome Guest
+            {% endif %}
+        </h3>
+        <p>
+            {% if session.get('user_id') %}
+                {{ session.get('user_email') }}
+            {% elif session.get('admin') %}
+                Administrator
+            {% else %}
+                Please login or register
+            {% endif %}
+        </p>
+    </div>
+    
+    <!-- ADMIN SECTION -->
+    {% if session.get('admin') or session.get('is_admin') %}
+    <div class="menu-section">
+        <div class="menu-title">👑 ADMINISTRATION</div>
+        <a href="{{ url_for('admin.dashboard') }}" class="menu-item">
+            <span class="icon">📊</span>
+            <span class="text">Dashboard</span>
+        </a>
+        <a href="{{ url_for('admin.products') }}" class="menu-item">
+            <span class="icon">📦</span>
+            <span class="text">Products</span>
+        </a>
+        <a href="{{ url_for('admin.ads') }}" class="menu-item">
+            <span class="icon">📢</span>
+            <span class="text">Advertisements</span>
+        </a>
+        <a href="{{ url_for('admin.orders') }}" class="menu-item">
+            <span class="icon">🛒</span>
+            <span class="text">Orders</span>
+            {% if pending_orders_count %}
+            <span class="badge">{{ pending_orders_count }}</span>
+            {% endif %}
+        </a>
+        <a href="{{ url_for('admin.admin_inbox') }}" class="menu-item">
+            <span class="icon">📩</span>
+            <span class="text">Contact Messages</span>
+        </a>
+        <a href="{{ url_for('admin.admin_reviews') }}" class="menu-item">
+            <span class="icon">⭐</span>
+            <span class="text">Reviews</span>
+        </a>
+        <a href="{{ url_for('admin.admin_users') }}" class="menu-item">
+            <span class="icon">👥</span>
+            <span class="text">Customers</span>
+        </a>
+        <a href="{{ url_for('admin.reports') }}" class="menu-item">
+            <span class="icon">📈</span>
+            <span class="text">Reports</span>
+        </a>
+        <a href="{{ url_for('admin.settings') }}" class="menu-item">
+            <span class="icon">⚙️</span>
+            <span class="text">Settings</span>
+        </a>
+    </div>
+    {% endif %}
+    
+    <!-- USER SECTION -->
+    <div class="menu-section">
+        <div class="menu-title">👤 MY ACCOUNT</div>
+        {% if session.get('user_id') %}
+            <a href="{{ url_for('customer.dashboard') }}" class="menu-item" style="background:linear-gradient(90deg,rgba(26,122,74,0.10),rgba(26,122,74,0.04));border-left:3px solid #1a7a4a;">
+                <span class="icon">📊</span>
+                <span class="text" style="color:#1a7a4a;font-weight:700;">My Dashboard</span>
+            </a>
+            <a href="{{ url_for('customer.dashboard', tab='orders') }}" class="menu-item">
+                <span class="icon">📦</span>
+                <span class="text">My Orders</span>
+            </a>
+            <a href="{{ url_for('customer.dashboard', tab='wishlist') }}" class="menu-item">
+                <span class="icon">❤️</span>
+                <span class="text">Wishlist</span>
+            </a>
+            <a href="{{ url_for('customer.dashboard', tab='notifs') }}" class="menu-item" onclick="closeHamburgerMenu();">
+                <span class="icon">🔔</span>
+                <span class="text">{% if lang == 'am' %}ማሳወቂያዎች{% elif lang == 'ar' %}الإشعارات{% else %}Notifications{% endif %}</span>
+                <span id="menuBellBadge" class="badge" style="display:none;">0</span>
+            </a>
+        {% else %}
+            <a href="#" class="menu-item" onclick="openUserModal(); closeHamburgerMenu();">
+                <span class="icon">🔐</span>
+                <span class="text">Login</span>
+            </a>
+            <a href="#" class="menu-item" onclick="openUserModal(); closeHamburgerMenu(); showRegisterForm();">
+                <span class="icon">📝</span>
+                <span class="text">Register</span>
+            </a>
+        {% endif %}
+    </div>
+    
+    <!-- SHOPPING SECTION -->
+    <div class="menu-section">
+        <div class="menu-title">🛍️ SHOPPING</div>
+        <a href="{{ url_for('customer.wede_semira') }}" class="menu-item" style="background:linear-gradient(90deg,rgba(194,24,91,0.10),rgba(194,24,91,0.04));border-left:3px solid #c2185b;">
+            <span class="icon">👗</span>
+            <span class="text" style="color:#c2185b;font-weight:700;">ሰሚራ የሴቶች እና የልጆች ልብስ እስቶር</span>
+        </a>
+        <a href="{{ url_for('customer.products') }}" class="menu-item">
+            <span class="icon">📦</span>
+            <span class="text">{% if lang == 'am' %}ሁሉም ምርቶች{% elif lang == 'ar' %}كل المنتجات{% else %}All Products{% endif %}</span>
+        </a>
+        <a href="{{ url_for('cart.view_cart') }}" class="menu-item">
+            <span class="icon">🛒</span>
+            <span class="text">{% if lang == 'am' %}ጋሪ{% elif lang == 'ar' %}السلة{% else %}My Cart{% endif %}</span>
+            <span id="menu-cart-count" class="badge" style="display: none;">0</span>
+        </a>
+        <a href="{{ url_for('customer.wishlist') }}" class="menu-item">
+            <span class="icon">❤️</span>
+            <span class="text">{% if lang == 'am' %}ምኞት ዝርዝር{% elif lang == 'ar' %}المفضلة{% else %}Wishlist{% endif %}</span>
+        </a>
+        <a href="{{ url_for('customer.search') }}" class="menu-item">
+            <span class="icon">🔍</span>
+            <span class="text">{% if lang == 'am' %}ፈልግ{% elif lang == 'ar' %}بحث{% else %}Search Products{% endif %}</span>
+        </a>
+        <a href="{{ url_for('customer.track_order_public') }}" class="menu-item">
+            <span class="icon">🚚</span>
+            <span class="text">{% if lang == 'am' %}ትዕዛዝ ክትትል{% elif lang == 'ar' %}تتبع الطلب{% else %}Track Order{% endif %}</span>
+        </a>
+    </div>
+    
+    <!-- LANGUAGE SECTION -->
+    <div class="menu-section">
+        <div class="menu-title">🌐 LANGUAGE</div>
+        <a href="{{ url_for('utility.set_language', lang='am') }}" class="menu-item">
+            <span class="icon">🇪🇹</span>
+            <span class="text">አማርኛ</span>
+        </a>
+        <a href="{{ url_for('utility.set_language', lang='ar') }}" class="menu-item">
+            <span class="icon">🇸🇦</span>
+            <span class="text">العربية</span>
+        </a>
+        <a href="{{ url_for('utility.set_language', lang='en') }}" class="menu-item">
+            <span class="icon">🇬🇧</span>
+            <span class="text">English</span>
+        </a>
+    </div>
+    
+    <!-- ISLAMIC SUITE SECTION -->
+    <div class="menu-section">
+        <div class="menu-title">🕌 ISLAMIC SUITE</div>
+        <a href="/islamic" class="menu-item" style="background:linear-gradient(90deg,rgba(26,122,74,0.12),rgba(26,122,74,0.04));border-left:3px solid #1a7a4a;">
+            <span class="icon">🕌</span>
+            <span class="text" style="color:#6ee7a0;font-weight:700;">Prayer Times & Qibla</span>
+        </a>
+    </div>
+
+    <!-- SUPPORT SECTION -->
+    <div class="menu-section">
+        <div class="menu-title">❓ SUPPORT</div>
+        <a href="{{ url_for('customer.branches') }}" class="menu-item">
+            <span class="icon">📍</span>
+            <span class="text">{% if lang == 'am' %}ቅርንጫፎቻችን{% elif lang == 'ar' %}فروعنا{% else %}Our Branches{% endif %}</span>
+        </a>
+        <a href="{{ url_for('customer.faq') }}" class="menu-item">
+            <span class="icon">❓</span>
+            <span class="text">{% if lang == 'am' %}በጥ ተጠ ጥያቄዎች{% elif lang == 'ar' %}الأسئلة الشائعة{% else %}FAQ{% endif %}</span>
+        </a>
+        <a href="{{ url_for('customer.shipping_info') }}" class="menu-item">
+            <span class="icon">🚚</span>
+            <span class="text">{% if lang == 'am' %}ማጓጓዝ መረጃ{% elif lang == 'ar' %}معلومات الشحن{% else %}Shipping Info{% endif %}</span>
+        </a>
+        <a href="{{ url_for('customer.returns_policy') }}" class="menu-item">
+            <span class="icon">🔄</span>
+            <span class="text">{% if lang == 'am' %}መመለስ እና መለዋወጥ{% elif lang == 'ar' %}الإرجاع والتبادل{% else %}Returns & Exchanges{% endif %}</span>
+        </a>
+        <a href="{{ url_for('customer.about') }}" class="menu-item">
+            <span class="icon">ℹ️</span>
+            <span class="text">{% if lang == 'am' %}ስለ እኛ{% elif lang == 'ar' %}معلومات عنا{% else %}About Us{% endif %}</span>
+        </a>
+        <a href="{{ url_for('customer.contact') }}" class="menu-item">
+            <span class="icon">📞</span>
+            <span class="text">{% if lang == 'am' %}አግኙን{% elif lang == 'ar' %}اتصل بنا{% else %}Contact Us{% endif %}</span>
+        </a>
+        <a href="{{ url_for('customer.privacy') }}" class="menu-item">
+            <span class="icon">🔒</span>
+            <span class="text">{% if lang == 'am' %}ግላዊነት ፖሊሲ{% elif lang == 'ar' %}سياسة الخصوصية{% else %}Privacy Policy{% endif %}</span>
+        </a>
+        <a href="{{ url_for('customer.terms') }}" class="menu-item">
+            <span class="icon">📜</span>
+            <span class="text">{% if lang == 'am' %}ውሎች{% elif lang == 'ar' %}الشروط والأحكام{% else %}Terms & Conditions{% endif %}</span>
+        </a>
+    </div>
+    
+    <!-- LOGOUT SECTION -->
+    {% if session.get('user_id') or session.get('admin') %}
+    <div class="menu-section">
+        {% if session.get('admin') or session.get('is_admin') %}
+        <a href="{{ url_for('admin.admin_logout') }}" class="menu-item logout">
+            <span class="icon">🚪</span>
+            <span class="text">Admin Logout</span>
+        </a>
+        {% endif %}
+        {% if session.get('user_id') %}
+        <a href="{{ url_for('customer.user_logout') }}" class="menu-item logout">
+            <span class="icon">🚪</span>
+            <span class="text">User Logout</span>
+        </a>
+        {% endif %}
+    </div>
+    {% endif %}
+</div>
+
+<!-- ==================== FLASH MESSAGES ==================== -->
+<div class="flash-messages" id="flash-messages">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% for category, message in messages %}
+            <div class="flash {{ category }}">{{ message }}</div>
+        {% endfor %}
+    {% endwith %}
+</div>
+
+<!-- ==================== MAIN CONTENT ==================== -->
+<div class="container" style="max-width: 100%; padding: 0 20px;">
+    {% block content %}{% endblock %}
+</div>
+<!-- ==================== BOTTOM NAVIGATION (Mobile only) ==================== -->
+<nav class="bottom-nav">
+    <a href="{{ url_for('customer.index') }}" class="nav-item {% if request.endpoint == 'customer.index' %}active{% endif %}">
+        <span class="nav-icon">🏠</span>
+        <span class="nav-label">{{ t.home }}</span>
+    </a>
+    <a href="{{ url_for('customer.products') }}" class="nav-item">
+        <span class="nav-icon">📂</span>
+        <span class="nav-label">{{ t.categories }}</span>
+    </a>
+    <a href="{{ url_for('cart.view_cart') }}" class="nav-item {% if request.endpoint == 'cart.view_cart' %}active{% endif %}" style="position: relative;">
+        <span class="nav-icon">🛒</span>
+        <span class="nav-label">{{ t.cart }}</span>
+    </a>
+    {% if session.get('user_id') %}
+    <a href="{{ url_for('customer.dashboard', tab='notifs') }}" class="nav-item {% if request.endpoint == 'customer.dashboard' %}active{% endif %}" style="position:relative;">
+        <span class="nav-icon">🔔</span>
+        <span id="bottomNavBellBadge" style="display:none;position:absolute;top:2px;right:6px;background:#f44336;color:#fff;border-radius:50%;font-size:9px;font-weight:900;padding:1px 4px;min-width:15px;text-align:center;line-height:15px;">0</span>
+        <span class="nav-label">{% if lang == 'am' %}ማሳወቂያ{% elif lang == 'ar' %}الإشعارات{% else %}Alerts{% endif %}</span>
+    </a>
+    {% else %}
+    <a href="{{ url_for('customer.dashboard') }}" class="nav-item {% if request.endpoint == 'customer.dashboard' %}active{% endif %}">
+        <span class="nav-icon">📊</span>
+        <span class="nav-label">{% if lang == 'am' %}ዳሽቦርድ{% elif lang == 'ar' %}لوحتي{% else %}Dashboard{% endif %}</span>
+    </a>
+    {% endif %}
+</nav>
+
+<!-- ==================== CATEGORIES MODAL ==================== -->
+<div id="categories-modal" class="categories-modal" style="display: none;">
+    <div class="categories-modal-header">
+        <h3>📂 {{ t.categories }}</h3>
+        <button class="close-categories" onclick="closeCategories()">&times;</button>
+    </div>
+    <div class="categories-modal-body">
+        <a href="{{ url_for('customer.products') }}" class="category-item">
+            <span class="category-icon">🔄</span>
+            <span class="category-name">{{ t.all_products }}</span>
+        </a>
+        {% for cat in categories %}
+        <a href="{{ url_for('customer.products', category=cat.id) }}" class="category-item">
+            <span class="category-icon">
+                {% if cat.name_am == 'ሶፋ' %}🛋️
+                {% elif cat.name_am == 'አልጋ' %}🛏️
+                {% elif cat.name_am == 'መጅሊስ' %}👗
+                {% elif cat.name_am == 'መጋረጃ' %}🚪
+                {% elif cat.name_am == 'ቁምሳጥን' %}🗄️
+                {% else %}📦{% endif %}
+            </span>
+            <span class="category-name">{{ category_name(cat) }}</span>
+        </a>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- ==================== FULL SCREEN USER MODAL ==================== -->
+<div id="user-modal" class="fullscreen-modal">
+    <div class="modal-header">
+        <h2 id="modal-title">🔐 {{ t.login }}</h2>
+        <button class="close-btn" onclick="closeUserModal()">&times;</button>
+    </div>
+    <div class="modal-body" id="modal-body">
+        
+        <!-- Login Form -->
+        <div id="login-form">
+            <form method="post" action="{{ url_for('customer.user_login') }}" onsubmit="submitLoginForm(event)">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <div class="form-group">
+                    <label>📧 Email</label>
+                    <input type="email" name="email" required placeholder="your@email.com">
+                </div>
+                <div class="form-group">
+                    <label>🔒 {{ t.password }}</label>
+                    <input type="password" name="password" required placeholder="********">
+                </div>
+                <button type="submit" class="btn btn-primary">{{ t.login }}</button>
+                <div class="switch-link">
+                    {{ t.no_account }}? 
+                    <a href="#" onclick="showRegisterForm()">{{ t.register }}</a>
+                </div>
+            </form>
+        </div>
+        
+        <!-- Register Form -->
+        <div id="register-form" style="display: none;">
+            <form method="post" action="{{ url_for('customer.user_register') }}" onsubmit="submitRegisterForm(event)">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <div class="form-group">
+                    <label>👤 {{ t.full_name }}</label>
+                    <input type="text" name="full_name" required placeholder="John Doe">
+                </div>
+                <div class="form-group">
+                    <label>📧 Email</label>
+                    <input type="email" name="email" required placeholder="your@email.com">
+                </div>
+                <div class="form-group">
+                    <label>📞 {{ t.phone_number }}</label>
+                    <input type="tel" name="phone" placeholder="09xxxxxxxx">
+                </div>
+                <div class="form-group">
+                    <label>🔒 {{ t.password }}</label>
+                    <input type="password" name="password" required placeholder="********">
+                </div>
+                <div class="form-group">
+                    <label>🔒 {{ t.confirm_password }}</label>
+                    <input type="password" name="confirm_password" required placeholder="********">
+                </div>
+                <button type="submit" class="btn btn-primary">{{ t.register }}</button>
+                <div class="switch-link">
+                    {{ t.have_account }}? 
+                    <a href="#" onclick="showLoginForm()">{{ t.login }}</a>
+                </div>
+            </form>
+        </div>
+        
+        <!-- Profile View -->
+        <div id="profile-view" style="display: none;">
+            <!-- Main account panel -->
+            <div id="account-main-panel">
+                <div class="profile-info">
+
+                    <!-- ── Avatar Header ── -->
+                    <div style="text-align:center;padding:8px 0 22px;">
+                        <div id="profile-avatar" style="width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,#1a7a4a,#0f5232);color:#fff;font-size:28px;font-weight:800;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;box-shadow:0 8px 24px rgba(26,122,74,0.30);letter-spacing:0;"></div>
+                        <h3 id="profile-name" style="margin:0 0 4px;font-size:18px;font-weight:700;color:#1a1a2e;"></h3>
+                        <p id="profile-email" style="margin:0;font-size:13px;color:#9ba3b8;"></p>
+                    </div>
+
+                    <!-- ── Personal Info Card ── -->
+                    <div class="prof-info-card">
+                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+                            <div>
+                                <div class="prof-field-label">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#9ba3b8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 8.81a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.77 0h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 7.91a16 16 0 0 0 6 6l.91-.91a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                                    Phone
+                                </div>
+                                <div id="profile-phone" class="prof-field-value muted">Not set</div>
+                            </div>
+                            <div>
+                                <div class="prof-field-label">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#9ba3b8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                                    City
+                                </div>
+                                <div id="profile-city" class="prof-field-value muted">Not set</div>
+                            </div>
+                            <div style="grid-column:1/-1;">
+                                <div class="prof-field-label">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#9ba3b8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                                    Address
+                                </div>
+                                <div id="profile-address" class="prof-field-value muted">Not set</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ── Stats Cards (glassmorphism, clickable) ── -->
+                    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px;">
+                        <a href="{{ url_for('customer.user_orders') }}" class="prof-stat-card" style="text-decoration:none;">
+                            <div style="background:rgba(26,122,74,0.10);border:1px solid rgba(26,122,74,0.18);border-radius:16px;padding:14px 6px;text-align:center;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);box-shadow:0 4px 16px rgba(26,122,74,0.10);">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1a7a4a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto 5px;"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+                                <div id="stat-total" style="font-size:22px;font-weight:800;color:#1a7a4a;line-height:1.1;">—</div>
+                                <div style="font-size:9px;font-weight:700;color:#1a7a4a;opacity:0.75;margin-top:3px;text-transform:uppercase;letter-spacing:0.6px;">Orders</div>
+                            </div>
+                        </a>
+                        <a href="{{ url_for('customer.user_orders', status='delivered') }}" class="prof-stat-card" style="text-decoration:none;">
+                            <div style="background:rgba(67,160,71,0.10);border:1px solid rgba(67,160,71,0.18);border-radius:16px;padding:14px 6px;text-align:center;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);box-shadow:0 4px 16px rgba(67,160,71,0.10);">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#43a047" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto 5px;"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                                <div id="stat-delivered" style="font-size:22px;font-weight:800;color:#43a047;line-height:1.1;">—</div>
+                                <div style="font-size:9px;font-weight:700;color:#43a047;opacity:0.75;margin-top:3px;text-transform:uppercase;letter-spacing:0.6px;">Done</div>
+                            </div>
+                        </a>
+                        <a href="{{ url_for('customer.user_orders', status='pending') }}" class="prof-stat-card" style="text-decoration:none;">
+                            <div style="background:rgba(230,81,0,0.10);border:1px solid rgba(230,81,0,0.18);border-radius:16px;padding:14px 6px;text-align:center;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);box-shadow:0 4px 16px rgba(230,81,0,0.10);">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#e65100" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto 5px;"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                                <div id="stat-pending" style="font-size:22px;font-weight:800;color:#e65100;line-height:1.1;">—</div>
+                                <div style="font-size:9px;font-weight:700;color:#e65100;opacity:0.75;margin-top:3px;text-transform:uppercase;letter-spacing:0.6px;">Pending</div>
+                            </div>
+                        </a>
+                    </div>
+
+                    <!-- ── Action Buttons ── -->
+                    <button onclick="openInlineEditProfile()" class="prof-edit-btn">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                        {{ t.edit_profile }}
+                    </button>
+                    <a href="{{ url_for('customer.user_logout') }}" class="prof-logout-btn">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                        {{ t.logout }}
+                    </a>
+
+                </div>
+            </div>
+            <!-- Inline Edit Profile panel -->
+            <div id="account-edit-panel" style="display: none;">
+                <div style="display:flex;align-items:center;gap:10px;margin-bottom:22px;">
+                    <button onclick="closeInlineEditProfile()" style="background:none;border:none;cursor:pointer;color:#555;display:flex;align-items:center;padding:6px 8px;border-radius:8px;transition:background 0.2s;" onmouseover="this.style.background='#f0f0f0'" onmouseout="this.style.background='none'">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+                    </button>
+                    <h3 style="margin:0;font-size:17px;font-weight:700;color:#1a1a2e;">{{ t.edit_profile }}</h3>
+                </div>
+                <form id="inline-edit-form" onsubmit="submitInlineEdit(event)">
+                    <div class="form-group">
+                        <label style="display:flex;align-items:center;gap:6px;font-size:12px;font-weight:700;color:#555;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#555" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                            Full Name <span style="color:#e53935;font-size:14px;line-height:1;">*</span>
+                        </label>
+                        <input type="text" id="inline-fn" name="full_name" required placeholder="Your full name"
+                               style="width:100%;padding:11px 14px;border:1.5px solid #e0e0e0;border-radius:12px;font-size:14px;box-sizing:border-box;transition:border-color 0.2s;outline:none;" onfocus="this.style.borderColor='#1a7a4a'" onblur="this.style.borderColor='#e0e0e0'">
+                    </div>
+                    <div class="form-group">
+                        <label style="display:flex;align-items:center;gap:6px;font-size:12px;font-weight:700;color:#555;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#555" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+                            Email
+                        </label>
+                        <input type="email" id="inline-email" disabled
+                               style="width:100%;padding:11px 14px;border:1.5px solid #eee;border-radius:12px;font-size:14px;background:#f8f8f8;color:#aaa;box-sizing:border-box;">
+                        <small style="color:#bbb;font-size:11px;margin-top:3px;display:block;">Email cannot be changed</small>
+                    </div>
+                    <div class="form-group">
+                        <label style="display:flex;align-items:center;gap:6px;font-size:12px;font-weight:700;color:#555;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#555" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 8.81a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.77 0h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 7.91a16 16 0 0 0 6 6l.91-.91a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                            Phone
+                        </label>
+                        <input type="tel" id="inline-phone" name="phone" placeholder="09xxxxxxxx"
+                               style="width:100%;padding:11px 14px;border:1.5px solid #e0e0e0;border-radius:12px;font-size:14px;box-sizing:border-box;transition:border-color 0.2s;outline:none;" onfocus="this.style.borderColor='#1a7a4a'" onblur="this.style.borderColor='#e0e0e0'">
+                    </div>
+                    <div class="form-group">
+                        <label style="display:flex;align-items:center;gap:6px;font-size:12px;font-weight:700;color:#555;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#555" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                            City
+                        </label>
+                        <input type="text" id="inline-city" name="city" placeholder="e.g. ወሎ ደሴ ኩታበር"
+                               style="width:100%;padding:11px 14px;border:1.5px solid #e0e0e0;border-radius:12px;font-size:14px;box-sizing:border-box;transition:border-color 0.2s;outline:none;" onfocus="this.style.borderColor='#1a7a4a'" onblur="this.style.borderColor='#e0e0e0'">
+                    </div>
+                    <div class="form-group">
+                        <label style="display:flex;align-items:center;gap:6px;font-size:12px;font-weight:700;color:#555;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#555" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                            Address
+                        </label>
+                        <textarea id="inline-address" name="address" rows="2" placeholder="Your delivery address"
+                                  style="width:100%;padding:11px 14px;border:1.5px solid #e0e0e0;border-radius:12px;font-size:14px;box-sizing:border-box;resize:none;transition:border-color 0.2s;outline:none;" onfocus="this.style.borderColor='#1a7a4a'" onblur="this.style.borderColor='#e0e0e0'"></textarea>
+                    </div>
+                    <div style="display:flex;gap:10px;margin-top:8px;">
+                        <button type="submit" id="inline-save-btn" class="prof-edit-btn" style="flex:1;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                            Save
+                        </button>
+                        <button type="button" onclick="closeInlineEditProfile()" style="flex:1;padding:13px;border-radius:14px;border:1.5px solid #ddd;background:#fff;font-size:14px;font-weight:600;color:#666;cursor:pointer;transition:background 0.2s;" onmouseover="this.style.background='#f5f5f5'" onmouseout="this.style.background='#fff'">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ==================== FOOTER ==================== -->
+<footer class="footer">
+    <div class="footer-container">
+        <div class="footer-grid">
+            <div class="footer-section">
+                <h3>👗 SEMIRA FASHION</h3>
+                <p>{{ t.quality_tagline }}</p>
+            </div>
+            <div class="footer-section">
+                <h4>🔗 {{ t.quick_links }}</h4>
+                <a href="{{ url_for('customer.index') }}">🏠 {{ t.home }}</a>
+                <a href="{{ url_for('customer.products') }}">📦 {{ t.products }}</a>
+                <a href="{{ url_for('customer.branches') }}">📍 {{ t.our_branches }}</a>
+                <a href="{{ url_for('customer.about') }}">ℹ️ {{ t.about_us }}</a>
+                <a href="{{ url_for('customer.contact') }}">📞 {{ t.contact }}</a>
+            </div>
+            <div class="footer-section">
+                <h4>📞 {{ t.call_us }}</h4>
+                <p>+251 98 795 7957</p>
+                <p>info@semirafashion.com</p>
+                <p>📍 ወሎ ደሴ ኩታበር, Ethiopia</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; {{ current_year }} SEMIRA FASHION. {{ t.copyright_text }}</p>
+        </div>
+    </div>
+</footer>
+
+<!-- ==================== SCRIPTS ==================== -->
+<script>
+    // ── CSRF fetch interceptor ─────────────────────────────────────────
+    (function() {
+        const _csrfToken = document.querySelector('meta[name="csrf-token"]')?.content || '';
+        const _origFetch = window.fetch.bind(window);
+        const _exemptPrefixes = ['/api/', '/static/'];
+        window.fetch = function(url, opts) {
+            opts = opts || {};
+            const method = (opts.method || 'GET').toUpperCase();
+            if (['POST', 'PUT', 'PATCH', 'DELETE'].includes(method)) {
+                const urlStr = typeof url === 'string' ? url : url.toString();
+                const isExempt = _exemptPrefixes.some(p => urlStr.startsWith(p));
+                if (!isExempt && _csrfToken) {
+                    opts.headers = Object.assign({}, opts.headers || {}, { 'X-CSRFToken': _csrfToken });
+                }
+            }
+            return _origFetch(url, opts);
+        };
+    })();
+</script>
+<script src="{{ url_for('static', filename='js/main.js') }}?v=2"></script>
+<script src="{{ url_for('static', filename='js/cart.js') }}?v=5"></script>
+<script src="{{ url_for('static', filename='js/components/modal.js') }}?v=3"></script>
+<script src="{{ url_for('static', filename='js/components/toast.js') }}?v=3"></script>
+
+<script>
+    // ==================== CART COUNT UPDATE ====================
+    function updateCartCounts(count) {
+        // Mobile cart count
+        const mobileBadge = document.getElementById('cart-count');
+        if (mobileBadge) {
+            if (count > 0) {
+                mobileBadge.textContent = count;
+                mobileBadge.style.display = 'inline-block';
+            } else {
+                mobileBadge.style.display = 'none';
+            }
+        }
+        
+        // Desktop cart count
+        const desktopBadge = document.getElementById('desktop-cart-count');
+        if (desktopBadge) {
+            if (count > 0) {
+                desktopBadge.textContent = count;
+                desktopBadge.style.display = 'inline-block';
+            } else {
+                desktopBadge.style.display = 'none';
+            }
+        }
+        
+        // Menu cart count
+        const menuBadge = document.getElementById('menu-cart-count');
+        if (menuBadge) {
+            if (count > 0) {
+                menuBadge.textContent = count;
+                menuBadge.style.display = 'inline-block';
+            } else {
+                menuBadge.style.display = 'none';
+            }
+        }
+    }
+    
+    // Override the original updateCartCount function
+    const originalUpdateCartCount = window.updateCartCount;
+    window.updateCartCount = function(count) {
+        if (originalUpdateCartCount) originalUpdateCartCount(count);
+        updateCartCounts(count);
+    };
+
+    // ==================== NOTIFICATION BELL ====================
+    function updateBellBadge(count) {
+        ['desktopBellBadge','mobileBellBadge','menuBellBadge','bottomNavBellBadge'].forEach(id => {
+            const el = document.getElementById(id);
+            if (!el) return;
+            if (count > 0) {
+                el.textContent = count > 99 ? '99+' : count;
+                el.style.display = 'inline-block';
+            } else {
+                el.style.display = 'none';
+            }
+        });
+    }
+    {% if session.get('user_id') %}
+    let _prevNotifCount = -1;
+
+    function pollNotifCount() {
+        fetch('/api/notifications/count')
+            .then(r => r.json())
+            .then(d => {
+                const count = d.count || 0;
+                updateBellBadge(count);
+                // Show toast only when count goes UP after the initial load
+                if (_prevNotifCount >= 0 && count > _prevNotifCount) {
+                    _fetchAndShowNotifToast();
+                }
+                _prevNotifCount = count;
+            })
+            .catch(() => {});
+    }
+
+    function _fetchAndShowNotifToast() {
+        fetch('/api/notifications')
+            .then(r => r.json())
+            .then(d => {
+                if (!d.notifications || d.notifications.length === 0) return;
+                const n = d.notifications[0];
+                if (n.is_read) return;
+                _showNotifToast(n);
+            })
+            .catch(() => {});
+    }
+
+    function _escHtml(text) {
+        if (!text) return '';
+        const div = document.createElement('div');
+        div.textContent = String(text);
+        return div.innerHTML;
+    }
+
+    function _showNotifToast(notif) {
+        const existing = document.getElementById('_notifLiveToast');
+        if (existing) { clearTimeout(existing._tmr); existing.remove(); }
+
+        const isMobile = window.innerWidth <= 768;
+        const bottomPx = isMobile ? '75px' : '20px';
+        const title = notif.title || 'New Notification';
+        const body  = notif.body
+            ? (notif.body.length > 90 ? notif.body.slice(0, 90) + '…' : notif.body)
+            : '';
+        const link  = notif.link || '/dashboard?tab=notifs';
+
+        const el = document.createElement('div');
+        el.id = '_notifLiveToast';
+        el.setAttribute('role', 'alert');
+        el.style.cssText = [
+            'position:fixed',
+            'bottom:' + bottomPx,
+            'left:50%',
+            'transform:translateX(-50%) translateY(130%)',
+            'opacity:0',
+            'background:linear-gradient(135deg,#0f5232,#1a7a4a)',
+            'color:#fff',
+            'border-radius:18px',
+            'box-shadow:0 10px 30px rgba(0,0,0,0.25)',
+            'padding:14px 16px',
+            'display:flex',
+            'align-items:flex-start',
+            'gap:12px',
+            'z-index:10001',
+            'max-width:min(390px,calc(100vw - 32px))',
+            'min-width:260px',
+            'cursor:pointer',
+            'overflow:hidden',
+            'transition:transform 0.42s cubic-bezier(0.34,1.56,0.64,1),opacity 0.3s ease',
+        ].join(';');
+
+        el.innerHTML =
+            '<div style="font-size:24px;flex-shrink:0;margin-top:1px;">🔔</div>' +
+            '<div style="flex:1;min-width:0;">' +
+                '<div style="font-weight:800;font-size:13px;line-height:1.35;">' + _escHtml(title) + '</div>' +
+                (body ? '<div style="font-size:12px;opacity:0.85;margin-top:4px;line-height:1.45;">' + _escHtml(body) + '</div>' : '') +
+                '<div style="font-size:10px;opacity:0.65;margin-top:5px;">{% if lang == "am" %}ለማስተካከል ጫን{% elif lang == "ar" %}انقر للعرض{% else %}Tap to view{% endif %}</div>' +
+            '</div>' +
+            '<button id="_notifToastClose" style="background:none;border:none;color:rgba(255,255,255,0.75);font-size:22px;padding:0 2px 0 10px;cursor:pointer;flex-shrink:0;line-height:1;transition:color .2s;">&times;</button>' +
+            '<div id="_notifToastBar" style="position:absolute;bottom:0;left:0;height:3px;background:rgba(255,255,255,0.35);border-radius:0 0 18px 18px;width:100%;"></div>';
+
+        document.body.appendChild(el);
+
+        el.addEventListener('click', function(e) {
+            if (e.target.id === '_notifToastClose') return;
+            window.location.href = link;
+        });
+        const closeBtn = document.getElementById('_notifToastClose');
+        if (closeBtn) {
+            closeBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                _dismissNotifToast(el);
+            });
+            closeBtn.addEventListener('mouseenter', function() { this.style.color = '#fff'; });
+            closeBtn.addEventListener('mouseleave', function() { this.style.color = 'rgba(255,255,255,0.75)'; });
+        }
+
+        // Slide in
+        requestAnimationFrame(function() {
+            requestAnimationFrame(function() {
+                el.style.transform = 'translateX(-50%) translateY(0)';
+                el.style.opacity = '1';
+                // Shrink progress bar over 5 s
+                var bar = document.getElementById('_notifToastBar');
+                if (bar) {
+                    bar.style.transition = 'width 5s linear';
+                    bar.style.width = '0%';
+                }
+            });
+        });
+
+        // Auto-dismiss after 5 s
+        el._tmr = setTimeout(function() { _dismissNotifToast(el); }, 5000);
+    }
+
+    function _dismissNotifToast(el) {
+        if (!el || !el.parentNode) return;
+        clearTimeout(el._tmr);
+        el.style.transform = 'translateX(-50%) translateY(130%)';
+        el.style.opacity = '0';
+        setTimeout(function() { if (el.parentNode) el.parentNode.removeChild(el); }, 420);
+    }
+
+    pollNotifCount();
+    setInterval(pollNotifCount, 30000);
+    // Re-poll when user returns to the tab
+    document.addEventListener('visibilitychange', function() {
+        if (document.visibilityState === 'visible') pollNotifCount();
+    });
+    {% endif %}
+    
+    // ==================== HAMBURGER MENU ====================
+    function openHamburgerMenu() {
+        const panel = document.getElementById('hamburgerPanel');
+        const overlay = document.getElementById('hamburgerOverlay');
+        if (panel) panel.classList.add('active');
+        if (overlay) overlay.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+    
+    function closeHamburgerMenu() {
+        const panel = document.getElementById('hamburgerPanel');
+        const overlay = document.getElementById('hamburgerOverlay');
+        if (panel) panel.classList.remove('active');
+        if (overlay) overlay.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+    
+    // ==================== CATEGORIES MODAL ====================
+    function toggleCategories() {
+        const modal = document.getElementById('categories-modal');
+        if (modal) {
+            if (modal.style.display === 'none' || modal.style.display === '') {
+                modal.style.display = 'block';
+            } else {
+                modal.style.display = 'none';
+            }
+        }
+    }
+    
+    function closeCategories() {
+        const modal = document.getElementById('categories-modal');
+        if (modal) modal.style.display = 'none';
+    }
+    
+    // Close categories when clicking outside
+    document.addEventListener('click', function(event) {
+        const modal = document.getElementById('categories-modal');
+        const isNavItem = event.target.closest('.nav-item');
+        const isDesktopCat = event.target.closest('.desktop-nav a');
+        const isCategoriesClick = (isNavItem && isNavItem.querySelector('.nav-label')?.innerText === 'Categories') ||
+                                  (isDesktopCat && isDesktopCat.innerText.includes('Categories'));
+        if (modal && modal.style.display === 'block' && !isCategoriesClick && !event.target.closest('#categories-modal')) {
+            modal.style.display = 'none';
+        }
+    });
+    
+    // ==================== USER MODAL ====================
+    function openUserModal() {
+        closeHamburgerMenu();
+        const modal = document.getElementById('user-modal');
+        if (modal) modal.classList.add('active');
+        
+        const isUserLoggedIn = {{ 'true' if session.get('user_id') else 'false' }};
+        if (isUserLoggedIn) {
+            showProfileView();
+        } else {
+            showLoginForm();
+        }
+    }
+    
+    function closeUserModal() {
+        const modal = document.getElementById('user-modal');
+        if (modal) modal.classList.remove('active');
+    }
+    
+    function showLoginForm() {
+        const loginForm = document.getElementById('login-form');
+        const registerForm = document.getElementById('register-form');
+        const profileView = document.getElementById('profile-view');
+        const modalTitle = document.getElementById('modal-title');
+        
+        if (loginForm) loginForm.style.display = 'block';
+        if (registerForm) registerForm.style.display = 'none';
+        if (profileView) profileView.style.display = 'none';
+        if (modalTitle) modalTitle.innerHTML = '🔐 ' + ('{% if lang == "am" %}ግባ{% else %}Login{% endif %}');
+    }
+    
+    function showRegisterForm() {
+        const loginForm = document.getElementById('login-form');
+        const registerForm = document.getElementById('register-form');
+        const profileView = document.getElementById('profile-view');
+        const modalTitle = document.getElementById('modal-title');
+        
+        if (loginForm) loginForm.style.display = 'none';
+        if (registerForm) registerForm.style.display = 'block';
+        if (profileView) profileView.style.display = 'none';
+        if (modalTitle) modalTitle.innerHTML = '📝 ' + ('{% if lang == "am" %}ተመዝገብ{% else %}Register{% endif %}');
+    }
+    
+    function showProfileView() {
+        const loginForm = document.getElementById('login-form');
+        const registerForm = document.getElementById('register-form');
+        const profileView = document.getElementById('profile-view');
+        const modalTitle = document.getElementById('modal-title');
+        const profileName = document.getElementById('profile-name');
+        const profileEmail = document.getElementById('profile-email');
+        const profileAvatar = document.getElementById('profile-avatar');
+
+        if (loginForm) loginForm.style.display = 'none';
+        if (registerForm) registerForm.style.display = 'none';
+        if (profileView) profileView.style.display = 'block';
+        if (modalTitle) modalTitle.innerHTML = '👤 ' + ('{% if lang == 'am' %}መገለጫ{% else %}My Account{% endif %}');
+
+        const sessionName = '{{ session.get('user_name', '') }}';
+        const sessionEmail = '{{ session.get('user_email', '') }}';
+        if (profileName) profileName.textContent = sessionName;
+        if (profileEmail) profileEmail.textContent = sessionEmail;
+        if (profileAvatar) profileAvatar.textContent = sessionName ? sessionName[0].toUpperCase() : '?';
+
+        closeInlineEditProfile();
+
+        fetch('{{ url_for("api.api_get_user_profile") }}', {
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        })
+        .then(r => r.json())
+        .then(data => {
+            if (data.success) {
+                const u = data.user;
+                if (profileName) profileName.textContent = u.full_name || sessionName;
+                if (profileAvatar) profileAvatar.textContent = (u.full_name || sessionName || '?')[0].toUpperCase();
+
+                const ph = document.getElementById('profile-phone');
+                const ci = document.getElementById('profile-city');
+                const ad = document.getElementById('profile-address');
+                if (ph) { ph.textContent = u.phone || 'Not set'; ph.className = 'prof-field-value' + (u.phone ? '' : ' muted'); }
+                if (ci) { ci.textContent = u.city  || 'Not set'; ci.className = 'prof-field-value' + (u.city  ? '' : ' muted'); }
+                if (ad) { ad.textContent = u.address || 'Not set'; ad.className = 'prof-field-value' + (u.address ? '' : ' muted'); }
+
+                const stats = data.order_stats || {};
+                const st = document.getElementById('stat-total');
+                const sd = document.getElementById('stat-delivered');
+                const sp = document.getElementById('stat-pending');
+                if (st) st.textContent = stats.total ?? 0;
+                if (sd) sd.textContent = stats.delivered ?? 0;
+                if (sp) sp.textContent = stats.pending ?? 0;
+            }
+        })
+        .catch(() => {});
+    }
+
+    function openInlineEditProfile() {
+        document.getElementById('account-main-panel').style.display = 'none';
+        document.getElementById('account-edit-panel').style.display = 'block';
+        const modalTitle = document.getElementById('modal-title');
+        if (modalTitle) modalTitle.innerHTML = '📝 {% if lang == "am" %}መገለጫ ያስተካክሉ{% else %}Edit Profile{% endif %}';
+
+        fetch('{{ url_for("api.api_get_user_profile") }}', {
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        })
+        .then(r => r.json())
+        .then(data => {
+            if (data.success) {
+                const u = data.user;
+                const fn = document.getElementById('inline-fn');
+                const em = document.getElementById('inline-email');
+                const ph = document.getElementById('inline-phone');
+                const ci = document.getElementById('inline-city');
+                const ad = document.getElementById('inline-address');
+                if (fn) fn.value = u.full_name;
+                if (em) em.value = u.email;
+                if (ph) ph.value = u.phone;
+                if (ci) ci.value = u.city;
+                if (ad) ad.value = u.address;
+            }
+        })
+        .catch(() => {
+            const em = document.getElementById('inline-email');
+            if (em) em.value = '{{ session.get("user_email", "") }}';
+            const fn = document.getElementById('inline-fn');
+            if (fn) fn.value = '{{ session.get("user_name", "") }}';
+        });
+    }
+
+    function closeInlineEditProfile() {
+        const main = document.getElementById('account-main-panel');
+        const edit = document.getElementById('account-edit-panel');
+        if (main) main.style.display = 'block';
+        if (edit) edit.style.display = 'none';
+        const modalTitle = document.getElementById('modal-title');
+        if (modalTitle) modalTitle.innerHTML = '👤 {% if lang == "am" %}መገለጫ{% else %}My Account{% endif %}';
+    }
+
+    function submitInlineEdit(event) {
+        event.preventDefault();
+        const btn = document.getElementById('inline-save-btn');
+        btn.disabled = true;
+        btn.textContent = '⏳ Saving…';
+
+        const formData = new FormData(document.getElementById('inline-edit-form'));
+        fetch('{{ url_for("customer.update_profile") }}', {
+            method: 'POST',
+            body: formData,
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        })
+        .then(r => r.json())
+        .then(data => {
+            if (data.success) {
+                const newName = document.getElementById('inline-fn').value.trim();
+                const newPhone = document.getElementById('inline-phone').value.trim();
+                const newCity = document.getElementById('inline-city').value.trim();
+                const newAddress = document.getElementById('inline-address').value.trim();
+                const muted = 'color:#bbb;font-style:italic;font-weight:400;';
+                const normal = 'font-size:14px;font-weight:600;color:#333;';
+
+                const pName = document.getElementById('profile-name');
+                const pAvatar = document.getElementById('profile-avatar');
+                const pPhone = document.getElementById('profile-phone');
+                const pCity = document.getElementById('profile-city');
+                const pAddr = document.getElementById('profile-address');
+
+                if (pName) pName.textContent = newName;
+                if (pAvatar) pAvatar.textContent = newName ? newName[0].toUpperCase() : '?';
+                if (pPhone) { pPhone.textContent = newPhone || 'Not set'; pPhone.className = 'prof-field-value' + (newPhone ? '' : ' muted'); }
+                if (pCity)  { pCity.textContent  = newCity  || 'Not set'; pCity.className  = 'prof-field-value' + (newCity  ? '' : ' muted'); }
+                if (pAddr)  { pAddr.textContent  = newAddress || 'Not set'; pAddr.className = 'prof-field-value' + (newAddress ? '' : ' muted'); }
+
+                if (window.showToast) window.showToast(data.message || 'Profile updated!', 'success');
+                closeInlineEditProfile();
+            } else {
+                if (window.showToast) window.showToast(data.error || 'Update failed', 'error');
+            }
+        })
+        .catch(() => {
+            if (window.showToast) window.showToast('Network error. Please try again.', 'error');
+        })
+        .finally(() => {
+            btn.disabled = false;
+            btn.textContent = '💾 Save';
+        });
+    }
+    
+    // ==================== LOGIN/REGISTER AJAX SUBMIT ====================
+    function submitLoginForm(event) {
+        event.preventDefault();
+        const form = event.target;
+        const formData = new FormData(form);
+        
+        fetch('{{ url_for('customer.user_login') }}', {
+            method: 'POST',
+            body: formData,
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                if (window.showToast) window.showToast(data.message || 'Login successful!', 'success');
+                setTimeout(() => location.reload(), 1000);
+            } else {
+                if (window.showToast) window.showToast(data.error || 'Login failed', 'error');
+            }
+        })
+        .catch(() => form.submit());
+    }
+    
+    function submitRegisterForm(event) {
+        event.preventDefault();
+        const form = event.target;
+        const formData = new FormData(form);
+        
+        // Client-side validation
+        const password = formData.get('password');
+        const confirm = formData.get('confirm_password');
+        
+        if (password !== confirm) {
+            if (window.showToast) window.showToast('Passwords do not match', 'error');
+            return;
+        }
+        
+        if (password && password.length < 6) {
+            if (window.showToast) window.showToast('Password must be at least 6 characters', 'error');
+            return;
+        }
+        
+        fetch('{{ url_for('customer.user_register') }}', {
+            method: 'POST',
+            body: formData,
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                if (window.showToast) window.showToast('Registration successful! Please login.', 'success');
+                showLoginForm();
+                form.reset();
+            } else {
+                if (window.showToast) window.showToast(data.error || 'Registration failed', 'error');
+            }
+        })
+        .catch(() => form.submit());
+    }
+    
+    // ==================== SEARCH FUNCTION ====================
+    function searchProducts(query) {
+        if (query && query.trim()) {
+            window.location.href = '{{ url_for('customer.search') }}?q=' + encodeURIComponent(query.trim());
+        }
+    }
+    
+    // ==================== FETCH CART COUNT ====================
+    function fetchCartCount() {
+        fetch('{{ url_for('api.api_cart_count') }}')
+            .then(res => res.text())
+            .then(text => {
+                if (!text || !text.trim()) return;
+                const data = JSON.parse(text);
+                if (data.success) {
+                    updateCartCounts(data.cart_count);
+                }
+            })
+            .catch(() => {});
+    }
+    
+    // ==================== CLOSE MODALS ON ESCAPE ====================
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            closeUserModal();
+            closeCategories();
+            closeHamburgerMenu();
+        }
+    });
+    
+    // ==================== INITIALIZE ON PAGE LOAD ====================
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize categories modal hidden
+        const categoriesModal = document.getElementById('categories-modal');
+        if (categoriesModal) categoriesModal.style.display = 'none';
+        
+        // Fetch cart count
+        fetchCartCount();
+        
+        // Auto-hide flash messages after 5 seconds
+        const flashMessages = document.querySelectorAll('.flash');
+        flashMessages.forEach(flash => {
+            setTimeout(() => {
+                flash.style.opacity = '0';
+                setTimeout(() => {
+                    if (flash && flash.parentNode) flash.remove();
+                }, 300);
+            }, 5000);
+        });
+        
+        // Add active class to current navigation items
+        const currentPath = window.location.pathname;
+        document.querySelectorAll('.nav-item, .desktop-nav a, .menu-item').forEach(link => {
+            const href = link.getAttribute('href');
+            if (href && href !== '#' && href !== '/' && currentPath === href) {
+                link.classList.add('active');
+            }
+        });
+    });
+    
+    // ==================== SEARCH INPUT ENTER KEY ====================
+    const searchInput = document.getElementById('search-input');
+    if (searchInput) {
+        searchInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                searchProducts(this.value);
+            }
+        });
+    }
+</script>
+
+<!-- Categories Modal CSS (inline for consistency) -->
+<style>
+    .categories-modal {
+        position: fixed;
+        bottom: 70px;
+        left: 20px;
+        right: 20px;
+        background: var(--bg-white, white);
+        border-radius: 20px;
+        box-shadow: 0 -5px 30px rgba(0,0,0,0.2);
+        z-index: 1001;
+        max-width: 500px;
+        margin: 0 auto;
+        overflow: hidden;
+        animation: slideUp 0.3s ease;
+    }
+    
+    .categories-modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px 20px;
+        border-bottom: 2px solid var(--border-color, #f0f0f0);
+    }
+    
+    .categories-modal-header h3 {
+        margin: 0;
+        color: var(--text-color, #333);
+    }
+    
+    .close-categories {
+        background: none;
+        border: none;
+        font-size: 24px;
+        cursor: pointer;
+        color: var(--text-muted, #999);
+    }
+    
+    .categories-modal-body {
+        padding: 20px;
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+    }
+    
+    .category-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 12px;
+        background: var(--bg-hover, #f5f5f5);
+        border-radius: 10px;
+        text-decoration: none;
+        color: var(--text-color, #333);
+        transition: all 0.3s;
+    }
+    
+    .category-item:hover {
+        background: #1a7a4a;
+        color: white;
+        transform: translateX(5px);
+    }
+    
+    .category-icon {
+        font-size: 20px;
+    }
+    
+    @keyframes slideUp {
+        from {
+            opacity: 0;
+            transform: translateY(100%);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    @media (max-width: 480px) {
+        .categories-modal {
+            left: 10px;
+            right: 10px;
+            bottom: 65px;
+        }
+        .categories-modal-body {
+            gap: 8px;
+            padding: 15px;
+        }
+        .category-item {
+            padding: 10px;
+            font-size: 13px;
+        }
+    }
+    
+    /* Dark mode */
+    @media (prefers-color-scheme: dark) {
+        .categories-modal {
+            background: #1e1e2e;
+        }
+        .categories-modal-header {
+            border-bottom-color: #3a3a4e;
+        }
+        .category-item {
+            background: #2a2a3e;
+            color: #ddd;
+        }
+        .category-item:hover {
+            background: #1a7a4a;
+            color: white;
+        }
+    }
+    
+    @media (prefers-reduced-motion: reduce) {
+        .categories-modal {
+            animation: none;
+        }
+        .category-item {
+            transition: none;
+        }
+        .category-item:hover {
+            transform: none;
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .search-box {
+            max-width: 150px !important;
+        }
+        .search-box input {
+            width: 100% !important;
+            font-size: 12px !important;
+            padding: 6px 10px !important;
+        }
+        .search-box button {
+            padding: 6px 10px !important;
+        }
+    }
+</style>
+
+{% block extra_js %}{% endblock %}
+
+<!-- ======== GLOBAL PASSWORD VISIBILITY TOGGLE ======== -->
+<style>
+.pw-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+.pw-wrap input[type="password"],
+.pw-wrap input[type="text"] {
+    width: 100%;
+    padding-right: 44px !important;
+}
+.pw-toggle-btn {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px 6px;
+    color: #888;
+    font-size: 18px;
+    line-height: 1;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.2s;
+    -webkit-tap-highlight-color: transparent;
+}
+.pw-toggle-btn:hover,
+.pw-toggle-btn:focus { color: #1a7a4a; outline: none; }
+.pw-toggle-btn svg { pointer-events: none; }
+</style>
+<script>
+(function() {
+    var EYE_OPEN  = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>';
+    var EYE_CLOSE = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/></svg>';
+
+    function wrapPasswordInputs() {
+        document.querySelectorAll('input[type="password"]').forEach(function(inp) {
+            if (inp.closest('.pw-wrap')) return; // already wrapped
+            var wrap = document.createElement('div');
+            wrap.className = 'pw-wrap';
+            // preserve inline styles & class from original container if any
+            inp.parentNode.insertBefore(wrap, inp);
+            wrap.appendChild(inp);
+            var btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'pw-toggle-btn';
+            btn.setAttribute('aria-label', 'ፓስዋርድ አሳይ/ደብቅ');
+            btn.setAttribute('tabindex', '-1');
+            btn.innerHTML = EYE_OPEN;
+            btn.addEventListener('click', function() {
+                var isPassword = inp.type === 'password';
+                inp.type = isPassword ? 'text' : 'password';
+                btn.innerHTML = isPassword ? EYE_CLOSE : EYE_OPEN;
+                btn.setAttribute('aria-label', isPassword ? 'ፓስዋርድ ደብቅ' : 'ፓስዋርድ አሳይ');
+                inp.focus();
+            });
+            wrap.appendChild(btn);
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', wrapPasswordInputs);
+    // also run after dynamic content (modals, tab switches)
+    var _pwObs = new MutationObserver(function(mutations) {
+        var hasNew = mutations.some(function(m) {
+            return Array.from(m.addedNodes).some(function(n) {
+                return n.nodeType === 1 && (n.matches('input[type="password"]') || n.querySelector('input[type="password"]'));
+            });
+        });
+        if (hasNew) wrapPasswordInputs();
+    });
+    document.addEventListener('DOMContentLoaded', function() {
+        _pwObs.observe(document.body, { childList: true, subtree: true });
+    });
+})();
+</script>
+
+<script>
+(function() {
+    var _wlIds = new Set();
+
+    function _loadWishlistIds() {
+        {% if session.get('user_id') %}
+        fetch('/api/wishlist/ids')
+            .then(function(r) { return r.json(); })
+            .then(function(d) {
+                if (d.ids) {
+                    _wlIds = new Set(d.ids.map(String));
+                    _applyWishlistState();
+                }
+            })
+            .catch(function() {});
+        {% endif %}
+    }
+
+    function _applyWishlistState() {
+        document.querySelectorAll('.wishlist-btn').forEach(function(btn) {
+            var pid = String(btn.dataset.productId);
+            if (_wlIds.has(pid)) {
+                btn.classList.add('in-wishlist');
+                btn.textContent = '❤️';
+                btn.style.color = '#e53935';
+            } else {
+                btn.classList.remove('in-wishlist');
+                btn.textContent = '♡';
+                btn.style.color = '#ccc';
+            }
+        });
+    }
+
+    window.toggleWishlist = function(productId, btn) {
+        {% if not session.get('user_id') %}
+        window.location.href = '{{ url_for("customer.user_login") }}';
+        return;
+        {% endif %}
+        var inWl = _wlIds.has(String(productId));
+        var endpoint = inWl ? '/api/wishlist/remove' : '/api/wishlist/add';
+        fetch(endpoint, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({product_id: productId})
+        })
+        .then(function(r) { return r.json(); })
+        .then(function(d) {
+            if (d.success) {
+                if (inWl) {
+                    _wlIds.delete(String(productId));
+                    btn.classList.remove('in-wishlist');
+                    btn.textContent = '♡';
+                    btn.style.color = '#ccc';
+                    if (window.showToast) showToast('Removed from wishlist', 'info');
+                } else {
+                    _wlIds.add(String(productId));
+                    btn.classList.add('in-wishlist');
+                    btn.textContent = '❤️';
+                    btn.style.color = '#e53935';
+                    if (window.showToast) showToast('Added to wishlist!', 'success');
+                }
+            } else if (d.redirect) {
+                window.location.href = d.redirect;
+            }
+        })
+        .catch(function() {});
+    };
+
+    document.addEventListener('DOMContentLoaded', _loadWishlistIds);
+})();
+</script>
+
+<!-- ==================== SEMIRA AI AGENT WIDGET ==================== -->
+<style>
+/* ========================================================
+   SEMIRA AI — Professional & Modern Widget
+   ======================================================== */
+
+/* ── Floating Trigger Button ─────────────────────────────── */
+#semira-ai-toggle {
+    position: fixed;
+    bottom: 84px;
+    right: 20px;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: linear-gradient(145deg, #0d5c38 0%, #1a8a52 50%, #22c46e 100%);
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 4px 24px rgba(13,92,56,0.5), 0 0 0 0 rgba(34,196,110,0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9998;
+    transition: transform 0.25s cubic-bezier(.34,1.56,.64,1), box-shadow 0.25s;
+    -webkit-tap-highlight-color: transparent;
+    animation: ai-btn-glow 3s ease-in-out infinite;
+}
+@keyframes ai-btn-glow {
+    0%,100% { box-shadow: 0 4px 24px rgba(13,92,56,0.5), 0 0 0 0 rgba(34,196,110,0.35); }
+    50%      { box-shadow: 0 4px 28px rgba(13,92,56,0.6), 0 0 0 10px rgba(34,196,110,0); }
+}
+#semira-ai-toggle:hover {
+    transform: scale(1.1) rotate(-6deg);
+    box-shadow: 0 8px 32px rgba(13,92,56,0.6);
+    animation: none;
+}
+#semira-ai-toggle:active { transform: scale(0.95); }
+#semira-ai-toggle svg { width: 26px; height: 26px; fill: #fff; filter: drop-shadow(0 1px 2px rgba(0,0,0,0.2)); }
+#semira-ai-toggle img { width: 60px; height: 60px; border-radius: 50%; object-fit: cover; display: block; }
+
+/* notification badge */
+#semira-ai-badge {
+    position: absolute;
+    top: -3px;
+    right: -3px;
+    width: 20px;
+    height: 20px;
+    background: linear-gradient(135deg, #ff4757, #ff6b81);
+    border-radius: 50%;
+    border: 2.5px solid #fff;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    font-size: 9px;
+    color: #fff;
+    font-weight: 900;
+    box-shadow: 0 2px 8px rgba(255,71,87,0.5);
+}
+@keyframes ai-pulse {
+    0%,100% { transform: scale(1); }
+    50%      { transform: scale(1.35); }
+}
+.ai-badge-pulse { animation: ai-pulse 1.4s ease-in-out infinite; }
+
+/* ── Chat Panel ─────────────────────────────────────────── */
+#semira-ai-panel {
+    position: fixed;
+    bottom: 158px;
+    right: 20px;
+    width: 370px;
+    max-width: calc(100vw - 32px);
+    height: 520px;
+    max-height: calc(100vh - 190px);
+    background: #ffffff;
+    border-radius: 24px;
+    box-shadow:
+        0 2px 4px rgba(0,0,0,0.04),
+        0 8px 24px rgba(0,0,0,0.10),
+        0 24px 64px rgba(0,0,0,0.14),
+        0 0 0 1px rgba(0,0,0,0.04);
+    display: flex;
+    flex-direction: column;
+    z-index: 9999;
+    overflow: hidden;
+    opacity: 0;
+    transform: translateY(28px) scale(0.92);
+    pointer-events: none;
+    transition: opacity 0.3s cubic-bezier(.4,0,.2,1),
+                transform 0.3s cubic-bezier(.34,1.4,.64,1);
+    transform-origin: bottom right;
+}
+#semira-ai-panel.open {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    pointer-events: all;
+}
+
+/* ── Header ─────────────────────────────────────────────── */
+.ai-header {
+    background: linear-gradient(135deg, #0a4429 0%, #0f6b3e 45%, #148c50 100%);
+    padding: 16px 16px 14px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-shrink: 0;
+    position: relative;
+    overflow: hidden;
+}
+.ai-header::before {
+    content: '';
+    position: absolute;
+    top: -30px; right: -30px;
+    width: 120px; height: 120px;
+    background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 70%);
+    pointer-events: none;
+}
+.ai-header::after {
+    content: '';
+    position: absolute;
+    bottom: -20px; left: 20px;
+    width: 80px; height: 80px;
+    background: radial-gradient(circle, rgba(255,255,255,0.05) 0%, transparent 70%);
+    pointer-events: none;
+}
+
+.ai-header-avatar {
+    position: relative;
+    width: 44px;
+    height: 44px;
+    flex-shrink: 0;
+}
+.ai-avatar-ring {
+    position: absolute;
+    inset: -3px;
+    border-radius: 50%;
+    border: 2px solid rgba(255,255,255,0.3);
+    animation: ai-ring-spin 8s linear infinite;
+    border-top-color: rgba(255,255,255,0.7);
+}
+@keyframes ai-ring-spin { to { transform: rotate(360deg); } }
+.ai-avatar-inner {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid rgba(255,255,255,0.3);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+}
+
+.ai-header-info { flex: 1; min-width: 0; }
+.ai-header-name {
+    color: #fff;
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0.2px;
+    line-height: 1.2;
+}
+.ai-header-model {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.18);
+    border-radius: 10px;
+    padding: 2px 7px;
+    font-size: 9.5px;
+    color: rgba(255,255,255,0.85);
+    font-weight: 500;
+    letter-spacing: 0.3px;
+    margin-top: 3px;
+}
+.ai-header-model::before {
+    content: '';
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    background: #4ade80;
+    box-shadow: 0 0 6px #4ade80;
+    animation: ai-blink 2s ease-in-out infinite;
+}
+@keyframes ai-blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+.ai-header-actions { display: flex; gap: 6px; align-items: center; flex-shrink: 0; }
+.ai-header-btn {
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.15);
+    color: rgba(255,255,255,0.9);
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: background 0.15s, transform 0.15s;
+    font-size: 14px;
+    line-height: 1;
+}
+.ai-header-btn:hover { background: rgba(255,255,255,0.22); transform: scale(1.08); }
+
+/* ── Messages area ───────────────────────────────────────── */
+#semira-ai-messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px 14px 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    scrollbar-width: thin;
+    scrollbar-color: #d1fae5 transparent;
+    background: #f6fbf8;
+    background-image:
+        radial-gradient(circle at 20% 20%, rgba(34,196,110,0.04) 0%, transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(13,92,56,0.03) 0%, transparent 50%);
+}
+#semira-ai-messages::-webkit-scrollbar { width: 3px; }
+#semira-ai-messages::-webkit-scrollbar-thumb { background: #a7f3d0; border-radius: 4px; }
+
+/* ── Message bubbles ─────────────────────────────────────── */
+.ai-msg-wrap {
+    display: flex;
+    align-items: flex-end;
+    gap: 8px;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.25s ease, transform 0.25s cubic-bezier(.34,1.2,.64,1);
+}
+.ai-msg-visible { opacity: 1; transform: translateY(0); }
+.ai-msg-user  { flex-direction: row-reverse; }
+.ai-msg-assistant { flex-direction: row; }
+
+.ai-msg-icon {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    margin-bottom: 2px;
+}
+.ai-msg-assistant .ai-msg-icon {
+    background: linear-gradient(135deg, #0f6b3e, #22c46e);
+    box-shadow: 0 2px 8px rgba(15,107,62,0.3);
+}
+.ai-msg-user .ai-msg-icon {
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    box-shadow: 0 2px 8px rgba(99,102,241,0.3);
+}
+
+.ai-bubble {
+    max-width: 78%;
+    padding: 10px 14px;
+    border-radius: 18px;
+    font-size: 13.5px;
+    line-height: 1.55;
+    word-break: break-word;
+}
+.ai-msg-user .ai-bubble {
+    background: linear-gradient(135deg, #0d5c38, #1a8a52);
+    color: #fff;
+    border-bottom-right-radius: 5px;
+    box-shadow: 0 2px 12px rgba(13,92,56,0.25);
+}
+.ai-msg-assistant .ai-bubble {
+    background: #fff;
+    color: #1a2e22;
+    border: 1px solid rgba(167,243,208,0.5);
+    border-bottom-left-radius: 5px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+}
+.ai-msg-assistant .ai-bubble a {
+    color: #0f6b3e;
+    font-weight: 600;
+    text-decoration: none;
+    border-bottom: 1px solid rgba(15,107,62,0.3);
+    transition: border-color 0.15s;
+}
+.ai-msg-assistant .ai-bubble a:hover { border-color: #0f6b3e; }
+
+/* ── Typing indicator ────────────────────────────────────── */
+.ai-typing {
+    display: flex;
+    gap: 5px;
+    align-items: center;
+    padding: 13px 16px !important;
+    min-width: 56px;
+}
+.ai-typing span {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: #22c46e;
+    animation: ai-dot 1.3s ease-in-out infinite;
+}
+.ai-typing span:nth-child(1) { animation-delay: 0s;    background: #0f6b3e; }
+.ai-typing span:nth-child(2) { animation-delay: 0.18s; background: #1a8a52; }
+.ai-typing span:nth-child(3) { animation-delay: 0.36s; background: #22c46e; }
+@keyframes ai-dot {
+    0%,60%,100% { transform: translateY(0) scale(1); opacity: 0.5; }
+    30%          { transform: translateY(-7px) scale(1.1); opacity: 1; }
+}
+
+/* ── Suggestion chips ────────────────────────────────────── */
+.ai-suggestions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+    margin-top: 4px;
+    padding-bottom: 2px;
+}
+.ai-chip {
+    background: #fff;
+    border: 1.5px solid #a7f3d0;
+    color: #0f6b3e;
+    font-size: 11.5px;
+    padding: 5px 12px;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.18s cubic-bezier(.34,1.4,.64,1);
+    white-space: nowrap;
+    font-weight: 500;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+}
+.ai-chip:hover {
+    background: linear-gradient(135deg, #0f6b3e, #22c46e);
+    color: #fff;
+    border-color: transparent;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(15,107,62,0.3);
+}
+
+/* ── Divider ─────────────────────────────────────────────── */
+.ai-divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(167,243,208,0.6), transparent);
+    margin: 0;
+    flex-shrink: 0;
+}
+
+/* ── Input area ──────────────────────────────────────────── */
+.ai-input-area {
+    padding: 12px 14px 10px;
+    display: flex;
+    gap: 10px;
+    align-items: flex-end;
+    background: #fff;
+    flex-shrink: 0;
+}
+.ai-input-wrap {
+    flex: 1;
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    background: #f0faf5;
+    border: 1.5px solid #a7f3d0;
+    border-radius: 20px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    overflow: hidden;
+}
+.ai-input-wrap:focus-within {
+    border-color: #0f6b3e;
+    box-shadow: 0 0 0 3px rgba(15,107,62,0.1);
+    background: #fff;
+}
+#semira-ai-input {
+    flex: 1;
+    border: none;
+    background: transparent;
+    padding: 10px 14px;
+    font-size: 13.5px;
+    outline: none;
+    resize: none;
+    max-height: 90px;
+    line-height: 1.45;
+    color: #1a2e22;
+    font-family: inherit;
+    scrollbar-width: none;
+}
+#semira-ai-input::-webkit-scrollbar { display: none; }
+#semira-ai-input::placeholder { color: #9ca3af; }
+
+#semira-ai-send {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #0d5c38, #22c46e);
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: opacity 0.15s, transform 0.2s cubic-bezier(.34,1.56,.64,1), box-shadow 0.2s;
+    box-shadow: 0 2px 10px rgba(13,92,56,0.35);
+}
+#semira-ai-send:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+#semira-ai-send:not(:disabled):hover {
+    transform: scale(1.12) rotate(-5deg);
+    box-shadow: 0 4px 16px rgba(13,92,56,0.5);
+}
+#semira-ai-send:not(:disabled):active { transform: scale(0.95); }
+#semira-ai-send svg { width: 18px; height: 18px; fill: #fff; }
+
+/* ── Footer ─────────────────────────────────────────────── */
+.ai-footer-note {
+    text-align: center;
+    font-size: 10px;
+    color: #9ca3af;
+    padding: 5px 0 8px;
+    background: #fff;
+    flex-shrink: 0;
+    letter-spacing: 0.3px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+}
+.ai-footer-note span {
+    display: inline-block;
+    width: 4px; height: 4px;
+    border-radius: 50%;
+    background: #22c46e;
+    box-shadow: 0 0 4px #22c46e;
+}
+
+/* ── Mobile ──────────────────────────────────────────────── */
+@media (max-width: 480px) {
+    #semira-ai-toggle { bottom: 76px; right: 14px; width: 54px; height: 54px; }
+    #semira-ai-panel  { bottom: 144px; right: 12px; left: 12px; width: auto; max-width: none; height: 460px; }
+}
+</style>
+
+<!-- ── AI Toggle Button ─────────────────────────────────── -->
+<button id="semira-ai-toggle" onclick="toggleAIPanel()" aria-label="AI Assistant" title="SEMIRA AI Assistant">
+    <span id="semira-ai-badge" style="display:none">1</span>
+    <img src="{{ url_for('static', filename='images/semiraAi.jpg') }}" alt="SEMIRA AI">
+</button>
+
+<!-- ── AI Chat Panel ────────────────────────────────────── -->
+<div id="semira-ai-panel" role="dialog" aria-modal="true" aria-label="SEMIRA AI Assistant">
+
+    <!-- Header -->
+    <div class="ai-header">
+        <div class="ai-header-avatar">
+            <div class="ai-avatar-ring"></div>
+            <div class="ai-avatar-inner">
+                <img src="{{ url_for('static', filename='images/semiraAi.jpg') }}" alt="SEMIRA AI" style="width:44px;height:44px;border-radius:50%;object-fit:cover;display:block;">
+            </div>
+        </div>
+        <div class="ai-header-info">
+            <div class="ai-header-name">SEMIRA AI</div>
+            <div class="ai-header-model">
+                {% if lang == 'ar' %}متصل · مساعد ذكي{% elif lang == 'en' %}Online · Smart Assistant{% else %}ዝግጁ · ሰሚራ አስተናጋጅ{% endif %}
+            </div>
+        </div>
+        <div class="ai-header-actions">
+            <button class="ai-header-btn" onclick="clearAIChat()" title="Clear chat" aria-label="Clear chat">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
+            </button>
+            <button class="ai-header-btn" onclick="closeAIPanel()" aria-label="Close">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+            </button>
+        </div>
+    </div>
+
+    <!-- Messages -->
+    <div id="semira-ai-messages" role="log" aria-live="polite"></div>
+
+    <!-- Divider -->
+    <div class="ai-divider"></div>
+
+    <!-- Input -->
+    <div class="ai-input-area">
+        <div class="ai-input-wrap">
+            <textarea
+                id="semira-ai-input"
+                rows="1"
+                placeholder="{% if lang == 'ar' %}اكتب رسالتك...{% elif lang == 'en' %}Ask me anything...{% else %}ጥያቄዎን ያስገቡ...{% endif %}"
+                aria-label="Message input"
+            ></textarea>
+        </div>
+        <button id="semira-ai-send" disabled aria-label="Send message">
+            <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+        </button>
+    </div>
+
+    <!-- Footer -->
+    <div class="ai-footer-note">
+        <span></span>
+        Powered by Llama 3.3 · SEMIRA AI
+    </div>
+</div>
+
+<script src="{{ url_for('static', filename='js/ai_agent.js') }}"></script>
+</body>
+</html>

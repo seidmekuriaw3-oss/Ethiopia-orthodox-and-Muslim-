@@ -1,0 +1,688 @@
+{% extends "base.html" %}
+
+{% block title %}SEMIRA FASHION - Women's & Children's Fashion in ወሎ ደሴ ኩታበር{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/slider.css') }}">
+<style>
+    /* ═══════════════════════════════════════════════════
+       HERO — Modern · Islamic · Habesha Fashion
+       ═══════════════════════════════════════════════════ */
+    .hero-section {
+        position: relative;
+        background: linear-gradient(170deg,
+            #021a0d 0%, #083320 18%, #0f5232 45%, #0b4228 72%, #021a0d 100%);
+        color: white;
+        text-align: center;
+        padding: 80px 32px 68px;
+        border-radius: 24px;
+        margin-bottom: 40px;
+        overflow: hidden;
+        border: 1px solid rgba(212,175,55,0.28);
+        box-shadow:
+            0 0 0 1px rgba(212,175,55,0.07),
+            0 16px 60px rgba(0,0,0,0.5),
+            inset 0 1px 0 rgba(255,255,255,0.04);
+    }
+    /* Gold shimmer top line — animated sweep */
+    .hero-section::before {
+        content: '';
+        position: absolute;
+        top: 0; left: 0; right: 0; height: 2px;
+        background: linear-gradient(90deg,
+            transparent 0%,
+            #7a5c0a 10%,
+            #d4af37 25%,
+            #fff9c4 38%,
+            #f5e070 50%,
+            #fff9c4 62%,
+            #d4af37 75%,
+            #7a5c0a 90%,
+            transparent 100%);
+        background-size: 250% 100%;
+        background-position: -100% 0;
+        animation: goldSweep 2.8s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        z-index: 3;
+    }
+    @keyframes goldSweep {
+        0%   { background-position: -100% 0; }
+        100% { background-position: 200%  0; }
+    }
+    /* Islamic diamond-lattice overlay */
+    .hero-section::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background-image:
+            linear-gradient(45deg,  rgba(212,175,55,0.065) 25%, transparent 25%),
+            linear-gradient(-45deg, rgba(212,175,55,0.065) 25%, transparent 25%),
+            linear-gradient(45deg,  transparent 75%, rgba(212,175,55,0.065) 75%),
+            linear-gradient(-45deg, transparent 75%, rgba(212,175,55,0.065) 75%);
+        background-size: 36px 36px;
+        background-position: 0 0, 0 18px, 18px -18px, -18px 0;
+        pointer-events: none;
+        z-index: 0;
+    }
+    .hero-section h1, .hero-section p, .hero-gold-divider, .hero-buttons { position: relative; z-index: 1; }
+    .hs-glow, .hs-btm, .hs-ornament { position: absolute !important; }
+    .hero-section h1 {
+        font-size: 42px;
+        margin-bottom: 6px;
+        text-shadow: 0 2px 24px rgba(0,0,0,0.55);
+        letter-spacing: 1px;
+    }
+    .hero-gold-divider {
+        color: #d4af37;
+        font-size: 14px;
+        letter-spacing: 12px;
+        margin: 10px 0 20px;
+        text-shadow: 0 0 14px rgba(212,175,55,0.65);
+    }
+    .hero-section p {
+        font-size: 18px;
+        margin-bottom: 8px;
+        opacity: 0.93;
+    }
+    .hero-buttons {
+        display: flex;
+        gap: 16px;
+        justify-content: center;
+        flex-wrap: wrap;
+        margin-top: 28px;
+    }
+    .hero-btn {
+        padding: 13px 32px;
+        border-radius: 40px;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.3s;
+        font-size: 15px;
+    }
+    .hero-btn-primary {
+        background: linear-gradient(135deg, #fff 0%, #f0f9f4 100%);
+        color: #0f5232;
+        box-shadow: 0 4px 18px rgba(0,0,0,0.25);
+    }
+    .hero-btn-primary:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 28px rgba(0,0,0,0.3);
+    }
+    .hero-btn-secondary {
+        background: rgba(255,255,255,0.12);
+        color: white;
+        border: 1px solid rgba(212,175,55,0.45);
+        backdrop-filter: blur(6px);
+        -webkit-backdrop-filter: blur(6px);
+    }
+    .hero-btn-secondary:hover {
+        background: rgba(212,175,55,0.18);
+        border-color: rgba(212,175,55,0.7);
+        transform: translateY(-3px);
+    }
+    /* Floating ornaments */
+    .hs-ornament {
+        position: absolute; z-index: 1;
+        opacity: 0.17; pointer-events: none;
+        animation: hsfloat 7s ease-in-out infinite;
+    }
+    .hs-ornament.tl { top: 16px;  left: 20px; }
+    .hs-ornament.tr { top: 16px;  right: 20px; animation-delay: -3.5s; }
+    .hs-ornament.bl { bottom: 16px; left: 20px; animation-delay: -1.8s; }
+    .hs-ornament.br { bottom: 16px; right: 20px; animation-delay: -5s; }
+    @keyframes hsfloat {
+        0%,100% { transform: translateY(0) rotate(0deg); }
+        50%      { transform: translateY(-5px) rotate(9deg); }
+    }
+    .hs-glow {
+        position: absolute; border-radius: 50%; pointer-events: none; z-index: 0;
+    }
+    .hs-glow.gl {
+        width: 280px; height: 280px;
+        background: radial-gradient(circle, rgba(212,175,55,0.09) 0%, transparent 70%);
+        top: -80px; left: -80px;
+    }
+    .hs-glow.gr {
+        width: 220px; height: 220px;
+        background: radial-gradient(circle, rgba(34,196,110,0.07) 0%, transparent 70%);
+        bottom: -60px; right: -60px;
+    }
+    .hs-btm {
+        position: absolute; bottom: 0; left: 0; right: 0; height: 1px; z-index: 2;
+        background: linear-gradient(90deg,
+            transparent, rgba(212,175,55,0.35) 30%,
+            rgba(212,175,55,0.65) 50%,
+            rgba(212,175,55,0.35) 70%, transparent);
+    }
+    
+    /* Section Styles */
+    .section-header {
+        text-align: center;
+        margin-bottom: 32px;
+    }
+    
+    .section-header h2 {
+        font-size: 32px;
+        margin-bottom: 12px;
+        color: #1a7a4a;
+    }
+    
+    .section-header p {
+        color: var(--text-muted, #666);
+        font-size: 16px;
+    }
+    
+    /* Categories Grid */
+    /* ── Category photo grid ── */
+    .categories-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+        gap: 14px;
+        margin-bottom: 50px;
+    }
+    .category-card {
+        position: relative;
+        border-radius: 18px;
+        overflow: hidden;
+        aspect-ratio: 3/4;
+        text-decoration: none;
+        color: white;
+        cursor: pointer;
+        box-shadow: 0 4px 16px rgba(0,0,0,0.14);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        display: block;
+    }
+    .category-card:hover {
+        transform: translateY(-6px) scale(1.03);
+        box-shadow: 0 14px 36px rgba(0,0,0,0.25);
+    }
+    .cat-img {
+        position: absolute;
+        inset: 0; width: 100%; height: 100%;
+        object-fit: cover;
+        transition: transform 0.45s ease;
+    }
+    .cat-emoji-bg {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(135deg, #1a7a4a, #0f5232);
+        display: flex; align-items: center; justify-content: center;
+        font-size: 52px;
+    }
+    .category-card:hover .cat-img { transform: scale(1.1); }
+    .cat-overlay {
+        position: absolute; inset: 0;
+        background: linear-gradient(to top,
+            rgba(0,0,0,0.78) 0%, rgba(0,0,0,0.18) 55%, transparent 100%);
+        transition: background 0.3s;
+    }
+    .category-card:hover .cat-overlay {
+        background: linear-gradient(to top,
+            rgba(10,62,34,0.88) 0%, rgba(10,62,34,0.35) 55%, transparent 100%);
+    }
+    /* gold top shimmer on hover */
+    .category-card::after {
+        content: '';
+        position: absolute; top: 0; left: 0; right: 0; height: 2px;
+        background: linear-gradient(90deg, transparent, #d4af37, transparent);
+        opacity: 0; transition: opacity 0.3s;
+        z-index: 2;
+    }
+    .category-card:hover::after { opacity: 1; }
+    .cat-name {
+        position: absolute; bottom: 0; left: 0; right: 0;
+        padding: 10px 8px 12px;
+        font-size: 13px; font-weight: 700;
+        text-align: center; line-height: 1.3;
+        text-shadow: 0 1px 8px rgba(0,0,0,0.9);
+        z-index: 1;
+    }
+    .cat-icon-badge {
+        position: absolute; top: 8px; left: 8px;
+        font-size: 20px; z-index: 1;
+        text-shadow: 0 1px 4px rgba(0,0,0,0.6);
+    }
+    
+    /* Features Section */
+    .features-section {
+        background: var(--bg-hover, #f8f9fa);
+        border-radius: 24px;
+        padding: 50px 30px;
+        margin: 50px 0;
+    }
+    
+    .features-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 30px;
+        text-align: center;
+    }
+    
+    .feature-item {
+        padding: 20px;
+    }
+    
+    .feature-icon {
+        font-size: 48px;
+        margin-bottom: 16px;
+    }
+    
+    .feature-title {
+        font-size: 18px;
+        font-weight: 600;
+        margin-bottom: 8px;
+        color: var(--text-color, #333);
+    }
+    
+    .feature-desc {
+        color: var(--text-muted, #666);
+        font-size: 14px;
+    }
+    
+    /* Products Grid - Default (Mobile): 2 columns */
+    .products-grid {
+        display: grid;
+        gap: 25px;
+        margin: 30px 0;
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .product-card {
+        background: var(--bg-white, white);
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+        transition: all 0.3s;
+        cursor: pointer;
+        position: relative;
+    }
+    
+    .product-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    }
+    
+    .product-image {
+        height: 220px;
+        background: var(--bg-hover, #f8f9fa);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .product-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.5s;
+    }
+    
+    .product-card:hover .product-image img {
+        transform: scale(1.05);
+    }
+    
+    .discount-badge {
+        position: absolute;
+        top: 12px;
+        right: 12px;
+        background: linear-gradient(135deg, #f44336, #d32f2f);
+        color: white;
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: bold;
+    }
+    
+    .product-info {
+        padding: 16px;
+    }
+    
+    .product-title {
+        font-size: 16px;
+        font-weight: 600;
+        margin: 0 0 8px 0;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        color: var(--text-color, #333);
+    }
+    
+    .product-price {
+        margin: 12px 0;
+    }
+    
+    .current-price {
+        font-size: 20px;
+        font-weight: bold;
+        color: #1a7a4a;
+    }
+    
+    .old-price {
+        text-decoration: line-through;
+        color: var(--text-muted, #999);
+        font-size: 14px;
+        margin-left: 8px;
+    }
+    
+    .btn-add-to-cart {
+        width: 100%;
+        background: #1a7a4a;
+        color: white;
+        border: none;
+        padding: 10px;
+        border-radius: 30px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+    
+    .btn-add-to-cart:hover {
+        background: #0f5232;
+        transform: translateY(-2px);
+    }
+    
+    .view-all-btn {
+        text-align: center;
+        margin-top: 20px;
+    }
+    
+    /* Tablet: 4 columns */
+    @media (min-width: 600px) {
+        .products-grid {
+            grid-template-columns: repeat(4, 1fr);
+        }
+    }
+    
+    /* Desktop: 6 columns */
+    @media (min-width: 1024px) {
+        .products-grid {
+            grid-template-columns: repeat(6, 1fr);
+        }
+    }
+    
+    /* Large Desktop: 8 columns */
+    @media (min-width: 1280px) {
+        .products-grid {
+            grid-template-columns: repeat(8, 1fr);
+        }
+    }
+    
+    /* Mobile Responsive */
+    @media (max-width: 768px) {
+        .hero-section { padding: 48px 16px 40px !important; border-radius: 16px; }
+        .hero-section h1 { font-size: 26px; letter-spacing: 0.5px; }
+        .hero-section p { font-size: 14px; }
+        .hero-buttons { flex-direction: column; align-items: center; margin-top: 20px; }
+        .hero-btn { width: 80%; }
+        .hs-ornament { opacity: 0.1 !important; }
+    }
+    @media (min-width: 769px) {
+        .hero-section { padding: 96px 80px 80px; }
+        .hero-section h1 { font-size: 52px; }
+        .hs-ornament { opacity: 0.24 !important; width: 76px !important; height: 76px !important; }
+        .hs-ornament.tl { top: 24px; left: 32px; }
+        .hs-ornament.tr { top: 24px; right: 32px; }
+        .hs-ornament.bl { bottom: 24px; left: 32px; }
+        .hs-ornament.br { bottom: 24px; right: 32px; }
+    }
+    @media (max-width: 768px) {
+        .section-header h2 {
+            font-size: 24px;
+        }
+        .categories-grid {
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+        .cat-name { font-size: 11px; padding: 8px 6px 10px; }
+        .features-section {
+            padding: 30px 20px;
+        }
+        .features-grid {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+        .products-grid {
+            gap: 12px;
+        }
+        .product-image {
+            height: 160px;
+        }
+        .product-title {
+            font-size: 13px;
+        }
+        .current-price {
+            font-size: 16px;
+        }
+        .btn-add-to-cart {
+            padding: 8px;
+            font-size: 11px;
+        }
+    }
+    
+    /* Small Mobile */
+    @media (max-width: 480px) {
+        .categories-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+        .features-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+    
+    /* Dark mode support */
+    @media (prefers-color-scheme: dark) {
+        .features-section {
+            background: #1a1a2e;
+        }
+        .feature-desc {
+            color: #aaa;
+        }
+        .category-card {
+            background: #1e1e2e;
+            color: #eee;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="hero-section">
+    <!-- Ambient glows -->
+    <div class="hs-glow gl"></div>
+    <div class="hs-glow gr"></div>
+    <!-- Bottom gold line -->
+    <div class="hs-btm"></div>
+    <!-- Islamic 8-pointed star — top corners -->
+    <svg class="hs-ornament tl" width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <polygon points="30,0 34.97,18 51.2,8.8 42,25.03 60,30 42,34.97 51.2,51.2 34.97,42 30,60 25.03,42 8.8,51.2 18,34.97 0,30 18,25.03 8.8,8.8 25.03,18" fill="rgba(212,175,55,0.15)" stroke="#d4af37" stroke-width="1.5"/>
+        <circle cx="30" cy="30" r="4.5" fill="#d4af37"/>
+    </svg>
+    <svg class="hs-ornament tr" width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <polygon points="30,0 34.97,18 51.2,8.8 42,25.03 60,30 42,34.97 51.2,51.2 34.97,42 30,60 25.03,42 8.8,51.2 18,34.97 0,30 18,25.03 8.8,8.8 25.03,18" fill="rgba(212,175,55,0.15)" stroke="#d4af37" stroke-width="1.5"/>
+        <circle cx="30" cy="30" r="4.5" fill="#d4af37"/>
+    </svg>
+    <!-- Habesha cross — bottom corners -->
+    <svg class="hs-ornament bl" width="48" height="48" viewBox="0 0 46 46" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <line x1="23" y1="4" x2="23" y2="42" stroke="#d4af37" stroke-width="2.2" stroke-linecap="round"/>
+        <line x1="4" y1="23" x2="42" y2="23" stroke="#d4af37" stroke-width="2.2" stroke-linecap="round"/>
+        <rect x="17" y="17" width="12" height="12" stroke="#d4af37" stroke-width="1.4" transform="rotate(45,23,23)" fill="rgba(212,175,55,0.12)"/>
+        <circle cx="23" cy="23" r="3.5" fill="#d4af37"/>
+        <circle cx="23" cy="6"  r="2" fill="#d4af37" opacity="0.7"/>
+        <circle cx="23" cy="40" r="2" fill="#d4af37" opacity="0.7"/>
+        <circle cx="6"  cy="23" r="2" fill="#d4af37" opacity="0.7"/>
+        <circle cx="40" cy="23" r="2" fill="#d4af37" opacity="0.7"/>
+    </svg>
+    <svg class="hs-ornament br" width="48" height="48" viewBox="0 0 46 46" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <line x1="23" y1="4" x2="23" y2="42" stroke="#d4af37" stroke-width="2.2" stroke-linecap="round"/>
+        <line x1="4" y1="23" x2="42" y2="23" stroke="#d4af37" stroke-width="2.2" stroke-linecap="round"/>
+        <rect x="17" y="17" width="12" height="12" stroke="#d4af37" stroke-width="1.4" transform="rotate(45,23,23)" fill="rgba(212,175,55,0.12)"/>
+        <circle cx="23" cy="23" r="3.5" fill="#d4af37"/>
+        <circle cx="23" cy="6"  r="2" fill="#d4af37" opacity="0.7"/>
+        <circle cx="23" cy="40" r="2" fill="#d4af37" opacity="0.7"/>
+        <circle cx="6"  cy="23" r="2" fill="#d4af37" opacity="0.7"/>
+        <circle cx="40" cy="23" r="2" fill="#d4af37" opacity="0.7"/>
+    </svg>
+
+    <h1>👗 SEMIRA FASHION</h1>
+    <div class="hero-gold-divider">✦ &nbsp; ✦ &nbsp; ✦</div>
+    <p>Quality fashion at affordable prices in ወሎ ደሴ ኩታበር</p>
+    <p>🚚 Free shipping on orders over 5000 ETB</p>
+    <div class="hero-buttons">
+        <a href="{{ url_for('customer.products') }}" class="hero-btn hero-btn-primary">Shop Now →</a>
+        <a href="{{ url_for('customer.about') }}" class="hero-btn hero-btn-secondary">Learn More</a>
+    </div>
+</div>
+
+<!-- Ads Slider -->
+{% include 'customer/components/ads_slider.html' %}
+
+<!-- Categories Section -->
+<div class="section-header">
+    <h2>📂 Shop by Category</h2>
+    <p>Browse our collection by category</p>
+</div>
+<div class="categories-grid">
+    {% for cat in categories %}
+    <a href="{{ url_for('customer.products', category=cat.id) }}" class="category-card">
+        {% if cat.image %}
+            <img class="cat-img" src="{{ url_for('static', filename=cat.image) }}" alt="{{ cat.name_am }}" loading="lazy">
+        {% else %}
+            <div class="cat-emoji-bg">{{ cat.icon or '👗' }}</div>
+        {% endif %}
+        <div class="cat-overlay"></div>
+        {% if cat.icon %}<span class="cat-icon-badge">{{ cat.icon }}</span>{% endif %}
+        <div class="cat-name">{{ cat.name_am }}</div>
+    </a>
+    {% endfor %}
+    <a href="{{ url_for('customer.products') }}" class="category-card">
+        <div class="cat-emoji-bg" style="background:linear-gradient(135deg,#d4af37,#8b6914);">🛍️</div>
+        <div class="cat-overlay"></div>
+        <div class="cat-name">{% if lang == 'am' %}ሁሉም ምርቶች{% else %}All Products{% endif %}</div>
+    </a>
+</div>
+
+<!-- Featured Products Section -->
+<div class="section-header">
+    <h2>⭐ Featured Products</h2>
+    <p>Our most popular and recommended items</p>
+</div>
+
+{% if featured_products and featured_products|length > 0 %}
+<div class="products-grid">
+    {% for product in featured_products[:12] %}
+    <div class="product-card" onclick="location.href='{{ url_for(&quot;product_detail&quot;, product_id=product.id) }}'">
+        <div class="product-image">
+            {% if product.thumbnail and product.thumbnail|trim != '' %}
+                <img src="{{ url_for('static', filename=product.thumbnail) }}" 
+                     alt="{{ product.name_am }}"
+                     loading="lazy"
+                     onerror="this.onerror=null; this.parentElement.innerHTML='<div style=\'font-size:48px;\'>👗</div>'">
+            {% else %}
+                <div style="font-size: 48px;">👗</div>
+            {% endif %}
+            {% if product.compare_price and product.compare_price|float > product.price|float %}
+                {% set discount = ((product.compare_price|float - product.price|float) / product.compare_price|float * 100)|round|int %}
+                <span class="discount-badge">-{{ discount }}%</span>
+            {% endif %}
+        </div>
+        <div class="product-info">
+            <h3 class="product-title">{{ product.name_am if lang == 'am' else product.name }}</h3>
+            <div class="product-price">
+                <span class="current-price">{{ format_price(product.price) }}</span>
+                {% if product.compare_price and product.compare_price|float > product.price|float %}
+                    <span class="old-price">{{ format_price(product.compare_price) }}</span>
+                {% endif %}
+            </div>
+            <button class="btn-add-to-cart" onclick="event.stopPropagation(); if(window.addToCart) addToCart('{{ product.id }}', 1, this)">
+                🛒 Add to Cart
+            </button>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+<div class="view-all-btn">
+    <a href="{{ url_for('customer.products') }}" class="hero-btn hero-btn-primary">View All Products →</a>
+</div>
+{% else %}
+<div style="text-align: center; padding: 60px; background: var(--bg-white, white); border-radius: 20px;">
+    <div style="font-size: 48px; margin-bottom: 16px;">📦</div>
+    <h3 style="color: var(--text-color, #333);">No products yet</h3>
+    <p style="color: var(--text-muted, #666);">Check back soon for our amazing clothing collection!</p>
+</div>
+{% endif %}
+
+<!-- Features Section -->
+<div class="features-section">
+    <div class="section-header">
+        <h2>✨ Why Choose Us?</h2>
+        <p>We pride ourselves on quality and customer satisfaction</p>
+    </div>
+    <div class="features-grid">
+        <div class="feature-item">
+            <div class="feature-icon">⭐</div>
+            <div class="feature-title">Quality Guaranteed</div>
+            <div class="feature-desc">Premium materials and expert craftsmanship</div>
+        </div>
+        <div class="feature-item">
+            <div class="feature-icon">💰</div>
+            <div class="feature-title">Best Prices</div>
+            <div class="feature-desc">Affordable fashion for every budget</div>
+        </div>
+        <div class="feature-item">
+            <div class="feature-icon">🚚</div>
+            <div class="feature-title">Free Delivery</div>
+            <div class="feature-desc">On orders over 5000 ETB</div>
+        </div>
+        <div class="feature-item">
+            <div class="feature-icon">😊</div>
+            <div class="feature-title">Customer Support</div>
+            <div class="feature-desc">24/7 assistance for your needs</div>
+        </div>
+    </div>
+</div>
+
+<!-- About Section (Desktop only - based on platform) -->
+{% if show_about %}
+<div style="background: var(--bg-white, white); border-radius: 24px; padding: 40px; margin: 40px 0; text-align: center;">
+    <h2 style="color: #1a7a4a;">🏢 About SEMIRA FASHION</h2>
+    <p style="color: var(--text-muted, #666); max-width: 800px; margin: 20px auto;">
+        SEMIRA FASHION is a leading fashion store in Ethiopia, offering high-quality 
+        clothing at competitive prices. With multiple branches across the country, we serve 
+        thousands of satisfied customers.
+    </p>
+</div>
+{% endif %}
+
+<!-- Admin Login Link (only visible when not logged in) -->
+<div style="text-align: center; margin-top: 40px; padding: 20px;">
+    {% if not session.get('admin') and not session.get('is_admin') %}
+    <a href="{{ url_for('admin.admin_login') }}" class="hero-btn hero-btn-secondary" style="background: #1a1a2e; color: #d4af37;">
+        👑 Admin Login
+    </a>
+    {% endif %}
+    {% if session.get('admin') or session.get('is_admin') %}
+    <a href="{{ url_for('admin.dashboard') }}" class="hero-btn hero-btn-secondary" style="background: #1a1a2e; color: #d4af37;">
+        👑 Go to Admin Panel
+    </a>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/slider.js') }}"></script>
+<script>
+    // Product card click handler
+    document.querySelectorAll('.product-card').forEach(card => {
+        card.addEventListener('click', function(e) {
+            if (e.target.classList && e.target.classList.contains('btn-add-to-cart')) return;
+            const link = this.querySelector('a[href^="/product/"]');
+            if (link) window.location.href = link.getAttribute('href');
+        });
+    });
+</script>
+{% endblock %}

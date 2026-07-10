@@ -1,0 +1,13 @@
+- [WhatsApp low-stock alert](whatsapp-low-stock.md) — send_low_stock_alert() in whatsapp_service.py; always logs to console, sends WhatsApp only if CALLMEBOT_API_KEY is set.
+- [Stock race condition fix](stock-race-condition.md) — FOR UPDATE OF p on product SELECT + atomic UPDATE WHERE stock_quantity >= qty + rollback; both cart_routes.py and api_routes.py.
+- [Order discount rate](order-discount.md) — USER_DISCOUNT_RATE in routes/shared.py is the single source of truth; never hardcode 0.9 in route files.
+- [Cart JS uses GET not POST](cart-get-not-post.md) — cart update/remove use GET+query params; POST+JSON was causing "Network error" catch to fire in browser (non-JSON response).
+- [Seed script schema](seed-schema.md) — seed_all.py must use: table `advertisements` (not `ads`), column `compare_price` (not `original_price`), `is_featured` as int 1/0 (not bool); advertisements.image made nullable.
+- [PostgreSQL only — always use %s](postgresql-only.md) — ALL SQL queries must use %s placeholders (never ?); search uses ILIKE not LIKE; user confirmed this is mandatory.
+- [Price columns NUMERIC](price-numeric.md) — products.price, compare_price, cost and order_items.price_at_time all use NUMERIC(12,2) not DOUBLE PRECISION; avoids floating-point rounding on ETB amounts.
+- [Decimal float multiply crash](decimal-float-crash.md) — psycopg2 returns NUMERIC as decimal.Decimal; multiplying Decimal * float raises TypeError. Always wrap DB price fields with float() before arithmetic in cart_routes.py checkout and place_order.
+- [Cart session structure](cart-session-structure.md) — cart stored as dict {product_id_str: quantity} in session; get_cart() returns {} default; all cart methods (add, remove, update, count, subtotal, items) expect dict format.
+- [Qibla compass — 2D Canvas](qibla-compass.md) — Three.js replaced with 2D Canvas; initOrientation() called lazily on Qibla tab open (not DOMContentLoaded); iOS uses qibla-sensor-btn + enableCompassSensor(); Android auto-registers deviceorientationabsolute+deviceorientation.
+- [Azan alarm bugs](azan-alarm.md) — _lastAzanKey dedup prevents every-second repeat; scheduleSW uses navigator.serviceWorker.ready (not _sw.active); all prayers get push notifications (not just Taraweeh); GPS requested only on Qibla tab click.
+- [Thumbnail path pattern](thumbnail-path.md) — all templates use `startswith('uploads/') or startswith('images/')` guard; bare filenames get 'uploads/products/' prefix. Fixed in: product_detail, cart, order_confirmation, track_order.
+- [Three.js — serve locally](threejs-local.md) — unpkg.com blocked by CSP and Replit proxy MIME issues; cdn.jsdelivr.net also 404'd. Download to static/js/three.min.js from cdnjs.cloudflare.com.
