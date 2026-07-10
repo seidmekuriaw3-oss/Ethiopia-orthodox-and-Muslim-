@@ -146,6 +146,14 @@ def index():
             import logging as _log
             _log.getLogger(__name__).warning("Islamic/Hijri data error: %s", _isl_err)
 
+        orthodox_home = None
+        try:
+            from routes.orthodox_routes import get_todays_data
+            orthodox_home = get_todays_data()
+        except Exception as _orth_err:
+            import logging as _log
+            _log.getLogger(__name__).warning("Orthodox data error: %s", _orth_err)
+
         return render_template('customer/index.html',
                                featured_products=featured_list,
                                new_products=new_list,
@@ -157,7 +165,8 @@ def index():
                                lang=lang,
                                hijri_home=hijri_home,
                                daily_ayah=daily_ayah,
-                               next_event=next_event)
+                               next_event=next_event,
+                               orthodox_home=orthodox_home)
     except Exception as e:
         import logging as _log
         _log.getLogger(__name__).error("Home page error: %s", e, exc_info=True)

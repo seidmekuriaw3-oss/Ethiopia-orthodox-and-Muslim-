@@ -815,6 +815,83 @@
         .idc-compass-svg { width:64px; height:64px; }
         .idc-slider-outer { max-width:100%; }
     }
+
+    /* ── Orthodox Tewahedo Corner (own maroon/gold palette) ── */
+    .otc-wrap {
+        margin: 36px 0;
+        background: linear-gradient(160deg,#fdf6ee 0%,#fffdfb 55%,#faf1e6 100%);
+        border-radius: 18px;
+        border: 1px solid #ecd7b8;
+        padding: 22px 18px 18px;
+    }
+    .otc-head { text-align:center; margin-bottom:16px; }
+    .otc-head h2 {
+        font-size:clamp(15px,2.5vw,19px); font-weight:800; color:#3a1a12;
+        margin:0 0 3px; display:flex; align-items:center; justify-content:center; gap:8px;
+    }
+    .otc-amharic-sub {
+        font-family:'Noto Sans Ethiopic','Nyala',serif; font-size:13px; color:#8a4a1e;
+        display:block; margin-bottom:3px;
+    }
+    .otc-head p { font-size:11px; color:#9a7a5e; margin:0; }
+    .otc-grid {
+        display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+        gap:12px; max-width:760px; margin:0 auto 16px;
+    }
+    .otc-card {
+        background:#fff; border-radius:14px; padding:16px 16px 14px;
+        box-shadow:0 4px 24px rgba(122,58,26,.1);
+        border:1px solid rgba(122,58,26,.12);
+        display:flex; flex-direction:column;
+        box-sizing:border-box;
+    }
+    .otc-card-head { display:flex; align-items:center; gap:7px; margin-bottom:10px; }
+    .otc-card-icon {
+        width:30px; height:30px; border-radius:8px;
+        background:linear-gradient(135deg,#7a3a1a,#4a1f0d);
+        display:flex; align-items:center; justify-content:center;
+        font-size:14px; flex-shrink:0;
+    }
+    .otc-card-lbl { font-size:11px; font-weight:700; color:#9a7a5e; text-transform:uppercase; letter-spacing:1px; }
+    .otc-card-link {
+        margin-top:auto; padding-top:12px;
+        font-size:12px; color:#7a3a1a; font-weight:700;
+        text-decoration:none; display:flex; align-items:center; gap:5px;
+        border-top:1px solid #f5e9d8;
+    }
+    .otc-card-link:hover { color:#4a1f0d; }
+
+    .otc-date-body { text-align:center; flex:1; padding:2px 0 8px; }
+    .otc-eth-day { font-size:42px; font-weight:900; color:#7a3a1a; line-height:1; margin-bottom:3px; }
+    .otc-eth-month { font-size:14px; font-weight:600; color:#3a1a12; margin-bottom:2px; }
+    .otc-eth-year { font-size:11px; color:#b09070; margin-bottom:10px; }
+
+    .otc-feast-body { flex:1; display:flex; flex-direction:column; justify-content:center; text-align:center; padding:6px 0; }
+    .otc-feast-name { font-size:15px; font-weight:800; color:#7a3a1a; margin-bottom:6px; }
+    .otc-feast-empty { font-size:12px; color:#b09070; }
+
+    .otc-saint-body { flex:1; padding:2px 0 8px; }
+    .otc-saint-name { font-size:13px; font-weight:700; color:#3a1a12; margin-bottom:6px; line-height:1.5; }
+
+    .otc-fast-body { flex:1; text-align:center; padding:6px 0; }
+    .otc-fast-status { font-size:13px; font-weight:700; color:#7a3a1a; }
+    .otc-fast-none { font-size:12px; color:#b09070; }
+
+    .otc-cta { text-align:center; padding-top:4px; }
+    .otc-cta a {
+        display:inline-flex; align-items:center; gap:7px;
+        background:linear-gradient(135deg,#7a3a1a,#4a1f0d); color:#fff;
+        text-decoration:none; padding:9px 22px; border-radius:30px;
+        font-weight:700; font-size:12px;
+        transition:transform .22s,box-shadow .22s;
+        box-shadow:0 4px 16px rgba(122,58,26,.28);
+    }
+    .otc-cta a:hover { transform:translateY(-2px); box-shadow:0 8px 24px rgba(122,58,26,.38); }
+
+    @media (max-width:640px) {
+        .otc-wrap { padding:16px 10px 14px; }
+        .otc-eth-day { font-size:34px; }
+    }
 </style>
 {% endblock %}
 
@@ -1224,6 +1301,92 @@
     <div class="idc-cta">
         <a href="{{ url_for('islamic.islamic_suite') }}">
             🕌 Open Full Islamic Suite
+        </a>
+    </div>
+</div>
+{% endif %}
+
+{% if orthodox_home %}
+<div class="otc-wrap">
+    <div class="otc-head">
+        <span class="otc-amharic-sub">የኦርቶዶክስ ተዋህዶ ጥግ</span>
+        <h2>☦️ Orthodox Tewahedo Corner</h2>
+        <p>Ethiopian calendar, daily saints, feasts & fasting — for our Orthodox Tewahedo customers</p>
+    </div>
+
+    <div class="otc-grid">
+
+        <div class="otc-card">
+            <div class="otc-card-head">
+                <div class="otc-card-icon">📅</div>
+                <span class="otc-card-lbl">Ethiopian Date</span>
+            </div>
+            <div class="otc-date-body">
+                <div class="otc-eth-day">{{ orthodox_home.eth_day }}</div>
+                <div class="otc-eth-month">{{ orthodox_home.eth_month_name }}</div>
+                <div class="otc-eth-year">{{ orthodox_home.eth_year }} ዓ.ም — {{ orthodox_home.eth_day_name }}</div>
+            </div>
+            <a href="{{ url_for('orthodox.orthodox_home') }}#calendar" class="otc-card-link">
+                Full Ethiopian Calendar →
+            </a>
+        </div>
+
+        <div class="otc-card">
+            <div class="otc-card-head">
+                <div class="otc-card-icon">✝️</div>
+                <span class="otc-card-lbl">Feast of the Day</span>
+            </div>
+            <div class="otc-feast-body">
+                {% if orthodox_home.annual_feast %}
+                <div class="otc-feast-name">{{ orthodox_home.annual_feast.icon }} {{ orthodox_home.annual_feast.name }}</div>
+                {% else %}
+                <div class="otc-feast-empty">No major feast today</div>
+                {% endif %}
+            </div>
+            <a href="{{ url_for('orthodox.orthodox_home') }}#feasts" class="otc-card-link">
+                All Annual Feasts →
+            </a>
+        </div>
+
+        <div class="otc-card">
+            <div class="otc-card-head">
+                <div class="otc-card-icon">📖</div>
+                <span class="otc-card-lbl">Saint of the Day</span>
+            </div>
+            <div class="otc-saint-body">
+                {% if orthodox_home.day_saints %}
+                <div class="otc-saint-name">{{ orthodox_home.day_saints.name if orthodox_home.day_saints.name is defined else orthodox_home.day_saints }}</div>
+                {% else %}
+                <div class="otc-feast-empty">—</div>
+                {% endif %}
+            </div>
+            <a href="{{ url_for('orthodox.orthodox_home') }}#saints" class="otc-card-link">
+                Synaxarium →
+            </a>
+        </div>
+
+        <div class="otc-card">
+            <div class="otc-card-head">
+                <div class="otc-card-icon">🍽️</div>
+                <span class="otc-card-lbl">Fasting Status</span>
+            </div>
+            <div class="otc-fast-body">
+                {% if orthodox_home.fasting %}
+                <div class="otc-fast-status">{{ orthodox_home.fasting }}</div>
+                {% else %}
+                <div class="otc-fast-none">Not a fasting day</div>
+                {% endif %}
+            </div>
+            <a href="{{ url_for('orthodox.orthodox_home') }}#fasting" class="otc-card-link">
+                Fasting Calendar →
+            </a>
+        </div>
+
+    </div>
+
+    <div class="otc-cta">
+        <a href="{{ url_for('orthodox.orthodox_home') }}">
+            ☦️ Open Full Orthodox Corner
         </a>
     </div>
 </div>
