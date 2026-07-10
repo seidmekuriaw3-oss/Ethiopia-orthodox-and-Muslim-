@@ -69,9 +69,15 @@ def gregorian_to_ethiopian(year, month, day):
 
 
 def _eth_year_start_jdn(eth_year):
-    """Return the Julian Day Number of Meskerem 1 for the given Ethiopian year."""
+    """Return the Julian Day Number of Meskerem 1 for the given Ethiopian year.
+
+    Ethiopian leap years satisfy (year % 4 == 3), i.e. years 3, 7, 11, ...
+    The count of leap years that have *already completed* before year Y is
+    floor(Y / 4), not floor((Y-1) / 4).  The difference matters whenever Y
+    is itself divisible by 4 (e.g. 2020, 2024 …).
+    """
     ETH_EPOCH = 1724221
-    return ETH_EPOCH + (eth_year - 1) * 365 + (eth_year - 1) // 4
+    return ETH_EPOCH + (eth_year - 1) * 365 + eth_year // 4
 
 
 def is_fasting_day(greg_date):
