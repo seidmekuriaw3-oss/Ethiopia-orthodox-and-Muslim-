@@ -1,0 +1,960 @@
+{% extends "base.html" %}
+{% block title %}Orthodox Tewahedo Corner — SEMIRA FASHION{% endblock %}
+
+{% block extra_css %}
+{{ super() }}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+Ethiopic:wght@300;400;600;700;900&display=swap">
+<style>
+/* ═══════════════════════════════════════════════
+   ORTHODOX TEWAHEDO CORNER — Color System
+   Palette: Gold #D4A843 | Crimson #8B1A1A | Royal Blue #1E3A8A
+   Background: near-black #0D0508
+═══════════════════════════════════════════════ */
+:root {
+  --og:      #D4A843;   /* gold — primary accent    */
+  --og2:     #A07828;   /* darker gold              */
+  --ocr:     #8B1A1A;   /* deep crimson             */
+  --ocr2:    #6A1212;   /* darker crimson           */
+  --obl:     #1E3A8A;   /* royal blue               */
+  --obl2:    #152B6A;   /* darker blue              */
+  --odark:   #0D0508;   /* near-black bg            */
+  --opanel:  rgba(18,6,6,0.95);
+  --oborder: rgba(212,168,67,0.25);
+  --gggold:  0 0 18px rgba(212,168,67,0.55);
+  --ggcr:    0 0 18px rgba(139,26,26,0.6);
+  --ggbl:    0 0 18px rgba(30,58,138,0.55);
+  --parchment: #F5E6C8;
+}
+*,*::before,*::after{box-sizing:border-box}
+
+.opage {
+  min-height: 100vh;
+  background: radial-gradient(ellipse at top, #1a0505 0%, #0d0208 50%, #000 100%);
+  padding: 16px 14px 90px;
+  font-family: 'Noto Serif Ethiopic', 'Segoe UI', system-ui, sans-serif;
+  color: #e8d8c0;
+}
+
+/* ── Header ── */
+.oheader { text-align: center; padding: 24px 0 16px; }
+.cross-ornament {
+  font-size: clamp(28px,7vw,48px);
+  color: var(--og);
+  text-shadow: var(--gggold);
+  letter-spacing: 6px;
+  margin-bottom: 4px;
+  display: block;
+}
+.oheader h1 {
+  font-size: clamp(14px,3.2vw,22px);
+  color: #d4c8a0;
+  font-weight: 400;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  margin: 0 0 4px;
+}
+.oheader .subtitle-am {
+  font-size: clamp(12px,2.5vw,15px);
+  color: #9a8860;
+  letter-spacing: 1px;
+}
+.ornament-line {
+  text-align: center;
+  color: var(--og);
+  font-size: 16px;
+  opacity: .35;
+  letter-spacing: 10px;
+  margin: 8px 0;
+}
+
+/* ── Today Dashboard ── */
+.today-card {
+  background: linear-gradient(135deg, rgba(139,26,26,0.18), rgba(18,6,6,0.97));
+  border: 1px solid var(--og);
+  border-radius: 20px;
+  padding: 20px 18px 16px;
+  max-width: 540px;
+  margin: 0 auto 14px;
+  position: relative;
+  overflow: hidden;
+}
+.today-card::before {
+  content: '✝';
+  position: absolute;
+  right: 16px; top: 10px;
+  font-size: 64px;
+  color: var(--og);
+  opacity: .06;
+  line-height: 1;
+}
+.today-eth-date {
+  font-size: clamp(22px,5.5vw,36px);
+  font-weight: 900;
+  color: var(--og);
+  text-shadow: var(--gggold);
+  margin: 0 0 2px;
+  line-height: 1.1;
+}
+.today-greg {
+  font-size: 12px;
+  color: #7a6a50;
+  margin-bottom: 10px;
+  letter-spacing: .5px;
+}
+.today-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.badge-feast {
+  background: linear-gradient(135deg, rgba(212,168,67,.22), rgba(160,120,40,.12));
+  border: 1px solid rgba(212,168,67,.5);
+  border-radius: 20px;
+  padding: 5px 14px;
+  font-size: 12px;
+  color: var(--og);
+  font-weight: 600;
+}
+.badge-fast {
+  background: linear-gradient(135deg, rgba(139,26,26,.28), rgba(106,18,18,.12));
+  border: 1px solid rgba(139,26,26,.6);
+  border-radius: 20px;
+  padding: 5px 14px;
+  font-size: 12px;
+  color: #e07070;
+  font-weight: 600;
+}
+.badge-major {
+  background: linear-gradient(135deg, rgba(30,58,138,.28), rgba(21,43,106,.12));
+  border: 1px solid rgba(30,58,138,.6);
+  border-radius: 20px;
+  padding: 5px 14px;
+  font-size: 12px;
+  color: #8ab0ff;
+  font-weight: 600;
+}
+.today-saint-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px;
+  background: rgba(212,168,67,.06);
+  border: 1px solid var(--oborder);
+  border-radius: 14px;
+}
+.saint-icon-big { font-size: 28px; line-height: 1; flex-shrink: 0; }
+.saint-info h3 {
+  font-size: clamp(13px,3vw,16px);
+  font-weight: 700;
+  color: var(--parchment);
+  margin: 0 0 4px;
+}
+.saint-info p { font-size: 12px; color: #9a8870; margin: 0; line-height: 1.5; }
+
+/* ── Tabs ── */
+.tabs {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin: 14px 0;
+  flex-wrap: wrap;
+}
+.tab-btn {
+  background: rgba(255,255,255,.05);
+  border: 1px solid var(--oborder);
+  color: #b8a87a;
+  padding: 9px 18px;
+  border-radius: 30px;
+  cursor: pointer;
+  font-size: 12.5px;
+  font-weight: 600;
+  letter-spacing: .5px;
+  transition: all .28s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: 'Noto Serif Ethiopic', sans-serif;
+}
+.tab-btn.active, .tab-btn:hover {
+  background: var(--ocr);
+  border-color: var(--og);
+  color: #fff;
+  box-shadow: var(--ggcr);
+}
+.tab-btn .t-icon { font-size: 15px; }
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+
+/* ── Generic Card ── */
+.ocard {
+  background: var(--opanel);
+  border: 1px solid var(--oborder);
+  border-radius: 18px;
+  padding: 20px 18px;
+  max-width: 540px;
+  margin: 0 auto 14px;
+  backdrop-filter: blur(10px);
+}
+.ocard-title {
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: var(--og);
+  margin: 0 0 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.ocard-title::before {
+  content: '';
+  display: inline-block;
+  width: 3px;
+  height: 14px;
+  background: var(--og);
+  border-radius: 2px;
+}
+
+/* ══ TAB 1: SYNAXARIUM ══════════════════════════════ */
+.month-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 5px;
+  margin-top: 10px;
+}
+@media (max-width: 400px) {
+  .month-grid { grid-template-columns: repeat(5, 1fr); }
+}
+.month-day-btn {
+  aspect-ratio: 1;
+  border-radius: 8px;
+  border: 1px solid rgba(212,168,67,.15);
+  background: rgba(255,255,255,.04);
+  color: #c8b890;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all .2s;
+  position: relative;
+}
+.month-day-btn:hover { background: rgba(212,168,67,.12); border-color: var(--og); }
+.month-day-btn.today-day {
+  background: linear-gradient(135deg, rgba(139,26,26,.5), rgba(106,18,18,.3));
+  border-color: var(--og);
+  color: var(--og);
+  box-shadow: var(--ggcr);
+  font-weight: 900;
+}
+.month-day-btn.major-feast { border-color: rgba(212,168,67,.6); }
+.month-day-btn.major-feast::after {
+  content: '✦';
+  position: absolute;
+  top: -2px; right: 1px;
+  font-size: 7px;
+  color: var(--og);
+}
+.day-popup {
+  display: none;
+  background: #140608;
+  border: 1px solid var(--og);
+  border-radius: 14px;
+  padding: 14px 16px;
+  margin-top: 10px;
+  animation: fadeUp .2s ease;
+}
+.day-popup.open { display: block; }
+@keyframes fadeUp {
+  from { opacity:0; transform:translateY(8px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+.popup-day-title { font-size: 16px; font-weight: 800; color: var(--og); margin-bottom: 6px; }
+.popup-saint-name { font-size: 14px; color: var(--parchment); font-weight: 600; margin-bottom: 4px; }
+.popup-desc { font-size: 12px; color: #9a8860; line-height: 1.6; }
+
+.fasting-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: 10px;
+}
+.fast-item {
+  padding: 12px;
+  border: 1px solid rgba(139,26,26,.4);
+  border-radius: 12px;
+  background: rgba(139,26,26,.06);
+}
+.fast-item .fast-name { font-size: 12px; font-weight: 700; color: #e07070; margin-bottom: 3px; }
+.fast-item .fast-desc { font-size: 11px; color: #7a5a5a; line-height: 1.4; }
+
+/* ══ TAB 2: PRAYER HOURS ══════════════════════════════ */
+.prayer-list { display: flex; flex-direction: column; gap: 10px; }
+.prayer-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 14px;
+  border-radius: 14px;
+  border: 1px solid var(--oborder);
+  background: rgba(255,255,255,.03);
+  transition: all .25s;
+}
+.prayer-item.current-prayer {
+  background: linear-gradient(135deg, rgba(212,168,67,.14), rgba(139,26,26,.10));
+  border-color: var(--og);
+  box-shadow: var(--gggold);
+}
+.prayer-item.next-prayer {
+  border-color: rgba(30,58,138,.5);
+  background: rgba(30,58,138,.07);
+}
+.prayer-time-badge {
+  flex-shrink: 0;
+  text-align: center;
+  min-width: 56px;
+}
+.prayer-icon { font-size: 22px; line-height: 1; display: block; margin-bottom: 2px; }
+.prayer-time { font-size: 11px; color: #7a6a50; font-weight: 700; font-variant-numeric: tabular-nums; }
+.prayer-body { flex: 1; }
+.prayer-name-am { font-size: 15px; font-weight: 800; color: var(--parchment); margin-bottom: 2px; }
+.prayer-name-en { font-size: 10px; color: #6a5a40; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px; }
+.prayer-desc { font-size: 11.5px; color: #8a7a60; line-height: 1.55; }
+.prayer-verse { font-size: 11px; color: rgba(212,168,67,.7); margin-top: 5px; font-style: italic; }
+.current-label, .next-label {
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  padding: 2px 8px;
+  border-radius: 10px;
+  margin-bottom: 4px;
+  display: inline-block;
+}
+.current-label { background: rgba(212,168,67,.2); color: var(--og); }
+.next-label    { background: rgba(30,58,138,.2); color: #8ab0ff; }
+
+/* ══ TAB 3: BIBLE READER ══════════════════════════════ */
+.bible-search-wrap { position: relative; margin-bottom: 12px; }
+.bible-search {
+  width: 100%;
+  padding: 10px 38px 10px 14px;
+  background: rgba(255,255,255,.05);
+  border: 1px solid var(--oborder);
+  border-radius: 11px;
+  color: #e8d8c0;
+  font-size: 13px;
+  outline: none;
+  transition: border-color .25s;
+  font-family: 'Noto Serif Ethiopic', sans-serif;
+}
+.bible-search:focus { border-color: var(--og); background: rgba(255,255,255,.08); }
+.bible-search::placeholder { color: #6a5a40; }
+.bible-search-icon { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); color: #7a6040; pointer-events: none; }
+
+.bible-section-title {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: var(--og2);
+  padding: 8px 0 4px;
+  border-bottom: 1px solid var(--oborder);
+  margin-bottom: 6px;
+}
+.bible-book-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 5px;
+  margin-bottom: 10px;
+}
+@media (max-width: 380px) {
+  .bible-book-grid { grid-template-columns: repeat(2, 1fr); }
+}
+.bible-book-btn {
+  padding: 7px 6px;
+  border-radius: 9px;
+  border: 1px solid var(--oborder);
+  background: rgba(255,255,255,.03);
+  color: #c8b890;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: center;
+  transition: all .2s;
+  font-family: 'Noto Serif Ethiopic', sans-serif;
+}
+.bible-book-btn:hover, .bible-book-btn.selected {
+  background: rgba(212,168,67,.12);
+  border-color: var(--og);
+  color: var(--og);
+}
+.bible-book-btn.extra-canon { border-color: rgba(30,58,138,.4); color: #8ab0ff; }
+.bible-book-btn.extra-canon:hover { background: rgba(30,58,138,.12); border-color: var(--obl); }
+
+.bible-reader-pane {
+  background: rgba(10,4,4,0.9);
+  border: 1px solid rgba(212,168,67,.3);
+  border-radius: 16px;
+  padding: 18px;
+  margin-top: 10px;
+}
+.reader-book-name { font-size: 18px; font-weight: 800; color: var(--og); margin-bottom: 6px; }
+.reader-chapters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+.ch-btn {
+  padding: 4px 10px;
+  border-radius: 8px;
+  border: 1px solid var(--oborder);
+  background: rgba(255,255,255,.04);
+  color: #c8b890;
+  font-size: 11px;
+  cursor: pointer;
+  transition: all .2s;
+}
+.ch-btn.active-ch {
+  background: var(--ocr);
+  border-color: var(--og);
+  color: #fff;
+}
+
+.daily-reading-card {
+  background: linear-gradient(135deg, rgba(212,168,67,.10), rgba(30,58,138,.06));
+  border: 1px solid var(--og);
+  border-radius: 14px;
+  padding: 16px;
+  margin-bottom: 12px;
+}
+.daily-reading-label { font-size: 10px; text-transform: uppercase; letter-spacing: 2px; color: var(--og2); margin-bottom: 6px; }
+.daily-psalm { font-size: 16px; font-weight: 800; color: var(--parchment); margin-bottom: 4px; }
+.daily-psalm-sub { font-size: 11px; color: #7a6a50; }
+
+/* ══ TAB 4: WUDASE MARIAM ══════════════════════════════ */
+.wudase-day-tabs {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+.wday-btn {
+  padding: 7px 14px;
+  border-radius: 20px;
+  border: 1px solid var(--oborder);
+  background: rgba(255,255,255,.04);
+  color: #b8a870;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all .25s;
+  font-family: 'Noto Serif Ethiopic', sans-serif;
+}
+.wday-btn.active, .wday-btn:hover {
+  background: rgba(139,26,26,.4);
+  border-color: var(--og);
+  color: var(--parchment);
+}
+.wday-btn.today-wd {
+  border-color: var(--og);
+  color: var(--og);
+  font-weight: 800;
+}
+
+.wudase-content {
+  background: rgba(10,4,4,0.9);
+  border: 1px solid rgba(212,168,67,.3);
+  border-radius: 18px;
+  padding: 22px 20px;
+}
+.wudase-title-am {
+  font-size: clamp(16px,4vw,22px);
+  font-weight: 900;
+  color: var(--og);
+  text-align: center;
+  text-shadow: var(--gggold);
+  margin-bottom: 4px;
+}
+.wudase-title-en {
+  font-size: 11px;
+  text-align: center;
+  color: #6a5a40;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 16px;
+}
+.wudase-opening {
+  font-size: clamp(13px,3vw,15px);
+  color: var(--og2);
+  font-style: italic;
+  text-align: center;
+  border-top: 1px solid var(--oborder);
+  border-bottom: 1px solid var(--oborder);
+  padding: 12px 0;
+  margin-bottom: 16px;
+  line-height: 1.7;
+}
+.wudase-body {
+  font-size: clamp(13px,2.8vw,15px);
+  color: #d8c8a0;
+  line-height: 1.9;
+  white-space: pre-line;
+  font-family: 'Noto Serif Ethiopic', serif;
+}
+.wudase-footer {
+  text-align: center;
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px solid var(--oborder);
+  font-size: 12px;
+  color: #6a5a40;
+  letter-spacing: 1px;
+}
+
+/* ── Responsive ── */
+@media (max-width: 480px) {
+  .ocard, .today-card { padding: 16px 14px; }
+  .month-grid { grid-template-columns: repeat(5, 1fr); }
+  .bible-book-grid { grid-template-columns: repeat(2, 1fr); }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="opage">
+
+  <!-- ░░ HEADER ░░ -->
+  <div class="oheader">
+    <span class="cross-ornament">✞ ✦ ✞</span>
+    <h1>Orthodox Tewahedo Corner</h1>
+    <div class="subtitle-am">የኢትዮጵያ ኦርቶዶክስ ተዋሕዶ አገልግሎት</div>
+    <div class="ornament-line">· · ✦ · · ✦ · · ✦ · ·</div>
+  </div>
+
+  <!-- ░░ TODAY DASHBOARD ░░ -->
+  <div class="today-card" id="todayCard">
+    <div class="today-eth-date" id="todayEthDate">
+      {{ today.eth_day }} {{ today.eth_month_name }} {{ today.eth_year }} ዓ.ም
+    </div>
+    <div class="today-greg" id="todayGreg">{{ today.greg_date }}</div>
+
+    <div class="today-badges">
+      <span class="badge-feast">{{ today.eth_day_name }}</span>
+      {% if today.fasting %}
+        <span class="badge-fast">🍃 {{ today.fasting }}</span>
+      {% endif %}
+      {% if today.annual_feast %}
+        <span class="badge-major">{{ today.annual_feast.icon }} {{ today.annual_feast.name }}</span>
+      {% endif %}
+      {% if today.day_saints.get('major') %}
+        <span class="badge-major">✨ ዓብይ ዓውደ ዓምቱ</span>
+      {% endif %}
+    </div>
+
+    <div class="today-saint-row">
+      <div class="saint-icon-big">{{ today.day_saints.icon }}</div>
+      <div class="saint-info">
+        <h3>{{ today.day_saints.saints | join('፣ ') }}</h3>
+        <p>{{ today.day_saints.description }}</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ░░ TABS ░░ -->
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('synax')" id="tab-synax">
+      <span class="t-icon">📅</span> ስንክሳር
+    </button>
+    <button class="tab-btn" onclick="switchTab('prayer')" id="tab-prayer">
+      <span class="t-icon">🕯️</span> ጸሎት ሰዓታት
+    </button>
+    <button class="tab-btn" onclick="switchTab('bible')" id="tab-bible">
+      <span class="t-icon">📖</span> መጽሐፍ ቅዱስ
+    </button>
+    <button class="tab-btn" onclick="switchTab('wudase')" id="tab-wudase">
+      <span class="t-icon">🌹</span> ውዳሴ ማርያም
+    </button>
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+       TAB 1: SYNAXARIUM & CALENDAR
+  ══════════════════════════════════════════════ -->
+  <div class="tab-panel active" id="panel-synax">
+
+    <!-- Monthly Saints Calendar -->
+    <div class="ocard">
+      <div class="ocard-title">📅 የወሩ ስንክሳር ቀን ቀን</div>
+      <div style="font-size:11px;color:#7a6a50;margin-bottom:10px;">
+        ቀኑን ቀኑን ጠቅ አድርጉ — ያ ቀን ቅዱሳን ይታያሉ
+      </div>
+      <div class="month-grid">
+        {% for d in range(1, 31) %}
+          {% set saint = saints_by_day.get(d, {}) %}
+          <button
+            class="month-day-btn{% if d == today.eth_day %} today-day{% endif %}{% if saint.get('major') %} major-feast{% endif %}"
+            onclick="showDayPopup({{ d }})"
+            data-day="{{ d }}"
+          >{{ d }}</button>
+        {% endfor %}
+      </div>
+
+      <!-- Popup -->
+      <div class="day-popup" id="dayPopup">
+        <div class="popup-day-title" id="popupTitle"></div>
+        <div class="popup-saint-name" id="popupSaints"></div>
+        <div class="popup-desc" id="popupDesc"></div>
+      </div>
+    </div>
+
+    <!-- Annual Major Feasts Quick View -->
+    <div class="ocard">
+      <div class="ocard-title">⭐ ዓብይ ዓውደ ዓምቶች</div>
+      {% set major_feasts = [
+          {'month': 'ታኅሣሥ 28', 'name': 'ገና — Genna (Christmas)', 'icon': '⭐'},
+          {'month': 'ጥር 11',    'name': 'ጥምቀት — Timkat (Epiphany)', 'icon': '💧'},
+          {'month': 'ሚያዝያ 5',  'name': 'ትንሣኤ — Fasika (Easter)', 'icon': '🌅'},
+          {'month': 'ሚያዝያ 23', 'name': 'ቅ/ጊዮርጊስ ዓብይ', 'icon': '🛡️'},
+          {'month': 'ነሐሴ 16',  'name': 'ፍልሠታ — Assumption', 'icon': '🌹'},
+          {'month': 'ነሐሴ 21',  'name': 'አቡነ ተክለ ሃይማኖት ዓብይ', 'icon': '🌳'},
+      ] %}
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+        {% for feast in major_feasts %}
+        <div style="padding:10px 12px;border-radius:12px;border:1px solid var(--oborder);background:rgba(212,168,67,.04);">
+          <div style="font-size:18px;margin-bottom:3px;">{{ feast.icon }}</div>
+          <div style="font-size:12px;font-weight:700;color:var(--parchment);margin-bottom:2px;">{{ feast.name }}</div>
+          <div style="font-size:10px;color:var(--og2);">{{ feast.month }}</div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- Fasting Seasons -->
+    <div class="ocard">
+      <div class="ocard-title">🍃 የጾም ወቅቶች</div>
+      <div class="fasting-grid">
+        {% for fast in fasting_seasons %}
+        <div class="fast-item">
+          <div class="fast-name">{{ fast.name }}</div>
+          <div class="fast-desc">{{ fast.desc }}</div>
+        </div>
+        {% endfor %}
+      </div>
+      <div style="margin-top:12px;padding:10px 12px;border-radius:10px;background:rgba(139,26,26,.08);border:1px solid rgba(139,26,26,.3);">
+        <div style="font-size:11px;color:#e07070;font-weight:700;">⚡ ሳምንታዊ ጾም</div>
+        <div style="font-size:11px;color:#7a5a5a;margin-top:3px;">ረቡዕ (ዕለተ ሒዩ — ፈተናው) እና ዓርብ (ዕለተ ስቅለቱ) — ምዕምናን ሁሉ ይጾማሉ።</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+       TAB 2: PRAYER HOURS
+  ══════════════════════════════════════════════ -->
+  <div class="tab-panel" id="panel-prayer">
+
+    <div class="ocard">
+      <div class="ocard-title">🕯️ ሰባቱ ሰዓተ ጸሎት</div>
+      <div style="font-size:11px;color:#7a6a50;margin-bottom:14px;">
+        ኦርቶዶክስ ምዕምናን ቀን ሰባት ጊዜ ይጸልያሉ — ልክ እንደ ሰዓሙ ዳዊት።
+        <br>ዛሬ ያለው ሰዓት: <strong id="liveTimePrayer" style="color:var(--og);"></strong>
+      </div>
+      <div class="prayer-list">
+        {% for ph in prayer_hours %}
+        <div class="prayer-item{% if ph.id == today.current_prayer.id %} current-prayer{% elif ph.id == today.next_prayer.id %} next-prayer{% endif %}"
+             id="ph-{{ ph.id }}">
+          <div class="prayer-time-badge">
+            <span class="prayer-icon">{{ ph.icon }}</span>
+            <span class="prayer-time">{{ ph.int_time }}</span>
+            <div style="font-size:9px;color:#5a4a30;margin-top:2px;">{{ ph.eth_hour }}</div>
+          </div>
+          <div class="prayer-body">
+            {% if ph.id == today.current_prayer.id %}
+              <span class="current-label">🔴 አሁን</span>
+            {% elif ph.id == today.next_prayer.id %}
+              <span class="next-label">⏭ ቀጣይ</span>
+            {% endif %}
+            <div class="prayer-name-am">{{ ph.name }}</div>
+            <div class="prayer-name-en">{{ ph.name_en }}</div>
+            <div class="prayer-desc">{{ ph.description }}</div>
+            <div class="prayer-verse">{{ ph.scripture }}</div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+       TAB 3: BIBLE READER — 81 BOOKS
+  ══════════════════════════════════════════════ -->
+  <div class="tab-panel" id="panel-bible">
+
+    <!-- Daily Reading -->
+    <div class="ocard">
+      <div class="daily-reading-card">
+        <div class="daily-reading-label">📖 የዕለቱ ምንባብ — Daily Reading</div>
+        <div class="daily-psalm">መዝሙረ ዳዊት — ምዕራፍ {{ today.psalm_num }}</div>
+        <div class="daily-psalm-sub">{{ today.eth_day }} {{ today.eth_month_name }} • 151 ምዕራፍ ዑደት</div>
+      </div>
+
+      <div class="bible-search-wrap">
+        <input type="text" class="bible-search" id="bibleSearch"
+               placeholder="📖 መጽሐፍ ፈልግ — Search book..."
+               oninput="filterBibleBooks(this.value)">
+      </div>
+
+      <div id="bibleBookList">
+        {% for section, books in bible_books.items() %}
+        <div class="bible-section-title" data-section="{{ section }}">{{ section }}</div>
+        <div class="bible-book-grid">
+          {% for book in books %}
+          <button class="bible-book-btn{% if '★' in book.name %} extra-canon{% endif %}"
+                  onclick="openBibleBook('{{ book.id }}', '{{ book.name | replace("'", "\\'") }}', {{ book.chapters if book.chapters else 1 }})"
+                  data-name="{{ book.name }}"
+                  data-id="{{ book.id }}">
+            {{ book.name | replace(' ★', '') }}
+          </button>
+          {% endfor %}
+        </div>
+        {% endfor %}
+      </div>
+
+      <!-- Reader pane (hidden until book selected) -->
+      <div class="bible-reader-pane" id="bibleReaderPane" style="display:none;">
+        <div class="reader-book-name" id="readerBookName"></div>
+        <div id="readerChapters" class="reader-chapters"></div>
+        <div style="padding:12px;background:rgba(212,168,67,.05);border-radius:10px;border:1px solid var(--oborder);font-size:12px;color:#9a8860;line-height:1.7;" id="readerText">
+          ምዕራፍ ይምረጡ ።
+        </div>
+        <button onclick="closeBibleReader()" style="margin-top:10px;padding:8px 18px;border-radius:20px;border:1px solid var(--oborder);background:transparent;color:#9a8060;font-size:12px;cursor:pointer;">← ወደ ዝርዝር ተመለሱ</button>
+      </div>
+    </div>
+
+    <!-- Canon note -->
+    <div class="ocard" style="border-color:rgba(30,58,138,.4);">
+      <div class="ocard-title" style="color:var(--obl);">ℹ️ 81 መጻሕፍት — የኢ.ኦ.ተ.ቤ.ክ ቀኖና</div>
+      <p style="font-size:12px;color:#7a7a9a;line-height:1.7;margin:0;">
+        የኢትዮጵያ ኦርቶዶክስ ተዋሕዶ ቤተ ክርስቲያን 81 መጻሕፍት አሏት —
+        ከካቶሊክ 73 ወይም ፕሮቴስታንት 66 መጻሕፍት ብዙ ናቸው።
+        <strong style="color:#8ab0ff;">★</strong> ምልክቱ ያለቸው መጻሕፍት (<em>ሄኖክ፣ ኩፋሌ፣ 3 መቃብያን፣ ሲኖዶስ...</em>)
+        በሌሎቹ አብያተ ክርስቲያናት ቀኖና ውስጥ አይገቡም።
+      </p>
+    </div>
+
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+       TAB 4: WUDASE MARIAM
+  ══════════════════════════════════════════════ -->
+  <div class="tab-panel" id="panel-wudase">
+
+    <div class="ocard">
+      <div class="ocard-title">🌹 ውዳሴ ማርያም — ለሰባቱ ቀናት</div>
+      <div style="font-size:11px;color:#7a6a50;margin-bottom:12px;">
+        ዛሬ: <strong style="color:var(--og);">{{ today.wudase.title }}</strong>
+      </div>
+
+      <div class="wudase-day-tabs">
+        {% set wdays_list = [
+          (0, 'እሑድ'), (1, 'ሰኞ'), (2, 'ማክሰኞ'), (3, 'ረቡዕ'),
+          (4, 'ሐሙስ'), (5, 'ዓርብ'), (6, 'ቅዳሜ')
+        ] %}
+        {% set today_pywd = today.greg_date | int(default=0) %}
+        {% for wd_idx, wd_name in wdays_list %}
+        <button class="wday-btn{% if wudase_all[wd_idx].day == today.wudase.day %} today-wd active{% endif %}"
+                id="wday-{{ wd_idx }}"
+                onclick="showWudase({{ wd_idx }})">
+          {{ wd_name }}
+        </button>
+        {% endfor %}
+      </div>
+
+      <div class="wudase-content" id="wudaseContent">
+        <div class="wudase-title-am" id="wTitle">{{ today.wudase.title }}</div>
+        <div class="wudase-title-en" id="wSubtitle">{{ today.wudase.subtitle }}</div>
+        <div class="wudase-opening" id="wOpening">{{ today.wudase.opening }}</div>
+        <div class="wudase-body" id="wBody">{{ today.wudase.text }}</div>
+        <div class="wudase-footer">✞ &nbsp; ሃሌ ሉያ — ለወልዱ ምስጋና ለዘለዓለም &nbsp; ✞</div>
+      </div>
+    </div>
+
+    <!-- Info card -->
+    <div class="ocard">
+      <div class="ocard-title">📚 ስለ ውዳሴ ማርያም</div>
+      <p style="font-size:12px;color:#8a7860;line-height:1.75;margin:0;">
+        <strong style="color:var(--og);">ውዳሴ ማርያም</strong> ለቅድስት ድንግል ማርያም ምስጋና የሚቀርብበት
+        የኢትዮጵያ ኦርቶዶክስ ተዋሕዶ ቤተ ክርስቲያን ልዩ ቅዱስ ጸሎት ነው።
+        ሰባት ዓይነቶች አሉት — ለሰባቱ ቀናት ሁሉ ልዩ ልዩ። ምዕምናን
+        ዕለት ዕለት ያዟቸዋል።
+      </p>
+    </div>
+
+  </div><!-- /wudase panel -->
+
+</div><!-- /opage -->
+{% endblock %}
+
+{% block extra_js %}
+{{ super() }}
+<script>
+// ── Wudase data (from server) ──
+const WUDASE_DATA = {
+  {% for wd_idx, wdata in wudase_all.items() %}
+  {{ wd_idx }}: {
+    title:    {{ wdata.title | tojson }},
+    subtitle: {{ wdata.subtitle | tojson }},
+    opening:  {{ wdata.opening | tojson }},
+    text:     {{ wdata.text | tojson }},
+    day:      {{ wdata.day | tojson }}
+  }{% if not loop.last %},{% endif %}
+  {% endfor %}
+};
+
+// ── Saints data (from server) ──
+const SAINTS_DATA = {
+  {% for d, info in saints_by_day.items() %}
+  {{ d }}: {
+    icon:        {{ info.icon | tojson }},
+    saints:      {{ info.saints | tojson }},
+    description: {{ info.description | tojson }},
+    major:       {{ 'true' if info.get('major') else 'false' }}
+  }{% if not loop.last %},{% endif %}
+  {% endfor %}
+};
+
+const TODAY_ETH_DAY = {{ today.eth_day }};
+
+// ── Tab switching ──
+function switchTab(name) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('panel-' + name).classList.add('active');
+  document.getElementById('tab-' + name).classList.add('active');
+}
+
+// ── Synaxarium day popup ──
+let _openDay = null;
+function showDayPopup(day) {
+  const popup = document.getElementById('dayPopup');
+  if (_openDay === day) {
+    popup.classList.remove('open');
+    _openDay = null;
+    return;
+  }
+  _openDay = day;
+  const info = SAINTS_DATA[day] || {};
+  document.getElementById('popupTitle').textContent =
+    (info.icon || '✝️') + '  ቀን ' + day + (day === TODAY_ETH_DAY ? ' (ዛሬ)' : '');
+  document.getElementById('popupSaints').textContent = (info.saints || []).join('  •  ');
+  document.getElementById('popupDesc').textContent   = info.description || '';
+  popup.classList.add('open');
+  popup.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+// ── Wudase day switch ──
+let _activeWday = null;
+function showWudase(idx) {
+  const d = WUDASE_DATA[idx];
+  if (!d) return;
+  document.getElementById('wTitle').textContent    = d.title;
+  document.getElementById('wSubtitle').textContent = d.subtitle;
+  document.getElementById('wOpening').textContent  = d.opening;
+  document.getElementById('wBody').textContent     = d.text;
+  document.querySelectorAll('.wday-btn').forEach(b => b.classList.remove('active'));
+  const btn = document.getElementById('wday-' + idx);
+  if (btn) btn.classList.add('active');
+  _activeWday = idx;
+}
+
+// Auto-select today's wudase
+(function () {
+  const now     = new Date();
+  const pyWd    = now.getDay() === 0 ? 6 : now.getDay() - 1; // Sun=6, Mon=0
+  // Python weekday: Mon=0 Sun=6
+  const pyWdMap = [6, 0, 1, 2, 3, 4, 5]; // JS getDay() → Python weekday
+  const pyIdx   = pyWdMap[now.getDay()];
+  showWudase(pyIdx);
+})();
+
+// ── Bible reader ──
+let _currentBook = null;
+let _currentChapters = 0;
+
+function openBibleBook(id, name, chapters) {
+  _currentBook     = id;
+  _currentChapters = chapters;
+  document.getElementById('readerBookName').textContent = name.replace(' ★', '');
+  const chDiv = document.getElementById('readerChapters');
+  chDiv.innerHTML = '';
+  const max = Math.min(chapters, 80);
+  for (let i = 1; i <= max; i++) {
+    const b = document.createElement('button');
+    b.className = 'ch-btn';
+    b.textContent = i;
+    b.onclick = () => loadChapter(id, name, i);
+    chDiv.appendChild(b);
+  }
+  if (chapters > 80) {
+    chDiv.innerHTML += '<span style="font-size:10px;color:#6a5a40;">… ' + chapters + ' ምዕራፍ</span>';
+  }
+  document.getElementById('readerText').textContent = 'ምዕራፍ ይምረጡ ።';
+  document.getElementById('bibleReaderPane').style.display = 'block';
+  document.getElementById('bibleReaderPane').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function loadChapter(id, name, ch) {
+  document.querySelectorAll('.ch-btn').forEach(b => b.classList.remove('active-ch'));
+  event.target.classList.add('active-ch');
+  const text = document.getElementById('readerText');
+  text.textContent = '⏳ እየተጫነ ነው...';
+  // Use publicly available Bible API (Amharic / Ge'ez not available via API — show message)
+  text.innerHTML = `
+    <div style="text-align:center;padding:16px;">
+      <div style="font-size:22px;margin-bottom:8px;">📖</div>
+      <div style="font-size:14px;font-weight:700;color:var(--og);margin-bottom:6px;">${name.replace(' ★', '')} — ምዕራፍ ${ch}</div>
+      <div style="font-size:12px;color:#8a7860;line-height:1.7;">
+        የ81ቱ ቅዱሳት መጻሕፍት ሙሉ ጽሑፍ ወደፊት ይታከላሉ።<br>
+        <span style="color:var(--og2);">ለአሁን:</span> ዩ-ቪዘን ቃል ወይም <em>ቅዱስ ሲኖዶስ</em> መጽሐፍ ቅዱስ ይጠቀሙ።<br><br>
+        <a href="https://bible.is/AMRAMB/{{ id | upper }}/{{ ch }}" target="_blank"
+           style="color:#8ab0ff;text-decoration:underline;">bible.is ላይ ይክፈቱ ↗</a>
+      </div>
+    </div>`;
+}
+
+function closeBibleReader() {
+  document.getElementById('bibleReaderPane').style.display = 'none';
+  _currentBook = null;
+}
+
+// ── Bible search ──
+function filterBibleBooks(q) {
+  const lower = q.toLowerCase();
+  document.querySelectorAll('.bible-book-btn').forEach(btn => {
+    const match = btn.dataset.name.toLowerCase().includes(lower) ||
+                  btn.dataset.id.toLowerCase().includes(lower);
+    btn.style.display = match ? '' : 'none';
+  });
+  document.querySelectorAll('.bible-section-title').forEach(sec => {
+    const grid  = sec.nextElementSibling;
+    const anyVisible = grid && [...grid.querySelectorAll('.bible-book-btn')]
+                                .some(b => b.style.display !== 'none');
+    sec.style.display  = anyVisible ? '' : 'none';
+    if (grid) grid.style.display = anyVisible ? '' : 'none';
+  });
+}
+
+// ── Live clock for prayer hours ──
+function updateLiveClock() {
+  const now = new Date();
+  const hh  = String(now.getHours()).padStart(2, '0');
+  const mm  = String(now.getMinutes()).padStart(2, '0');
+  const el  = document.getElementById('liveTimePrayer');
+  if (el) el.textContent = hh + ':' + mm;
+}
+updateLiveClock();
+setInterval(updateLiveClock, 30000);
+</script>
+{% endblock %}
