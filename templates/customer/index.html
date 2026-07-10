@@ -968,7 +968,14 @@
         .idc-slider-dot, .otc-slider-dot { width:5px; height:5px; }
 
         .idc-cta, .otc-cta { margin-top:auto; }
-        .idc-cta a, .otc-cta a { font-size:9px; padding:5px 10px; gap:3px; white-space:nowrap; }
+        .idc-cta a, .otc-cta a {
+            width:100%; box-sizing:border-box;
+            height:34px; min-height:34px; max-height:34px;
+            padding:0 8px; gap:3px;
+            font-size:10px; line-height:1;
+            white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+            justify-content:center;
+        }
     }
 
     /* ── Orthodox Tewahedo Corner (own maroon/gold palette) ── */
