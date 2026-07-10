@@ -21950,3 +21950,4 @@ TypeError: 'str' object is not callable
 2026-07-09 01:13:22,004 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
 2026-07-09 01:14:09,610 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
 2026-07-10 12:46:39,842 - app - WARNING - Scheduler could not start: No module named 'pytz'
+2026-07-10 13:29:58,283 - app - WARNING - Scheduler could not start: No module named 'pytz'
