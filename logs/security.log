@@ -21951,3 +21951,4 @@ TypeError: 'str' object is not callable
 2026-07-09 01:14:09,610 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
 2026-07-10 12:46:39,842 - app - WARNING - Scheduler could not start: No module named 'pytz'
 2026-07-10 13:29:58,283 - app - WARNING - Scheduler could not start: No module named 'pytz'
+2026-07-10 14:27:32,911 - app - WARNING - 404 Error: http://dbb41360-544e-4226-b9b9-5c05cf286af3-00-2wgb9n2benpeu.riker.replit.dev/product/uploads/products/baby_dress.jpg

@@ -816,6 +816,109 @@
         .idc-slider-outer { max-width:100%; }
     }
 
+    /* ── Two-corners row: forces Islamic + Orthodox side-by-side, even on mobile ── */
+    .corners-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+        align-items: start;
+    }
+    .corners-row > .idc-wrap,
+    .corners-row > .otc-wrap {
+        margin: 0;
+        width: 100%;
+        min-width: 0; /* allow grid children to shrink below content size */
+    }
+    .corners-row > .otc-full,
+    .corners-row > .idc-wrap.otc-full {
+        grid-column: 1 / -1;
+    }
+
+    /* Orthodox slider (mirrors Islamic slider structure/behavior) */
+    .otc-slider-outer {
+        position:relative; max-width:340px; margin:0 auto 16px;
+        overflow:hidden; border-radius:14px;
+    }
+    .otc-slider-track {
+        display:flex;
+        transition:transform .52s cubic-bezier(.4,0,.2,1);
+        will-change:transform;
+    }
+    .otc-slider-arr {
+        position:absolute; top:50%; transform:translateY(-50%);
+        width:34px; height:34px; border-radius:50%;
+        background:rgba(255,255,255,.92); border:1px solid rgba(122,58,26,.2);
+        color:#7a3a1a; font-size:18px; cursor:pointer;
+        display:flex; align-items:center; justify-content:center;
+        box-shadow:0 2px 10px rgba(0,0,0,.1); z-index:10;
+        transition:all .2s; user-select:none;
+    }
+    .otc-slider-arr:hover { background:#7a3a1a; color:#fff; }
+    .otc-slider-arr.left  { left:10px; }
+    .otc-slider-arr.right { right:10px; }
+    .otc-slider-dots {
+        display:flex; align-items:center; justify-content:center;
+        gap:8px; margin-bottom:20px;
+    }
+    .otc-slider-dot {
+        width:8px; height:8px; border-radius:50%;
+        background:rgba(122,58,26,.2); border:1px solid rgba(122,58,26,.2);
+        cursor:pointer; transition:all .25s;
+    }
+    .otc-slider-dot.on {
+        background:#7a3a1a; border-color:#7a3a1a;
+        transform:scale(1.3); box-shadow:0 0 6px rgba(122,58,26,.4);
+    }
+    .otc-card { min-width:100%; width:100%; }
+
+    /* ── Mini/compact mobile layout for both corners, side-by-side ── */
+    @media (max-width:640px) {
+        .corners-row { gap:6px; }
+        .corners-row > .idc-wrap,
+        .corners-row > .otc-wrap { padding:8px 6px 6px; border-radius:12px; }
+
+        .idc-head, .otc-head { margin-bottom:6px; }
+        .idc-arabic-sub, .otc-amharic-sub { font-size:9px; margin-bottom:1px; }
+        .idc-head h2, .otc-head h2 { font-size:10px; gap:3px; }
+        .idc-head p, .otc-head p { display:none; }
+
+        .idc-slider-outer, .otc-slider-outer { max-width:100%; margin:0 auto 8px; border-radius:10px; }
+        .idc-card, .otc-card { padding:8px 8px 7px; border-radius:10px; }
+        .idc-card-head, .otc-card-head { gap:4px; margin-bottom:5px; }
+        .idc-card-icon, .otc-card-icon { width:18px; height:18px; font-size:9px; border-radius:5px; }
+        .idc-card-lbl, .otc-card-lbl { font-size:8px; letter-spacing:0.3px; }
+        .idc-card-link, .otc-card-link { font-size:9px; padding-top:6px; gap:3px; }
+
+        .idc-prayer-list { gap:3px; }
+        .idc-prayer-row { padding:4px 6px; border-radius:6px; }
+        .idc-pname, .idc-ptime { font-size:10px; }
+
+        .idc-hijri-day, .otc-eth-day { font-size:22px; margin-bottom:1px; }
+        .idc-hijri-month, .otc-eth-month { font-size:10px; }
+        .idc-hijri-year, .otc-eth-year { font-size:8px; margin-bottom:5px; }
+        .idc-next-event { font-size:8px; padding:5px 6px; }
+
+        .idc-compass-svg { width:40px; height:40px; }
+        .idc-bearing { font-size:12px; }
+        .idc-bearing-sub { font-size:7px; }
+
+        .idc-ayah-text { font-size:11px; padding:2px 0 6px; line-height:1.6; }
+        .idc-ayah-ref { font-size:8px; }
+
+        .otc-feast-name { font-size:10px; }
+        .otc-saint-name { font-size:9px; }
+        .otc-fast-status { font-size:9px; }
+        .otc-feast-empty, .otc-fast-none { font-size:9px; }
+
+        .idc-slider-arr, .otc-slider-arr { width:20px; height:20px; font-size:11px; }
+        .idc-slider-arr.left, .otc-slider-arr.left { left:2px; }
+        .idc-slider-arr.right, .otc-slider-arr.right { right:2px; }
+        .idc-slider-dots, .otc-slider-dots { gap:4px; margin-bottom:8px; }
+        .idc-slider-dot, .otc-slider-dot { width:5px; height:5px; }
+
+        .idc-cta a, .otc-cta a { font-size:9px; padding:5px 10px; gap:3px; }
+    }
+
     /* ── Orthodox Tewahedo Corner (own maroon/gold palette) ── */
     .otc-wrap {
         margin: 36px 0;
@@ -834,10 +937,6 @@
         display:block; margin-bottom:3px;
     }
     .otc-head p { font-size:11px; color:#9a7a5e; margin:0; }
-    .otc-grid {
-        display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
-        gap:12px; max-width:760px; margin:0 auto 16px;
-    }
     .otc-card {
         background:#fff; border-radius:14px; padding:16px 16px 14px;
         box-shadow:0 4px 24px rgba(122,58,26,.1);
@@ -887,11 +986,6 @@
         box-shadow:0 4px 16px rgba(122,58,26,.28);
     }
     .otc-cta a:hover { transform:translateY(-2px); box-shadow:0 8px 24px rgba(122,58,26,.38); }
-
-    @media (max-width:640px) {
-        .otc-wrap { padding:16px 10px 14px; }
-        .otc-eth-day { font-size:34px; }
-    }
 </style>
 {% endblock %}
 
@@ -1180,8 +1274,10 @@
 </div>
 {% endif %}
 
+{% if hijri_home or orthodox_home %}
+<div class="corners-row">
 {% if hijri_home %}
-<div class="idc-wrap">
+<div class="idc-wrap{% if not orthodox_home %} otc-full{% endif %}">
     <div class="idc-head">
         <span class="idc-arabic-sub">الزاوية الإسلامية</span>
         <h2>🕌 Islamic Corner</h2>
@@ -1307,81 +1403,93 @@
 {% endif %}
 
 {% if orthodox_home %}
-<div class="otc-wrap">
+<div class="otc-wrap{% if not hijri_home %} otc-full{% endif %}">
     <div class="otc-head">
         <span class="otc-amharic-sub">የኦርቶዶክስ ተዋህዶ ጥግ</span>
         <h2>☦️ Orthodox Tewahedo Corner</h2>
         <p>Ethiopian calendar, daily saints, feasts & fasting — for our Orthodox Tewahedo customers</p>
     </div>
 
-    <div class="otc-grid">
+    <div class="otc-slider-outer" id="otc-slider-outer">
+        <button class="otc-slider-arr left" onclick="otcNav(-1)">&#8249;</button>
+        <button class="otc-slider-arr right" onclick="otcNav(1)">&#8250;</button>
 
-        <div class="otc-card">
-            <div class="otc-card-head">
-                <div class="otc-card-icon">📅</div>
-                <span class="otc-card-lbl">Ethiopian Date</span>
+        <div class="otc-slider-track" id="otc-track">
+
+            <div class="otc-card">
+                <div class="otc-card-head">
+                    <div class="otc-card-icon">📅</div>
+                    <span class="otc-card-lbl">Ethiopian Date</span>
+                </div>
+                <div class="otc-date-body">
+                    <div class="otc-eth-day">{{ orthodox_home.eth_day }}</div>
+                    <div class="otc-eth-month">{{ orthodox_home.eth_month_name }}</div>
+                    <div class="otc-eth-year">{{ orthodox_home.eth_year }} ዓ.ም — {{ orthodox_home.eth_day_name }}</div>
+                </div>
+                <a href="{{ url_for('orthodox.orthodox_home') }}#calendar" class="otc-card-link">
+                    Full Ethiopian Calendar →
+                </a>
             </div>
-            <div class="otc-date-body">
-                <div class="otc-eth-day">{{ orthodox_home.eth_day }}</div>
-                <div class="otc-eth-month">{{ orthodox_home.eth_month_name }}</div>
-                <div class="otc-eth-year">{{ orthodox_home.eth_year }} ዓ.ም — {{ orthodox_home.eth_day_name }}</div>
+
+            <div class="otc-card">
+                <div class="otc-card-head">
+                    <div class="otc-card-icon">✝️</div>
+                    <span class="otc-card-lbl">Feast of the Day</span>
+                </div>
+                <div class="otc-feast-body">
+                    {% if orthodox_home.annual_feast %}
+                    <div class="otc-feast-name">{{ orthodox_home.annual_feast.icon }} {{ orthodox_home.annual_feast.name }}</div>
+                    {% else %}
+                    <div class="otc-feast-empty">No major feast today</div>
+                    {% endif %}
+                </div>
+                <a href="{{ url_for('orthodox.orthodox_home') }}#feasts" class="otc-card-link">
+                    All Annual Feasts →
+                </a>
             </div>
-            <a href="{{ url_for('orthodox.orthodox_home') }}#calendar" class="otc-card-link">
-                Full Ethiopian Calendar →
-            </a>
+
+            <div class="otc-card">
+                <div class="otc-card-head">
+                    <div class="otc-card-icon">📖</div>
+                    <span class="otc-card-lbl">Saint of the Day</span>
+                </div>
+                <div class="otc-saint-body">
+                    {% if orthodox_home.day_saints %}
+                    <div class="otc-saint-name">{{ orthodox_home.day_saints.name if orthodox_home.day_saints.name is defined else orthodox_home.day_saints }}</div>
+                    {% else %}
+                    <div class="otc-feast-empty">—</div>
+                    {% endif %}
+                </div>
+                <a href="{{ url_for('orthodox.orthodox_home') }}#saints" class="otc-card-link">
+                    Synaxarium →
+                </a>
+            </div>
+
+            <div class="otc-card">
+                <div class="otc-card-head">
+                    <div class="otc-card-icon">🍽️</div>
+                    <span class="otc-card-lbl">Fasting Status</span>
+                </div>
+                <div class="otc-fast-body">
+                    {% if orthodox_home.fasting %}
+                    <div class="otc-fast-status">{{ orthodox_home.fasting }}</div>
+                    {% else %}
+                    <div class="otc-fast-none">Not a fasting day</div>
+                    {% endif %}
+                </div>
+                <a href="{{ url_for('orthodox.orthodox_home') }}#fasting" class="otc-card-link">
+                    Fasting Calendar →
+                </a>
+            </div>
+
         </div>
+    </div>
 
-        <div class="otc-card">
-            <div class="otc-card-head">
-                <div class="otc-card-icon">✝️</div>
-                <span class="otc-card-lbl">Feast of the Day</span>
-            </div>
-            <div class="otc-feast-body">
-                {% if orthodox_home.annual_feast %}
-                <div class="otc-feast-name">{{ orthodox_home.annual_feast.icon }} {{ orthodox_home.annual_feast.name }}</div>
-                {% else %}
-                <div class="otc-feast-empty">No major feast today</div>
-                {% endif %}
-            </div>
-            <a href="{{ url_for('orthodox.orthodox_home') }}#feasts" class="otc-card-link">
-                All Annual Feasts →
-            </a>
-        </div>
-
-        <div class="otc-card">
-            <div class="otc-card-head">
-                <div class="otc-card-icon">📖</div>
-                <span class="otc-card-lbl">Saint of the Day</span>
-            </div>
-            <div class="otc-saint-body">
-                {% if orthodox_home.day_saints %}
-                <div class="otc-saint-name">{{ orthodox_home.day_saints.name if orthodox_home.day_saints.name is defined else orthodox_home.day_saints }}</div>
-                {% else %}
-                <div class="otc-feast-empty">—</div>
-                {% endif %}
-            </div>
-            <a href="{{ url_for('orthodox.orthodox_home') }}#saints" class="otc-card-link">
-                Synaxarium →
-            </a>
-        </div>
-
-        <div class="otc-card">
-            <div class="otc-card-head">
-                <div class="otc-card-icon">🍽️</div>
-                <span class="otc-card-lbl">Fasting Status</span>
-            </div>
-            <div class="otc-fast-body">
-                {% if orthodox_home.fasting %}
-                <div class="otc-fast-status">{{ orthodox_home.fasting }}</div>
-                {% else %}
-                <div class="otc-fast-none">Not a fasting day</div>
-                {% endif %}
-            </div>
-            <a href="{{ url_for('orthodox.orthodox_home') }}#fasting" class="otc-card-link">
-                Fasting Calendar →
-            </a>
-        </div>
-
+    <div class="otc-slider-dots" id="otc-dots">
+        <div class="otc-slider-dot on" onclick="otcGoTo(0)"></div>
+        <div class="otc-slider-dot" onclick="otcGoTo(1)"></div>
+        <div class="otc-slider-dot" onclick="otcGoTo(2)"></div>
+        <div class="otc-slider-dot" onclick="otcGoTo(3)"></div>
     </div>
 
     <div class="otc-cta">
@@ -1389,6 +1497,8 @@
             ☦️ Open Full Orthodox Corner
         </a>
     </div>
+</div>
+{% endif %}
 </div>
 {% endif %}
 
@@ -1545,6 +1655,37 @@ function hscrollNav(trackId, dir) {
         outer.addEventListener('touchend', function(e){
             var dx = tsx - e.changedTouches[0].clientX;
             if (Math.abs(dx) > 40) { clearInterval(idcTimer); idcGoTo(idcIdx + (dx > 0 ? 1 : -1)); idcTimer = setInterval(function(){ idcGoTo(idcIdx + 1); }, 3500); }
+        }, {passive:true});
+    });
+})();
+
+/* ══ ORTHODOX TEWAHEDO CORNER SLIDER (mirrors Islamic Corner slider) ══ */
+(function() {
+    var otcIdx = 0;
+    var otcTotal = 4;
+    var otcTimer;
+    function otcGoTo(n) {
+        otcIdx = (n + otcTotal) % otcTotal;
+        var track = document.getElementById('otc-track');
+        if (track) track.style.transform = 'translateX(-' + (otcIdx * 100) + '%)';
+        var dots = document.querySelectorAll('.otc-slider-dot');
+        dots.forEach(function(d, i) { d.classList.toggle('on', i === otcIdx); });
+    }
+    window.otcGoTo = otcGoTo;
+    window.otcNav = function(dir) {
+        clearInterval(otcTimer);
+        otcGoTo(otcIdx + dir);
+        otcTimer = setInterval(function(){ otcGoTo(otcIdx + 1); }, 3500);
+    };
+    document.addEventListener('DOMContentLoaded', function() {
+        var outer = document.getElementById('otc-slider-outer');
+        if (!outer) return;
+        otcTimer = setInterval(function(){ otcGoTo(otcIdx + 1); }, 3500);
+        var tsx = 0;
+        outer.addEventListener('touchstart', function(e){ tsx = e.touches[0].clientX; }, {passive:true});
+        outer.addEventListener('touchend', function(e){
+            var dx = tsx - e.changedTouches[0].clientX;
+            if (Math.abs(dx) > 40) { clearInterval(otcTimer); otcGoTo(otcIdx + (dx > 0 ? 1 : -1)); otcTimer = setInterval(function(){ otcGoTo(otcIdx + 1); }, 3500); }
         }, {passive:true});
     });
 })();
