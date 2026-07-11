@@ -485,46 +485,90 @@ def daily_content():
         return jsonify({'success': False}), 500
 
 
-# ── Quran Tafsir Library ─────────────────────────────────────────────────────
+# ── Quran Bilingual (Arabic + Amharic) per Surah ────────────────────────────
 
-@islamic_bp.route('/api/quran/tafsir')
-def quran_tafsir_library():
-    """Return all Amharic Quran tafsir entries for the library browser."""
-    try:
-        from database.islamic_data import QURAN_AMHARIC
-        entries = []
-        for i, entry in enumerate(QURAN_AMHARIC):
-            ref = entry.get('ref', '')
-            surah_num = None
-            try:
-                # Refs are like "ዐለቅ 96:1" — extract surah number
-                parts = ref.strip().split()
-                if parts:
-                    ch_v = parts[-1]
-                    surah_num = int(ch_v.split(':')[0])
-            except Exception:
-                pass
-            entries.append({
-                'index':     i,
-                'ar':        entry.get('ar', ''),
-                'am':        entry.get('am', ''),
-                'ref':       ref,
-                'tafsir':    entry.get('tafsir', ''),
-                'surah_num': surah_num,
-            })
-        return jsonify({'success': True, 'entries': entries, 'total': len(entries)})
-    except Exception:
-        current_app.logger.error("quran-tafsir error", exc_info=True)
-        return jsonify({'success': False}), 500
+@islamic_bp.route('/api/quran/surah/<int:surah_num>/bilingual')
+def quran_surah_bilingual(surah_num):
+    """Return every ayah with Arabic text + Amharic translation side-by-side."""
+    if surah_num < 1 or surah_num > 114:
+        return jsonify({'success': False, 'error': 'Surah must be 1–114'}), 400
+    meta = next((s for s in SURAHS if s[0] == surah_num), None)
+    if not meta:
+        return jsonify({'success': False, 'error': 'Surah not found'}), 404
+    num, arabic_name, transliteration, meaning, total_ayahs, revelation = meta
+
+    arabic_ayahs = []
+    quran_data = _load_quran_data()
+    if quran_data:
+        try:
+            verses_list = None
+            if isinstance(quran_data, list) and surah_num <= len(quran_data):
+                entry = quran_data[surah_num - 1]
+                verses_list = entry if isinstance(entry, list) else (
+                    entry.get('verses') or entry.get('ayahs') or [] if isinstance(entry, dict) else [])
+            elif isinstance(quran_data, dict):
+                entry = quran_data.get(surah_num) or quran_data.get(str(surah_num))
+                if entry is not None:
+                    verses_list = entry if isinstance(entry, list) else (
+                        entry.get('verses') or entry.get('ayahs') or [])
+            for i, v in enumerate(verses_list or [], 1):
+                text = (v.get('text') or v.get('arabic') or v.get('ar') or ''
+                        if isinstance(v, dict) else str(v))
+                arabic_ayahs.append({'number': i, 'text': text})
+        except Exception:
+            pass
+
+    from database.quran_amharic_loader import get_surah_amharic
+    amharic_ayahs = get_surah_amharic(surah_num) or []
+    amharic_by_num = {a['number']: a['text'] for a in amharic_ayahs}
+
+    bilingual = []
+    for a in arabic_ayahs:
+        bilingual.append({
+            'number':  a['number'],
+            'arabic':  a['text'],
+            'amharic': amharic_by_num.get(a['number'], ''),
+        })
+    if not bilingual:
+        bilingual = [{'number': a['number'], 'arabic': '', 'amharic': a['text']}
+                     for a in amharic_ayahs]
+
+    return jsonify({
+        'success':         True,
+        'number':          num,
+        'arabic_name':     arabic_name,
+        'transliteration': transliteration,
+        'meaning':         meaning,
+        'total_ayahs':     total_ayahs,
+        'revelation_type': revelation,
+        'ayahs':           bilingual,
+        'has_arabic':      len(arabic_ayahs) > 0,
+        'has_amharic':     len(amharic_ayahs) > 0,
+    })
 
 
 # ── Hadith Collections Library ───────────────────────────────────────────────
 
 @islamic_bp.route('/api/hadith/collections')
 def hadith_collections_api():
-    """Return metadata for all hadith collections (no hadiths list)."""
+    """Return metadata for all hadith collections."""
     try:
-        meta = get_collections_meta()
+        from database.hadith_downloader import is_cached as ext_cached
+        raw_meta = get_collections_meta()
+        meta = []
+        for c in raw_meta:
+            col_id = c['id']
+            ext_ids = ('bukhari', 'muslim')
+            if col_id in ext_ids:
+                if ext_cached(col_id):
+                    from database.hadith_downloader import get_extended_collection
+                    data = get_extended_collection(col_id)
+                    total = len(data) if data else c['total']
+                else:
+                    total = {'bukhari': 7589, 'muslim': 7563}.get(col_id, c['total'])
+                meta.append({**c, 'total': total, 'is_extended': True})
+            else:
+                meta.append({**c, 'is_extended': False})
         return jsonify({'success': True, 'collections': meta})
     except Exception:
         current_app.logger.error("hadith-collections error", exc_info=True)
@@ -533,12 +577,64 @@ def hadith_collections_api():
 
 @islamic_bp.route('/api/hadith/collection/<collection_id>')
 def hadith_collection_detail(collection_id):
-    """Return all hadiths in a specific collection."""
+    """Return paginated hadiths for a collection (full extended for Bukhari/Muslim/Nawawi40)."""
     try:
+        page     = max(1, int(request.args.get('page', 1)))
+        per_page = min(max(10, int(request.args.get('per_page', 50))), 100)
+
+        EXT_IDS = ('bukhari', 'muslim')
+
+        if collection_id in EXT_IDS:
+            from database.hadith_downloader import get_extended_collection, is_cached
+            ext = get_extended_collection(collection_id)
+            if ext is not None:
+                col_meta = get_collection(collection_id) or {}
+                total      = len(ext)
+                total_pgs  = math.ceil(total / per_page)
+                start      = (page - 1) * per_page
+                slice_     = ext[start:start + per_page]
+                return jsonify({
+                    'success':      True,
+                    'collection': {
+                        'id':          collection_id,
+                        'name':        col_meta.get('name', collection_id),
+                        'name_am':     col_meta.get('name_am', ''),
+                        'author_am':   col_meta.get('author_am', ''),
+                        'icon':        col_meta.get('icon', '📚'),
+                        'total':       total,
+                    },
+                    'hadiths':      slice_,
+                    'page':         page,
+                    'per_page':     per_page,
+                    'total':        total,
+                    'total_pages':  total_pgs,
+                    'is_extended':  True,
+                })
+
         col = get_collection(collection_id)
         if not col:
             return jsonify({'success': False, 'error': 'Collection not found'}), 404
-        return jsonify({'success': True, 'collection': col})
+        hadiths    = col.get('hadiths', [])
+        total      = len(hadiths)
+        total_pgs  = math.ceil(total / per_page) if total else 1
+        start      = (page - 1) * per_page
+        return jsonify({
+            'success':     True,
+            'collection': {
+                'id':        col['id'],
+                'name':      col['name'],
+                'name_am':   col.get('name_am', ''),
+                'author_am': col.get('author_am', ''),
+                'icon':      col.get('icon', '📚'),
+                'total':     total,
+            },
+            'hadiths':     hadiths[start:start + per_page],
+            'page':        page,
+            'per_page':    per_page,
+            'total':       total,
+            'total_pages': total_pgs,
+            'is_extended': False,
+        })
     except Exception:
         current_app.logger.error("hadith-collection error", exc_info=True)
         return jsonify({'success': False}), 500

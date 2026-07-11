@@ -21954,3 +21954,4 @@ TypeError: 'str' object is not callable
 2026-07-10 14:27:32,911 - app - WARNING - 404 Error: http://dbb41360-544e-4226-b9b9-5c05cf286af3-00-2wgb9n2benpeu.riker.replit.dev/product/uploads/products/baby_dress.jpg
 2026-07-11 06:47:11,489 - app - WARNING - 404 Error: http://localhost:5000/api/quran/tafsir
 2026-07-11 06:47:13,668 - app - WARNING - 404 Error: http://localhost:5000/api/hadith/collections
+2026-07-11 07:08:20,115 - app - WARNING - 404 Error: http://localhost:5000/api/quran/surah/1/bilingual
