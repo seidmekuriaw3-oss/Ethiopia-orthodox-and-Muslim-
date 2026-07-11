@@ -383,10 +383,10 @@ HADITH_COLLECTIONS = [
     # ── 2. Sahih al-Bukhari Selected ────────────────────────────────────────
     {
         "id": "bukhari",
-        "name": "Sahih al-Bukhari (Selected)",
-        "name_am": "ሶሒሕ አልቡኻሪ — የተመረጡ",
+        "name": "Sahih al-Bukhari (Complete)",
+        "name_am": "ሶሒሕ አልቡኻሪ — ሙሉ",
         "author_am": "ኢማም ቡኻሪ (ረ.ዐ)",
-        "description_am": "ኢማም ቡኻሪ (ረ.ዐ) ያሰባሰቧቸው ከሙስሊሞች ሁሉ ቁልፍ ምዕራፎቻቸው የተለዩ ሐዲሶች።",
+        "description_am": "ኢማም ቡኻሪ (ረ.ዐ) ያሰባሰቧቸው ሙሉ ሶሒሕ አልቡኻሪ — በዐረብኛና በእንግሊዝኛ፣ በተመረጡ ሐዲሶች ላይ አማርኛ ትርጉምም ተያይዟል። (ከመጀመሪያው ጭነት በኋላ በራስ-ሰር ይወርዳል።)",
         "icon": "📖",
         "total": 25,
         "hadiths": [
@@ -571,10 +571,10 @@ HADITH_COLLECTIONS = [
     # ── 3. Sahih Muslim Selected ────────────────────────────────────────────
     {
         "id": "muslim",
-        "name": "Sahih Muslim (Selected)",
-        "name_am": "ሶሒሕ ሙስሊም — የተመረጡ",
+        "name": "Sahih Muslim (Complete)",
+        "name_am": "ሶሒሕ ሙስሊም — ሙሉ",
         "author_am": "ኢማም ሙስሊም ኢብን አልሐጃጅ (ረ.ዐ)",
-        "description_am": "ኢማም ሙስሊም (ረ.ዐ) ያሰባሰቧቸው ጠቃሚ ሐዲሶቻቸው ከሶሒሕ ሙስሊም።",
+        "description_am": "ኢማም ሙስሊም (ረ.ዐ) ያሰባሰቧቸው ሙሉ ሶሒሕ ሙስሊም — በዐረብኛና በእንግሊዝኛ፣ በተመረጡ ሐዲሶች ላይ አማርኛ ትርጉምም ተያይዟል። (ከመጀመሪያው ጭነት በኋላ በራስ-ሰር ይወርዳል።)",
         "icon": "🌟",
         "total": 20,
         "hadiths": [

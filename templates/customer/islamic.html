@@ -811,7 +811,9 @@
     background:rgba(201,168,76,.05);border:1px solid rgba(201,168,76,.12);
     border-radius:10px;padding:10px 12px;margin-bottom:10px;
 }
-.hlib-am{font-size:14px;line-height:1.85;color:#d4c99a;margin-bottom:10px}
+.hlib-am{font-size:14px;line-height:1.85;color:#d4c99a;margin-bottom:10px;border-left:3px solid #3f7d5c;padding-left:10px}
+.hlib-no-text{color:#8a7a5a;font-style:italic;border-left-color:#6b5b3a}
+.hlib-am-auto{display:inline-block;margin-left:8px;font-size:11px;font-style:italic;color:#8a9a8a;opacity:.75;vertical-align:middle}
 .hlib-meta{
     display:flex;flex-wrap:wrap;align-items:center;gap:7px;
     border-top:1px solid rgba(255,255,255,.05);padding-top:10px;
@@ -2475,7 +2477,7 @@ function bilRenderGrid(surahs) {
         <div class="surah-card" onclick="bilOpenSurah(${s.number})">
             <div class="sc-num">${s.number}</div>
             <div class="sc-body">
-                <div class="sc-arabic">${s.arabic}</div>
+                <div class="sc-arabic">${s.arabic_name}</div>
                 <div class="sc-latin">${s.transliteration}</div>
                 <div class="sc-meta">${s.total_ayahs} Ayahs · ${s.revelation_type}</div>
             </div>
@@ -2488,7 +2490,7 @@ function bilFilter(q) {
         ? _bilAllSurahs.filter(s =>
             String(s.number).includes(q) ||
             s.transliteration.toLowerCase().includes(q) ||
-            s.arabic.includes(q) ||
+            s.arabic_name.includes(q) ||
             (s.meaning && s.meaning.toLowerCase().includes(q)))
         : _bilAllSurahs;
     bilRenderGrid(_bilFiltered);
@@ -2717,11 +2719,16 @@ function hlibRenderPage(hadiths) {
         /* Local collection:    has text_am + arabic + narrator + source + grade */
         const arabicHtml = h.arabic
             ? `<div class="hlib-arabic">${h.arabic}</div>` : '';
-        const bodyHtml = h.text_am
-            ? `<div class="hlib-am">${h.text_am}</div>`
-            : (h.text_en
-                ? `<div class="hlib-en">${h.text_en}</div>`
-                : '');
+        /* English body (extended collections) or local Amharic-only body,
+           followed by the Amharic translation directly underneath when
+           available — never both hidden, never a blank card. */
+        const englishHtml = h.text_en
+            ? `<div class="hlib-en">${h.text_en}</div>` : '';
+        const amharicHtml = h.text_am
+            ? `<div class="hlib-am">🇪🇹 ${h.text_am}${h.am_auto ? '<span class="hlib-am-auto">🤖 በማሽን የተተረጎመ</span>' : ''}</div>` : '';
+        const bodyHtml = (englishHtml || amharicHtml)
+            ? englishHtml + amharicHtml
+            : `<div class="hlib-en hlib-no-text">⚠️ Text unavailable for this entry.</div>`;
         const chapterHtml = h.chapter_am
             ? `<div class="hlib-chapter">${h.chapter_am}</div>` : '';
         const gradeVal  = h.grade || (h.grades && h.grades[0] && h.grades[0].grade) || '';
