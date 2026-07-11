@@ -664,6 +664,183 @@
 .dtab-narrator{
     font-style:italic;color:#9a8860;
 }
+
+/* ── Tafsir Library ────────────────────────────────── */
+.tlib-wrap{max-width:640px;margin:0 auto}
+.tlib-search{
+    display:flex;align-items:center;gap:8px;
+    background:rgba(255,255,255,.06);border:1px solid var(--iborder);
+    border-radius:13px;padding:10px 14px;margin-bottom:14px;
+}
+.tlib-search input{flex:1;background:transparent;border:none;outline:none;color:#e8dfc8;font-size:14px}
+.tlib-search input::placeholder{color:#7a6a50}
+.tlib-search .ts-icon{font-size:16px;color:#9a8060;flex-shrink:0}
+.tlib-count{font-size:11px;color:#7a6a50;text-align:right;margin-bottom:10px;padding-right:2px}
+
+.tlib-grid{display:flex;flex-direction:column;gap:12px;padding-bottom:80px}
+.tlib-card{
+    background:var(--ipanel);border:1px solid var(--iborder);
+    border-radius:16px;padding:0;overflow:hidden;
+    backdrop-filter:blur(10px);cursor:pointer;transition:border-color .2s;
+}
+.tlib-card:hover{border-color:var(--igold)}
+.tlib-card-head{
+    display:flex;align-items:center;gap:10px;
+    padding:14px 16px 12px;
+}
+.tlib-num{
+    width:32px;height:32px;border-radius:50%;flex-shrink:0;
+    background:linear-gradient(135deg,var(--ig),var(--ig2));
+    border:1px solid var(--igold);
+    display:flex;align-items:center;justify-content:center;
+    font-size:10px;font-weight:700;color:var(--igold);
+}
+.tlib-ref-pill{
+    font-size:11px;font-weight:700;color:var(--igold);
+    background:rgba(201,168,76,.10);border:1px solid rgba(201,168,76,.25);
+    border-radius:20px;padding:3px 10px;flex-shrink:0;
+}
+.tlib-am-preview{flex:1;min-width:0;font-size:13px;color:#b8a870;
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tlib-expand-arrow{font-size:12px;color:#7a6a50;flex-shrink:0;transition:transform .25s}
+.tlib-card.open .tlib-expand-arrow{transform:rotate(180deg)}
+
+.tlib-card-body{
+    display:none;
+    padding:0 16px 16px;
+    border-top:1px solid var(--iborder);
+    animation:fadeInDown .2s ease;
+}
+.tlib-card.open .tlib-card-body{display:block}
+@keyframes fadeInDown{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
+
+.tlib-arabic{
+    font-family:'Amiri',serif;
+    font-size:clamp(22px,5vw,30px);
+    color:#f0e8d0;line-height:2;
+    direction:rtl;text-align:right;
+    background:rgba(201,168,76,.06);border:1px solid rgba(201,168,76,.15);
+    border-radius:10px;padding:12px 14px;margin:12px 0 10px;
+}
+.tlib-label{font-size:9px;text-transform:uppercase;letter-spacing:1.8px;color:var(--igold);font-weight:700;margin-bottom:5px}
+.tlib-am-text{font-size:14px;line-height:1.9;color:#d4c99a;margin-bottom:8px}
+.tlib-tafsir-text{
+    font-size:13px;color:#b8a870;line-height:1.8;
+    background:rgba(255,255,255,.03);
+    border-left:3px solid var(--igold);
+    padding:8px 12px;border-radius:0 9px 9px 0;
+}
+
+/* ── Hadith Library ────────────────────────────────── */
+.hlib-wrap{max-width:640px;margin:0 auto;padding-bottom:80px}
+
+.hcol-dashboard{display:block}
+.hcol-dashboard.hidden{display:none}
+.hcol-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
+.hcol-card{
+    background:var(--ipanel);border:1px solid var(--iborder);
+    border-radius:18px;padding:20px 18px;cursor:pointer;
+    transition:all .22s;backdrop-filter:blur(10px);
+    display:flex;flex-direction:column;gap:10px;
+}
+.hcol-card:hover{border-color:var(--igold);transform:translateY(-2px);box-shadow:0 4px 22px rgba(201,168,76,.14)}
+.hcol-icon-wrap{
+    width:52px;height:52px;border-radius:14px;flex-shrink:0;
+    background:linear-gradient(135deg,var(--ig),var(--ig2));
+    border:1px solid var(--igold);
+    display:flex;align-items:center;justify-content:center;
+    font-size:26px;box-shadow:0 0 12px rgba(26,122,74,.3);
+}
+.hcol-name{font-size:15px;font-weight:700;color:#e8dfc8}
+.hcol-name-am{font-size:12px;color:var(--igold);margin-top:1px}
+.hcol-desc{font-size:12px;color:#9a8860;line-height:1.6}
+.hcol-footer{
+    display:flex;align-items:center;justify-content:space-between;
+    border-top:1px solid var(--iborder);padding-top:10px;margin-top:4px;
+}
+.hcol-count{
+    font-size:11px;font-weight:700;color:#6ee7a0;
+    background:rgba(26,122,74,.18);border:1px solid rgba(26,122,74,.3);
+    border-radius:20px;padding:2px 10px;
+}
+.hcol-open-btn{font-size:11px;color:var(--igold);font-weight:600;letter-spacing:.5px}
+
+.hcol-detail{display:none}
+.hcol-detail.visible{display:block}
+.hcol-detail-header{
+    display:flex;align-items:center;gap:10px;
+    background:var(--ipanel);border:1px solid var(--iborder);
+    border-radius:16px;padding:14px 16px;margin-bottom:12px;
+    backdrop-filter:blur(10px);
+}
+.hcol-back-btn{
+    background:rgba(255,255,255,.08);border:1px solid var(--iborder);
+    border-radius:9px;color:var(--igold);font-size:13px;font-weight:700;
+    padding:7px 13px;cursor:pointer;flex-shrink:0;transition:.2s;white-space:nowrap;
+}
+.hcol-back-btn:hover{background:rgba(201,168,76,.15)}
+.hcol-detail-title{flex:1;min-width:0}
+.hcol-detail-name{font-size:16px;font-weight:700;color:#e8dfc8}
+.hcol-detail-sub{font-size:11px;color:#9a8060;margin-top:2px}
+
+.hlib-search-wrap{
+    display:flex;align-items:center;gap:8px;
+    background:rgba(255,255,255,.06);border:1px solid var(--iborder);
+    border-radius:13px;padding:9px 13px;margin-bottom:12px;
+}
+.hlib-search-wrap input{flex:1;background:transparent;border:none;outline:none;color:#e8dfc8;font-size:13px}
+.hlib-search-wrap input::placeholder{color:#7a6a50}
+
+.hlib-hadith-list{display:flex;flex-direction:column;gap:12px}
+.hlib-hadith-item{
+    background:var(--ipanel);border:1px solid var(--iborder);
+    border-radius:16px;padding:18px 16px;backdrop-filter:blur(8px);
+    transition:border-color .2s;
+}
+.hlib-hadith-item:hover{border-color:rgba(201,168,76,.4)}
+.hlib-hadith-num{
+    display:inline-flex;align-items:center;justify-content:center;
+    width:28px;height:28px;border-radius:50%;
+    background:linear-gradient(135deg,var(--ig),var(--ig2));
+    border:1px solid var(--igold);
+    font-size:10px;font-weight:700;color:var(--igold);
+    float:right;margin-left:10px;margin-bottom:6px;flex-shrink:0;
+}
+.hlib-chapter{font-size:11px;font-weight:700;color:var(--igold);
+    text-transform:uppercase;letter-spacing:1px;margin-bottom:8px}
+.hlib-arabic{
+    font-family:'Amiri',serif;
+    font-size:clamp(18px,4.5vw,24px);
+    color:#f0e8d0;line-height:1.9;
+    direction:rtl;text-align:right;
+    background:rgba(201,168,76,.05);border:1px solid rgba(201,168,76,.12);
+    border-radius:10px;padding:10px 12px;margin-bottom:10px;
+}
+.hlib-am{font-size:14px;line-height:1.85;color:#d4c99a;margin-bottom:10px}
+.hlib-meta{
+    display:flex;flex-wrap:wrap;align-items:center;gap:7px;
+    border-top:1px solid rgba(255,255,255,.05);padding-top:10px;
+}
+.hlib-source-badge{
+    font-size:11px;font-weight:700;color:#d4c99a;
+    background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);
+    border-radius:20px;padding:3px 10px;
+}
+.hlib-grade-badge{
+    font-size:11px;font-weight:700;color:#6ee7a0;
+    background:rgba(26,122,74,.18);border:1px solid rgba(26,122,74,.3);
+    border-radius:20px;padding:3px 10px;
+}
+.hlib-narrator{font-size:11px;color:#7a6a50;font-style:italic}
+.hlib-empty{text-align:center;padding:32px 20px;color:#7a6a50;font-size:13px}
+.hlib-total-badge{
+    text-align:right;font-size:11px;color:#7a6a50;margin-bottom:10px;padding-right:2px;
+}
+
+@media(max-width:480px){
+    .hcol-grid{grid-template-columns:1fr}
+    .tlib-arabic{font-size:20px}
+}
 </style>
 {% endblock %}
 
@@ -887,63 +1064,51 @@
     </div>
 </div>
 
-<!-- ── Quran Tafsir tab panel ─────────────────────────────────── -->
+<!-- ── Quran Tafsir Library tab ────────────────────────────────── -->
 <div id="tab-tafsir" class="tab-panel">
-    <div class="dtab-card">
-        <div class="dtab-header">
-            <div class="dtab-icon">🌿</div>
-            <div>
-                <div class="dtab-title">Quran Tafsir</div>
-                <div class="dtab-subtitle">የዕለቱ ቁርኣን — አማርኛ ትርጉምና ተፍሲር</div>
-            </div>
+    <div class="tlib-wrap">
+        <div class="tlib-search">
+            <span class="ts-icon">🔍</span>
+            <input type="text" id="tlib-search-input" placeholder="ፈልግ — ሱራ፣ ማጣቀሻ ወይም ጽሑፍ…" autocomplete="off" oninput="tlibFilter(this.value)">
         </div>
-
-        <div class="dtab-arabic">{{ quran_daily.ar }}</div>
-
-        <div class="dtab-section-label">🇪🇹 የአማርኛ ትርጉም</div>
-        <div class="dtab-body">{{ quran_daily.am }}</div>
-
-        {% if quran_daily.tafsir %}
-        <div class="dtab-section-label">📚 ተፍሲር (ማብራሪያ)</div>
-        <div class="dtab-body dtab-tafsir">{{ quran_daily.tafsir }}</div>
-        {% endif %}
-
-        <div class="dtab-ref-pill">
-            <span>📖</span>
-            <span>{{ quran_daily.ref }}</span>
+        <div class="tlib-count" id="tlib-count"></div>
+        <div class="tlib-grid" id="tlib-grid">
+            <div class="ayah-loading">📚 ትርጉሞችን በመጫን ላይ…</div>
         </div>
     </div>
 </div>
 
-<!-- ── Authentic Hadith tab panel ─────────────────────────────── -->
+<!-- ── Authentic Hadith Library tab ───────────────────────────── -->
 <div id="tab-hadith" class="tab-panel">
-    <div class="dtab-card">
-        <div class="dtab-header">
-            <div class="dtab-icon">🕌</div>
-            <div>
-                <div class="dtab-title">Authentic Hadith</div>
-                <div class="dtab-subtitle">ትክክለኛ ሐዲሶች — ዕለታዊ ትምህርት</div>
+    <div class="hlib-wrap">
+        <!-- Collection dashboard -->
+        <div class="hcol-dashboard" id="hcol-dashboard">
+            <div style="text-align:center;padding:10px 0 18px">
+                <div style="font-size:22px;font-weight:700;color:var(--igold);letter-spacing:1px">📚 ሐዲስ ቤተ-መጻሕፍት</div>
+                <div style="font-size:12px;color:#9a8060;margin-top:4px">ትክክለኛ ሐዲሶች — አማርኛ ትርጉም</div>
+            </div>
+            <div class="hcol-grid" id="hcol-grid">
+                <div class="ayah-loading">📖 ስብስቦችን በመጫን ላይ…</div>
             </div>
         </div>
 
-        <div class="dtab-section-label">🇪🇹 የሐዲሱ ትርጉም</div>
-        <div class="dtab-body">{{ hadith_daily.text_am }}</div>
-
-        <div class="dtab-hadith-meta">
-            <div class="dtab-meta-row">
-                <span class="dtab-meta-label">📚 ምንጭ</span>
-                <span class="dtab-meta-val">{{ hadith_daily.source }}</span>
+        <!-- Collection detail view -->
+        <div class="hcol-detail" id="hcol-detail">
+            <div class="hcol-detail-header">
+                <button class="hcol-back-btn" onclick="hcolBack()">← ስብስቦች</button>
+                <div class="hcol-detail-title">
+                    <div class="hcol-detail-name" id="hcol-detail-name">—</div>
+                    <div class="hcol-detail-sub" id="hcol-detail-sub">—</div>
+                </div>
             </div>
-            <div class="dtab-meta-row">
-                <span class="dtab-meta-label">✅ ደረጃ</span>
-                <span class="dtab-grade-badge">{{ hadith_daily.grade }}</span>
+            <div class="hlib-search-wrap">
+                <span style="font-size:15px;color:#9a8060">🔍</span>
+                <input type="text" id="hlib-search-input" placeholder="ሐዲስ ፈልግ…" autocomplete="off" oninput="hlibFilter(this.value)">
             </div>
-            {% if hadith_daily.narrator %}
-            <div class="dtab-meta-row">
-                <span class="dtab-meta-label">🧑 ዘጋቢ</span>
-                <span class="dtab-meta-val dtab-narrator">{{ hadith_daily.narrator }}</span>
+            <div class="hlib-total-badge" id="hlib-total-badge"></div>
+            <div class="hlib-hadith-list" id="hlib-hadith-list">
+                <div class="ayah-loading">⏳ ሐዲሶችን በመጫን ላይ…</div>
             </div>
-            {% endif %}
         </div>
     </div>
 </div>
@@ -2222,10 +2387,209 @@ function qClosePlayer() {
     });
 })();
 
+/* ═══════════════════════════════════════════════════════════
+   QURAN TAFSIR LIBRARY
+   ═══════════════════════════════════════════════════════════ */
+
+let _tlibEntries   = [];
+let _tlibFiltered  = [];
+let _tlibLoaded    = false;
+
+function tlibLoad() {
+    if (_tlibLoaded) return;
+    fetch('/api/quran/tafsir')
+        .then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+        .then(data => {
+            if (!data.success) throw new Error('API error');
+            _tlibEntries  = data.entries;
+            _tlibFiltered = data.entries;
+            _tlibLoaded   = true;
+            document.getElementById('tlib-count').textContent =
+                data.total + ' ምርጥ ጥቅሶች ተፍሲር ጋር';
+            tlibRender(_tlibFiltered);
+        })
+        .catch(() => {
+            document.getElementById('tlib-grid').innerHTML =
+                '<div class="ayah-loading">⚠️ ትርጉሞቹ መጫን አልተቻለም።</div>';
+        });
+}
+
+function tlibRender(entries) {
+    const grid = document.getElementById('tlib-grid');
+    if (!entries.length) {
+        grid.innerHTML = '<div class="ayah-loading">ምንም ውጤት አልተገኘም።</div>';
+        return;
+    }
+    grid.innerHTML = entries.map((e, idx) => `
+        <div class="tlib-card" id="tcard-${e.index}" onclick="tlibToggle(${e.index})">
+            <div class="tlib-card-head">
+                <div class="tlib-num">${e.index + 1}</div>
+                <div class="tlib-ref-pill">📖 ${e.ref}</div>
+                <div class="tlib-am-preview">${e.am}</div>
+                <span class="tlib-expand-arrow">▼</span>
+            </div>
+            <div class="tlib-card-body">
+                <div class="tlib-arabic">${e.ar}</div>
+                <div class="tlib-label">🇪🇹 የአማርኛ ትርጉም</div>
+                <div class="tlib-am-text">${e.am}</div>
+                ${e.tafsir ? `<div class="tlib-label" style="margin-top:8px">📚 ተፍሲር (ማብራሪያ)</div>
+                <div class="tlib-tafsir-text">${e.tafsir}</div>` : ''}
+            </div>
+        </div>`).join('');
+}
+
+function tlibToggle(idx) {
+    const card = document.getElementById('tcard-' + idx);
+    if (!card) return;
+    card.classList.toggle('open');
+}
+
+function tlibFilter(q) {
+    q = q.trim().toLowerCase();
+    if (!q) {
+        _tlibFiltered = _tlibEntries;
+    } else {
+        _tlibFiltered = _tlibEntries.filter(e =>
+            e.am.toLowerCase().includes(q) ||
+            e.ref.toLowerCase().includes(q) ||
+            (e.tafsir && e.tafsir.toLowerCase().includes(q)) ||
+            e.ar.includes(q)
+        );
+    }
+    document.getElementById('tlib-count').textContent =
+        _tlibFiltered.length + ' / ' + _tlibEntries.length + ' ምርጥ ጥቅሶች';
+    tlibRender(_tlibFiltered);
+}
+
+
+/* ═══════════════════════════════════════════════════════════
+   HADITH COLLECTIONS LIBRARY
+   ═══════════════════════════════════════════════════════════ */
+
+let _hcolMeta       = [];
+let _hcolLoaded     = false;
+let _hcolCurrent    = null;   /* currently open collection object */
+let _hcolHadiths    = [];     /* all hadiths of open collection */
+let _hcolFiltered   = [];     /* after search filter */
+
+function hcolLoad() {
+    if (_hcolLoaded) return;
+    fetch('/api/hadith/collections')
+        .then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+        .then(data => {
+            if (!data.success) throw new Error('API error');
+            _hcolMeta   = data.collections;
+            _hcolLoaded = true;
+            hcolRenderDashboard(_hcolMeta);
+        })
+        .catch(() => {
+            document.getElementById('hcol-grid').innerHTML =
+                '<div class="ayah-loading">⚠️ ስብስቦቹ መጫን አልተቻለም።</div>';
+        });
+}
+
+function hcolRenderDashboard(cols) {
+    const grid = document.getElementById('hcol-grid');
+    grid.innerHTML = cols.map(c => `
+        <div class="hcol-card" onclick="hcolOpen('${c.id}')">
+            <div class="hcol-icon-wrap">${c.icon}</div>
+            <div>
+                <div class="hcol-name">${c.name}</div>
+                <div class="hcol-name-am">${c.name_am}</div>
+            </div>
+            <div class="hcol-desc">${c.description_am}</div>
+            <div class="hcol-footer">
+                <span class="hcol-count">📜 ${c.total} ሐዲሶች</span>
+                <span class="hcol-open-btn">ክፈት ›</span>
+            </div>
+        </div>`).join('');
+}
+
+function hcolOpen(collectionId) {
+    document.getElementById('hcol-dashboard').classList.add('hidden');
+    const detail = document.getElementById('hcol-detail');
+    detail.classList.add('visible');
+    document.getElementById('hlib-hadith-list').innerHTML =
+        '<div class="ayah-loading">⏳ ሐዲሶችን በመጫን ላይ…</div>';
+    document.getElementById('hlib-search-input').value = '';
+    document.getElementById('hlib-total-badge').textContent = '';
+
+    fetch('/api/hadith/collection/' + collectionId)
+        .then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+        .then(data => {
+            if (!data.success) throw new Error(data.error || 'Failed');
+            const col = data.collection;
+            _hcolCurrent  = col;
+            _hcolHadiths  = col.hadiths || [];
+            _hcolFiltered = _hcolHadiths;
+            document.getElementById('hcol-detail-name').textContent =
+                col.name + ' — ' + col.name_am;
+            document.getElementById('hcol-detail-sub').textContent =
+                col.author_am || '';
+            document.getElementById('hlib-total-badge').textContent =
+                _hcolHadiths.length + ' ሐዲሶች';
+            hlibRender(_hcolFiltered);
+        })
+        .catch(() => {
+            document.getElementById('hlib-hadith-list').innerHTML =
+                '<div class="ayah-loading">⚠️ ሐዲሶቹ መጫን አልተቻለም።</div>';
+        });
+}
+
+function hcolBack() {
+    document.getElementById('hcol-detail').classList.remove('visible');
+    document.getElementById('hcol-dashboard').classList.remove('hidden');
+    _hcolCurrent  = null;
+    _hcolHadiths  = [];
+    _hcolFiltered = [];
+}
+
+function hlibRender(hadiths) {
+    const list = document.getElementById('hlib-hadith-list');
+    if (!hadiths.length) {
+        list.innerHTML = '<div class="hlib-empty">ምንም ሐዲስ አልተገኘም።</div>';
+        return;
+    }
+    list.innerHTML = hadiths.map(h => `
+        <div class="hlib-hadith-item">
+            <div class="hlib-hadith-num">${h.number}</div>
+            ${h.chapter_am ? `<div class="hlib-chapter">${h.chapter_am}</div>` : ''}
+            <div class="hlib-arabic">${h.arabic}</div>
+            <div class="hlib-am">${h.text_am}</div>
+            <div class="hlib-meta">
+                <span class="hlib-source-badge">📚 ${h.source}</span>
+                <span class="hlib-grade-badge">✅ ${h.grade}</span>
+                ${h.narrator ? `<span class="hlib-narrator">— ${h.narrator}</span>` : ''}
+            </div>
+        </div>`).join('');
+}
+
+function hlibFilter(q) {
+    if (!_hcolHadiths.length) return;
+    q = q.trim().toLowerCase();
+    if (!q) {
+        _hcolFiltered = _hcolHadiths;
+    } else {
+        _hcolFiltered = _hcolHadiths.filter(h =>
+            h.text_am.toLowerCase().includes(q) ||
+            (h.arabic && h.arabic.includes(q)) ||
+            (h.chapter_am && h.chapter_am.toLowerCase().includes(q)) ||
+            (h.narrator && h.narrator.toLowerCase().includes(q)) ||
+            (h.source && h.source.toLowerCase().includes(q))
+        );
+    }
+    document.getElementById('hlib-total-badge').textContent =
+        _hcolFiltered.length + ' / ' + _hcolHadiths.length + ' ሐዲሶች';
+    hlibRender(_hcolFiltered);
+}
+
+
 const _origSwitchTab = switchTab;
 switchTab = function(name, btn) {
     _origSwitchTab(name, btn);
     if (name === 'quran' && !_qSurahs.length) qLoadSurahs();
+    if (name === 'tafsir' && !_tlibLoaded) tlibLoad();
+    if (name === 'hadith' && !_hcolLoaded) hcolLoad();
     if (name === 'qibla') {
         /* Init 2D compass canvas on first open */
         if (!_compassInited) {

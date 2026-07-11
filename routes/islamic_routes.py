@@ -483,3 +483,62 @@ def daily_content():
     except Exception:
         current_app.logger.error("daily-content error", exc_info=True)
         return jsonify({'success': False}), 500
+
+
+# ── Quran Tafsir Library ─────────────────────────────────────────────────────
+
+@islamic_bp.route('/api/quran/tafsir')
+def quran_tafsir_library():
+    """Return all Amharic Quran tafsir entries for the library browser."""
+    try:
+        from database.islamic_data import QURAN_AMHARIC
+        entries = []
+        for i, entry in enumerate(QURAN_AMHARIC):
+            ref = entry.get('ref', '')
+            surah_num = None
+            try:
+                # Refs are like "ዐለቅ 96:1" — extract surah number
+                parts = ref.strip().split()
+                if parts:
+                    ch_v = parts[-1]
+                    surah_num = int(ch_v.split(':')[0])
+            except Exception:
+                pass
+            entries.append({
+                'index':     i,
+                'ar':        entry.get('ar', ''),
+                'am':        entry.get('am', ''),
+                'ref':       ref,
+                'tafsir':    entry.get('tafsir', ''),
+                'surah_num': surah_num,
+            })
+        return jsonify({'success': True, 'entries': entries, 'total': len(entries)})
+    except Exception:
+        current_app.logger.error("quran-tafsir error", exc_info=True)
+        return jsonify({'success': False}), 500
+
+
+# ── Hadith Collections Library ───────────────────────────────────────────────
+
+@islamic_bp.route('/api/hadith/collections')
+def hadith_collections_api():
+    """Return metadata for all hadith collections (no hadiths list)."""
+    try:
+        meta = get_collections_meta()
+        return jsonify({'success': True, 'collections': meta})
+    except Exception:
+        current_app.logger.error("hadith-collections error", exc_info=True)
+        return jsonify({'success': False}), 500
+
+
+@islamic_bp.route('/api/hadith/collection/<collection_id>')
+def hadith_collection_detail(collection_id):
+    """Return all hadiths in a specific collection."""
+    try:
+        col = get_collection(collection_id)
+        if not col:
+            return jsonify({'success': False, 'error': 'Collection not found'}), 404
+        return jsonify({'success': True, 'collection': col})
+    except Exception:
+        current_app.logger.error("hadith-collection error", exc_info=True)
+        return jsonify({'success': False}), 500
