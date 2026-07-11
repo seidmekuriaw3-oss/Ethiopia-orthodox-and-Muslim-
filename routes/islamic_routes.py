@@ -15,6 +15,8 @@ except ImportError:
     _HAS_REQUESTS = False
 
 from database.quran_surahs import SURAHS, RECITERS
+from database.islamic_data import get_today_quran_amharic, get_today_hadith
+from database.hadith_collections import get_collection, get_collections_meta
 
 islamic_bp = Blueprint('islamic', __name__)
 
@@ -335,7 +337,9 @@ def islamic_suite():
         'year':  hy,
         'full':  f"{hd} {HIJRI_MONTHS[hm-1]} {hy} AH",
     }
-    holidays = _upcoming_holidays(10)
+    holidays     = _upcoming_holidays(10)
+    quran_daily  = get_today_quran_amharic()
+    hadith_daily = get_today_hadith()
     return render_template(
         'customer/islamic.html',
         lang=lang,
@@ -343,6 +347,8 @@ def islamic_suite():
         holidays=holidays,
         ramadan_active=ramadan_active,
         cities=ETHIOPIAN_CITIES,
+        quran_daily=quran_daily,
+        hadith_daily=hadith_daily,
     )
 
 
@@ -463,3 +469,17 @@ def prayer_schedule_csv():
     except Exception:
         current_app.logger.error("Traceback:", exc_info=True)
         return jsonify({'success': False, 'error': 'Export failed'}), 500
+
+
+# ── Daily rotating Islamic content (Amharic Quran + Hadith) ─────────────────
+
+@islamic_bp.route('/api/islamic/daily-content')
+def daily_content():
+    """Return today's Quran Amharic verse and Hadith for the home-page cards."""
+    try:
+        quran  = get_today_quran_amharic()
+        hadith = get_today_hadith()
+        return jsonify({'success': True, 'quran_am': quran, 'hadith': hadith})
+    except Exception:
+        current_app.logger.error("daily-content error", exc_info=True)
+        return jsonify({'success': False}), 500

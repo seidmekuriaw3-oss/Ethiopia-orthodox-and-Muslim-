@@ -605,6 +605,7 @@
         <div class="popup-day-title" id="popupTitle"></div>
         <div class="popup-saint-name" id="popupSaints"></div>
         <div class="popup-desc" id="popupDesc"></div>
+        <div id="popupFeasts" style="display:none;margin-top:6px;"></div>
       </div>
     </div>
 
@@ -819,6 +820,7 @@ const SAINTS_DATA = {
   {{ d }}: {
     icon:        {{ info.icon | tojson }},
     saints:      {{ info.saints | tojson }},
+    feasts:      {{ (info.feasts or []) | tojson }},
     description: {{ info.description | tojson }},
     major:       {{ 'true' if info.get('major') else 'false' }}
   }{% if not loop.last %},{% endif %}
@@ -850,6 +852,23 @@ function showDayPopup(day) {
     (info.icon || '✝️') + '  ቀን ' + day + (day === TODAY_ETH_DAY ? ' (ዛሬ)' : '');
   document.getElementById('popupSaints').textContent = (info.saints || []).join('  •  ');
   document.getElementById('popupDesc').textContent   = info.description || '';
+
+  // Render 44 Tabots feasts list
+  const feastsEl = document.getElementById('popupFeasts');
+  const feasts   = info.feasts || [];
+  if (feasts.length) {
+    feastsEl.innerHTML =
+      '<div style="font-size:10px;text-transform:uppercase;letter-spacing:1.5px;color:var(--og2);margin:8px 0 4px;">⛪ 44 ጠቦት — ታቦት ዓውደ ዓምት</div>' +
+      feasts.map(f =>
+        '<span style="display:inline-block;margin:2px 4px 2px 0;padding:3px 10px;border-radius:12px;' +
+        'border:1px solid rgba(212,168,67,.35);background:rgba(212,168,67,.07);' +
+        'font-size:11px;color:#d8c890;">' + f + '</span>'
+      ).join('');
+    feastsEl.style.display = 'block';
+  } else {
+    feastsEl.style.display = 'none';
+  }
+
   popup.classList.add('open');
   popup.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 }
@@ -909,19 +928,42 @@ function loadChapter(id, name, ch) {
   document.querySelectorAll('.ch-btn').forEach(b => b.classList.remove('active-ch'));
   event.target.classList.add('active-ch');
   const text = document.getElementById('readerText');
-  text.textContent = '⏳ እየተጫነ ነው...';
-  // Use publicly available Bible API (Amharic / Ge'ez not available via API — show message)
-  text.innerHTML = `
-    <div style="text-align:center;padding:16px;">
-      <div style="font-size:22px;margin-bottom:8px;">📖</div>
-      <div style="font-size:14px;font-weight:700;color:var(--og);margin-bottom:6px;">${name.replace(' ★', '')} — ምዕራፍ ${ch}</div>
-      <div style="font-size:12px;color:#8a7860;line-height:1.7;">
-        የ81ቱ ቅዱሳት መጻሕፍት ሙሉ ጽሑፍ ወደፊት ይታከላሉ።<br>
-        <span style="color:var(--og2);">ለአሁን:</span> ዩ-ቪዘን ቃል ወይም <em>ቅዱስ ሲኖዶስ</em> መጽሐፍ ቅዱስ ይጠቀሙ።<br><br>
-        <a href="https://bible.is/AMRAMB/{{ id | upper }}/{{ ch }}" target="_blank"
-           style="color:#8ab0ff;text-decoration:underline;">bible.is ላይ ይክፈቱ ↗</a>
-      </div>
-    </div>`;
+  text.innerHTML = '<div style="text-align:center;padding:20px;color:#7a6a50;">⏳ ጥቅሶች እየተጫኑ ነው...</div>';
+
+  fetch(`/api/orthodox/bible/${id}/${ch}`)
+    .then(r => r.json())
+    .then(data => {
+      if (!data.verses || data.verses.length === 0) {
+        // Book not in API (Ethiopian-only canon) or empty response
+        const msg = data.message || 'ጥቅሱ አልተገኘም።';
+        text.innerHTML = `
+          <div style="text-align:center;padding:16px;">
+            <div style="font-size:22px;margin-bottom:8px;">📖</div>
+            <div style="font-size:13px;font-weight:700;color:var(--og);margin-bottom:6px;">${name.replace(' ★','')} — ምዕራፍ ${ch}</div>
+            <div style="font-size:12px;color:#8a7860;line-height:1.7;">${msg}</div>
+          </div>`;
+        return;
+      }
+      // Render verses
+      const bookLabel = (data.book_name || name).replace(' ★', '');
+      let html = `<div style="font-size:13px;font-weight:800;color:var(--og);margin-bottom:10px;">${bookLabel} — ምዕራፍ ${ch}</div>`;
+      data.verses.forEach(v => {
+        html += `<p class="text-sm mb-2 text-justify" style="font-size:13px;margin-bottom:8px;line-height:1.75;color:#d8c8a0;">` +
+                `<strong style="color:var(--og);margin-right:4px;">${v.number}</strong>${v.text}</p>`;
+      });
+      text.innerHTML = html;
+    })
+    .catch(() => {
+      text.innerHTML = `
+        <div style="text-align:center;padding:16px;">
+          <div style="font-size:22px;margin-bottom:8px;">⚠️</div>
+          <div style="font-size:12px;color:#8a7860;line-height:1.7;">
+            ኔትዎርክ ስህተት — ደግሞ ይሞክሩ።<br><br>
+            <a href="https://bible.is/AMRAMB/${id.toUpperCase()}/${ch}" target="_blank"
+               style="color:#8ab0ff;text-decoration:underline;">bible.is ላይ ይክፈቱ ↗</a>
+          </div>
+        </div>`;
+    });
 }
 
 function closeBibleReader() {

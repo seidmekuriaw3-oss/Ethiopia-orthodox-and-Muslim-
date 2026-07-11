@@ -1,0 +1,51 @@
+Please implement the Orthodox Corner upgrades (the 44 Tabots monthly feasts data and the full Amharic Bible rendering) in the workspace from scratch. Follow these precise instructions:
+
+1. REFACTOR & MERGE DATABASE (`database/orthodox_data.py`):
+   - Do NOT delete the existing accurate saint descriptions. Refactor the data format so that each day (1 to 30) holds a list named `feasts` containing the exact traditional 44 Tabots below, while keeping its description keys intact.
+   - Use this exact monthly mapping:
+     1: ["ልደታ ለማርያም", "ቅዱስ ራጉኤል", "ነቢዩ ኤልያስ"]
+     2: ["አባ ጉባ", "ጻድቁ ዮሐንስ"]
+     3: ["በዓታ ለማርያም", "አባ ዜና ማርቆስ", "ነቢዩ ዛካርያስ"]
+     4: ["ቅዱስ ዮሐንስ መጥምቅ", "አባ ባኑዳ"]
+     5: ["አቡነ ገብረ መንፈስ ቅዱስ (አቦ)", "ጴጥሮስ ወጳውሎስ"]
+     6: ["ቅድስት አርሴማ", "ኢየሱስ (በዓለ እግዚእ)"]
+     7: ["ቅድስት ሥላሴ (አብ፣ ወልድ፣ መንፈስ ቅዱስ)"]
+     8: ["አባ ኪሮስ", "አባ አኖሬዎስ"]
+     9: ["አቡነ እስትንፋሰ ክርስቶስ", "ቅዱስ ቶማስ"]
+     10: ["ጻድቁ አባ ኖብ", "ሰማዕቱ ሰርጊስ"]
+     11: ["ቅዱስ ያሬድ", "ሐና እና ፋኑኤል", "ማርቆስ ዘአንጾኪያ"]
+     12: ["ቅዱስ ሚካኤል ሊቀ መላእክት", "አባ ሳሙኤል ዘወሊድባ"]
+     13: ["እግዚአብሔር አብ", "ጻድቁ አባ ዘረዓብሩክ", "ቅዱስ ሩፋኤል"]
+     14: ["አቡነ አረጋዊ (ዘሚካኤል)", "ጻድቁ ገብረ ክርስቶስ"]
+     15: ["ቂርቆስና ኢየሉጣ", "አባ ኤፍሬምሶን"]
+     16: ["ኪዳነ ምሕረት", "አባ ሚካኤል", "ሰማዕቱ ጊዮርጊስ ዘእስክንድርያ"]
+     17: ["ቅዱስ እስጢፋኖስ (ቀዳሜ ሰማዕት)", "አባ ገሪማ", "ያዕቆብ ሐዋርያ"]
+     18: ["አቡነ ኤዎስጣቴዎስ", "ፊሊጶስ ሐዋርያ"]
+     19: ["ቅዱስ ገብርኤል ሊቀ መላእክት", "በአታ ለማርያም"]
+     20: ["ሕንጸተ ማርያም", "ቅዱስ ኤልሳዕ ነቢይ", "አባ መርቆሬዎስ"]
+     21: ["ቅድስት ድንግል ማርያም (እመቤታችን)", "አቡነ ተክለ ሃይማኖት"]
+     22: ["ቅዱስ ዑራኤል ሊቀ መላእክት", "ሉቃስ ወንጌላዊ"]
+     23: ["ቅዱስ ጊዮርጊስ ሰማዕቱ (ልዳ)"]
+     24: ["አቡነ ተክለ ሃይማኖት (ልደታቸው)", "24ቱ ካህናተ ሰማይ", "አባ ኖኅ"]
+     25: ["ቅድስት መርቆሬዎስ (ሰማዕተ እግዚአብሔር)", "አባ አቢብ"]
+     26: ["አቡነ ሐራ ድንግል", "ቶማስ ሐዋርያ", "ሳሙኤል ነቢይ"]
+     27: ["መድኃኔዓለም (የዓለም መድኃኒት)", "አባ ዮሐንስ ሐጺር"]
+     28: ["አማኑኤል", "ቅዱስ ቴዎድሮስ ሰማዕት", "አብርሃም፣ ይስሐቅ፣ ያዕቆብ"]
+     29: ["በዓለ ወልድ (ኢየሱስ ክርስቶስ)", "እግዚአብሔር አብ", "ቅዱስ ማርቆስ ወንጌላዊ"]
+     30: ["ቅዱስ ዮሐንስ መለኮታዊ", "አባ ሳሙኤል", "አባ ዮሐንስ መጥምቅ"]
+
+2. INTEGRATE FULL AMHARIC BIBLE TEXT IN BACKEND (`routes/orthodox_routes.py`):
+   - Remove the external link placeholder text ("የ81ቱ ቅዱሳት መጻሕፍት ሙሉ ጽሑፍ ወደፊት ይካተታሉ"). 
+   - Integrate a local Amharic Bible JSON file OR use a reliable open-source public Amharic Bible API/dataset to pull scripture text dynamically.
+   - Set up the backend route controller so that when a user selects a book and chapter (e.g., "ሮሜ 1"), it fetches and returns an array/list of verses: `[{"number": 1, "text": "..."}, {"number": 2, "text": "..."}]`. Pass this data directly into the template context as `verses`.
+
+3. FRONTEND UI UPDATE (`templates/customer/orthodox.html`):
+   - Adjust the layout to iterationally render the new daily `feasts` list cleanly alongside the existing text details.
+   - In the Bible reader section, replace the old static placeholder with a clean Jinja loop to display the real scripture text directly inside the web app card layout:
+     ```html
+     {% for verse in verses %}
+       <p class="text-sm mb-2 text-justify"><strong>{{ verse.number }}</strong> {{ verse.text }}</p>
+     {% endfor %}
+     ```
+
+Please execute Workflow 1 completely now and verify that the Bible chapters and Tabots data load natively.

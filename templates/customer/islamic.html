@@ -445,26 +445,38 @@
     background:var(--ipanel);border:1px solid var(--iborder);
     border-radius:16px;padding:18px 16px;margin-bottom:100px;
     backdrop-filter:blur(10px);
+    /* Authentic Mushaf flow */
+    direction:rtl;text-align:justify;
 }
+/* Mushaf paragraph block — verses flow inline like real Mus-haf */
+.mushaf-block{
+    font-family:'Amiri',serif;
+    font-size:var(--qfont-size,26px);
+    color:#f0e8d0;
+    line-height:2.5rem;
+    direction:rtl;text-align:justify;
+    unicode-bidi:embed;
+    word-spacing:2px;
+}
+.mushaf-inline{
+    display:inline;
+}
+/* Legacy stacked style kept for graceful fallback */
 .ayah-item{
-    display:flex;flex-direction:column;
-    border-bottom:1px solid rgba(255,255,255,.05);
-    padding:14px 4px;transition:background .2s;
+    display:inline;
 }
-.ayah-item:last-child{border-bottom:none}
-.ayah-item:hover{background:rgba(201,168,76,.04);border-radius:9px;padding-left:8px;padding-right:8px}
 .ayah-arabic{
     font-family:'Amiri',serif;
     font-size:var(--qfont-size,26px);
-    color:#f0e8d0;line-height:1.9;text-align:right;direction:rtl;
-    unicode-bidi:embed;
+    color:#f0e8d0;line-height:2.5rem;
+    display:inline;direction:rtl;unicode-bidi:embed;
 }
 .ayah-num-badge{
     display:inline-flex;align-items:center;justify-content:center;
-    width:26px;height:26px;border-radius:50%;
+    width:24px;height:24px;border-radius:50%;
     background:rgba(201,168,76,.15);border:1px solid rgba(201,168,76,.3);
-    font-size:10px;color:var(--igold);font-weight:700;
-    flex-shrink:0;margin-left:8px;vertical-align:middle;
+    font-size:9px;color:var(--igold);font-weight:700;
+    margin:0 5px;vertical-align:middle;flex-shrink:0;
 }
 .ayah-loading{text-align:center;padding:40px;color:#7a7060;font-size:14px}
 .ayah-no-text{
@@ -472,6 +484,23 @@
     background:rgba(201,168,76,.05);border:1px solid var(--iborder);
     border-radius:12px;margin-bottom:16px;
 }
+
+/* Inline mini-player strip inside the reader header */
+.qap-inline{
+    display:none;align-items:center;gap:8px;
+    margin-top:10px;padding:8px 12px;
+    background:rgba(201,168,76,.08);border:1px solid var(--iborder);
+    border-radius:10px;
+}
+.qap-inline.visible{display:flex}
+.qap-inline-btn{
+    width:32px;height:32px;border-radius:50%;flex-shrink:0;
+    background:linear-gradient(135deg,var(--ig),var(--ig2));
+    border:1px solid var(--igold);color:#fff;font-size:13px;cursor:pointer;
+    display:flex;align-items:center;justify-content:center;
+}
+.qap-inline-title{flex:1;min-width:0;font-size:12px;color:#d4c99a;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.qap-inline-time{font-size:10px;color:#7a6a50;font-variant-numeric:tabular-nums;flex-shrink:0}
 
 .qaudio-player{
     position:fixed;bottom:0;left:0;right:0;z-index:900;
@@ -527,6 +556,114 @@
     .qaudio-player{padding:8px 12px 18px}
     .qap-vol-wrap{display:none}
 }
+
+/* ── Tafsir & Hadith full tab panels ──────────────────────────── */
+.dtab-card{
+    background:var(--ipanel);
+    border:1px solid var(--iborder);
+    border-radius:18px;
+    padding:24px 20px 22px;
+    max-width:520px;
+    margin:0 auto 16px;
+    backdrop-filter:blur(10px);
+    display:flex;
+    flex-direction:column;
+    gap:16px;
+    position:relative;
+    overflow:hidden;
+}
+.dtab-card::before{
+    content:'';
+    position:absolute;inset:0;border-radius:inherit;
+    background:linear-gradient(135deg,rgba(201,168,76,.05) 0%,transparent 55%);
+    pointer-events:none;
+}
+
+.dtab-header{
+    display:flex;align-items:center;gap:12px;
+    border-bottom:1px solid var(--iborder);
+    padding-bottom:14px;
+}
+.dtab-icon{
+    width:44px;height:44px;border-radius:12px;flex-shrink:0;
+    background:linear-gradient(135deg,var(--ig),var(--ig2));
+    border:1px solid var(--igold);
+    display:flex;align-items:center;justify-content:center;
+    font-size:22px;
+    box-shadow:0 0 14px rgba(26,122,74,.35);
+}
+.dtab-title{
+    font-size:16px;font-weight:700;color:#e8dfc8;letter-spacing:.5px;
+}
+.dtab-subtitle{
+    font-size:11px;color:#9a8860;margin-top:3px;
+}
+
+.dtab-arabic{
+    font-family:'Amiri',serif;
+    font-size:clamp(22px,5vw,32px);
+    color:#f0e8d0;
+    line-height:2.1;
+    direction:rtl;
+    text-align:right;
+    background:rgba(201,168,76,.06);
+    border:1px solid rgba(201,168,76,.18);
+    border-radius:12px;
+    padding:14px 16px;
+}
+
+.dtab-section-label{
+    font-size:10px;text-transform:uppercase;letter-spacing:1.8px;
+    color:var(--igold);font-weight:700;
+    margin-bottom:-8px;
+}
+
+.dtab-body{
+    font-size:15px;line-height:1.85;color:#d4c99a;
+}
+.dtab-tafsir{
+    font-size:14px;color:#b8a870;
+    background:rgba(255,255,255,.03);
+    border-left:3px solid var(--igold);
+    padding:10px 14px;
+    border-radius:0 10px 10px 0;
+}
+
+.dtab-ref-pill{
+    display:inline-flex;align-items:center;gap:6px;
+    font-size:12px;font-weight:700;color:var(--igold);
+    background:rgba(201,168,76,.10);
+    border:1px solid rgba(201,168,76,.28);
+    border-radius:20px;padding:5px 14px;
+    width:fit-content;
+}
+
+.dtab-hadith-meta{
+    display:flex;flex-direction:column;gap:10px;
+    border-top:1px solid rgba(201,168,76,.15);
+    padding-top:14px;
+}
+.dtab-meta-row{
+    display:flex;align-items:center;gap:10px;
+}
+.dtab-meta-label{
+    font-size:10px;text-transform:uppercase;letter-spacing:1.5px;
+    color:#7a6a50;width:56px;flex-shrink:0;
+}
+.dtab-meta-val{
+    font-size:13px;color:#d4c99a;font-weight:600;
+}
+.dtab-grade-badge{
+    display:inline-flex;align-items:center;gap:5px;
+    font-size:11px;font-weight:700;
+    color:#6ee7a0;
+    background:rgba(26,122,74,.2);
+    border:1px solid rgba(26,122,74,.4);
+    border-radius:20px;padding:3px 12px;
+}
+.dtab-narrator{
+    font-style:italic;color:#9a8860;
+}
 </style>
 {% endblock %}
 
@@ -565,6 +702,8 @@
     <button class="tab-btn" onclick="switchTab('qibla',this)">🧭 Qibla</button>
     <button class="tab-btn" onclick="switchTab('calendar',this)">📅 Calendar</button>
     <button class="tab-btn" onclick="switchTab('quran',this)">📖 Qur'an</button>
+    <button class="tab-btn" onclick="switchTab('tafsir',this)">🌿 Quran Tafsir</button>
+    <button class="tab-btn" onclick="switchTab('hadith',this)">🕌 Authentic Hadith</button>
 </div>
 
 <div id="tab-prayer" class="tab-panel active">
@@ -727,10 +866,16 @@
                     <div class="qrt-arabic" id="qrt-arabic">—</div>
                     <div class="qrt-latin"  id="qrt-latin">—</div>
                     <div class="qrt-meta"   id="qrt-meta">—</div>
+                    <!-- Inline audio strip — visible when surah is playing -->
+                    <div class="qap-inline" id="qap-inline">
+                        <button class="qap-inline-btn" id="qap-inline-play" onclick="qTogglePlay()" title="Play / Pause">▶</button>
+                        <span class="qap-inline-title" id="qap-inline-title">—</span>
+                        <span class="qap-inline-time" id="qap-inline-time">0:00</span>
+                    </div>
                 </div>
                 <div class="qfont-ctrl">
-                    <button class="qfont-btn" onclick="qFontAdj(-2)">A‒</button>
-                    <button class="qfont-btn" onclick="qFontAdj(2)">A+</button>
+                    <button id="btn-font-decrease" class="qfont-btn" onclick="qFontAdj(-2)" title="Decrease font">A‒</button>
+                    <button id="btn-font-increase" class="qfont-btn" onclick="qFontAdj(2)"  title="Increase font">A+</button>
                 </div>
             </div>
             <div class="bismillah-line" id="bismillah-line">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</div>
@@ -739,6 +884,67 @@
             </div>
         </div>
 
+    </div>
+</div>
+
+<!-- ── Quran Tafsir tab panel ─────────────────────────────────── -->
+<div id="tab-tafsir" class="tab-panel">
+    <div class="dtab-card">
+        <div class="dtab-header">
+            <div class="dtab-icon">🌿</div>
+            <div>
+                <div class="dtab-title">Quran Tafsir</div>
+                <div class="dtab-subtitle">የዕለቱ ቁርኣን — አማርኛ ትርጉምና ተፍሲር</div>
+            </div>
+        </div>
+
+        <div class="dtab-arabic">{{ quran_daily.ar }}</div>
+
+        <div class="dtab-section-label">🇪🇹 የአማርኛ ትርጉም</div>
+        <div class="dtab-body">{{ quran_daily.am }}</div>
+
+        {% if quran_daily.tafsir %}
+        <div class="dtab-section-label">📚 ተፍሲር (ማብራሪያ)</div>
+        <div class="dtab-body dtab-tafsir">{{ quran_daily.tafsir }}</div>
+        {% endif %}
+
+        <div class="dtab-ref-pill">
+            <span>📖</span>
+            <span>{{ quran_daily.ref }}</span>
+        </div>
+    </div>
+</div>
+
+<!-- ── Authentic Hadith tab panel ─────────────────────────────── -->
+<div id="tab-hadith" class="tab-panel">
+    <div class="dtab-card">
+        <div class="dtab-header">
+            <div class="dtab-icon">🕌</div>
+            <div>
+                <div class="dtab-title">Authentic Hadith</div>
+                <div class="dtab-subtitle">ትክክለኛ ሐዲሶች — ዕለታዊ ትምህርት</div>
+            </div>
+        </div>
+
+        <div class="dtab-section-label">🇪🇹 የሐዲሱ ትርጉም</div>
+        <div class="dtab-body">{{ hadith_daily.text_am }}</div>
+
+        <div class="dtab-hadith-meta">
+            <div class="dtab-meta-row">
+                <span class="dtab-meta-label">📚 ምንጭ</span>
+                <span class="dtab-meta-val">{{ hadith_daily.source }}</span>
+            </div>
+            <div class="dtab-meta-row">
+                <span class="dtab-meta-label">✅ ደረጃ</span>
+                <span class="dtab-grade-badge">{{ hadith_daily.grade }}</span>
+            </div>
+            {% if hadith_daily.narrator %}
+            <div class="dtab-meta-row">
+                <span class="dtab-meta-label">🧑 ዘጋቢ</span>
+                <span class="dtab-meta-val dtab-narrator">{{ hadith_daily.narrator }}</span>
+            </div>
+            {% endif %}
+        </div>
     </div>
 </div>
 
@@ -1865,13 +2071,12 @@ function qOpenSurah(num) {
 
 function qRenderAyahs(ayahs) {
     const list = document.getElementById('ayah-list');
-    list.innerHTML = ayahs.map(a=>`
-        <div class="ayah-item" id="ayah-${a.number}">
-            <div class="ayah-arabic" style="font-size:${_qFontSize}px">
-                ${a.text}
-                <span class="ayah-num-badge">${a.number}</span>
-            </div>
-        </div>`).join('');
+    /* ── Authentic Mushaf flow: all verses inline in one RTL paragraph ── */
+    list.setAttribute('dir', 'rtl');
+    const inner = ayahs.map(a =>
+        `<span class="mushaf-inline" id="ayah-${a.number}">${a.text}</span><span class="ayah-num-badge" title="Ayah ${a.number}">${a.number}</span>`
+    ).join('\u200c '); /* zero-width non-joiner + space between verses */
+    list.innerHTML = `<p class="mushaf-block" style="font-size:${_qFontSize}px">${inner}</p>`;
 }
 
 function qFetchAndRetryText(num) {
@@ -1895,8 +2100,17 @@ function qBackToList() {
 
 function qFontAdj(delta) {
     _qFontSize = Math.max(16, Math.min(44, _qFontSize + delta));
-    document.querySelectorAll('.ayah-arabic').forEach(el=>{ el.style.fontSize = _qFontSize+'px'; });
+    /* update both inline Mushaf block and any legacy ayah-arabic elements */
+    document.querySelectorAll('.mushaf-block,.ayah-arabic').forEach(el=>{ el.style.fontSize = _qFontSize+'px'; });
 }
+
+document.addEventListener('DOMContentLoaded', function() {
+    /* Bind font resize buttons by ID per spec */
+    const bDec = document.getElementById('btn-font-decrease');
+    const bInc = document.getElementById('btn-font-increase');
+    if (bDec) bDec.addEventListener('click', function(){ qFontAdj(-2); });
+    if (bInc) bInc.addEventListener('click', function(){ qFontAdj(2); });
+});
 
 function qPlayAudio(num, name) {
     const audio = document.getElementById('quran-audio');
@@ -1909,10 +2123,18 @@ function qPlayAudio(num, name) {
     audio.src = urls[_qReciter] || urls.alafasy;
     audio.load();
     audio.play().catch(()=>{});
-    document.getElementById('qap-surah-name').textContent  = name || 'Surah '+num;
-    document.getElementById('qap-reciter-name').textContent= _qReciterName;
+    const label = name || 'Surah '+num;
+    document.getElementById('qap-surah-name').textContent   = label;
+    document.getElementById('qap-reciter-name').textContent = _qReciterName;
     document.getElementById('qaudio-player').classList.add('visible');
-    document.getElementById('qap-play-btn').textContent    = '⏸';
+    document.getElementById('qap-play-btn').textContent     = '⏸';
+    /* Sync inline header strip */
+    const inl = document.getElementById('qap-inline');
+    if (inl) { inl.classList.add('visible'); }
+    const inlTitle = document.getElementById('qap-inline-title');
+    if (inlTitle) inlTitle.textContent = label+' · '+_qReciterName;
+    const inlBtn = document.getElementById('qap-inline-play');
+    if (inlBtn) inlBtn.textContent = '⏸';
     _qAudioLoaded = true;
 }
 
@@ -1921,14 +2143,24 @@ function qStopAudio() {
     audio.pause();
     audio.src = '';
     document.getElementById('qaudio-player').classList.remove('visible');
+    const inl = document.getElementById('qap-inline');
+    if (inl) inl.classList.remove('visible');
     _qAudioLoaded = false;
 }
 
 function qTogglePlay() {
     const audio = document.getElementById('quran-audio');
     const btn   = document.getElementById('qap-play-btn');
-    if (audio.paused) { audio.play().catch(()=>{}); btn.textContent='⏸'; }
-    else              { audio.pause(); btn.textContent='▶'; }
+    const inlBtn = document.getElementById('qap-inline-play');
+    if (audio.paused) {
+        audio.play().catch(()=>{});
+        btn.textContent = '⏸';
+        if (inlBtn) inlBtn.textContent = '⏸';
+    } else {
+        audio.pause();
+        btn.textContent = '▶';
+        if (inlBtn) inlBtn.textContent = '▶';
+    }
 }
 
 function qSeekTo(val) {
@@ -1962,12 +2194,24 @@ function qClosePlayer() {
         audio.addEventListener('timeupdate', ()=>{
             if (!audio.duration || _qSeeking) return;
             seek.value = (audio.currentTime/audio.duration)*100;
-            cur.textContent = qFmtTime(audio.currentTime);
+            const t = qFmtTime(audio.currentTime);
+            cur.textContent = t;
+            const it=document.getElementById('qap-inline-time'); if(it) it.textContent=t;
         });
         audio.addEventListener('loadedmetadata', ()=>{ dur.textContent = qFmtTime(audio.duration); });
-        audio.addEventListener('ended',  ()=>{ btn.textContent='▶'; seek.value=0; cur.textContent='0:00'; });
-        audio.addEventListener('pause',  ()=>{ btn.textContent='▶'; });
-        audio.addEventListener('play',   ()=>{ btn.textContent='⏸'; });
+        audio.addEventListener('ended',  ()=>{
+            btn.textContent='▶'; seek.value=0; cur.textContent='0:00';
+            const ib=document.getElementById('qap-inline-play'); if(ib) ib.textContent='▶';
+            const it=document.getElementById('qap-inline-time'); if(it) it.textContent='0:00';
+        });
+        audio.addEventListener('pause',  ()=>{
+            btn.textContent='▶';
+            const ib=document.getElementById('qap-inline-play'); if(ib) ib.textContent='▶';
+        });
+        audio.addEventListener('play',   ()=>{
+            btn.textContent='⏸';
+            const ib=document.getElementById('qap-inline-play'); if(ib) ib.textContent='⏸';
+        });
         audio.addEventListener('waiting',()=>{ btn.textContent='⏳'; });
         audio.addEventListener('canplay',()=>{ if(!audio.paused) btn.textContent='⏸'; });
         seek.addEventListener('mousedown', ()=>{ _qSeeking=true; });

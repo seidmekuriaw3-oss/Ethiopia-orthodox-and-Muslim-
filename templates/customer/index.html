@@ -1453,6 +1453,49 @@
                 </a>
             </div>
 
+            <!-- Card 5: Quran Amharic Translation / Tafsir -->
+            <div class="idc-card" id="idc-card-quran-am">
+                <div class="idc-card-head">
+                    <div class="idc-card-icon">🌿</div>
+                    <span class="idc-card-lbl">የአማርኛ ትርጉም</span>
+                </div>
+                <div class="idc-ayah-body" style="min-h-[140px]">
+                    <div class="idc-ayah-text" id="idc-quran-am-ar" style="font-size:clamp(14px,2.2vw,18px);line-height:1.9;min-height:52px;">
+                        ﷽
+                    </div>
+                    <div style="font-size:12px;font-weight:600;color:#2a4a2e;margin:6px 0 2px;display:-webkit-box;-webkit-line-clamp:2;line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;" id="idc-quran-am-text">
+                        በዚህ ቀን የሚሰጠው የቁርኣን ትርጉም ደቂቃ ውስጥ ይጫናል…
+                    </div>
+                    <div class="idc-ayah-ref" id="idc-quran-am-ref">
+                        <span>📖</span><span>—</span>
+                    </div>
+                </div>
+                <a href="{{ url_for('islamic.islamic_suite') }}#quran" class="idc-card-link">
+                    ሙሉ ቁርኣን ያንብቡ →
+                </a>
+            </div>
+
+            <!-- Card 6: Authentic Hadith -->
+            <div class="idc-card" id="idc-card-hadith">
+                <div class="idc-card-head">
+                    <div class="idc-card-icon">🕌</div>
+                    <span class="idc-card-lbl">ትክክለኛ ሐዲሶች</span>
+                </div>
+                <div class="idc-ayah-body" style="min-height:140px">
+                    <div style="font-size:12px;font-weight:600;color:#1a2e1e;line-height:1.7;display:-webkit-box;-webkit-line-clamp:2;line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;flex:1;padding-bottom:8px;" id="idc-hadith-text">
+                        ሐዲሱ ይጫናል…
+                    </div>
+                    <div style="font-size:10px;color:#5a7a60;border-top:1px solid #edf6ef;padding-top:6px;display:flex;gap:6px;align-items:center;flex-wrap:wrap;" id="idc-hadith-meta">
+                        <span id="idc-hadith-src">—</span>
+                        <span id="idc-hadith-grade" style="background:rgba(26,122,74,.08);border-radius:20px;padding:1px 8px;font-weight:700;color:#1a7a4a;">—</span>
+                    </div>
+                    <div style="font-size:10px;color:#8aaa8e;margin-top:3px;" id="idc-hadith-narrator"></div>
+                </div>
+                <a href="{{ url_for('islamic.islamic_suite') }}#quran" class="idc-card-link">
+                    ተጨማሪ ሐዲሶች →
+                </a>
+            </div>
+
         </div>
     </div>
 
@@ -1461,6 +1504,8 @@
         <div class="idc-slider-dot" onclick="idcGoTo(1)"></div>
         <div class="idc-slider-dot" onclick="idcGoTo(2)"></div>
         <div class="idc-slider-dot" onclick="idcGoTo(3)"></div>
+        <div class="idc-slider-dot" onclick="idcGoTo(4)"></div>
+        <div class="idc-slider-dot" onclick="idcGoTo(5)"></div>
     </div>
 
     <div class="idc-cta">
@@ -1696,7 +1741,7 @@ function hscrollNav(trackId, dir) {
             .catch(function(){});
     }
     var idcIdx = 0;
-    var idcTotal = 4;
+    var idcTotal = 6;
     var idcTimer;
     function idcGoTo(n) {
         idcIdx = (n + idcTotal) % idcTotal;
@@ -1711,10 +1756,38 @@ function hscrollNav(trackId, dir) {
         idcGoTo(idcIdx + dir);
         idcTimer = setInterval(function(){ idcGoTo(idcIdx + 1); }, 3500);
     };
+    function loadIslamicDailyContent() {
+        fetch('/api/islamic/daily-content')
+            .then(function(r){ return r.json(); })
+            .then(function(d){
+                if (!d.success) return;
+                var q = d.quran_am;
+                var h = d.hadith;
+                /* Quran Amharic card */
+                var qAr   = document.getElementById('idc-quran-am-ar');
+                var qText = document.getElementById('idc-quran-am-text');
+                var qRef  = document.getElementById('idc-quran-am-ref');
+                if (qAr)   qAr.textContent   = q.ar || '';
+                if (qText) qText.textContent  = q.am || '';
+                if (qRef)  qRef.innerHTML     = '<span>📖</span><span>'+( q.ref||'')+'</span>';
+                /* Hadith card */
+                var hTxt = document.getElementById('idc-hadith-text');
+                var hSrc = document.getElementById('idc-hadith-src');
+                var hGrd = document.getElementById('idc-hadith-grade');
+                var hNar = document.getElementById('idc-hadith-narrator');
+                if (hTxt) hTxt.textContent = h.text_am || '';
+                if (hSrc) hSrc.textContent = h.source  || '';
+                if (hGrd) hGrd.textContent = h.grade   || '';
+                if (hNar) hNar.textContent = h.narrator ? '— '+h.narrator : '';
+            })
+            .catch(function(){});
+    }
+
     document.addEventListener('DOMContentLoaded', function() {
         if (document.getElementById('idc-prayer-list')) {
             loadPrayers();
             loadQibla();
+            loadIslamicDailyContent();
         }
         var outer = document.getElementById('idc-slider-outer');
         if (!outer) return;

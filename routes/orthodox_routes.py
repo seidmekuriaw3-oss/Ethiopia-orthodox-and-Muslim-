@@ -7,6 +7,16 @@ from flask import Blueprint, render_template, request, jsonify
 from routes.shared import get_lang
 import datetime
 import math
+import json
+import os
+
+# ── Load local Amharic Bible JSON once at import time ──────────────────
+_BIBLE_JSON_PATH = os.path.join(os.path.dirname(__file__), '..', 'database', 'amharic_bible.json')
+try:
+    with open(_BIBLE_JSON_PATH, encoding='utf-8') as _f:
+        _AMHARIC_BIBLE = json.load(_f)
+except (FileNotFoundError, json.JSONDecodeError):
+    _AMHARIC_BIBLE = {}
 
 from database.orthodox_data import (
     SAINTS_BY_DAY, ANNUAL_FEASTS, FASTING_SEASONS, WEEKLY_FAST_DAYS,
@@ -188,3 +198,54 @@ def orthodox_saints_api(day):
     if day < 1 or day > 30:
         return jsonify({"error": "Day must be 1–30"}), 400
     return jsonify(SAINTS_BY_DAY.get(day, {}))
+
+
+# ── App book ID → XML corpus abbreviation (uppercase) ──────────────────
+_BOOK_XML = {
+    'gen': 'GEN', 'exo': 'EXO', 'lev': 'LEV', 'num': 'NUM', 'deu': 'DEU',
+    'jos': 'JOS', 'jdg': 'JDG', 'rut': 'RUT', '1sa': '1SA', '2sa': '2SA',
+    '1ki': '1KI', '2ki': '2KI', '1ch': '1CH', '2ch': '2CH', 'ezr': 'EZR',
+    'neh': 'NEH', 'est': 'EST', 'job': 'JOB', 'psa': 'PSA', 'pro': 'PRO',
+    'ecc': 'ECC', 'son': 'SNG', 'isa': 'ISA', 'jer': 'JER', 'lam': 'LAM',
+    'eze': 'EZE', 'dan': 'DAN', 'hos': 'HOS', 'joe': 'JOL', 'amo': 'AMO',
+    'oba': 'OBA', 'jon': 'JON', 'mic': 'MIC', 'nah': 'NAH', 'hab': 'HAB',
+    'zep': 'ZEP', 'hag': 'HAG', 'zec': 'ZEC', 'mal': 'MAL',
+    'mat': 'MAT', 'mar': 'MRK', 'luk': 'LUK', 'joh': 'JHN', 'act': 'ACT',
+    'rom': 'ROM', '1co': '1CO', '2co': '2CO', 'gal': 'GAL', 'eph': 'EPH',
+    'php': 'PHP', 'col': 'COL', '1th': '1TH', '2th': '2TH', '1ti': '1TI',
+    '2ti': '2TI', 'tit': 'TIT', 'phm': 'PHM', 'heb': 'HEB', 'jas': 'JAS',
+    '1pe': '1PE', '2pe': '2PE', '1jo': '1JN', '2jo': '2JN', '3jo': '3JN',
+    'jud': 'JUD', 'rev': 'REV',
+}
+
+
+@orthodox_bp.route('/api/orthodox/bible/<book_id>/<int:chapter>')
+def bible_chapter_api(book_id, chapter):
+    """Return Amharic Bible verses for a given book+chapter as JSON.
+
+    Reads from the local amharic_bible.json built from the christos-c corpus.
+    Returns: {"book_id":"...", "chapter":N, "verses":[{"number":N,"text":"..."}]}
+    """
+    xml_key = _BOOK_XML.get(book_id.lower())
+    if not xml_key:
+        return jsonify({
+            "error": "book_not_available",
+            "message": "ይህ መጽሐፍ ገና ዲጅታል ቅርጸት የለውም — የኢ.ኦ.ተ. ልዩ ቀኖና ነው።",
+            "verses": []
+        }), 404
+
+    book_data = _AMHARIC_BIBLE.get(xml_key, {})
+    verses = book_data.get(str(chapter), [])
+
+    if not book_data:
+        return jsonify({
+            "error": "book_not_found",
+            "message": "ይህ መጽሐፍ ዲጅታል ቅርጸት አልተገኘም።",
+            "verses": []
+        }), 404
+
+    return jsonify({
+        "book_id": book_id,
+        "chapter": chapter,
+        "verses": verses
+    })
