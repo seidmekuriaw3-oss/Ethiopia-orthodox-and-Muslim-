@@ -558,14 +558,14 @@ def hadith_collections_api():
         meta = []
         for c in raw_meta:
             col_id = c['id']
-            ext_ids = ('bukhari', 'muslim')
+            ext_ids = ('bukhari', 'muslim', 'riyad')
             if col_id in ext_ids:
                 if ext_cached(col_id):
                     from database.hadith_downloader import get_extended_collection
                     data = get_extended_collection(col_id)
                     total = len(data) if data else c['total']
                 else:
-                    total = {'bukhari': 7580, 'muslim': 7360}.get(col_id, c['total'])
+                    total = {'bukhari': 7580, 'muslim': 7360, 'riyad': 1895}.get(col_id, c['total'])
                 meta.append({**c, 'total': total, 'is_extended': True})
             else:
                 meta.append({**c, 'is_extended': False})
@@ -582,7 +582,7 @@ def hadith_collection_detail(collection_id):
         page     = max(1, int(request.args.get('page', 1)))
         per_page = min(max(10, int(request.args.get('per_page', 50))), 100)
 
-        EXT_IDS = ('bukhari', 'muslim')
+        EXT_IDS = ('bukhari', 'muslim', 'riyad')
 
         if collection_id in EXT_IDS:
             from database.hadith_downloader import get_extended_collection, is_cached

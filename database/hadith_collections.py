@@ -1,9 +1,9 @@
 """
-Hadith Collections — four curated libraries with full Amharic translations.
-  • nawawi40      — Imam Nawawi's 40 Hadiths (all 40)
-  • bukhari       — Sahih al-Bukhari Selected (25 hadiths)
-  • muslim        — Sahih Muslim Selected (20 hadiths)
-  • riyad         — Riyad as-Saliheen Selected (20 hadiths)
+Hadith Collections — curated libraries with Amharic translations.
+  • nawawi40  — Imam Nawawi's 40 Hadiths (all 40, full Amharic)
+  • bukhari   — Sahih al-Bukhari Selected (25 hadiths, seed data only)
+  • muslim    — Sahih Muslim Selected (20 hadiths, seed data only)
+  • riyad     — Riyad as-Saliheen full (1895 hadiths via sunnah.com, Arabic+English)
 """
 
 HADITH_COLLECTIONS = [
@@ -721,15 +721,15 @@ HADITH_COLLECTIONS = [
         ],
     },
 
-    # ── 4. Riyad as-Saliheen Selected ──────────────────────────────────────
+    # ── 4. Riyad as-Saliheen ────────────────────────────────────────────────
     {
         "id": "riyad",
-        "name": "Riyad as-Saliheen (Selected)",
-        "name_am": "ሪያዲ አስሷሊሒን — የተመረጡ",
+        "name": "Riyad as-Saliheen",
+        "name_am": "ሪያዲ አስሷሊሒን — ሙሉ",
         "author_am": "ኢማም ነወዊ (ረ.ዐ)",
-        "description_am": "«ጸደቃዎቹ የአትክልት ስፍራ» — ጥሩ ሰዎቹ ሕይወት ምሳሌ ሐዲሶቹ።",
+        "description_am": "«ጸደቃዎቹ የአትክልት ስፍራ» — ሁሉም 1,895 ሐዲሶች። ጥሩ ሰዎቹ ሕይወት ምሳሌ ሐዲሶቹ — 20 ምዕራፍ።",
         "icon": "🌸",
-        "total": 20,
+        "total": 1895,
         "hadiths": [
             {
                 "number": 1, "chapter_am": "ዒባዳ ሐሳቡ",
