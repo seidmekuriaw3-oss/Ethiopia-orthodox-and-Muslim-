@@ -141,17 +141,25 @@
         display: flex; align-items: center; justify-content: center;
         font-size: 36px; background: linear-gradient(135deg,#e8f5ee,#f0faf4);
     }
+    .products-grid .product-card .product-image .discount-badge,
     .discount-badge {
-        position: absolute; top: 8px; left: 8px;
+        position: absolute !important; top: 8px !important; left: 8px !important;
+        right: auto !important; bottom: auto !important;
+        display: inline-block !important; width: auto !important; max-width: max-content !important;
         background: #e53935; color: #fff;
         font-size: 10px; font-weight: 800; border-radius: 20px;
-        padding: 2px 7px; z-index: 2;
+        padding: 2px 7px; z-index: 2; line-height: 1.4;
+        white-space: nowrap;
     }
+    .products-grid .product-card .product-image .new-badge,
     .new-badge {
-        position: absolute; top: 8px; right: 8px;
+        position: absolute !important; top: 8px !important; right: 8px !important;
+        left: auto !important; bottom: auto !important;
+        display: inline-block !important; width: auto !important; max-width: max-content !important;
         background: linear-gradient(135deg,#1a7a4a,#22a060); color: #fff;
         font-size: 10px; font-weight: 800; border-radius: 20px;
-        padding: 2px 7px; z-index: 2;
+        padding: 2px 7px; z-index: 2; line-height: 1.4;
+        white-space: nowrap;
     }
     .cart-hover-btn {
         position: absolute; bottom: 8px; right: 8px;
