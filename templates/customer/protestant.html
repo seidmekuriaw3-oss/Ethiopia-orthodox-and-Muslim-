@@ -109,6 +109,91 @@
 }
 .back-btn:hover{background:var(--pc);color:#fff;}
 
+/* ── Reading Plan ── */
+.rp-day-badge{
+    text-align:center;padding:10px 0 6px;
+}
+.rp-day-num{
+    font-size:clamp(32px,8vw,52px);font-weight:900;
+    color:var(--pgold);line-height:1;
+    text-shadow:0 0 22px rgba(249,168,37,.45);
+}
+.rp-day-label{font-size:11px;color:#6a8aaa;letter-spacing:1.5px;text-transform:uppercase;}
+.rp-progress-wrap{margin:10px 0 6px;}
+.rp-progress-bar{
+    height:8px;background:rgba(255,255,255,.08);border-radius:8px;overflow:hidden;
+}
+.rp-progress-fill{
+    height:100%;background:linear-gradient(90deg,var(--pc),var(--pgold));
+    border-radius:8px;transition:width .5s ease;
+}
+.rp-progress-labels{display:flex;justify-content:space-between;margin-top:4px;font-size:10px;color:#6a8aaa;}
+.rp-stats{display:flex;gap:10px;justify-content:center;margin:12px 0;}
+.rp-stat{
+    flex:1;text-align:center;background:rgba(21,101,192,.12);
+    border:1px solid var(--pborder);border-radius:12px;padding:10px 6px;
+}
+.rp-stat-val{font-size:20px;font-weight:800;color:var(--pgold);}
+.rp-stat-lbl{font-size:10px;color:#6a8aaa;margin-top:2px;}
+
+.rp-reading-section{margin-top:16px;}
+.rp-section-head{
+    font-size:10px;font-weight:700;color:var(--pgold);
+    letter-spacing:1.8px;text-transform:uppercase;margin-bottom:8px;
+    display:flex;align-items:center;gap:8px;
+}
+.rp-section-head::after{content:'';flex:1;height:1px;background:var(--pborder);}
+.rp-chapter-list{display:flex;flex-direction:column;gap:6px;}
+.rp-chapter{
+    display:flex;align-items:center;gap:10px;
+    background:rgba(21,101,192,.1);border:1px solid rgba(249,168,37,.12);
+    border-radius:10px;padding:10px 14px;cursor:pointer;transition:all .2s;
+}
+.rp-chapter:hover{background:rgba(21,101,192,.22);border-color:rgba(249,168,37,.3);}
+.rp-chapter-icon{font-size:20px;flex-shrink:0;}
+.rp-chapter-text{}
+.rp-chapter-ref{font-size:13px;font-weight:700;color:#cce0ff;}
+.rp-chapter-ref-en{font-size:11px;color:#6a8aaa;margin-top:1px;}
+.rp-chapter-done{
+    margin-left:auto;font-size:18px;opacity:.25;transition:all .2s;flex-shrink:0;
+}
+.rp-chapter.done .rp-chapter-done{opacity:1;color:#66bb6a;}
+.rp-chapter.done .rp-chapter-ref{text-decoration:line-through;opacity:.55;}
+
+.rp-mark-btn{
+    width:100%;max-width:320px;display:block;margin:18px auto 6px;
+    background:rgba(21,101,192,.2);border:2px solid var(--pborder);
+    color:var(--pgold);padding:13px 0;border-radius:30px;
+    font-size:13px;font-weight:700;letter-spacing:.8px;cursor:pointer;
+    transition:all .25s;text-align:center;
+}
+.rp-mark-btn:hover{background:var(--pc);border-color:var(--pgold);color:#fff;}
+.rp-mark-btn.marked{background:linear-gradient(135deg,#1b5e20,#2e7d32);border-color:#66bb6a;color:#a5d6a7;}
+.rp-mark-btn.marked:hover{background:linear-gradient(135deg,#2e7d32,#388e3c);}
+
+.rp-week{display:flex;gap:5px;justify-content:center;margin-top:16px;flex-wrap:wrap;}
+.rp-week-day{
+    flex:0 0 calc(100% / 7 - 5px);max-width:40px;
+    aspect-ratio:1;border-radius:8px;display:flex;align-items:center;justify-content:center;
+    font-size:11px;font-weight:700;cursor:pointer;transition:all .2s;
+    border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.04);color:#6a8aaa;
+}
+.rp-week-day.today{border-color:var(--pgold);color:var(--pgold);box-shadow:0 0 10px rgba(249,168,37,.3);}
+.rp-week-day.done{background:rgba(46,125,50,.35);border-color:#66bb6a;color:#a5d6a7;}
+.rp-week-day.done.today{background:rgba(46,125,50,.5);border-color:var(--pgold);}
+.rp-week-day.future{opacity:.35;}
+
+.rp-nav{display:flex;gap:10px;justify-content:center;margin-top:10px;}
+.rp-nav-btn{
+    background:rgba(21,101,192,.15);border:1px solid var(--pborder);
+    color:#b8c8e8;padding:7px 18px;border-radius:20px;font-size:12px;
+    cursor:pointer;transition:all .2s;
+}
+.rp-nav-btn:hover{background:var(--pc);color:#fff;}
+.rp-nav-btn:disabled{opacity:.3;cursor:not-allowed;}
+
+.rp-empty{text-align:center;color:#6a8aaa;font-size:13px;padding:20px 0;}
+
 @media(max-width:480px){
     .ppage{padding:12px 10px 80px;}
     .card{padding:16px 14px;}
@@ -133,6 +218,7 @@
         <button class="tab-btn active" onclick="switchTab('verse',this)">📖 ዕለታዊ ጥቅስ</button>
         <button class="tab-btn" onclick="switchTab('song',this)">🎵 መዝሙር / ጥቅሶች</button>
         <button class="tab-btn" onclick="switchTab('library',this)">📚 ቤተ-መጻሕፍት</button>
+        <button class="tab-btn" onclick="switchTab('plan',this)" id="plan-tab-btn">📅 የንባብ እቅድ</button>
     </div>
 
     <!-- ═══ TAB 1: Today's Bible Verse ═══ -->
@@ -204,6 +290,83 @@
         </div>
     </div>
 
+    <!-- ═══ TAB 4: Bible Reading Plan ═══ -->
+    <div class="tab-panel" id="tab-plan">
+
+        <!-- Day badge + progress -->
+        <div class="card" id="rp-header-card">
+            <div class="rp-day-badge">
+                <div class="rp-day-num" id="rp-day-num">—</div>
+                <div class="rp-day-label">of 365 — Annual Bible Reading Plan</div>
+            </div>
+
+            <div class="rp-stats">
+                <div class="rp-stat">
+                    <div class="rp-stat-val" id="rp-stat-done">0</div>
+                    <div class="rp-stat-lbl">ያነበቡ ቀናት</div>
+                </div>
+                <div class="rp-stat">
+                    <div class="rp-stat-val" id="rp-stat-streak">0</div>
+                    <div class="rp-stat-lbl">🔥 ተከታታይ ቀናት</div>
+                </div>
+                <div class="rp-stat">
+                    <div class="rp-stat-val" id="rp-stat-pct">0%</div>
+                    <div class="rp-stat-lbl">ፕሮግረስ</div>
+                </div>
+            </div>
+
+            <div class="rp-progress-wrap">
+                <div class="rp-progress-bar">
+                    <div class="rp-progress-fill" id="rp-fill" style="width:0%"></div>
+                </div>
+                <div class="rp-progress-labels">
+                    <span>ጥር 1</span><span>ህዳር 30</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Today's reading -->
+        <div class="card" id="rp-reading-card">
+            <div class="card-title" id="rp-card-title">📅 ዛሬ የሚነበብ — Day <span id="rp-day-inline">—</span></div>
+
+            <div class="rp-reading-section" id="rp-ot-section">
+                <div class="rp-section-head">📜 ብሉይ ኪዳን — Old Testament</div>
+                <div class="rp-chapter-list" id="rp-ot-list">
+                    <div class="rp-empty">Loading…</div>
+                </div>
+            </div>
+
+            <div class="rp-reading-section" id="rp-nt-section" style="margin-top:14px;">
+                <div class="rp-section-head">✝️ አዲስ ኪዳን — New Testament</div>
+                <div class="rp-chapter-list" id="rp-nt-list">
+                    <div class="rp-empty">Loading…</div>
+                </div>
+            </div>
+
+            <button class="rp-mark-btn" id="rp-mark-btn" onclick="rpToggleDay()">
+                ✓ ዛሬ ያነበብኩ — Mark Today as Read
+            </button>
+        </div>
+
+        <!-- Week view -->
+        <div class="card">
+            <div class="card-title">📅 ያለፉ 7 ቀናት — Last 7 Days</div>
+            <div class="rp-week" id="rp-week"></div>
+        </div>
+
+        <!-- Navigate to other days -->
+        <div class="card">
+            <div class="card-title">🔍 ወደ ሌላ ቀን — Browse Any Day</div>
+            <div style="display:flex;gap:8px;align-items:center;justify-content:center;flex-wrap:wrap;">
+                <button class="rp-nav-btn" id="rp-prev-btn" onclick="rpBrowse(-1)">‹ ትናንት</button>
+                <div style="font-size:13px;color:var(--pgold);font-weight:700;min-width:70px;text-align:center;" id="rp-browse-label">Day —</div>
+                <button class="rp-nav-btn" id="rp-next-btn" onclick="rpBrowse(1)">ነገ ›</button>
+                <button class="rp-nav-btn" onclick="rpGoToday()">↩ ዛሬ</button>
+            </div>
+        </div>
+
+    </div>
+
 </div>
 
 <script>
@@ -213,6 +376,184 @@ function switchTab(id, btn) {
     var el = document.getElementById('tab-' + id);
     if (el) el.classList.add('active');
     if (btn) btn.classList.add('active');
+    if (id === 'plan') rpInit();
 }
+
+/* ══════════════════════════════════════════════
+   BIBLE READING PLAN — localStorage-tracked
+══════════════════════════════════════════════ */
+var RP_KEY = 'semira_bible_plan';
+var rpTodayNum = 0;
+var rpBrowseNum = 0;
+var rpLoaded = false;
+
+function rpDayOfYear() {
+    var now = new Date();
+    var start = new Date(now.getFullYear(), 0, 0);
+    var diff = now - start + (start.getTimezoneOffset() - now.getTimezoneOffset()) * 60 * 1000;
+    var oneDay = 1000 * 60 * 60 * 24;
+    return Math.min(Math.floor(diff / oneDay), 365);
+}
+
+function rpStorage() {
+    try {
+        var raw = localStorage.getItem(RP_KEY);
+        if (raw) return JSON.parse(raw);
+    } catch(e) {}
+    return { completed: {} };
+}
+
+function rpSave(data) {
+    try { localStorage.setItem(RP_KEY, JSON.stringify(data)); } catch(e) {}
+}
+
+function rpIsCompleted(dayNum) {
+    return !!rpStorage().completed[String(dayNum)];
+}
+
+function rpCountCompleted() {
+    return Object.keys(rpStorage().completed).length;
+}
+
+function rpStreak() {
+    var data = rpStorage();
+    var streak = 0;
+    var d = rpTodayNum;
+    while (d >= 1 && data.completed[String(d)]) {
+        streak++;
+        d--;
+    }
+    return streak;
+}
+
+function rpToggleDay() {
+    var data = rpStorage();
+    var key = String(rpBrowseNum);
+    if (data.completed[key]) {
+        delete data.completed[key];
+    } else {
+        data.completed[key] = true;
+    }
+    rpSave(data);
+    rpRefreshUI();
+}
+
+function rpRefreshUI() {
+    var done = rpCountCompleted();
+    var streak = rpStreak();
+    var pct = Math.round((done / 365) * 100);
+
+    document.getElementById('rp-stat-done').textContent   = done;
+    document.getElementById('rp-stat-streak').textContent = streak;
+    document.getElementById('rp-stat-pct').textContent    = pct + '%';
+    document.getElementById('rp-fill').style.width        = pct + '%';
+
+    var btn = document.getElementById('rp-mark-btn');
+    var isTodayBrowse = (rpBrowseNum === rpTodayNum);
+    if (rpIsCompleted(rpBrowseNum)) {
+        btn.textContent = '✓ አነበብኩ — Marked as Read ✓';
+        btn.classList.add('marked');
+    } else {
+        btn.textContent = isTodayBrowse
+            ? '✓ ዛሬ ያነበብኩ — Mark Today as Read'
+            : '✓ ዚህን ቀን ያነበብኩ — Mark Day ' + rpBrowseNum + ' as Read';
+        btn.classList.remove('marked');
+    }
+
+    rpRenderWeek();
+    rpRenderBrowseLabel();
+}
+
+function rpRenderWeek() {
+    var wrap = document.getElementById('rp-week');
+    if (!wrap) return;
+    var html = '';
+    var start = Math.max(1, rpTodayNum - 6);
+    for (var d = start; d <= rpTodayNum; d++) {
+        var cls = 'rp-week-day';
+        if (d === rpTodayNum) cls += ' today';
+        if (rpIsCompleted(d)) cls += ' done';
+        html += '<div class="' + cls + '" onclick="rpBrowseTo(' + d + ')" title="Day ' + d + '">' + d + '</div>';
+    }
+    wrap.innerHTML = html;
+}
+
+function rpRenderBrowseLabel() {
+    var el = document.getElementById('rp-browse-label');
+    if (el) el.textContent = 'Day ' + rpBrowseNum;
+    var prev = document.getElementById('rp-prev-btn');
+    var next = document.getElementById('rp-next-btn');
+    if (prev) prev.disabled = rpBrowseNum <= 1;
+    if (next) next.disabled = rpBrowseNum >= 365;
+}
+
+function rpLoadReading(dayNum, callback) {
+    fetch('/api/christian/reading-plan?day=' + dayNum)
+        .then(function(r){ return r.json(); })
+        .then(function(data){ if (data.success) callback(data.plan); })
+        .catch(function(){ });
+}
+
+function rpRenderChapterList(listId, chapters, icon) {
+    var el = document.getElementById(listId);
+    if (!el) return;
+    if (!chapters || chapters.length === 0) {
+        el.innerHTML = '<div class="rp-empty" style="font-size:12px;padding:8px 0;">— ዛሬ ለዚህ ክፍል ምንባብ የለም —</div>';
+        return;
+    }
+    var html = '';
+    chapters.forEach(function(ch) {
+        html += '<div class="rp-chapter">'
+              + '<div class="rp-chapter-icon">' + icon + '</div>'
+              + '<div class="rp-chapter-text">'
+              + '<div class="rp-chapter-ref">' + ch.ref_am + '</div>'
+              + '<div class="rp-chapter-ref-en">' + ch.ref_en + '</div>'
+              + '</div>'
+              + '<div class="rp-chapter-done">✓</div>'
+              + '</div>';
+    });
+    el.innerHTML = html;
+}
+
+function rpShowDay(dayNum) {
+    rpBrowseNum = dayNum;
+    document.getElementById('rp-day-num').textContent    = dayNum;
+    document.getElementById('rp-day-inline').textContent = dayNum;
+    rpRefreshUI();
+    rpLoadReading(dayNum, function(plan) {
+        rpRenderChapterList('rp-ot-list', plan.ot, '📜');
+        rpRenderChapterList('rp-nt-list', plan.nt, '✝️');
+    });
+}
+
+function rpBrowse(dir) {
+    var next = rpBrowseNum + dir;
+    if (next < 1 || next > 365) return;
+    rpShowDay(next);
+}
+
+function rpBrowseTo(dayNum) {
+    rpShowDay(dayNum);
+}
+
+function rpGoToday() {
+    rpShowDay(rpTodayNum);
+}
+
+function rpInit() {
+    if (rpLoaded) { rpRefreshUI(); rpRenderWeek(); return; }
+    rpLoaded = true;
+    rpTodayNum  = rpDayOfYear();
+    rpBrowseNum = rpTodayNum;
+    rpShowDay(rpTodayNum);
+}
+
+/* Auto-open if URL hash is #plan */
+document.addEventListener('DOMContentLoaded', function() {
+    if (window.location.hash === '#plan') {
+        var btn = document.getElementById('plan-tab-btn');
+        if (btn) btn.click();
+    }
+});
 </script>
 {% endblock %}

@@ -4,9 +4,10 @@ Christian Corner Routes — SEMIRA FASHION
 /catholic     — Catholic full suite
 /api/christian/protestant-content  — JSON for home slider
 /api/christian/catholic-content    — JSON for home slider
+/api/christian/reading-plan        — JSON for a given day's Bible reading
 """
 
-from flask import Blueprint, render_template, jsonify
+from flask import Blueprint, render_template, jsonify, request
 from routes.shared import get_lang
 
 christian_bp = Blueprint('christian', __name__)
@@ -64,3 +65,17 @@ def api_catholic_content():
         'liturgy': get_today_catholic_liturgy(),
         'prayer':  get_today_catholic_prayer(),
     })
+
+
+@christian_bp.route('/api/christian/reading-plan')
+def api_reading_plan():
+    from database.christian_data import get_reading_plan_day, get_today_reading_plan
+    try:
+        day_param = request.args.get('day')
+        if day_param is not None:
+            data = get_reading_plan_day(int(day_param))
+        else:
+            data = get_today_reading_plan()
+        return jsonify({'success': True, 'plan': data})
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 400

@@ -846,3 +846,158 @@ def get_today_catholic_liturgy() -> dict:
 
 def get_today_catholic_prayer() -> dict:
     return CATHOLIC_SAINT_PRAYERS[_day_idx()]
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# BIBLE READING PLAN  —  365-day plan through the entire Bible
+# Each day gets 2-3 OT chapters + 0-1 NT chapters (generated algorithmically)
+# ══════════════════════════════════════════════════════════════════════════════
+
+_BIBLE_BOOKS_OT = [
+    ("ዘፍጥረት",   "Genesis",         50),
+    ("ዘጸአት",    "Exodus",          40),
+    ("ዘሌዋዊያን",  "Leviticus",       27),
+    ("ዘኁልቁ",    "Numbers",         36),
+    ("ዘዳግም",    "Deuteronomy",     34),
+    ("ኢያሱ",     "Joshua",          24),
+    ("መሳፍንት",   "Judges",          21),
+    ("ሩት",      "Ruth",             4),
+    ("1ሳሙኤል",  "1 Samuel",         31),
+    ("2ሳሙኤል",  "2 Samuel",         24),
+    ("1ነገሥት",  "1 Kings",          22),
+    ("2ነገሥት",  "2 Kings",          25),
+    ("1ዜና",    "1 Chronicles",     29),
+    ("2ዜና",    "2 Chronicles",     36),
+    ("ዕዝራ",    "Ezra",             10),
+    ("ነህምያ",   "Nehemiah",         13),
+    ("አስቴር",   "Esther",           10),
+    ("ኢዮብ",    "Job",              42),
+    ("መዝሙር",   "Psalms",          150),
+    ("ምሳሌ",    "Proverbs",         31),
+    ("መክብብ",   "Ecclesiastes",     12),
+    ("መኃልይ",   "Song of Songs",     8),
+    ("ኢሳይያስ",  "Isaiah",           66),
+    ("ኤርምያስ",  "Jeremiah",         52),
+    ("ሰቆቃወ",   "Lamentations",      5),
+    ("ሕዝቅኤል",  "Ezekiel",          48),
+    ("ዳንኤል",   "Daniel",           12),
+    ("ሆሴዕ",    "Hosea",            14),
+    ("ዮኤል",    "Joel",              3),
+    ("አሞጽ",    "Amos",              9),
+    ("ዓብድዩ",   "Obadiah",           1),
+    ("ዮናስ",    "Jonah",             4),
+    ("ሚክያስ",   "Micah",             7),
+    ("ናሆም",    "Nahum",             3),
+    ("ዕንባቆም",  "Habakkuk",          3),
+    ("ሶፎንያስ",  "Zephaniah",         3),
+    ("ሐጌ",     "Haggai",            2),
+    ("ዘካርያስ",  "Zechariah",        14),
+    ("ሚልክያስ",  "Malachi",           4),
+]
+
+_BIBLE_BOOKS_NT = [
+    ("ማቴዎስ",         "Matthew",          28),
+    ("ማርቆስ",         "Mark",             16),
+    ("ሉቃስ",          "Luke",             24),
+    ("ዮሐንስ",         "John",             21),
+    ("የሐዋርያት",       "Acts",             28),
+    ("ሮሜ",           "Romans",           16),
+    ("1ቆሮንቶስ",       "1 Corinthians",    16),
+    ("2ቆሮንቶስ",       "2 Corinthians",    13),
+    ("ገላትያ",         "Galatians",         6),
+    ("ኤፌሶን",         "Ephesians",         6),
+    ("ፊልጵስዩስ",       "Philippians",       4),
+    ("ቆላስይስ",        "Colossians",        4),
+    ("1ተሰሎ",         "1 Thessalonians",   5),
+    ("2ተሰሎ",         "2 Thessalonians",   3),
+    ("1ጢሞቴዎስ",       "1 Timothy",         6),
+    ("2ጢሞቴዎስ",       "2 Timothy",         4),
+    ("ቲቶ",           "Titus",             3),
+    ("ፊልሞና",         "Philemon",          1),
+    ("ዕብራዊያን",       "Hebrews",          13),
+    ("ያዕቆብ",         "James",             5),
+    ("1ጴጥሮስ",        "1 Peter",           5),
+    ("2ጴጥሮስ",        "2 Peter",           3),
+    ("1ዮሐንስ",        "1 John",            5),
+    ("2ዮሐንስ",        "2 John",            1),
+    ("3ዮሐንስ",        "3 John",            1),
+    ("ይሁዳ",          "Jude",              1),
+    ("ራዕይ",          "Revelation",       22),
+]
+
+
+def _build_chapter_list(books):
+    """Return a flat list of (am, en, chapter_num) for all books."""
+    out = []
+    for am, en, cnt in books:
+        for ch in range(1, cnt + 1):
+            out.append((am, en, ch))
+    return out
+
+
+_OT_CHAPTERS = _build_chapter_list(_BIBLE_BOOKS_OT)  # 929
+_NT_CHAPTERS = _build_chapter_list(_BIBLE_BOOKS_NT)  # 260
+_OT_TOTAL = len(_OT_CHAPTERS)  # 929
+_NT_TOTAL = len(_NT_CHAPTERS)  # 260
+
+
+def _fmt_reading(chapters):
+    """Given a list of (am, en, ch) tuples, produce grouped reading dicts."""
+    if not chapters:
+        return []
+    groups = {}
+    order = []
+    for am, en, ch in chapters:
+        if en not in groups:
+            groups[en] = {"am": am, "en": en, "chs": []}
+            order.append(en)
+        groups[en]["chs"].append(ch)
+    result = []
+    for key in order:
+        g = groups[key]
+        chs = g["chs"]
+        if len(chs) == 1:
+            result.append({
+                "am": g["am"], "en": g["en"],
+                "ref_am": f"{g['am']} {chs[0]}",
+                "ref_en": f"{g['en']} {chs[0]}",
+            })
+        else:
+            result.append({
+                "am": g["am"], "en": g["en"],
+                "ref_am": f"{g['am']} {chs[0]}–{chs[-1]}",
+                "ref_en": f"{g['en']} {chs[0]}–{chs[-1]}",
+            })
+    return result
+
+
+def get_reading_plan_day(day_num: int) -> dict:
+    """
+    Return the Bible reading for a given day (1–365).
+    Distributes OT (929 ch) and NT (260 ch) evenly across 365 days.
+    """
+    day_num = max(1, min(365, day_num))
+
+    ot_start = round((day_num - 1) * _OT_TOTAL / 365)
+    ot_end   = round(day_num       * _OT_TOTAL / 365)
+    nt_start = round((day_num - 1) * _NT_TOTAL / 365)
+    nt_end   = round(day_num       * _NT_TOTAL / 365)
+
+    ot_reading = _fmt_reading(_OT_CHAPTERS[ot_start:ot_end])
+    nt_reading = _fmt_reading(_NT_CHAPTERS[nt_start:nt_end])
+
+    total_chapters = (ot_end - ot_start) + (nt_end - nt_start)
+
+    return {
+        "day":            day_num,
+        "ot":             ot_reading,
+        "nt":             nt_reading,
+        "total_chapters": total_chapters,
+    }
+
+
+def get_today_reading_plan() -> dict:
+    """Return the reading plan entry for today's day-of-year."""
+    today = datetime.date.today()
+    day_of_year = today.timetuple().tm_yday  # 1..366
+    return get_reading_plan_day(min(day_of_year, 365))
