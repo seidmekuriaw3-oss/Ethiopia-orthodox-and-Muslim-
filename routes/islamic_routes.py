@@ -590,21 +590,10 @@ def hadith_collection_detail(collection_id):
             if ext is not None:
                 col_meta = get_collection(collection_id) or {}
                 total      = len(ext)
-                total_pgs  = math.ceil(total / per_page)
+                total_pgs  = math.ceil(total / per_page) if total else 1
+                page       = min(page, total_pgs)
                 start      = (page - 1) * per_page
                 slice_     = ext[start:start + per_page]
-
-                # Fill in any missing Amharic text for this page only (not
-                # the whole collection) via machine-translation fallback, so
-                # every hadith shown always has Amharic underneath English.
-                # Already-translated entries are skipped, so this is a no-op
-                # after the first time a page is viewed.
-                try:
-                    from database.hadith_downloader import ensure_amharic
-                    ensure_amharic(collection_id, slice_)
-                except Exception:
-                    current_app.logger.warning("Amharic auto-translate fallback failed", exc_info=True)
-
                 return jsonify({
                     'success':      True,
                     'collection': {
@@ -629,6 +618,7 @@ def hadith_collection_detail(collection_id):
         hadiths    = col.get('hadiths', [])
         total      = len(hadiths)
         total_pgs  = math.ceil(total / per_page) if total else 1
+        page       = min(page, total_pgs)
         start      = (page - 1) * per_page
         return jsonify({
             'success':     True,
