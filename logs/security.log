@@ -22145,3 +22145,14 @@ TypeError: 'str' object is not callable
 2026-07-12 01:23:02,493 - app - WARNING - 404 Error: http://505e658d-6498-4dfb-b2cd-6745e5dfa3ea-00-tv5w7eqsmocb.worf.replit.dev/static/uploads/products/baby_onesie.jpg
 2026-07-12 01:23:07,444 - app - WARNING - 404 Error: http://505e658d-6498-4dfb-b2cd-6745e5dfa3ea-00-tv5w7eqsmocb.worf.replit.dev/static/uploads/ads/ad_holiday_photo.jpg
 2026-07-12 01:23:11,715 - app - WARNING - 404 Error: http://505e658d-6498-4dfb-b2cd-6745e5dfa3ea-00-tv5w7eqsmocb.worf.replit.dev/static/uploads/ads/ad_traditional_photo.jpg
+2026-07-12 02:17:59,295 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-07-12 02:17:59,347 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-07-12 02:18:03,256 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-07-12 02:18:06,922 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-07-12 02:18:10,595 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-07-12 02:18:14,288 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-07-12 02:18:17,964 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-07-12 02:18:21,708 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-07-12 02:18:25,474 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-07-12 02:18:32,305 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-07-12 02:19:08,897 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
