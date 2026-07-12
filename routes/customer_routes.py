@@ -154,6 +154,28 @@ def index():
             import logging as _log
             _log.getLogger(__name__).warning("Orthodox data error: %s", _orth_err)
 
+        protestant_home = None
+        try:
+            from database.christian_data import get_today_protestant_verse, get_today_protestant_song
+            protestant_home = {
+                'verse': get_today_protestant_verse(),
+                'song':  get_today_protestant_song(),
+            }
+        except Exception as _prt_err:
+            import logging as _log
+            _log.getLogger(__name__).warning("Protestant data error: %s", _prt_err)
+
+        catholic_home = None
+        try:
+            from database.christian_data import get_today_catholic_liturgy, get_today_catholic_prayer
+            catholic_home = {
+                'liturgy': get_today_catholic_liturgy(),
+                'prayer':  get_today_catholic_prayer(),
+            }
+        except Exception as _ctc_err:
+            import logging as _log
+            _log.getLogger(__name__).warning("Catholic data error: %s", _ctc_err)
+
         return render_template('customer/index.html',
                                featured_products=featured_list,
                                new_products=new_list,
@@ -166,7 +188,9 @@ def index():
                                hijri_home=hijri_home,
                                daily_ayah=daily_ayah,
                                next_event=next_event,
-                               orthodox_home=orthodox_home)
+                               orthodox_home=orthodox_home,
+                               protestant_home=protestant_home,
+                               catholic_home=catholic_home)
     except Exception as e:
         import logging as _log
         _log.getLogger(__name__).error("Home page error: %s", e, exc_info=True)

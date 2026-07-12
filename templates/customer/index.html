@@ -816,33 +816,41 @@
         .idc-slider-outer { max-width:100%; }
     }
 
-    /* ── Two-corners row: forces Islamic + Orthodox side-by-side, even on mobile ── */
+    /* ── Corners row: 2×2 grid for Islamic, Orthodox, Protestant, Catholic ── */
     .corners-row {
         display: grid;
         grid-template-columns: 1fr 1fr;
         gap: 14px;
-        align-items: stretch; /* force both columns to equal height */
+        align-items: stretch;
     }
     .corners-row > .idc-wrap,
-    .corners-row > .otc-wrap {
+    .corners-row > .otc-wrap,
+    .corners-row > .prt-wrap,
+    .corners-row > .ctc-wrap {
         margin: 0;
         width: 100%;
-        min-width: 0; /* allow grid children to shrink below content size */
+        min-width: 0;
         height: 100%;
         display: flex;
         flex-direction: column;
     }
     .idc-slider-outer,
-    .otc-slider-outer {
+    .otc-slider-outer,
+    .prt-slider-outer,
+    .ctc-slider-outer {
         min-height: 200px;
     }
     .idc-card,
-    .otc-card {
+    .otc-card,
+    .prt-card,
+    .ctc-card {
         min-height: 200px;
         overflow: hidden;
     }
     .idc-cta,
-    .otc-cta {
+    .otc-cta,
+    .prt-cta,
+    .ctc-cta {
         margin-top: auto;
     }
     .corners-row > .otc-full,
@@ -1055,6 +1063,242 @@
         box-shadow:0 4px 16px rgba(122,58,26,.28);
     }
     .otc-cta a:hover { transform:translateY(-2px); box-shadow:0 8px 24px rgba(122,58,26,.38); }
+
+    /* ── Protestant Corner (light blue / cyan + gold palette) ── */
+    .prt-wrap {
+        margin: 36px 0;
+        background: linear-gradient(160deg,#e8f4fd 0%,#f0f8ff 55%,#e3f2fd 100%);
+        border-radius: 18px;
+        border: 1px solid #b3d9f7;
+        padding: 22px 18px 18px;
+    }
+    .prt-head { text-align:center; margin-bottom:16px; }
+    .prt-head h2 {
+        font-size:clamp(15px,2.5vw,19px); font-weight:800; color:#0d3c61;
+        margin:0 0 3px; display:flex; align-items:center; justify-content:center; gap:8px;
+    }
+    .prt-amharic-sub {
+        font-family:'Noto Sans Ethiopic','Nyala',serif; font-size:13px; color:#1565c0;
+        display:block; margin-bottom:3px;
+    }
+    .prt-head p { font-size:11px; color:#5a80a0; margin:0; }
+    .prt-slider-outer {
+        position:relative; max-width:340px; margin:0 auto 16px;
+        overflow:hidden; border-radius:14px;
+    }
+    .prt-slider-track {
+        display:flex;
+        transition:transform .52s cubic-bezier(.4,0,.2,1);
+        will-change:transform;
+    }
+    .prt-slider-arr {
+        position:absolute; top:50%; transform:translateY(-50%);
+        width:34px; height:34px; border-radius:50%;
+        background:rgba(255,255,255,.92); border:1px solid rgba(21,101,192,.2);
+        color:#1565c0; font-size:18px; cursor:pointer;
+        display:flex; align-items:center; justify-content:center;
+        box-shadow:0 2px 10px rgba(0,0,0,.1); z-index:10;
+        transition:all .2s; user-select:none;
+    }
+    .prt-slider-arr:hover { background:#1565c0; color:#fff; }
+    .prt-slider-arr.left  { left:10px; }
+    .prt-slider-arr.right { right:10px; }
+    .prt-slider-dots {
+        display:flex; align-items:center; justify-content:center;
+        gap:8px; margin-bottom:20px;
+    }
+    .prt-slider-dot {
+        width:8px; height:8px; border-radius:50%;
+        background:rgba(21,101,192,.2); border:1px solid rgba(21,101,192,.2);
+        cursor:pointer; transition:all .25s;
+    }
+    .prt-slider-dot.on {
+        background:#1565c0; border-color:#1565c0;
+        transform:scale(1.3); box-shadow:0 0 6px rgba(21,101,192,.4);
+    }
+    .prt-card {
+        background:#fff; border-radius:14px; padding:16px 16px 14px;
+        box-shadow:0 4px 24px rgba(21,101,192,.1);
+        border:1px solid rgba(21,101,192,.12);
+        display:flex; flex-direction:column;
+        box-sizing:border-box; min-width:100%; width:100%;
+    }
+    .prt-card-head { display:flex; align-items:center; gap:7px; margin-bottom:10px; }
+    .prt-card-icon {
+        width:30px; height:30px; border-radius:8px;
+        background:linear-gradient(135deg,#1565c0,#0d47a1);
+        display:flex; align-items:center; justify-content:center;
+        font-size:14px; flex-shrink:0;
+    }
+    .prt-card-lbl { font-size:11px; font-weight:700; color:#5a80a0; text-transform:uppercase; letter-spacing:1px; }
+    .prt-card-link {
+        margin-top:auto; padding-top:12px;
+        font-size:12px; color:#1565c0; font-weight:700;
+        text-decoration:none; display:flex; align-items:center; gap:5px;
+        border-top:1px solid #d8eaf8;
+    }
+    .prt-card-link:hover { color:#0d47a1; }
+    .prt-verse-body { flex:1; display:flex; flex-direction:column; }
+    .prt-verse-am {
+        font-size:clamp(11px,2vw,13px); font-weight:600; color:#0d3c61;
+        line-height:1.65; margin-bottom:6px;
+        display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:3; line-clamp:3; overflow:hidden;
+    }
+    .prt-verse-ref { font-size:10px; color:#f9a825; font-weight:700; margin-bottom:4px; }
+    .prt-song-body { flex:1; display:flex; flex-direction:column; }
+    .prt-song-title { font-size:13px; font-weight:800; color:#1565c0; margin-bottom:4px; }
+    .prt-song-lyric {
+        font-size:11px; color:#2a5a8a; line-height:1.6; font-style:italic;
+        display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:2; line-clamp:2; overflow:hidden;
+        margin-bottom:4px;
+    }
+    .prt-song-quote { font-size:10px; color:#5a80a0; line-height:1.5; }
+    .prt-cta { text-align:center; padding-top:4px; }
+    .prt-cta a {
+        display:inline-flex; align-items:center; gap:7px;
+        background:linear-gradient(135deg,#1565c0,#0d47a1); color:#fff;
+        text-decoration:none; padding:9px 22px; border-radius:30px;
+        font-weight:700; font-size:12px;
+        transition:transform .22s,box-shadow .22s;
+        box-shadow:0 4px 16px rgba(21,101,192,.28);
+    }
+    .prt-cta a:hover { transform:translateY(-2px); box-shadow:0 8px 24px rgba(21,101,192,.38); }
+
+    /* ── Catholic Corner (purple + gold palette) ── */
+    .ctc-wrap {
+        margin: 36px 0;
+        background: linear-gradient(160deg,#f5eeff 0%,#fdf8ff 55%,#f0e8ff 100%);
+        border-radius: 18px;
+        border: 1px solid #d4b8f0;
+        padding: 22px 18px 18px;
+    }
+    .ctc-head { text-align:center; margin-bottom:16px; }
+    .ctc-head h2 {
+        font-size:clamp(15px,2.5vw,19px); font-weight:800; color:#3a0a5c;
+        margin:0 0 3px; display:flex; align-items:center; justify-content:center; gap:8px;
+    }
+    .ctc-amharic-sub {
+        font-family:'Noto Sans Ethiopic','Nyala',serif; font-size:13px; color:#6a1b9a;
+        display:block; margin-bottom:3px;
+    }
+    .ctc-head p { font-size:11px; color:#7a5a9a; margin:0; }
+    .ctc-slider-outer {
+        position:relative; max-width:340px; margin:0 auto 16px;
+        overflow:hidden; border-radius:14px;
+    }
+    .ctc-slider-track {
+        display:flex;
+        transition:transform .52s cubic-bezier(.4,0,.2,1);
+        will-change:transform;
+    }
+    .ctc-slider-arr {
+        position:absolute; top:50%; transform:translateY(-50%);
+        width:34px; height:34px; border-radius:50%;
+        background:rgba(255,255,255,.92); border:1px solid rgba(106,27,154,.2);
+        color:#6a1b9a; font-size:18px; cursor:pointer;
+        display:flex; align-items:center; justify-content:center;
+        box-shadow:0 2px 10px rgba(0,0,0,.1); z-index:10;
+        transition:all .2s; user-select:none;
+    }
+    .ctc-slider-arr:hover { background:#6a1b9a; color:#fff; }
+    .ctc-slider-arr.left  { left:10px; }
+    .ctc-slider-arr.right { right:10px; }
+    .ctc-slider-dots {
+        display:flex; align-items:center; justify-content:center;
+        gap:8px; margin-bottom:20px;
+    }
+    .ctc-slider-dot {
+        width:8px; height:8px; border-radius:50%;
+        background:rgba(106,27,154,.2); border:1px solid rgba(106,27,154,.2);
+        cursor:pointer; transition:all .25s;
+    }
+    .ctc-slider-dot.on {
+        background:#6a1b9a; border-color:#6a1b9a;
+        transform:scale(1.3); box-shadow:0 0 6px rgba(106,27,154,.4);
+    }
+    .ctc-card {
+        background:#fff; border-radius:14px; padding:16px 16px 14px;
+        box-shadow:0 4px 24px rgba(106,27,154,.1);
+        border:1px solid rgba(106,27,154,.12);
+        display:flex; flex-direction:column;
+        box-sizing:border-box; min-width:100%; width:100%;
+    }
+    .ctc-card-head { display:flex; align-items:center; gap:7px; margin-bottom:10px; }
+    .ctc-card-icon {
+        width:30px; height:30px; border-radius:8px;
+        background:linear-gradient(135deg,#6a1b9a,#4a148c);
+        display:flex; align-items:center; justify-content:center;
+        font-size:14px; flex-shrink:0;
+    }
+    .ctc-card-lbl { font-size:11px; font-weight:700; color:#7a5a9a; text-transform:uppercase; letter-spacing:1px; }
+    .ctc-card-link {
+        margin-top:auto; padding-top:12px;
+        font-size:12px; color:#6a1b9a; font-weight:700;
+        text-decoration:none; display:flex; align-items:center; gap:5px;
+        border-top:1px solid #e8d8f8;
+    }
+    .ctc-card-link:hover { color:#4a148c; }
+    .ctc-liturgy-body { flex:1; display:flex; flex-direction:column; }
+    .ctc-season-badge {
+        display:inline-block; background:rgba(106,27,154,.12);
+        border-radius:10px; padding:2px 8px;
+        font-size:9px; font-weight:700; color:#6a1b9a; margin-bottom:6px;
+    }
+    .ctc-liturgy-am {
+        font-size:clamp(11px,2vw,13px); font-weight:600; color:#3a0a5c;
+        line-height:1.65; margin-bottom:4px;
+        display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:3; line-clamp:3; overflow:hidden;
+    }
+    .ctc-liturgy-ref { font-size:10px; color:#fdd835; font-weight:700; margin-bottom:4px;
+        text-shadow: 0 0 4px rgba(0,0,0,.08); }
+    .ctc-prayer-body { flex:1; display:flex; flex-direction:column; }
+    .ctc-prayer-saint { font-size:11px; font-weight:700; color:#6a1b9a; margin-bottom:2px; }
+    .ctc-prayer-am {
+        font-size:11px; color:#4a2a6a; line-height:1.6; font-style:italic;
+        display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:3; line-clamp:3; overflow:hidden;
+        margin-bottom:4px;
+    }
+    .ctc-prayer-reflect { font-size:10px; color:#7a5a9a; line-height:1.5; }
+    .ctc-cta { text-align:center; padding-top:4px; }
+    .ctc-cta a {
+        display:inline-flex; align-items:center; gap:7px;
+        background:linear-gradient(135deg,#6a1b9a,#4a148c); color:#fff;
+        text-decoration:none; padding:9px 22px; border-radius:30px;
+        font-weight:700; font-size:12px;
+        transition:transform .22s,box-shadow .22s;
+        box-shadow:0 4px 16px rgba(106,27,154,.28);
+    }
+    .ctc-cta a:hover { transform:translateY(-2px); box-shadow:0 8px 24px rgba(106,27,154,.38); }
+
+    /* mobile tweaks for all 4 corners */
+    @media (max-width:640px) {
+        .corners-row > .prt-wrap,
+        .corners-row > .ctc-wrap { padding:8px 6px 6px; border-radius:12px; }
+        .prt-head, .ctc-head { margin-bottom:6px; }
+        .prt-amharic-sub, .ctc-amharic-sub { font-size:9px; margin-bottom:1px; }
+        .prt-head h2, .ctc-head h2 { font-size:10px; gap:3px; }
+        .prt-head p, .ctc-head p { display:none; }
+        .prt-slider-outer, .ctc-slider-outer { max-width:100%; }
+        .prt-card, .ctc-card { padding:8px 6px 6px; border-radius:10px; min-height:160px; }
+        .prt-card-head, .ctc-card-head { gap:4px; margin-bottom:5px; }
+        .prt-card-icon, .ctc-card-icon { width:16px; height:16px; font-size:8px; border-radius:5px; }
+        .prt-card-lbl, .ctc-card-lbl { font-size:10px; letter-spacing:0.2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+        .prt-card-link, .ctc-card-link { font-size:9px; padding-top:5px; gap:3px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+        .prt-slider-arr, .ctc-slider-arr { width:20px; height:20px; font-size:11px; }
+        .prt-slider-arr.left, .ctc-slider-arr.left { left:2px; }
+        .prt-slider-arr.right, .ctc-slider-arr.right { right:2px; }
+        .prt-slider-dots, .ctc-slider-dots { gap:4px; margin-bottom:8px; }
+        .prt-slider-dot, .ctc-slider-dot { width:5px; height:5px; }
+        .prt-cta, .ctc-cta { margin-top:auto; }
+        .prt-cta a, .ctc-cta a {
+            width:100%; box-sizing:border-box;
+            height:34px; min-height:34px; max-height:34px;
+            padding:0 6px; gap:2px;
+            font-size:9px; line-height:1;
+            white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+            justify-content:center;
+        }
+    }
 </style>
 {% endblock %}
 
@@ -1343,7 +1587,7 @@
 </div>
 {% endif %}
 
-{% if hijri_home or orthodox_home %}
+{% if hijri_home or orthodox_home or protestant_home or catholic_home %}
 <div class="corners-row">
 {% if hijri_home %}
 <div class="idc-wrap{% if not orthodox_home %} otc-full{% endif %}">
@@ -1613,6 +1857,126 @@
     </div>
 </div>
 {% endif %}
+
+{% if protestant_home %}
+<div class="prt-wrap">
+    <div class="prt-head">
+        <span class="prt-amharic-sub">የወንጌላውያን ክርስቲያኖች ክፍል</span>
+        <h2>✝️ Protestant Corner</h2>
+        <p>Daily Bible verse &amp; spiritual songs — for our Protestant Christian customers</p>
+    </div>
+
+    <div class="prt-slider-outer" id="prt-slider-outer">
+        <button class="prt-slider-arr left" onclick="prtNav(-1)">&#8249;</button>
+        <button class="prt-slider-arr right" onclick="prtNav(1)">&#8250;</button>
+
+        <div class="prt-slider-track" id="prt-track">
+
+            <div class="prt-card">
+                <div class="prt-card-head">
+                    <div class="prt-card-icon">📖</div>
+                    <span class="prt-card-lbl">Daily Bible Verse</span>
+                </div>
+                <div class="prt-verse-body">
+                    <div class="prt-verse-am">{{ protestant_home.verse.verse_am }}</div>
+                    <div class="prt-verse-ref">{{ protestant_home.verse.ref }}</div>
+                </div>
+                <a href="{{ url_for('christian.protestant_suite') }}#verse" class="prt-card-link">
+                    ሙሉ ጥቅስ ያንብቡ →
+                </a>
+            </div>
+
+            <div class="prt-card">
+                <div class="prt-card-head">
+                    <div class="prt-card-icon">🎵</div>
+                    <span class="prt-card-lbl">Spiritual Song</span>
+                </div>
+                <div class="prt-song-body">
+                    <div class="prt-song-title">{{ protestant_home.song.title }}</div>
+                    <div class="prt-song-lyric">"{{ protestant_home.song.lyric }}"</div>
+                    <div class="prt-song-quote">{{ protestant_home.song.quote }}</div>
+                </div>
+                <a href="{{ url_for('christian.protestant_suite') }}#song" class="prt-card-link">
+                    ሙሉ መዝሙር →
+                </a>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="prt-slider-dots" id="prt-dots">
+        <div class="prt-slider-dot on" onclick="prtGoTo(0)"></div>
+        <div class="prt-slider-dot" onclick="prtGoTo(1)"></div>
+    </div>
+
+    <div class="prt-cta">
+        <a href="{{ url_for('christian.protestant_suite') }}">
+            ✝️ Open Full Protestant Corner
+        </a>
+    </div>
+</div>
+{% endif %}
+
+{% if catholic_home %}
+<div class="ctc-wrap">
+    <div class="ctc-head">
+        <span class="ctc-amharic-sub">የካቶሊክ ክርስቲያኖች ክፍል</span>
+        <h2>✝️ Catholic Corner</h2>
+        <p>Daily liturgical reading &amp; prayers of the saints — for our Catholic customers</p>
+    </div>
+
+    <div class="ctc-slider-outer" id="ctc-slider-outer">
+        <button class="ctc-slider-arr left" onclick="ctcNav(-1)">&#8249;</button>
+        <button class="ctc-slider-arr right" onclick="ctcNav(1)">&#8250;</button>
+
+        <div class="ctc-slider-track" id="ctc-track">
+
+            <div class="ctc-card">
+                <div class="ctc-card-head">
+                    <div class="ctc-card-icon">📅</div>
+                    <span class="ctc-card-lbl">Liturgical Reading</span>
+                </div>
+                <div class="ctc-liturgy-body">
+                    <div class="ctc-season-badge">{{ catholic_home.liturgy.season }}</div>
+                    <div class="ctc-liturgy-am">{{ catholic_home.liturgy.reading_am }}</div>
+                    <div class="ctc-liturgy-ref">{{ catholic_home.liturgy.ref }}</div>
+                </div>
+                <a href="{{ url_for('christian.catholic_suite') }}#liturgy" class="ctc-card-link">
+                    ሙሉ ንባብ →
+                </a>
+            </div>
+
+            <div class="ctc-card">
+                <div class="ctc-card-head">
+                    <div class="ctc-card-icon">🙏</div>
+                    <span class="ctc-card-lbl">Saint Prayer</span>
+                </div>
+                <div class="ctc-prayer-body">
+                    <div class="ctc-prayer-saint">✝ {{ catholic_home.prayer.saint }}</div>
+                    <div class="ctc-prayer-am">{{ catholic_home.prayer.prayer_am }}</div>
+                    <div class="ctc-prayer-reflect">{{ catholic_home.prayer.reflection }}</div>
+                </div>
+                <a href="{{ url_for('christian.catholic_suite') }}#prayer" class="ctc-card-link">
+                    ሙሉ ጸሎት →
+                </a>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="ctc-slider-dots" id="ctc-dots">
+        <div class="ctc-slider-dot on" onclick="ctcGoTo(0)"></div>
+        <div class="ctc-slider-dot" onclick="ctcGoTo(1)"></div>
+    </div>
+
+    <div class="ctc-cta">
+        <a href="{{ url_for('christian.catholic_suite') }}">
+            ✝️ Open Full Catholic Corner
+        </a>
+    </div>
+</div>
+{% endif %}
+
 </div>
 {% endif %}
 
@@ -1828,6 +2192,68 @@ function hscrollNav(trackId, dir) {
         outer.addEventListener('touchend', function(e){
             var dx = tsx - e.changedTouches[0].clientX;
             if (Math.abs(dx) > 40) { clearInterval(otcTimer); otcGoTo(otcIdx + (dx > 0 ? 1 : -1)); otcTimer = setInterval(function(){ otcGoTo(otcIdx + 1); }, 3500); }
+        }, {passive:true});
+    });
+})();
+
+/* ══ PROTESTANT CORNER SLIDER ══ */
+(function() {
+    var prtIdx = 0;
+    var prtTotal = 2;
+    var prtTimer;
+    function prtGoTo(n) {
+        prtIdx = (n + prtTotal) % prtTotal;
+        var track = document.getElementById('prt-track');
+        if (track) track.style.transform = 'translateX(-' + (prtIdx * 100) + '%)';
+        var dots = document.querySelectorAll('.prt-slider-dot');
+        dots.forEach(function(d, i) { d.classList.toggle('on', i === prtIdx); });
+    }
+    window.prtGoTo = prtGoTo;
+    window.prtNav = function(dir) {
+        clearInterval(prtTimer);
+        prtGoTo(prtIdx + dir);
+        prtTimer = setInterval(function(){ prtGoTo(prtIdx + 1); }, 4000);
+    };
+    document.addEventListener('DOMContentLoaded', function() {
+        var outer = document.getElementById('prt-slider-outer');
+        if (!outer) return;
+        prtTimer = setInterval(function(){ prtGoTo(prtIdx + 1); }, 4000);
+        var tsx = 0;
+        outer.addEventListener('touchstart', function(e){ tsx = e.touches[0].clientX; }, {passive:true});
+        outer.addEventListener('touchend', function(e){
+            var dx = tsx - e.changedTouches[0].clientX;
+            if (Math.abs(dx) > 40) { clearInterval(prtTimer); prtGoTo(prtIdx + (dx > 0 ? 1 : -1)); prtTimer = setInterval(function(){ prtGoTo(prtIdx + 1); }, 4000); }
+        }, {passive:true});
+    });
+})();
+
+/* ══ CATHOLIC CORNER SLIDER ══ */
+(function() {
+    var ctcIdx = 0;
+    var ctcTotal = 2;
+    var ctcTimer;
+    function ctcGoTo(n) {
+        ctcIdx = (n + ctcTotal) % ctcTotal;
+        var track = document.getElementById('ctc-track');
+        if (track) track.style.transform = 'translateX(-' + (ctcIdx * 100) + '%)';
+        var dots = document.querySelectorAll('.ctc-slider-dot');
+        dots.forEach(function(d, i) { d.classList.toggle('on', i === ctcIdx); });
+    }
+    window.ctcGoTo = ctcGoTo;
+    window.ctcNav = function(dir) {
+        clearInterval(ctcTimer);
+        ctcGoTo(ctcIdx + dir);
+        ctcTimer = setInterval(function(){ ctcGoTo(ctcIdx + 1); }, 4000);
+    };
+    document.addEventListener('DOMContentLoaded', function() {
+        var outer = document.getElementById('ctc-slider-outer');
+        if (!outer) return;
+        ctcTimer = setInterval(function(){ ctcGoTo(ctcIdx + 1); }, 4000);
+        var tsx = 0;
+        outer.addEventListener('touchstart', function(e){ tsx = e.touches[0].clientX; }, {passive:true});
+        outer.addEventListener('touchend', function(e){
+            var dx = tsx - e.changedTouches[0].clientX;
+            if (Math.abs(dx) > 40) { clearInterval(ctcTimer); ctcGoTo(ctcIdx + (dx > 0 ? 1 : -1)); ctcTimer = setInterval(function(){ ctcGoTo(ctcIdx + 1); }, 4000); }
         }, {passive:true});
     });
 })();

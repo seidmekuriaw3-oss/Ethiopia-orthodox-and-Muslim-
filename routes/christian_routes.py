@@ -1,0 +1,66 @@
+"""
+Christian Corner Routes — SEMIRA FASHION
+/protestant   — Protestant full suite
+/catholic     — Catholic full suite
+/api/christian/protestant-content  — JSON for home slider
+/api/christian/catholic-content    — JSON for home slider
+"""
+
+from flask import Blueprint, render_template, jsonify
+from routes.shared import get_lang
+
+christian_bp = Blueprint('christian', __name__)
+
+
+@christian_bp.route('/protestant')
+def protestant_suite():
+    lang = get_lang()
+    from database.christian_data import (
+        PROTESTANT_BIBLE_VERSES, PROTESTANT_SONGS,
+        get_today_protestant_verse, get_today_protestant_song,
+    )
+    return render_template(
+        'customer/protestant.html',
+        lang=lang,
+        all_verses=PROTESTANT_BIBLE_VERSES,
+        all_songs=PROTESTANT_SONGS,
+        today_verse=get_today_protestant_verse(),
+        today_song=get_today_protestant_song(),
+    )
+
+
+@christian_bp.route('/catholic')
+def catholic_suite():
+    lang = get_lang()
+    from database.christian_data import (
+        CATHOLIC_LITURGY, CATHOLIC_SAINT_PRAYERS,
+        get_today_catholic_liturgy, get_today_catholic_prayer,
+    )
+    return render_template(
+        'customer/catholic.html',
+        lang=lang,
+        all_liturgy=CATHOLIC_LITURGY,
+        all_prayers=CATHOLIC_SAINT_PRAYERS,
+        today_liturgy=get_today_catholic_liturgy(),
+        today_prayer=get_today_catholic_prayer(),
+    )
+
+
+@christian_bp.route('/api/christian/protestant-content')
+def api_protestant_content():
+    from database.christian_data import get_today_protestant_verse, get_today_protestant_song
+    return jsonify({
+        'success': True,
+        'verse': get_today_protestant_verse(),
+        'song':  get_today_protestant_song(),
+    })
+
+
+@christian_bp.route('/api/christian/catholic-content')
+def api_catholic_content():
+    from database.christian_data import get_today_catholic_liturgy, get_today_catholic_prayer
+    return jsonify({
+        'success': True,
+        'liturgy': get_today_catholic_liturgy(),
+        'prayer':  get_today_catholic_prayer(),
+    })

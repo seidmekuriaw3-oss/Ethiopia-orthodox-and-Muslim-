@@ -1,0 +1,235 @@
+{% extends "base.html" %}
+{% block title %}Catholic Corner — SEMIRA FASHION{% endblock %}
+
+{% block extra_css %}
+{{ super() }}
+<style>
+:root {
+    --cc: #6a1b9a;
+    --cc2: #4a148c;
+    --cgold: #fdd835;
+    --cgold2: #f9a825;
+    --cdark: #1a0a2e;
+    --cpanel: rgba(26,10,46,0.96);
+    --cborder: rgba(253,216,53,0.28);
+    --gpurple: 0 0 18px rgba(106,27,154,0.7);
+    --ggold: 0 0 18px rgba(253,216,53,0.5);
+}
+*,*::before,*::after{box-sizing:border-box}
+.cpage{
+    min-height:100vh;
+    background:radial-gradient(ellipse at top,#1e0633 0%,#0d0118 55%,#000 100%);
+    padding:16px 14px 90px;
+    font-family:'Segoe UI',system-ui,sans-serif;
+    color:#ede0ff;
+}
+.cheader{text-align:center;padding:24px 0 18px}
+.ccross-deco{font-size:clamp(22px,5vw,36px);color:var(--cgold);letter-spacing:4px;text-shadow:0 0 22px rgba(253,216,53,0.5);margin-bottom:5px;}
+.cheader h1{font-size:clamp(15px,3.5vw,24px);color:#e0ccff;font-weight:300;margin:0;letter-spacing:3px;text-transform:uppercase}
+.ornament{text-align:center;color:var(--cgold);font-size:18px;opacity:.4;margin:8px 0;letter-spacing:8px}
+
+.tabs{display:flex;justify-content:center;gap:8px;margin:14px 0;flex-wrap:wrap}
+.tab-btn{
+    background:rgba(255,255,255,.06);border:1px solid var(--cborder);
+    color:#c8b0e8;padding:9px 20px;border-radius:30px;cursor:pointer;
+    font-size:13px;font-weight:600;letter-spacing:.8px;transition:all .28s;
+}
+.tab-btn.active,.tab-btn:hover{background:var(--cc);border-color:var(--cgold);color:#fff;box-shadow:var(--gpurple)}
+.tab-panel{display:none}.tab-panel.active{display:block}
+
+.card{
+    background:var(--cpanel);border:1px solid var(--cborder);
+    border-radius:18px;padding:22px 20px;
+    max-width:520px;margin:0 auto 16px;backdrop-filter:blur(10px);
+}
+.card-title{
+    font-size:11px;font-weight:700;color:var(--cgold);
+    text-transform:uppercase;letter-spacing:1.8px;margin-bottom:14px;
+    display:flex;align-items:center;gap:8px;
+}
+.card-title::after{content:'';flex:1;height:1px;background:var(--cborder);}
+
+/* Season badge */
+.season-badge{
+    display:inline-block;background:rgba(106,27,154,.35);
+    border:1px solid rgba(253,216,53,.4);border-radius:20px;
+    padding:3px 12px;font-size:10px;font-weight:700;color:var(--cgold);
+    margin-bottom:10px;
+}
+
+/* Liturgy card */
+.liturgy-am{
+    font-size:clamp(13px,2.8vw,17px);font-weight:600;
+    color:#ece0ff;line-height:1.8;margin-bottom:10px;
+}
+.liturgy-en{
+    font-size:12px;color:#9a80cc;line-height:1.6;
+    border-left:3px solid var(--cborder);padding-left:10px;margin-bottom:10px;
+    font-style:italic;
+}
+.liturgy-ref{
+    display:inline-block;background:rgba(106,27,154,.25);
+    border:1px solid rgba(253,216,53,.35);border-radius:20px;
+    padding:4px 14px;font-size:11px;font-weight:700;color:var(--cgold);
+}
+.liturgy-reflection{
+    margin-top:12px;font-size:12px;color:#c0a8e8;line-height:1.7;
+    background:rgba(106,27,154,.15);border-radius:10px;padding:10px 12px;
+}
+
+/* Prayer card */
+.prayer-saint{font-size:13px;font-weight:700;color:var(--cgold);margin-bottom:3px;}
+.prayer-feast{font-size:11px;color:#8a70aa;margin-bottom:10px;}
+.prayer-am{
+    font-size:clamp(13px,2.8vw,17px);color:#ece0ff;line-height:1.8;margin-bottom:8px;
+    font-style:italic;
+}
+.prayer-en{
+    font-size:12px;color:#9a80cc;line-height:1.6;
+    border-left:3px solid var(--cborder);padding-left:10px;margin-bottom:10px;
+    font-style:italic;
+}
+.prayer-reflection{
+    font-size:12px;color:#c0a8e8;
+    border-top:1px solid var(--cborder);padding-top:10px;line-height:1.6;
+}
+
+/* Library items */
+.lib-grid{display:flex;flex-direction:column;gap:12px;max-width:520px;margin:0 auto;}
+.lib-item{
+    background:rgba(106,27,154,.1);border:1px solid rgba(253,216,53,.15);
+    border-radius:14px;padding:14px 16px;
+}
+.lib-item-ref{font-size:11px;font-weight:700;color:var(--cgold);}
+.lib-item-text{font-size:13px;color:#ddd0ff;line-height:1.6;margin:4px 0;}
+.lib-item-tafsir{font-size:11px;color:#8a70aa;line-height:1.5;}
+
+.prayer-lib-item{
+    background:rgba(74,20,140,.1);border:1px solid rgba(253,216,53,.13);
+    border-radius:14px;padding:14px 16px;
+}
+.prayer-lib-saint{font-size:12px;font-weight:700;color:var(--cgold);margin-bottom:4px;}
+.prayer-lib-text{font-size:12px;color:#c8b8ee;line-height:1.6;font-style:italic;margin-bottom:4px;}
+.prayer-lib-reflect{font-size:11px;color:#8a70aa;}
+
+/* Back button */
+.back-btn{
+    display:flex;align-items:center;gap:8px;width:fit-content;
+    background:rgba(106,27,154,.25);border:1px solid var(--cborder);
+    color:var(--cgold);padding:10px 20px;border-radius:30px;
+    text-decoration:none;font-size:13px;font-weight:600;
+    margin:0 auto 18px;transition:all .22s;
+}
+.back-btn:hover{background:var(--cc);color:#fff;}
+
+@media(max-width:480px){
+    .cpage{padding:12px 10px 80px;}
+    .card{padding:16px 14px;}
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="cpage">
+
+    <a href="/" class="back-btn">← ወደ ቤት</a>
+
+    <div class="cheader">
+        <div class="ccross-deco">✝ ✝ ✝</div>
+        <h1>Catholic Corner</h1>
+        <div style="font-size:12px;color:#7a60aa;margin-top:4px;letter-spacing:1px;">የካቶሊክ ክርስቲያኖች ክፍል</div>
+    </div>
+    <div class="ornament">· · · · ·</div>
+
+    <!-- Tabs -->
+    <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab('liturgy',this)">📅 ሥርዓተ አምልኮ</button>
+        <button class="tab-btn" onclick="switchTab('prayer',this)">🙏 የቅዱሳን ጸሎት</button>
+        <button class="tab-btn" onclick="switchTab('library',this)">📚 ቤተ-መጻሕፍት</button>
+    </div>
+
+    <!-- ═══ TAB 1: Liturgical Reading ═══ -->
+    <div class="tab-panel active" id="tab-liturgy">
+        <div class="card">
+            <div class="card-title">📅 ዛሬ ሥርዓተ አምልኮ ንባብ — Daily Liturgical Reading</div>
+
+            <div class="season-badge">📿 {{ today_liturgy.season }}</div>
+            <div class="liturgy-am">{{ today_liturgy.reading_am }}</div>
+            <div class="liturgy-en">{{ today_liturgy.reading_en }}</div>
+            <div class="liturgy-ref">{{ today_liturgy.ref }}</div>
+            <div class="liturgy-reflection">💡 {{ today_liturgy.reflection }}</div>
+        </div>
+
+        <div class="card" style="text-align:center;">
+            <div class="card-title">🗓️ ዛሬ ምን ዘመን ነው?</div>
+            <div style="font-size:13px;color:#9a80cc;line-height:1.8;">
+                ሥርዓተ አምልኮ ዘመኖቹ — ዐቢይ ጾም፤ ፋሲካ፤ ዘወትር ዘመን — ሊቱርጂካዊ ካሌንደር<br>
+                <span style="color:var(--cgold);font-weight:700;">30 ዕለታዊ ንባቦች</span> ያሉ ሲሆን ዙርያዊ ናቸው።
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══ TAB 2: Saint Prayer ═══ -->
+    <div class="tab-panel" id="tab-prayer">
+        <div class="card">
+            <div class="card-title">🙏 ዛሬ የቅዱሳን ጸሎት — Prayer of the Saints</div>
+
+            <div class="prayer-saint">✝ {{ today_prayer.saint }}</div>
+            <div class="prayer-feast">📅 {{ today_prayer.feast }}</div>
+            <div class="prayer-am">{{ today_prayer.prayer_am }}</div>
+            <div class="prayer-en">{{ today_prayer.prayer_en }}</div>
+            <div class="prayer-reflection">✨ {{ today_prayer.reflection }}</div>
+        </div>
+    </div>
+
+    <!-- ═══ TAB 3: Library ═══ -->
+    <div class="tab-panel" id="tab-library">
+
+        <div class="card" style="max-width:520px;margin:0 auto 6px;">
+            <div class="card-title">📅 30 ዕለታዊ ሥርዓተ አምልኮ ንባቦች — All Liturgical Readings</div>
+        </div>
+
+        <div class="lib-grid">
+            {% for l in all_liturgy %}
+            <div class="lib-item">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+                    <div class="lib-item-ref">{{ l.ref }}</div>
+                    <div class="season-badge" style="font-size:9px;padding:2px 8px;">{{ l.season }}</div>
+                </div>
+                <div class="lib-item-text">{{ l.reading_am }}</div>
+                <div style="font-size:11px;color:#8a70aa;font-style:italic;margin-bottom:4px;">{{ l.reading_en }}</div>
+                <div class="lib-item-tafsir">💡 {{ l.reflection }}</div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div style="height:20px;"></div>
+
+        <div class="card" style="max-width:520px;margin:0 auto 6px;">
+            <div class="card-title">🙏 30 የቅዱሳን ጸሎቶች — All Saint Prayers</div>
+        </div>
+
+        <div class="lib-grid">
+            {% for p in all_prayers %}
+            <div class="prayer-lib-item">
+                <div class="prayer-lib-saint">✝ {{ p.saint }} — <span style="font-weight:400;color:#8a70aa;">{{ p.feast }}</span></div>
+                <div class="prayer-lib-text">"{{ p.prayer_en }}"</div>
+                <div style="font-size:12px;color:#c0a8ee;margin-bottom:4px;">{{ p.prayer_am }}</div>
+                <div class="prayer-lib-reflect">✨ {{ p.reflection }}</div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+</div>
+
+<script>
+function switchTab(id, btn) {
+    document.querySelectorAll('.tab-panel').forEach(function(p){ p.classList.remove('active'); });
+    document.querySelectorAll('.tab-btn').forEach(function(b){ b.classList.remove('active'); });
+    var el = document.getElementById('tab-' + id);
+    if (el) el.classList.add('active');
+    if (btn) btn.classList.add('active');
+}
+</script>
+{% endblock %}

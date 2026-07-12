@@ -30,6 +30,7 @@ def register_routes(app):
     from routes.islamic_routes import islamic_bp
     from routes.ai_routes import ai_bp
     from routes.orthodox_routes import orthodox_bp
+    from routes.christian_routes import christian_bp
 
     # Register blueprints with URL prefixes
     app.register_blueprint(customer_bp, url_prefix='/')
@@ -40,6 +41,7 @@ def register_routes(app):
     app.register_blueprint(islamic_bp, url_prefix='/')
     app.register_blueprint(ai_bp, url_prefix='/api')
     app.register_blueprint(orthodox_bp, url_prefix='/')
+    app.register_blueprint(christian_bp, url_prefix='/')
 
     _log.getLogger(__name__).warning("✅ All routes registered successfully")
     _log.getLogger(__name__).warning("   - Customer routes: /")
