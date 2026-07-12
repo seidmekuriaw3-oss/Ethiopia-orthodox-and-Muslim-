@@ -67,6 +67,26 @@ def api_catholic_content():
     })
 
 
+@christian_bp.route('/api/bible/books')
+def api_bible_books():
+    from database.bible_explorer import get_books_index
+    result = get_books_index()
+    return jsonify({'success': True, 'OT': result['OT'], 'NT': result['NT']})
+
+
+@christian_bp.route('/api/bible/chapter')
+def api_bible_chapter():
+    from database.bible_explorer import get_chapter_verses
+    code    = request.args.get('book', '').strip().upper()
+    chapter = request.args.get('chapter', 1, type=int)
+    if not code:
+        return jsonify({'success': False, 'error': 'book is required'}), 400
+    data = get_chapter_verses(code, chapter)
+    if data is None:
+        return jsonify({'success': False, 'error': 'Not found'}), 404
+    return jsonify({'success': True, **data})
+
+
 @christian_bp.route('/api/christian/reading-plan')
 def api_reading_plan():
     from database.christian_data import get_reading_plan_day, get_today_reading_plan
