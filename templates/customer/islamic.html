@@ -3287,45 +3287,66 @@ function hsnBack() {
 // ═══════════════════════════════════════════════════════════════
 let _duaPlayingKey = null;
 
+function _duaReset(key) {
+    const btn = document.getElementById('dua-btn-' + key);
+    if (btn) { btn.textContent = '▶'; btn.classList.remove('playing'); }
+    if (_duaPlayingKey === key) _duaPlayingKey = null;
+}
+
 function duaPlayAudio(url, key) {
     const audio = document.getElementById('dua-audio');
     const btn   = document.getElementById('dua-btn-' + key);
 
-    // If clicking the already-playing dua → pause it
+    // Pause if already playing this one
     if (_duaPlayingKey === key && !audio.paused) {
         audio.pause();
-        if (btn) { btn.textContent = '▶'; btn.classList.remove('playing'); }
+        _duaReset(key);
         return;
     }
 
-    // Stop whatever was playing before
+    // Stop any other dua that was playing
     if (_duaPlayingKey && _duaPlayingKey !== key) {
-        const prev = document.getElementById('dua-btn-' + _duaPlayingKey);
-        if (prev) { prev.textContent = '▶'; prev.classList.remove('playing'); }
+        audio.pause();
+        _duaReset(_duaPlayingKey);
     }
 
-    // Resume if same key but paused
-    if (_duaPlayingKey === key && audio.paused && audio.src) {
-        audio.play().catch(() => {});
+    // Resume if same key was paused
+    if (_duaPlayingKey === key && audio.paused && audio.currentSrc) {
         if (btn) { btn.textContent = '⏸'; btn.classList.add('playing'); }
+        audio.play().catch(e => { console.warn('dua resume err:', e); _duaReset(key); });
         return;
     }
 
-    // Load new URL and play
+    // Load fresh and play
     _duaPlayingKey = key;
-    audio.src = url;
-    audio.load();
-    audio.play().catch(() => {
-        if (btn) { btn.textContent = '▶'; btn.classList.remove('playing'); }
-        _duaPlayingKey = null;
-    });
-    if (btn) { btn.textContent = '⏸'; btn.classList.add('playing'); }
+    if (btn) { btn.textContent = '⌛'; btn.classList.add('playing'); }
 
-    // Reset button when playback ends
-    audio.onended = () => {
-        if (btn) { btn.textContent = '▶'; btn.classList.remove('playing'); }
-        _duaPlayingKey = null;
+    audio.onerror = () => {
+        console.warn('dua audio error: could not load', url);
+        _duaReset(key);
+        if (btn) {
+            btn.textContent = '⚠';
+            setTimeout(() => { if (btn.textContent === '⚠') btn.textContent = '▶'; }, 2500);
+        }
     };
+    audio.onended = () => _duaReset(key);
+    audio.oncanplay = () => {
+        if (_duaPlayingKey !== key) return;
+        if (btn) btn.textContent = '⏸';
+    };
+
+    audio.src = url;
+    audio.volume = 1.0;
+    audio.muted  = false;
+    audio.load();
+    audio.play().catch(e => {
+        console.warn('dua play() rejected:', e);
+        _duaReset(key);
+        if (btn) {
+            btn.textContent = '⚠';
+            setTimeout(() => { if (btn.textContent === '⚠') btn.textContent = '▶'; }, 2500);
+        }
+    });
 }
 
 function hsnIncr(key, target) {
