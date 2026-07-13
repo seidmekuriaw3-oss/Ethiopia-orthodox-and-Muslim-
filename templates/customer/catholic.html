@@ -122,6 +122,47 @@
 }
 .back-btn:hover{background:var(--cc);color:#fff;}
 
+/* ── Bible Explorer (Catholic — purple/gold theme) ── */
+.bib-search-wrap{position:relative;margin-bottom:14px;}
+.bib-search{width:100%;background:rgba(255,255,255,.06);border:1px solid var(--cborder);color:#ece0ff;padding:10px 14px 10px 38px;border-radius:24px;font-size:13px;outline:none;transition:border .2s;}
+.bib-search:focus{border-color:var(--cgold);background:rgba(255,255,255,.1);}
+.bib-search::placeholder{color:#7a60aa;}
+.bib-search-ico{position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:15px;pointer-events:none;opacity:.6;}
+.bib-breadcrumb{font-size:12px;color:#7a60aa;margin-bottom:10px;display:flex;align-items:center;gap:6px;flex-wrap:wrap;line-height:1.6;}
+.bib-breadcrumb span{cursor:pointer;color:var(--cgold);font-weight:600;transition:opacity .15s;}
+.bib-breadcrumb span:hover{opacity:.7;}
+.bib-breadcrumb .sep{color:#5a3a7a;cursor:default;}
+.bib-section-head{font-size:10px;font-weight:700;color:var(--cgold);letter-spacing:2px;text-transform:uppercase;margin:14px 0 8px;padding:6px 0;border-bottom:1px solid var(--cborder);display:flex;align-items:center;gap:8px;}
+.bib-books-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-bottom:4px;}
+.bib-book-card{background:rgba(106,27,154,.1);border:1px solid rgba(253,216,53,.15);border-radius:10px;padding:10px 7px;text-align:center;cursor:pointer;transition:all .2s;}
+.bib-book-card:hover,.bib-book-card:active{background:var(--cc);border-color:var(--cgold);transform:translateY(-1px);}
+.bib-book-am{font-size:12px;font-weight:700;color:#e0ccff;line-height:1.3;}
+.bib-book-en{font-size:9px;color:#7a60aa;margin-top:2px;}
+.bib-book-cnt{font-size:9px;color:var(--cgold);margin-top:3px;font-weight:600;}
+.bib-chapters-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;}
+.bib-ch-btn{background:rgba(106,27,154,.15);border:1px solid rgba(253,216,53,.18);border-radius:8px;padding:9px 4px;text-align:center;font-size:12px;font-weight:700;color:#e0ccff;cursor:pointer;transition:all .2s;}
+.bib-ch-btn:hover,.bib-ch-btn:active{background:var(--cc);color:#fff;border-color:var(--cgold);}
+.bib-verse-list{max-width:520px;margin:0 auto;}
+.bib-verse{display:flex;gap:10px;padding:9px 0;border-bottom:1px solid rgba(253,216,53,.06);}
+.bib-verse:last-child{border-bottom:none;}
+.bib-verse-num{font-size:10px;font-weight:700;color:var(--cgold);min-width:22px;flex-shrink:0;padding-top:4px;opacity:.9;}
+.bib-verse-text{font-size:14px;color:#ece0ff;line-height:1.9;flex:1;}
+.bib-reader-nav{display:flex;gap:10px;justify-content:center;margin-top:16px;flex-wrap:wrap;}
+.bib-nav-btn{background:rgba(106,27,154,.2);border:1px solid var(--cborder);color:var(--cgold);padding:8px 18px;border-radius:20px;font-size:12px;cursor:pointer;transition:all .2s;}
+.bib-nav-btn:hover{background:var(--cc);color:#fff;}
+.bib-nav-btn:disabled{opacity:.3;cursor:not-allowed;}
+.bib-font-ctrl{display:flex;gap:8px;align-items:center;justify-content:flex-end;margin-bottom:12px;}
+.bib-font-btn{background:rgba(255,255,255,.08);border:1px solid var(--cborder);color:#e0ccff;width:28px;height:28px;border-radius:50%;font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;}
+.bib-font-btn:hover{background:var(--cc);}
+.bib-font-label{font-size:10px;color:#7a60aa;}
+.bib-loading-spin{text-align:center;padding:30px;font-size:26px;animation:bibspin 1s linear infinite;display:inline-block;}
+@keyframes bibspin{to{transform:rotate(360deg);}}
+.bib-back-btn{display:inline-flex;align-items:center;gap:6px;background:rgba(106,27,154,.18);border:1px solid var(--cborder);color:var(--cgold);padding:7px 16px;border-radius:20px;font-size:12px;cursor:pointer;margin-bottom:12px;transition:all .2s;}
+.bib-back-btn:hover{background:var(--cc);color:#fff;}
+.bib-empty{text-align:center;color:#7a60aa;font-size:13px;padding:30px 0;}
+.bib-spinner-wrap{text-align:center;padding:20px 0;}
+@media(max-width:380px){.bib-books-grid{grid-template-columns:repeat(2,1fr);}.bib-chapters-grid{grid-template-columns:repeat(5,1fr);}}
+
 @media(max-width:480px){
     .cpage{padding:12px 10px 80px;}
     .card{padding:16px 14px;}
@@ -182,42 +223,54 @@
         </div>
     </div>
 
-    <!-- ═══ TAB 3: Library ═══ -->
+    <!-- ═══ TAB 3: Full Bible Explorer (የተሟላ መጽሐፍ ቅዱስ) ═══ -->
     <div class="tab-panel" id="tab-library">
+        <div style="max-width:520px;margin:0 auto;">
 
-        <div class="card" style="max-width:520px;margin:0 auto 6px;">
-            <div class="card-title">📅 30 ዕለታዊ ሥርዓተ አምልኮ ንባቦች — All Liturgical Readings</div>
-        </div>
+            <div class="bib-search-wrap" id="bib-search-wrap">
+                <span class="bib-search-ico">🔍</span>
+                <input class="bib-search" id="bib-search" type="text"
+                    placeholder="ስም ፈልግ — Search a book…" oninput="bibSearch(this.value)">
+            </div>
 
-        <div class="lib-grid">
-            {% for l in all_liturgy %}
-            <div class="lib-item">
-                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
-                    <div class="lib-item-ref">{{ l.ref }}</div>
-                    <div class="season-badge" style="font-size:9px;padding:2px 8px;">{{ l.season }}</div>
+            <div id="bib-loading" style="display:none;">
+                <div class="bib-spinner-wrap"><span class="bib-loading-spin">⏳</span></div>
+            </div>
+
+            <div id="bib-view-books" style="display:none;">
+                <div id="bib-books-content"></div>
+            </div>
+
+            <div id="bib-view-chapters" style="display:none;">
+                <button class="bib-back-btn" onclick="bibShowBooks()">← ወደ ማውጫ</button>
+                <div class="card">
+                    <div class="bib-breadcrumb" id="bib-crumb-ch"></div>
+                    <div class="card-title" id="bib-ch-title"></div>
+                    <div class="bib-chapters-grid" id="bib-chapters-grid"></div>
                 </div>
-                <div class="lib-item-text">{{ l.reading_am }}</div>
-                <div style="font-size:11px;color:#8a70aa;font-style:italic;margin-bottom:4px;">{{ l.reading_en }}</div>
-                <div class="lib-item-tafsir">💡 {{ l.reflection }}</div>
             </div>
-            {% endfor %}
-        </div>
 
-        <div style="height:20px;"></div>
-
-        <div class="card" style="max-width:520px;margin:0 auto 6px;">
-            <div class="card-title">🙏 30 የቅዱሳን ጸሎቶች — All Saint Prayers</div>
-        </div>
-
-        <div class="lib-grid">
-            {% for p in all_prayers %}
-            <div class="prayer-lib-item">
-                <div class="prayer-lib-saint">✝ {{ p.saint }} — <span style="font-weight:400;color:#8a70aa;">{{ p.feast }}</span></div>
-                <div class="prayer-lib-text">"{{ p.prayer_en }}"</div>
-                <div style="font-size:12px;color:#c0a8ee;margin-bottom:4px;">{{ p.prayer_am }}</div>
-                <div class="prayer-lib-reflect">✨ {{ p.reflection }}</div>
+            <div id="bib-view-reader" style="display:none;">
+                <button class="bib-back-btn" onclick="bibBackToChapters()">← ወደ ምዕራፎቹ</button>
+                <div class="card">
+                    <div class="bib-breadcrumb" id="bib-crumb-rd"></div>
+                    <div class="bib-font-ctrl">
+                        <span class="bib-font-label">ፊደል መጠን</span>
+                        <button class="bib-font-btn" onclick="bibFontSize(-1)">A−</button>
+                        <button class="bib-font-btn" onclick="bibFontSize(1)">A+</button>
+                    </div>
+                    <div class="card-title" id="bib-rd-title"></div>
+                    <div id="bib-rd-loading" style="display:none;">
+                        <div class="bib-spinner-wrap"><span class="bib-loading-spin">⏳</span></div>
+                    </div>
+                    <div class="bib-verse-list" id="bib-verse-list"></div>
+                    <div class="bib-reader-nav">
+                        <button class="bib-nav-btn" id="bib-prev-ch" onclick="bibNavChapter(-1)">‹ ፊተኛ ምዕ.</button>
+                        <button class="bib-nav-btn" id="bib-next-ch" onclick="bibNavChapter(1)">ቀጣይ ምዕ. ›</button>
+                    </div>
+                </div>
             </div>
-            {% endfor %}
+
         </div>
     </div>
 
@@ -230,6 +283,166 @@ function switchTab(id, btn) {
     var el = document.getElementById('tab-' + id);
     if (el) el.classList.add('active');
     if (btn) btn.classList.add('active');
+    if (id === 'library') bibInit();
+}
+
+/* ═══════════════════════════════════════════════════════
+   FULL BIBLE EXPLORER — Catholic (same 66-book dataset)
+═══════════════════════════════════════════════════════ */
+var _bibLoaded  = false;
+var _bibBooks   = null;
+var _bibBook    = null;
+var _bibChapter = 0;
+var _bibTotalCh = 0;
+var _bibSearch  = '';
+var _bibFontPx  = 14;
+
+function bibInit() {
+    if (_bibLoaded) { bibShowBooks(); return; }
+    document.getElementById('bib-loading').style.display = 'block';
+    document.getElementById('bib-view-books').style.display = 'none';
+    fetch('/api/bible/books')
+        .then(function(r) { return r.json(); })
+        .then(function(d) {
+            _bibLoaded = true;
+            _bibBooks  = d;
+            document.getElementById('bib-loading').style.display = 'none';
+            bibShowBooks();
+        })
+        .catch(function() {
+            document.getElementById('bib-loading').innerHTML =
+                '<div class="bib-empty">⚠️ ጥያቄ አልተሳካም — ዳግም ሞክር።</div>';
+        });
+}
+
+function bibSearch(q) {
+    _bibSearch = (q || '').trim().toLowerCase();
+    if (document.getElementById('bib-view-books').style.display !== 'none') bibRenderBooks();
+}
+
+function bibRenderBooks() {
+    var sections = [
+        { key: 'OT', label: '📜 ብሉይ ኪዳን — Old Testament' },
+        { key: 'NT', label: '✝️ አዲስ ኪዳን — New Testament'  },
+    ];
+    var html = '';
+    sections.forEach(function(sec) {
+        var books = (_bibBooks[sec.key] || []).filter(function(b) {
+            if (!_bibSearch) return true;
+            return b.am.toLowerCase().indexOf(_bibSearch) !== -1
+                || b.en.toLowerCase().indexOf(_bibSearch) !== -1;
+        });
+        if (!books.length) return;
+        html += '<div class="bib-section-head">' + sec.label
+              + ' <span style="font-size:10px;font-weight:400;color:#7a60aa;">('
+              + books.length + ' መጻሕፍት)</span></div>'
+              + '<div class="bib-books-grid">';
+        books.forEach(function(b) {
+            var am = b.am.replace(/'/g, '&#39;');
+            var en = b.en.replace(/'/g, '&#39;');
+            html += '<div class="bib-book-card" onclick="bibShowChapters(\''
+                  + b.code + '\',\'' + am + '\',\'' + en + '\',' + b.chapters + ')">'
+                  + '<div class="bib-book-am">' + b.am + '</div>'
+                  + '<div class="bib-book-en">' + b.en + '</div>'
+                  + '<div class="bib-book-cnt">' + b.chapters + ' ምዕ.</div></div>';
+        });
+        html += '</div>';
+    });
+    if (!html) html = '<div class="bib-empty">ምንም አልተገኘም — Nothing found</div>';
+    document.getElementById('bib-books-content').innerHTML = html;
+}
+
+function bibShowBooks() {
+    _bibBook = null;
+    document.getElementById('bib-search-wrap').style.display    = '';
+    document.getElementById('bib-view-books').style.display     = '';
+    document.getElementById('bib-view-chapters').style.display  = 'none';
+    document.getElementById('bib-view-reader').style.display    = 'none';
+    bibRenderBooks();
+}
+
+function bibShowChapters(code, am, en, total) {
+    _bibBook = { code: code, am: am, en: en, chapters: total };
+    document.getElementById('bib-search-wrap').style.display    = 'none';
+    document.getElementById('bib-view-books').style.display     = 'none';
+    document.getElementById('bib-view-chapters').style.display  = '';
+    document.getElementById('bib-view-reader').style.display    = 'none';
+    document.getElementById('bib-crumb-ch').innerHTML =
+        '<span onclick="bibShowBooks()">📚 ማውጫ</span>'
+      + '<span class="sep">›</span><span>' + am + '</span>';
+    document.getElementById('bib-ch-title').textContent = am + ' — ' + en;
+    var html = '';
+    for (var i = 1; i <= total; i++) {
+        html += '<div class="bib-ch-btn" onclick="bibShowReader(' + i + ')">' + i + '</div>';
+    }
+    document.getElementById('bib-chapters-grid').innerHTML = html;
+}
+
+function bibShowReader(chapter) {
+    _bibChapter = chapter;
+    document.getElementById('bib-search-wrap').style.display    = 'none';
+    document.getElementById('bib-view-books').style.display     = 'none';
+    document.getElementById('bib-view-chapters').style.display  = 'none';
+    document.getElementById('bib-view-reader').style.display    = '';
+    bibLoadChapter();
+}
+
+function bibBackToChapters() {
+    if (_bibBook) bibShowChapters(_bibBook.code, _bibBook.am, _bibBook.en, _bibBook.chapters);
+}
+
+function bibLoadChapter() {
+    document.getElementById('bib-rd-loading').style.display = 'block';
+    document.getElementById('bib-verse-list').innerHTML = '';
+    document.getElementById('bib-crumb-rd').innerHTML =
+        '<span onclick="bibShowBooks()">📚 ማውጫ</span>'
+      + '<span class="sep">›</span>'
+      + '<span onclick="bibBackToChapters()">' + _bibBook.am + '</span>'
+      + '<span class="sep">›</span>'
+      + '<span>ምዕ. ' + _bibChapter + '</span>';
+    document.getElementById('bib-rd-title').textContent =
+        _bibBook.am + ' ምዕራፍ ' + _bibChapter + ' — ' + _bibBook.en + ' Chapter ' + _bibChapter;
+    fetch('/api/bible/chapter?book=' + _bibBook.code + '&chapter=' + _bibChapter)
+        .then(function(r) { return r.json(); })
+        .then(function(d) {
+            document.getElementById('bib-rd-loading').style.display = 'none';
+            _bibTotalCh = d.total_chapters || _bibBook.chapters;
+            if (!d.success || !d.verses || !d.verses.length) {
+                document.getElementById('bib-verse-list').innerHTML =
+                    '<div class="bib-empty">ምዕራፉ አልተገኘም።</div>';
+                return;
+            }
+            var html = '';
+            d.verses.forEach(function(v) {
+                html += '<div class="bib-verse">'
+                      + '<span class="bib-verse-num">' + v.number + '</span>'
+                      + '<span class="bib-verse-text" style="font-size:' + _bibFontPx + 'px">'
+                      + v.text + '</span></div>';
+            });
+            document.getElementById('bib-verse-list').innerHTML = html;
+            document.getElementById('bib-prev-ch').disabled = _bibChapter <= 1;
+            document.getElementById('bib-next-ch').disabled = _bibChapter >= _bibTotalCh;
+            document.getElementById('bib-view-reader').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        })
+        .catch(function() {
+            document.getElementById('bib-rd-loading').style.display = 'none';
+            document.getElementById('bib-verse-list').innerHTML =
+                '<div class="bib-empty">⚠️ ጥያቄ አልተሳካም።</div>';
+        });
+}
+
+function bibNavChapter(dir) {
+    var next = _bibChapter + dir;
+    if (next < 1 || next > _bibTotalCh) return;
+    _bibChapter = next;
+    bibLoadChapter();
+}
+
+function bibFontSize(dir) {
+    _bibFontPx = Math.max(11, Math.min(22, _bibFontPx + dir * 1.5));
+    document.querySelectorAll('.bib-verse-text').forEach(function(el) {
+        el.style.fontSize = _bibFontPx + 'px';
+    });
 }
 </script>
 {% endblock %}
