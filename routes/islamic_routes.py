@@ -20,40 +20,12 @@ from database.hadith_collections import get_collection, get_collections_meta
 from database.adhkar_data import get_morning_adhkar, get_evening_adhkar
 from database.hisnul_muslim_data import get_all_chapters, get_chapter_by_id, HISNUL_CHAPTERS
 
-# ── Audio helpers ─────────────────────────────────────────────────────────────
-# Build sequential dua-number map: (chapter_id, dua_index) -> sequential_int
-# hisnmuslim.com serves files as /audio/ar/{n}.mp3  (no zero-padding, 1-based)
-_HSN_SEQ: dict = {}
-_seq_counter = 1
-_CH14_SEQS: list = []   # morning adhkar sequential numbers
-_CH15_SEQS: list = []   # evening adhkar sequential numbers
-for _ch in HISNUL_CHAPTERS:
-    for _di in range(len(_ch['duas'])):
-        _HSN_SEQ[(_ch['id'], _di)] = _seq_counter
-        if _ch['id'] == 14:
-            _CH14_SEQS.append(_seq_counter)
-        if _ch['id'] == 15:
-            _CH15_SEQS.append(_seq_counter)
-        _seq_counter += 1
-_TOTAL_HSN_DUAS = _seq_counter - 1
+# ── Audio helpers — edge-tts TTS (reads ONLY the exact Arabic text on the card)
+from urllib.parse import quote as _url_quote
 
-def _proxy_url(seq: int) -> str:
-    """Internal proxy URL — browser fetches from our server, no CORS."""
-    return f"/api/islamic/audio/{seq}"
-
-def _hsn_audio_url(chapter_id: int, dua_index: int) -> str | None:
-    seq = _HSN_SEQ.get((chapter_id, dua_index))
-    return _proxy_url(seq) if seq else None
-
-def _adhkar_audio_url(adhkar_type: str, item_id: int) -> str:
-    """Morning adhkar → chapter-14 audio pool; evening → chapter-15 pool."""
-    pool = _CH14_SEQS if adhkar_type == 'morning' else _CH15_SEQS
-    if pool:
-        seq = pool[(item_id - 1) % len(pool)]
-    else:
-        # fallback: first or last sequential number in book
-        seq = 18 if adhkar_type == 'morning' else 20
-    return _proxy_url(seq)
+def _tts_url(arabic_text: str) -> str:
+    """Return a same-origin TTS URL for the given Arabic text."""
+    return f"/api/islamic/audio/tts?t={_url_quote(arabic_text)}"
 
 islamic_bp = Blueprint('islamic', __name__)
 
@@ -681,47 +653,62 @@ def hadith_collection_detail(collection_id):
 
 # ── Daily Adhkar ─────────────────────────────────────────────────────────────
 
-@islamic_bp.route('/api/islamic/audio/<int:seq>')
-def proxy_dua_audio(seq):
-    """Server-side proxy for hisnmuslim.com audio — eliminates CORS entirely."""
-    if seq < 1 or seq > _TOTAL_HSN_DUAS + 40:
-        return jsonify({'error': 'out of range'}), 404
-    if not _HAS_REQUESTS:
-        return jsonify({'error': 'requests not available'}), 503
-
-    upstream = f"https://www.hisnmuslim.com/audio/ar/{seq}.mp3"
+@islamic_bp.route('/api/islamic/audio/tts')
+def tts_dua_audio():
+    """
+    Edge-TTS endpoint — generates audio for EXACTLY the Arabic text on the card.
+    Uses Microsoft Edge TTS (ar-SA-HamedNeural, high-quality male Arabic voice).
+    Results are cached on disk by MD5 hash so repeated requests are instant.
+    """
+    import asyncio, hashlib, os
     try:
-        r = _requests.get(upstream, stream=True, timeout=12,
-                          headers={'User-Agent': 'Mozilla/5.0'})
-        if r.status_code != 200:
-            return jsonify({'error': f'upstream {r.status_code}'}), 502
+        import edge_tts
+    except ImportError:
+        return jsonify({'error': 'edge-tts not installed'}), 503
 
-        from flask import stream_with_context
-        def generate():
-            for chunk in r.iter_content(chunk_size=16384):
-                if chunk:
-                    yield chunk
+    text = request.args.get('t', '').strip()
+    if not text:
+        return jsonify({'error': 'no text'}), 400
 
-        return Response(
-            stream_with_context(generate()),
-            status=200,
-            content_type='audio/mpeg',
-            headers={
-                'Cache-Control': 'public, max-age=86400',
-                'Accept-Ranges': 'bytes',
-            }
-        )
-    except Exception as exc:
-        current_app.logger.warning(f"audio proxy error seq={seq}: {exc}")
-        return jsonify({'error': 'upstream unavailable'}), 502
+    cache_dir = '/tmp/dua_tts_cache'
+    os.makedirs(cache_dir, exist_ok=True)
+
+    text_hash = hashlib.md5(text.encode('utf-8')).hexdigest()
+    cache_path = os.path.join(cache_dir, f'{text_hash}.mp3')
+
+    if not os.path.exists(cache_path):
+        async def _generate():
+            communicate = edge_tts.Communicate(text, 'ar-SA-HamedNeural')
+            await communicate.save(cache_path)
+        try:
+            asyncio.run(_generate())
+        except Exception as exc:
+            current_app.logger.warning(f"TTS generation error: {exc}")
+            # Try fallback voice
+            try:
+                async def _fallback():
+                    communicate = edge_tts.Communicate(text, 'ar-EG-ShakirNeural')
+                    await communicate.save(cache_path)
+                asyncio.run(_fallback())
+            except Exception as exc2:
+                current_app.logger.error(f"TTS fallback error: {exc2}")
+                return jsonify({'error': 'TTS generation failed'}), 502
+
+    from flask import send_file
+    return send_file(
+        cache_path,
+        mimetype='audio/mpeg',
+        max_age=604800,   # cache 7 days in browser
+        conditional=True,
+    )
 
 
 @islamic_bp.route('/api/islamic/adhkar/morning')
 def adhkar_morning():
     try:
         adhkar = [
-            {**a, 'audio_url': _adhkar_audio_url('morning', a.get('id', i + 1))}
-            for i, a in enumerate(get_morning_adhkar())
+            {**a, 'audio_url': _tts_url(a['arabic'])}
+            for a in get_morning_adhkar()
         ]
         return jsonify({'success': True, 'adhkar': adhkar})
     except Exception:
@@ -732,8 +719,8 @@ def adhkar_morning():
 def adhkar_evening():
     try:
         adhkar = [
-            {**a, 'audio_url': _adhkar_audio_url('evening', a.get('id', i + 1))}
-            for i, a in enumerate(get_evening_adhkar())
+            {**a, 'audio_url': _tts_url(a['arabic'])}
+            for a in get_evening_adhkar()
         ]
         return jsonify({'success': True, 'adhkar': adhkar})
     except Exception:
@@ -757,12 +744,12 @@ def hisnul_chapter(chapter_id):
         ch = get_chapter_by_id(chapter_id)
         if not ch:
             return jsonify({'success': False, 'error': 'Chapter not found'}), 404
-        # Inject audio_url per dua
+        # Inject TTS audio_url per dua (reads ONLY the exact Arabic on the card)
         ch_out = {
             **ch,
             'duas': [
-                {**dua, 'audio_url': _hsn_audio_url(chapter_id, i)}
-                for i, dua in enumerate(ch.get('duas', []))
+                {**dua, 'audio_url': _tts_url(dua['arabic'])}
+                for dua in ch.get('duas', [])
             ]
         }
         return jsonify({'success': True, 'chapter': ch_out})

@@ -3317,9 +3317,13 @@ function duaPlayAudio(url, key) {
         return;
     }
 
-    // Load fresh and play
+    // Load fresh and play (TTS may take a few seconds on first request)
     _duaPlayingKey = key;
-    if (btn) { btn.textContent = '⌛'; btn.classList.add('playing'); }
+    if (btn) {
+        btn.textContent = '⌛';
+        btn.classList.add('playing');
+        btn.title = 'ድምፁ ዝግጁ ሆኖ ነው…';
+    }
 
     audio.onerror = () => {
         console.warn('dua audio error: could not load', url);

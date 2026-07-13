@@ -235,7 +235,7 @@ HISNUL_CHAPTERS = [
             {
                 "arabic": "اللَّهُمَّ رَبَّ هَذِهِ الدَّعْوَةِ التَّامَّةِ وَالصَّلَاةِ الْقَائِمَةِ آتِ مُحَمَّدًا الْوَسِيلَةَ وَالْفَضِيلَةَ وَابْعَثْهُ مَقَامًا مَحْمُودًا الَّذِي وَعَدْتَهُ",
                 "transliteration": "Allahumma Rabba hadhihid-da'watit-tammah, wassalatil-qa'imah, ati Muhammadanil-wasilata wal-fadilah, wab'athhu maqamam-mahmudanil-ladhi wa'adtah.",
-                "amharic": "አቤቱ አላህ ሆይ! ፍጹም ጥሪ ጌታ! ፂናኝ ሶላት ጌታ! ሙሐመዱን ዋሲሌ (ቅርበት) ናፋቂ ሰጠው! ቃልህ ሰጥተኸው ወደ ምስጉን ደረጃ ላኩት! (ዩዛ ሻፋዓዬ (አማላጅነቴ) ለርሱ ቃል ቃሉ ይሆናል)።",
+                "amharic": "አቤቱ አላህ ሆይ! ይህ ፍጹም ጥሪ ጌታ! ቀጥ ያለ ሶላት ጌታ! ሙሐመዱን ወሲሌ (ቅርበት) ፋዲሌ (ልዕልና) ሰጠው፤ ቃልህ ሰጥቶ ወደ ምስጉን ደረጃ ከፍ አድርገው! (ዩዛ ሻፋዓዬ ሊቀርቢኝ ነው ብሎ ዱዓ ያደርጋሉ — አማልጅነቱ ይፍቀድላቸዋል)።",
                 "count": 1,
                 "source": "Bukhari 1/152"
             }
@@ -601,7 +601,7 @@ HISNUL_CHAPTERS = [
             {
                 "arabic": "سُبْحَانَ الَّذِي يُسَبِّحُ الرَّعْدُ بِحَمْدِهِ وَالْمَلَائِكَةُ مِنْ خِيفَتِهِ",
                 "transliteration": "Subhanal-ladhi yusabbihu-r-ra'du bihamdihi wal-mala'ikatu min khifatih.",
-                "amharic": "ነጎድጓዱ ምስጋናው ሆኖ ብሎ ሚዘምር፤ ቅዱሳን መላዕክቱ ፍርሃቱ ሆኖ ሚዘምሩ ሁሉ ንጽሕና ስሙ ይሁን።",
+                "amharic": "ነጎድጓዱ ምስጋናሁ ሆኖ ሲያወድሰው፤ ቅዱሳን መላዕክቱ ፍርሃቱ ሆኖ ሲያወድሱት — ሁሉ ንጽሕና ለርሱ ይሁን።",
                 "count": 1,
                 "source": "Al-Muwatta 2/992"
             }
@@ -617,7 +617,7 @@ HISNUL_CHAPTERS = [
             {
                 "arabic": "اللَّهُمَّ إِنَّا نَجْعَلُكَ فِي نُحُورِهِمْ وَنَعُوذُ بِكَ مِنْ شُرُورِهِمْ",
                 "transliteration": "Allahumma inna naj'aluka fi nuhurihim, wa na'udhu bika min shururihim.",
-                "amharic": "አቤቱ አላህ ሆይ! ወደ ጉሮሯቸው ጋሻ ሆነህ ሰጥቶናቸዋል። ከጠላቶቻቸው ወደ አንተ ሸሻለን።",
+                "amharic": "አቤቱ አላህ ሆይ! አንተን በፊታቸው ጋሻና ዕንቅፋት አድርጎ አቆምናቸዋለን፤ ከክፋታቸው ወደ አንተ ሸሻለን።",
                 "count": 1,
                 "source": "Abu Dawud 2/89, Ibn Majah"
             }
@@ -633,7 +633,7 @@ HISNUL_CHAPTERS = [
             {
                 "arabic": "اللَّهُ أَكْبَرُ، اللَّهُ أَكْبَرُ، اللَّهُ أَكْبَرُ، سُبْحَانَ الَّذِي سَخَّرَ لَنَا هَذَا وَمَا كُنَّا لَهُ مُقْرِنِينَ وَإِنَّا إِلَى رَبِّنَا لَمُنْقَلِبُونَ، اللَّهُمَّ إِنَّا نَسْأَلُكَ فِي سَفَرِنَا هَذَا الْبِرَّ وَالتَّقْوَى وَمِنَ الْعَمَلِ مَا تَرْضَى، اللَّهُمَّ هَوِّنْ عَلَيْنَا سَفَرَنَا هَذَا وَاطْوِ عَنَّا بُعْدَهُ",
                 "transliteration": "Allahu Akbar, Allahu Akbar, Allahu Akbar. Subhana-l-ladhi sakhkhara lana hadha wa ma kunna lahu muqrinin, wa inna ila Rabbina lamunqalibun. Allahumma inna nas'aluka fi safarina hadhal-birra wat-taqwa, wa minal-'amali ma tarda, Allahumma hawwin 'alayna safarana hadha watwi 'anna bu'dah.",
-                "amharic": "አላህ ሁሉ ከሁሉ ይበልጣል (×3)። ያሕ ሁሉ ሊቃቆሙ ሳንችል ይህን ያዘዘ ሁሉ ንጽሕና ስሙ ይሁን። ወደ ጌታችን እንመለሳለን። አቤቱ አላህ ሆይ! ጉዞ ሙሉ ፈርሃ አላህና ጥሩ ዐምሎ ስጠን። ጉዞ ሁሉ አቃልልልን — ርቀቱ ሳናደክም ትጥፋ።",
+                "amharic": "አላህ ሁሉ ታላቅ ነው፤ አላህ ሁሉ ታላቅ ነው፤ አላህ ሁሉ ታላቅ ነው። ይህን ለኛ ያቀናጀ — ያለ ርሱ ረዳትነት ሊቃቆሙ ሳንችል ሳለ — ሁሉ ንጽሕና ለርሱ ይሁን። ወደ ጌታቸን (ለትንሣኤ) እርግጥ እንመለሳለን። አቤቱ አላህ ሆይ! በዚህ ጉዟቸን ቅን ምግባርና ጥንቃቄ ስጠን፤ ደስ ሚያሰኝህ ዐምሎ ሰጠን። አቤቱ አላህ ሆይ! ጉዟቸንን አቃልልልን — ርቀቱን ዝጋው።",
                 "count": 1,
                 "source": "Muslim 2/978, Abu Dawud 3/34"
             }
@@ -665,7 +665,7 @@ HISNUL_CHAPTERS = [
             {
                 "arabic": "بِسْمِ اللَّهِ، الْحَمْدُ لِلَّهِ، سُبْحَانَ الَّذِي سَخَّرَ لَنَا هَذَا وَمَا كُنَّا لَهُ مُقْرِنِينَ وَإِنَّا إِلَى رَبِّنَا لَمُنْقَلِبُونَ",
                 "transliteration": "Bismillah, alhamdu lillah. Subhanal-ladhi sakhkhara lana hadha wa ma kunna lahu muqrinin, wa inna ila Rabbina lamunqalibun.",
-                "amharic": "የአላህ ስም ሆኖ — ምስጋናው ሁሉ ለአላህ ነው። ያሕ ሁሉ ሊቃቆሙ ሳንችል ይህን ያዘዘ ሁሉ ንጽሕና ስሙ ይሁን። ወደ ጌታቸን እንመለሳለን።",
+                "amharic": "የአላህ ስም ሆኖ (እጀምራለሁ) — ምስጋናው ሁሉ ለአላህ ነው። ይህን ለኛ ያቀናጀ — ያለ ርሱ ረዳትነት ሊቃቆሙ ሳንችል ሳለ — ሁሉ ንጽሕና ለርሱ ይሁን፤ ወደ ጌታቸን (ለትንሣኤ) እርግጥ እንመለሳለን።",
                 "count": 1,
                 "source": "Abu Dawud 3/34, Tirmidhi 5/501"
             }
@@ -681,7 +681,7 @@ HISNUL_CHAPTERS = [
             {
                 "arabic": "اللَّهُمَّ رَبَّ السَّمَاوَاتِ السَّبْعِ وَمَا أَظْلَلْنَ وَرَبَّ الْأَرَضِينَ السَّبْعِ وَمَا أَقْلَلْنَ وَرَبَّ الشَّيَاطِينِ وَمَا أَضْلَلْنَ وَرَبَّ الرِّيَاحِ وَمَا ذَرَيْنَ أَسْأَلُكَ خَيْرَ هَذِهِ الْقَرْيَةِ وَخَيْرَ أَهْلِهَا وَخَيْرَ مَا فِيهَا وَأَعُوذُ بِكَ مِنْ شَرِّهَا وَشَرِّ أَهْلِهَا وَشَرِّ مَا فِيهَا",
                 "transliteration": "Allahumma Rabb as-samawatis-sab'i wa ma adhallalna, wa Rabbal-aradinas-sab'i wa ma aqllalna, wa Rabbash-shayatini wa ma adallalna, wa Rabbir-riyahi wa ma dharayna. As'aluka khayra hadzihil-qaryati wa khayra ahliha wa khayra ma fiha, wa a'udhu bika min sharriha wa sharri ahliha wa sharri ma fiha.",
-                "amharic": "አቤቱ አላህ ሆይ! ሰባቱ ሰማያት ጌታ ምን ያጠለሉ ሁሉ! ሰባቱ ምድር ጌታ ምን ያቀፉ ሁሉ! ሸይጣኖቹ ጌታ ምን ያሳቱ ሁሉ! ነፋሶቹ ጌታ ምን የበተኑ ሁሉ! — ከዚህ ሰፈር ምን ያለ ሰዎቹ ምን ያለ ውስጡ ምን ያለ ሁሉ ክፍሉ እጠይቃለሁ። ክፉዋ ሰዎቹ ውስጡ ምን ያለ ሁሉ ወደ አንተ ሸሻለሁ።",
+                "amharic": "አቤቱ አላህ ሆይ! ሰባቱ ሰማያት ጌታ ምን ያጠለሉ ሁሉ ጌታ! ሰባቱ ምድር ጌታ ምን ያቀፉ ሁሉ ጌታ! ሸይጣኖቹ ጌታ ምን ያሳቱ ሁሉ ጌታ! ነፋሶቹ ጌታ ምን የበተኑ ሁሉ ጌታ! — ከዚህ ከተማ ቡራኬ፤ ሰዎቿ ቡራኬ፤ ውስጧ ምን ያለ ቡራኬ ሁሉ እጠይቃለሁ። ከርሷ ክፋት፤ ሰዎቿ ክፋት፤ ውስጧ ምን ያለ ክፋት ሁሉ ወደ አንተ ሸሻለሁ።",
                 "count": 1,
                 "source": "Al-Hakim 1/446, Nasai"
             }
