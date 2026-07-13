@@ -642,3 +642,44 @@ def hadith_collection_detail(collection_id):
     except Exception:
         current_app.logger.error("hadith-collection error", exc_info=True)
         return jsonify({'success': False}), 500
+
+
+# ── Daily Adhkar ─────────────────────────────────────────────────────────────
+
+@islamic_bp.route('/api/islamic/adhkar/morning')
+def adhkar_morning():
+    try:
+        return jsonify({'success': True, 'adhkar': get_morning_adhkar()})
+    except Exception:
+        current_app.logger.error("adhkar-morning error", exc_info=True)
+        return jsonify({'success': False}), 500
+
+@islamic_bp.route('/api/islamic/adhkar/evening')
+def adhkar_evening():
+    try:
+        return jsonify({'success': True, 'adhkar': get_evening_adhkar()})
+    except Exception:
+        current_app.logger.error("adhkar-evening error", exc_info=True)
+        return jsonify({'success': False}), 500
+
+
+# ── Hisnul Muslim ─────────────────────────────────────────────────────────────
+
+@islamic_bp.route('/api/islamic/hisnul/chapters')
+def hisnul_chapters():
+    try:
+        return jsonify({'success': True, 'chapters': get_all_chapters()})
+    except Exception:
+        current_app.logger.error("hisnul-chapters error", exc_info=True)
+        return jsonify({'success': False}), 500
+
+@islamic_bp.route('/api/islamic/hisnul/chapter/<int:chapter_id>')
+def hisnul_chapter(chapter_id):
+    try:
+        ch = get_chapter_by_id(chapter_id)
+        if not ch:
+            return jsonify({'success': False, 'error': 'Chapter not found'}), 404
+        return jsonify({'success': True, 'chapter': ch})
+    except Exception:
+        current_app.logger.error("hisnul-chapter error", exc_info=True)
+        return jsonify({'success': False}), 500

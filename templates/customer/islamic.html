@@ -860,6 +860,171 @@
     .hcol-grid{grid-template-columns:1fr}
     .bil-ayah-arabic{font-size:20px}
 }
+
+/* ══════════════════════════════════════════════════════
+   DAILY ADHKAR & DUAS TAB
+   ══════════════════════════════════════════════════════ */
+.adh-wrap{max-width:600px;margin:0 auto;padding-bottom:80px}
+.adh-hero{text-align:center;padding:10px 0 22px}
+.adh-hero-title{font-size:21px;font-weight:700;color:var(--igold);letter-spacing:.5px}
+.adh-hero-sub{font-size:12px;color:#9a8060;margin-top:4px;line-height:1.6}
+.adh-sub-cards{display:flex;flex-direction:column;gap:14px;margin-bottom:8px}
+.adh-sub-card{
+    display:flex;align-items:center;gap:16px;
+    background:var(--ipanel);border:1px solid var(--iborder);
+    border-radius:16px;padding:18px 20px;cursor:pointer;
+    transition:border-color .2s,transform .2s,box-shadow .2s;
+    position:relative;overflow:hidden;
+}
+.adh-sub-card::before{
+    content:'';position:absolute;inset:0;
+    background:linear-gradient(135deg,rgba(201,168,76,.06) 0%,transparent 60%);
+    pointer-events:none;
+}
+.adh-sub-card.morning{border-left:4px solid #f0b429}
+.adh-sub-card.evening{border-left:4px solid #6b8ebd}
+.adh-sub-card:hover{transform:translateY(-2px);box-shadow:0 6px 24px rgba(201,168,76,.15);border-color:var(--igold)}
+.adh-sc-icon{font-size:34px;flex-shrink:0}
+.adh-sc-body{flex:1;min-width:0}
+.adh-sc-title{font-size:17px;font-weight:700;color:#e8dfc8}
+.adh-sc-en{font-size:12px;color:#9a8060;margin-top:2px}
+.adh-sc-count{font-size:12px;color:var(--igold);margin-top:6px;font-weight:600}
+.adh-sc-arrow{font-size:26px;color:var(--igold);font-weight:700;flex-shrink:0;opacity:.7}
+.adh-back-btn{
+    background:rgba(201,168,76,.12);border:1px solid rgba(201,168,76,.3);
+    color:var(--igold);border-radius:8px;padding:6px 16px;font-size:13px;
+    cursor:pointer;transition:background .2s;margin-bottom:14px;display:inline-block;
+}
+.adh-back-btn:hover{background:rgba(201,168,76,.24)}
+.adh-reader-title{font-size:18px;font-weight:700;color:#e8dfc8;margin-bottom:14px}
+.adh-list{display:flex;flex-direction:column;gap:14px;padding-bottom:80px}
+.adh-item{
+    background:var(--ipanel);border:1px solid var(--iborder);border-radius:14px;
+    padding:18px 16px;display:flex;flex-direction:column;gap:10px;
+    transition:border-color .2s;
+}
+.adh-item:hover{border-color:rgba(201,168,76,.35)}
+.adh-item-hdr{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.adh-item-title{font-size:13px;font-weight:700;color:var(--igold)}
+.adh-item-src{font-size:11px;color:#7a6a50;text-align:right;flex-shrink:0}
+.adh-ar{
+    font-family:'Amiri',serif;font-size:23px;line-height:1.85;color:#f0e8d0;
+    direction:rtl;text-align:right;border-right:3px solid var(--igold);padding-right:12px;
+}
+.adh-trans{
+    font-size:12px;color:#8a9a8a;font-style:italic;line-height:1.75;
+    border-left:2px solid #3a4a3a;padding-left:10px;
+}
+.adh-am{
+    font-size:14px;line-height:1.9;color:#d4c99a;
+    border-left:3px solid #3f7d5c;padding-left:10px;
+}
+.adh-counter-row{display:flex;align-items:center;gap:12px;padding-top:4px;flex-wrap:wrap}
+.adh-count-label{font-size:12px;color:#9a8060}
+.adh-counter{display:flex;align-items:center;gap:8px}
+.adh-cnt-btn{
+    width:32px;height:32px;border-radius:50%;border:1px solid rgba(201,168,76,.45);
+    background:rgba(201,168,76,.1);color:var(--igold);font-size:18px;font-weight:700;
+    cursor:pointer;transition:background .15s;line-height:1;
+}
+.adh-cnt-btn:hover{background:rgba(201,168,76,.28)}
+.adh-cnt-display{
+    font-size:16px;font-weight:700;color:var(--igold);
+    min-width:32px;text-align:center;
+}
+.adh-cnt-target{font-size:11px;color:#7a6a50}
+.adh-cnt-done{color:#3f9d5c;font-weight:700;font-size:13px}
+
+/* ══════════════════════════════════════════════════════
+   HISNUL MUSLIM TAB
+   ══════════════════════════════════════════════════════ */
+.hsn-wrap{max-width:640px;margin:0 auto;padding-bottom:80px}
+.hsn-hero{text-align:center;padding:10px 0 22px}
+.hsn-hero-title{font-size:21px;font-weight:700;color:var(--igold);letter-spacing:.5px}
+.hsn-hero-sub{font-size:12px;color:#9a8060;margin-top:4px}
+.hsn-search-bar{
+    display:flex;align-items:center;gap:10px;
+    background:rgba(255,255,255,.04);border:1px solid var(--iborder);
+    border-radius:10px;padding:8px 14px;margin-bottom:14px;
+}
+.hsn-search-bar input{
+    flex:1;background:transparent;border:none;outline:none;
+    color:#e8dfc8;font-size:13px;
+}
+.hsn-search-bar input::placeholder{color:#7a6a50}
+.hsn-chapter-grid{
+    display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:10px;
+}
+.hsn-ch-card{
+    background:var(--ipanel);border:1px solid var(--iborder);border-radius:13px;
+    padding:14px 12px;cursor:pointer;
+    transition:border-color .2s,transform .15s,box-shadow .2s;
+    display:flex;flex-direction:column;gap:5px;
+}
+.hsn-ch-card:hover{
+    border-color:var(--igold);transform:translateY(-2px);
+    box-shadow:0 4px 18px rgba(201,168,76,.13);
+}
+.hsn-ch-icon{font-size:20px}
+.hsn-ch-id{font-size:10px;color:#7a6a50;font-weight:600;letter-spacing:.3px}
+.hsn-ch-am{font-size:13px;font-weight:700;color:#e8dfc8;line-height:1.35}
+.hsn-ch-en{font-size:11px;color:#9a8060;line-height:1.3}
+.hsn-ch-count{font-size:11px;color:var(--igold);font-weight:600;margin-top:3px}
+.hsn-reader-hdr{display:flex;align-items:flex-start;gap:14px;margin-bottom:16px}
+.hsn-back-btn{
+    background:rgba(201,168,76,.12);border:1px solid rgba(201,168,76,.3);
+    color:var(--igold);border-radius:8px;padding:6px 16px;font-size:13px;
+    cursor:pointer;transition:background .2s;flex-shrink:0;white-space:nowrap;
+}
+.hsn-back-btn:hover{background:rgba(201,168,76,.24)}
+.hsn-reader-title{font-size:17px;font-weight:700;color:#e8dfc8}
+.hsn-reader-sub{font-size:12px;color:#9a8060;margin-top:3px;direction:rtl;text-align:left}
+.hsn-dua-list{display:flex;flex-direction:column;gap:16px;padding-bottom:80px}
+.hsn-dua{
+    background:var(--ipanel);border:1px solid var(--iborder);border-radius:14px;
+    padding:18px 16px;display:flex;flex-direction:column;gap:10px;
+    transition:border-color .2s;
+}
+.hsn-dua:hover{border-color:rgba(201,168,76,.35)}
+.hsn-dua-hdr{display:flex;align-items:center;gap:10px;margin-bottom:2px}
+.hsn-dua-num{
+    display:inline-flex;align-items:center;justify-content:center;
+    width:26px;height:26px;border-radius:50%;flex-shrink:0;
+    background:rgba(201,168,76,.15);color:var(--igold);
+    font-size:12px;font-weight:700;
+}
+.hsn-dua-src{font-size:11px;color:#7a6a50;margin-left:auto}
+.hsn-dua-ar{
+    font-family:'Amiri',serif;font-size:23px;line-height:1.85;color:#f0e8d0;
+    direction:rtl;text-align:right;border-right:3px solid var(--igold);padding-right:12px;
+}
+.hsn-dua-trans{
+    font-size:12px;color:#8a9a8a;font-style:italic;line-height:1.75;
+    border-left:2px solid #3a4a3a;padding-left:10px;
+}
+.hsn-dua-am{
+    font-size:14px;line-height:1.9;color:#d4c99a;
+    border-left:3px solid #3f7d5c;padding-left:10px;
+}
+.hsn-dua-counter-row{display:flex;align-items:center;gap:12px;padding-top:4px;flex-wrap:wrap}
+.hsn-dua-count-label{font-size:12px;color:#9a8060}
+.hsn-dua-counter{display:flex;align-items:center;gap:8px}
+.hsn-dua-cnt-btn{
+    width:32px;height:32px;border-radius:50%;border:1px solid rgba(201,168,76,.45);
+    background:rgba(201,168,76,.1);color:var(--igold);font-size:18px;font-weight:700;
+    cursor:pointer;transition:background .15s;line-height:1;
+}
+.hsn-dua-cnt-btn:hover{background:rgba(201,168,76,.28)}
+.hsn-dua-cnt-display{
+    font-size:16px;font-weight:700;color:var(--igold);
+    min-width:32px;text-align:center;
+}
+.hsn-dua-cnt-target{font-size:11px;color:#7a6a50}
+.hsn-dua-cnt-done{color:#3f9d5c;font-weight:700;font-size:13px}
+@media(max-width:480px){
+    .hsn-chapter-grid{grid-template-columns:repeat(2,1fr)}
+    .adh-ar,.hsn-dua-ar{font-size:20px}
+}
 </style>
 {% endblock %}
 
@@ -900,6 +1065,8 @@
     <button class="tab-btn" onclick="switchTab('quran',this)">📖 Qur'an</button>
     <button class="tab-btn" onclick="switchTab('tafsir',this)">🌿 Quran Tafsir</button>
     <button class="tab-btn" onclick="switchTab('hadith',this)">🕌 Authentic Hadith</button>
+    <button class="tab-btn" onclick="switchTab('adhkar',this)">☀️ Adhkar & Duas</button>
+    <button class="tab-btn" onclick="switchTab('hisnul',this)">🛡 Hisnul Muslim</button>
 </div>
 
 <div id="tab-prayer" class="tab-panel active">
@@ -1165,6 +1332,86 @@
                 <button class="hlib-page-btn" id="hlib-next-btn" onclick="hlibPage(1)"  disabled>Next →</button>
             </div>
         </div>
+    </div>
+</div>
+
+<!-- ── Daily Adhkar & Duas tab ──────────────────────────────────── -->
+<div id="tab-adhkar" class="tab-panel">
+    <div class="adh-wrap">
+
+        <div class="adh-hero">
+            <div class="adh-hero-title">☀️ የዕለት ተዕለት ዱዓና ዚክሮች</div>
+            <div class="adh-hero-sub">Daily Azkar &amp; Duas — Authentic supplications for morning &amp; evening<br>ከቁርኣንና ሱናህ የተወሰዱ የዕለት ዱዓዎች</div>
+        </div>
+
+        <!-- Sub-card dashboard -->
+        <div class="adh-sub-cards" id="adh-sub-cards">
+            <div class="adh-sub-card morning" onclick="adhOpen('morning')">
+                <div class="adh-sc-icon">🌅</div>
+                <div class="adh-sc-body">
+                    <div class="adh-sc-title">የጧት ዱዓእ</div>
+                    <div class="adh-sc-en">Morning Adhkar</div>
+                    <div class="adh-sc-count" id="adh-morning-count">⏳ Loading…</div>
+                </div>
+                <div class="adh-sc-arrow">›</div>
+            </div>
+            <div class="adh-sub-card evening" onclick="adhOpen('evening')">
+                <div class="adh-sc-icon">🌙</div>
+                <div class="adh-sc-body">
+                    <div class="adh-sc-title">የማታ ዱዓእ</div>
+                    <div class="adh-sc-en">Evening Adhkar</div>
+                    <div class="adh-sc-count" id="adh-evening-count">⏳ Loading…</div>
+                </div>
+                <div class="adh-sc-arrow">›</div>
+            </div>
+        </div>
+
+        <!-- Full reader (hidden until sub-card clicked) -->
+        <div id="adh-reader" style="display:none">
+            <button class="adh-back-btn" onclick="adhBack()">← ወደ ዋናው ምርጫ</button>
+            <div class="adh-reader-title" id="adh-reader-title">—</div>
+            <div class="adh-list" id="adh-list">
+                <div class="ayah-loading">⏳ በመጫን ላይ…</div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- ── Hisnul Muslim tab ─────────────────────────────────────────── -->
+<div id="tab-hisnul" class="tab-panel">
+    <div class="hsn-wrap">
+
+        <div class="hsn-hero">
+            <div class="hsn-hero-title">🛡 ሕስኒል ሙስሊም</div>
+            <div class="hsn-hero-sub">Hisnul Muslim — Complete Book · 132 ምዕራፎች (Chapters)<br>By Sa'id ibn Ali al-Qahtani — Arabic · Transliteration · Amharic</div>
+        </div>
+
+        <!-- Chapter browser -->
+        <div id="hsn-browser">
+            <div class="hsn-search-bar">
+                <span style="font-size:15px;color:#9a8060">🔍</span>
+                <input type="text" id="hsn-search" placeholder="ምዕራፍ ፈልግ — Search chapter…" autocomplete="off" oninput="hsnFilter(this.value)">
+            </div>
+            <div class="hsn-chapter-grid" id="hsn-chapter-grid">
+                <div class="ayah-loading">📖 ምዕራፎቸን በመጫን ላይ…</div>
+            </div>
+        </div>
+
+        <!-- Chapter reader (hidden until chapter clicked) -->
+        <div id="hsn-reader" style="display:none">
+            <div class="hsn-reader-hdr">
+                <button class="hsn-back-btn" onclick="hsnBack()">← ምዕራፎች</button>
+                <div>
+                    <div class="hsn-reader-title" id="hsn-reader-title">—</div>
+                    <div class="hsn-reader-sub"   id="hsn-reader-sub">—</div>
+                </div>
+            </div>
+            <div class="hsn-dua-list" id="hsn-dua-list">
+                <div class="ayah-loading">⏳ ዱዓዎቸን በመጫን ላይ…</div>
+            </div>
+        </div>
+
     </div>
 </div>
 
@@ -2772,6 +3019,8 @@ switchTab = function(name, btn) {
     if (name === 'quran'  && !_qSurahs.length)      qLoadSurahs();
     if (name === 'tafsir' && !_bilSurahsLoaded)      bilLoadSurahs();
     if (name === 'hadith' && !_hcolLoaded)           hcolLoad();
+    if (name === 'adhkar' && !_adhInited)            adhInit();
+    if (name === 'hisnul' && !_hsnInited)            hsnInit();
     if (name === 'qibla') {
         /* Init 2D compass canvas on first open */
         if (!_compassInited) {
@@ -2791,5 +3040,235 @@ switchTab = function(name, btn) {
         }
     }
 };
+
+// ═══════════════════════════════════════════════════════════════
+// DAILY ADHKAR & DUAS
+// ═══════════════════════════════════════════════════════════════
+let _adhInited  = false;
+let _adhMorning = [];
+let _adhEvening = [];
+let _adhCounts  = {};   // { "morning-1": 0, "evening-3": 2, … }
+let _adhCurrent = null; // 'morning' | 'evening'
+
+function adhInit() {
+    if (_adhInited) return;
+    Promise.all([
+        fetch('/api/islamic/adhkar/morning').then(r => r.json()),
+        fetch('/api/islamic/adhkar/evening').then(r => r.json()),
+    ]).then(([m, e]) => {
+        _adhMorning = m.adhkar || [];
+        _adhEvening = e.adhkar || [];
+        _adhInited  = true;
+        const mc = document.getElementById('adh-morning-count');
+        const ec = document.getElementById('adh-evening-count');
+        if (mc) mc.textContent = _adhMorning.length + ' supplications';
+        if (ec) ec.textContent = _adhEvening.length + ' supplications';
+    }).catch(() => {
+        const mc = document.getElementById('adh-morning-count');
+        const ec = document.getElementById('adh-evening-count');
+        if (mc) mc.textContent = 'Error loading';
+        if (ec) ec.textContent = 'Error loading';
+    });
+}
+
+function adhOpen(type) {
+    _adhCurrent = type;
+    const list  = type === 'morning' ? _adhMorning : _adhEvening;
+    const title = type === 'morning'
+        ? '🌅 የጧት ዱዓእ — Morning Adhkar'
+        : '🌙 የማታ ዱዓእ — Evening Adhkar';
+
+    document.getElementById('adh-sub-cards').style.display = 'none';
+    document.getElementById('adh-reader').style.display    = 'block';
+    document.getElementById('adh-reader-title').textContent = title;
+
+    const container = document.getElementById('adh-list');
+    if (!list.length) {
+        container.innerHTML = '<div class="ayah-loading">⏳ ዱዓዎቹ ገና አልተጫኑም — ትንሽ ቆይተው እንደገና ይሞክሩ።</div>';
+        return;
+    }
+    container.innerHTML = list.map((a, i) => {
+        const key    = type + '-' + (a.id || i);
+        const target = a.count || 1;
+        return `<div class="adh-item">
+            <div class="adh-item-hdr">
+                <div class="adh-item-title">${a.title_am}</div>
+                <div class="adh-item-src">${a.source || ''}</div>
+            </div>
+            <div class="adh-ar">${a.arabic}</div>
+            ${a.transliteration ? `<div class="adh-trans">${a.transliteration}</div>` : ''}
+            <div class="adh-am">${a.amharic}</div>
+            <div class="adh-counter-row">
+                <span class="adh-count-label">ብዛት (${target}x):</span>
+                <div class="adh-counter">
+                    <button class="adh-cnt-btn" onclick="adhDecr('${key}',${target})">−</button>
+                    <span class="adh-cnt-display" id="adh-cnt-${key}">0</span>
+                    <span class="adh-cnt-target">/ ${target}</span>
+                    <button class="adh-cnt-btn" onclick="adhIncr('${key}',${target})">+</button>
+                </div>
+                <span id="adh-done-${key}" style="display:none" class="adh-cnt-done">✓ ተጠናቀቀ</span>
+            </div>
+        </div>`;
+    }).join('');
+}
+
+function adhBack() {
+    document.getElementById('adh-sub-cards').style.display = 'flex';
+    document.getElementById('adh-reader').style.display    = 'none';
+}
+
+function adhIncr(key, target) {
+    _adhCounts[key] = (_adhCounts[key] || 0) + 1;
+    _adhRefreshCount(key, target);
+}
+function adhDecr(key, target) {
+    _adhCounts[key] = Math.max(0, (_adhCounts[key] || 0) - 1);
+    _adhRefreshCount(key, target);
+}
+function _adhRefreshCount(key, target) {
+    const v    = _adhCounts[key] || 0;
+    const disp = document.getElementById('adh-cnt-' + key);
+    const done = document.getElementById('adh-done-' + key);
+    if (disp) disp.textContent = v;
+    if (done) done.style.display = (v >= target) ? 'inline' : 'none';
+    // Highlight completed items
+    const item = disp ? disp.closest('.adh-item') : null;
+    if (item) item.style.borderColor = (v >= target) ? 'rgba(63,157,92,.6)' : '';
+}
+
+// ═══════════════════════════════════════════════════════════════
+// HISNUL MUSLIM — COMPLETE BOOK
+// ═══════════════════════════════════════════════════════════════
+let _hsnInited   = false;
+let _hsnChapters = [];
+let _hsnFiltered = [];
+let _hsnCounts   = {};   // { "hsn-3-1": 2, … }
+
+function hsnInit() {
+    if (_hsnInited) return;
+    fetch('/api/islamic/hisnul/chapters')
+        .then(r => r.json())
+        .then(d => {
+            _hsnChapters = d.chapters || [];
+            _hsnFiltered = [..._hsnChapters];
+            _hsnInited   = true;
+            hsnRenderGrid();
+        })
+        .catch(() => {
+            const g = document.getElementById('hsn-chapter-grid');
+            if (g) g.innerHTML = '<div class="ayah-loading">⚠️ ምዕራፎቹ አልተጫኑም።</div>';
+        });
+}
+
+function hsnRenderGrid() {
+    const grid = document.getElementById('hsn-chapter-grid');
+    if (!grid) return;
+    if (!_hsnFiltered.length) {
+        grid.innerHTML = '<div class="ayah-loading">ምዕራፉ አልተገኘም።</div>';
+        return;
+    }
+    grid.innerHTML = _hsnFiltered.map(c => `
+        <div class="hsn-ch-card" onclick="hsnOpenChapter(${c.id})">
+            <div class="hsn-ch-icon">${c.icon || '📖'}</div>
+            <div class="hsn-ch-id">ምዕራፍ ${c.id}</div>
+            <div class="hsn-ch-am">${c.title_am}</div>
+            <div class="hsn-ch-en">${c.title_en}</div>
+            <div class="hsn-ch-count">${c.dua_count} ዱዓ${c.dua_count > 1 ? 'ዎች' : ''}</div>
+        </div>`).join('');
+}
+
+function hsnFilter(q) {
+    const f = (q || '').trim().toLowerCase();
+    _hsnFiltered = f
+        ? _hsnChapters.filter(c =>
+            c.title_am.includes(q) ||
+            c.title_en.toLowerCase().includes(f) ||
+            String(c.id) === f)
+        : [..._hsnChapters];
+    hsnRenderGrid();
+}
+
+function hsnOpenChapter(id) {
+    document.getElementById('hsn-browser').style.display = 'none';
+    document.getElementById('hsn-reader').style.display  = 'block';
+    const duaList = document.getElementById('hsn-dua-list');
+    duaList.innerHTML = '<div class="ayah-loading">⏳ ዱዓዎቸን በመጫን ላይ…</div>';
+
+    // Optimistic header from cached metadata
+    const meta = _hsnChapters.find(c => c.id === id);
+    if (meta) {
+        document.getElementById('hsn-reader-title').textContent =
+            (meta.icon || '') + ' ' + meta.title_am;
+        document.getElementById('hsn-reader-sub').textContent = meta.title_en;
+    }
+
+    fetch(`/api/islamic/hisnul/chapter/${id}`)
+        .then(r => r.json())
+        .then(d => {
+            const ch = d.chapter || {};
+            document.getElementById('hsn-reader-title').textContent =
+                (ch.icon || '') + ' ' + (ch.title_am || '');
+            document.getElementById('hsn-reader-sub').textContent =
+                (ch.title_en || '') + (ch.title_ar ? '  ·  ' + ch.title_ar : '');
+
+            const duas = ch.duas || [];
+            if (!duas.length) {
+                duaList.innerHTML = '<div class="ayah-loading">ዱዓ አልተገኘም።</div>';
+                return;
+            }
+            duaList.innerHTML = duas.map((dua, i) => {
+                const key    = `hsn-${id}-${i}`;
+                const target = dua.count || 1;
+                return `<div class="hsn-dua">
+                    <div class="hsn-dua-hdr">
+                        <span class="hsn-dua-num">${i + 1}</span>
+                        <span class="hsn-dua-src">${dua.source || ''}</span>
+                    </div>
+                    <div class="hsn-dua-ar">${dua.arabic}</div>
+                    ${dua.transliteration
+                        ? `<div class="hsn-dua-trans">${dua.transliteration}</div>`
+                        : ''}
+                    <div class="hsn-dua-am">${dua.amharic}</div>
+                    <div class="hsn-dua-counter-row">
+                        <span class="hsn-dua-count-label">ብዛት (${target}x):</span>
+                        <div class="hsn-dua-counter">
+                            <button class="hsn-dua-cnt-btn" onclick="hsnDecr('${key}',${target})">−</button>
+                            <span class="hsn-dua-cnt-display" id="hsn-cnt-${key}">0</span>
+                            <span class="hsn-dua-cnt-target">/ ${target}</span>
+                            <button class="hsn-dua-cnt-btn" onclick="hsnIncr('${key}',${target})">+</button>
+                        </div>
+                        <span id="hsn-done-${key}" style="display:none" class="hsn-dua-cnt-done">✓ ተጠናቀቀ</span>
+                    </div>
+                </div>`;
+            }).join('');
+        })
+        .catch(() => {
+            duaList.innerHTML = '<div class="ayah-loading">⚠️ ዱዓዎቹ አልተጫኑም።</div>';
+        });
+}
+
+function hsnBack() {
+    document.getElementById('hsn-reader').style.display  = 'none';
+    document.getElementById('hsn-browser').style.display = 'block';
+}
+
+function hsnIncr(key, target) {
+    _hsnCounts[key] = (_hsnCounts[key] || 0) + 1;
+    _hsnRefreshCount(key, target);
+}
+function hsnDecr(key, target) {
+    _hsnCounts[key] = Math.max(0, (_hsnCounts[key] || 0) - 1);
+    _hsnRefreshCount(key, target);
+}
+function _hsnRefreshCount(key, target) {
+    const v    = _hsnCounts[key] || 0;
+    const disp = document.getElementById('hsn-cnt-' + key);
+    const done = document.getElementById('hsn-done-' + key);
+    if (disp) disp.textContent = v;
+    if (done) done.style.display = (v >= target) ? 'inline' : 'none';
+    const dua = disp ? disp.closest('.hsn-dua') : null;
+    if (dua) dua.style.borderColor = (v >= target) ? 'rgba(63,157,92,.6)' : '';
+}
+
 </script>
 {% endblock %}
