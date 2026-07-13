@@ -60,7 +60,7 @@ MORNING_ADHKAR = [
         "title_en": "Morning Protection Dua",
         "arabic": "أَصْبَحْنَا وَأَصْبَحَ الْمُلْكُ لِلَّهِ، وَالْحَمْدُ لِلَّهِ، لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ",
         "transliteration": "Asbahna wa asbahal-mulku lillah, walhamdu lillah, la ilaha illallahu wahdahu la sharika lah, lahul-mulku wa lahul-hamd, wa Huwa 'ala kulli shay'in Qadir.",
-        "amharic": "ጠዋት ደረስን፤ ሥልጣኑም ሁሉ ለአላህ ሆኖ ጠዋት ደረሰ። ምስጋናው ሁሉ ለአላህ ነው። ከአላህ ሌላ በሕቅ የሚገዛ አምላክ የለም ብቻውን ነው፤ አጋር የለውም። ሥልጣኑ ሁሉ ለርሱ ነው፤ ምስጋናም ሁሉ ለርሱ ነው። እርሱ በሁሉ ነገር ላይ ቁቅ ቻይ ነው።",
+        "amharic": "ጠዋት ደረስን፤ ሥልጣኑም ሁሉ ለአላህ ሆኖ ጠዋት ደረሰ። ምስጋናው ሁሉ ለአላህ ነው። ከአላህ ሌላ በሕቅ የሚገዛ አምላክ የለም — ብቻው ነው፤ አጋር የለውም። ሥልጣኑ ሁሉ ለርሱ ነው፤ ምስጋናም ሁሉ ለርሱ ነው። እርሱ በሁሉ ነገር ላይ ሁሉ ቻይ ነው።",
         "count": 1,
         "source": "Muslim"
     },
@@ -70,7 +70,7 @@ MORNING_ADHKAR = [
         "title_en": "Tahlil — Ten times at Morning",
         "arabic": "لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ",
         "transliteration": "La ilaha illallahu wahdahu la sharika lah, lahul-mulku wa lahul-hamd, wa Huwa 'ala kulli shay'in Qadir.",
-        "amharic": "ከአላህ ሌላ በሕቅ የሚገዛ አምላክ የለም፤ ብቻው ነው፤ አጋር የለውም። ሥልጣኑ ሁሉ ለርሱ ነው፤ ምስጋናም ሁሉ ለርሱ ነው። እርሱ በሁሉ ነገር ላይ ቁቅ ቻይ ነው።\n(ጠዋት አስር ጊዜ ያነበበ ሰው — 10 ባሪያ ነፃ ያወጣ ያህል ምንዱቡ ይሆናል፤ 10 ሻሃደ (ሰማዕታት) ያህል ምስጋና ይሰጠዋል።)",
+        "amharic": "ከአላህ ሌላ በሕቅ የሚገዛ አምላክ የለም፤ ብቻው ነው፤ አጋር የለውም። ሥልጣኑ ሁሉ ለርሱ ነው፤ ምስጋናም ሁሉ ለርሱ ነው። እርሱ በሁሉ ነገር ላይ ሁሉ ቻይ ነው።\n(ጠዋት አስር ጊዜ ያነበበ ሰው — 10 ባሪያ ነፃ ያወጣ ያህል ምንዱቡ ይሆናል፤ 10 ሻሃደ (ሰማዕታት) ያህል ምስጋና ይሰጠዋል።)",
         "count": 10,
         "source": "Ahmad, Tirmidhi"
     },
@@ -110,7 +110,7 @@ MORNING_ADHKAR = [
         "title_en": "Protection from Shaytan",
         "arabic": "أَعُوذُ بِكَلِمَاتِ اللَّهِ التَّامَّاتِ مِنْ شَرِّ مَا خَلَقَ",
         "transliteration": "A'udhu bikalimatillahit-tammati min sharri ma khalaq.",
-        "amharic": "ከፈጠሩት ሁሉ ክፋት ሊጠብቀኝ ፍጹማን ቃሎቹ አስከ አላህ ሸሻለሁ። (ሦስቴ ያለ — ምንም መርዝ አይጎዳውም።)",
+        "amharic": "ከፈጠሩት ሁሉ ክፋት ሊጠብቀኝ — ፍጹማን ቃሎቹ ዘንድ ወደ አላህ ሸሻለሁ። (ሦስቴ ያለ — ምንም መርዝ አይጎዳውም።)",
         "count": 3,
         "source": "Muslim"
     },
@@ -130,7 +130,7 @@ MORNING_ADHKAR = [
         "title_en": "Tasbih — Glorification of Allah",
         "arabic": "سُبْحَانَ اللَّهِ وَبِحَمْدِهِ",
         "transliteration": "Subhanallahi wa bihamdih.",
-        "amharic": "አላህ ሁሉ ንጽሕና ስሙ ምስጋናው ጭምር ይሁን። (ጠዋት መቶ ጊዜ ያለ — ዂሉ ሰው ካለው ምንዱቡ ይበልጣል ካልሰነዘረ ሌሊ ለሌሊ ፍቁር ጊዜ ዝም።)",
+        "amharic": "አላህ ሁሉ ንጽሕና ስሙ ምስጋናው ጭምር ይሁን። (ጠዋት መቶ ጊዜ ያለ — ሌላ ሰው ካለው ምንዱቡ ሁሉ ይበልጣል — ሌሊ ለሌሊ ጸልቶ ሳያስቀምጥ።)",
         "count": 100,
         "source": "Muslim"
     },
@@ -190,7 +190,7 @@ MORNING_ADHKAR = [
         "title_en": "Lord of All Souls Supplication",
         "arabic": "اللَّهُمَّ فَاطِرَ السَّمَاوَاتِ وَالْأَرْضِ، عَالِمَ الْغَيْبِ وَالشَّهَادَةِ، رَبَّ كُلِّ شَيْءٍ وَمَلِيكَهُ، أَشْهَدُ أَنْ لَا إِلَهَ إِلَّا أَنْتَ",
         "transliteration": "Allahumma fatiras-samawati wal-ard, 'alimal-ghaybi wash-shahada, Rabba kulli shay'in wa malikah, ashhadu an la ilaha illa anta.",
-        "amharic": "አቤቱ አላህ ሆይ! ሰማያትና ምድርን ፈጣሪ! ጋይብ (ሚስጥር) ሻሃዳ (ዐይናቸውን) አዋቂ! የሁሉ ጌታ ሥልጣን ፈጣሪ! ከአንተ ሌላ በሕቅ የሚገዛ አምላክ እንደሌለ እምሰክርባለሁ።",
+        "amharic": "አቤቱ አላህ ሆይ! ሰማያትና ምድርን ፈጣሪ! የሚስጥርና የግልጽ አዋቂ! የሁሉ ጌታና ሥልጣናቸው ባለቤት! ከአንተ ሌላ በሕቅ የሚገዛ አምላክ እንደሌለ እምሰክርባለሁ።",
         "count": 1,
         "source": "Abu Dawud, Tirmidhi"
     },
@@ -200,7 +200,7 @@ MORNING_ADHKAR = [
         "title_en": "Full Day Protection",
         "arabic": "بِسْمِ اللَّهِ الَّذِي لَا يَضُرُّ مَعَ اسْمِهِ شَيْءٌ فِي الْأَرْضِ وَلَا فِي السَّمَاءِ وَهُوَ السَّمِيعُ الْعَلِيمُ",
         "transliteration": "Bismillahil-ladhi la yadurru ma'asmihi shay'un fil-ardi wa la fis-sama', wa Huwas-Sami'ul-'Alim.",
-        "amharic": "ስሙ ከጎነ ምድርም ሰማይም ምንም ጉዳት የማያደርስ አላህ ስሙ ሆኖ (እጀምራለሁ)፤ እርሱ ሰሚ አዋቂ ነው። (ሦስቴ — ድንገተኛ ጉዳት ሁሉ አያደርስበትም።)",
+        "amharic": "ስሙ ካለ ምድርም ሰማይም ምንም ጉዳት የማያደርስ አላህ ስም ሆኖ (እጀምራለሁ)፤ እርሱ ሰሚ አዋቂ ነው። (ሦስቴ — ድንገተኛ ጉዳት ሁሉ አያደርስበትም።)",
         "count": 3,
         "source": "Abu Dawud, Ibn Majah, Tirmidhi"
     }
@@ -213,7 +213,7 @@ EVENING_ADHKAR = [
         "title_en": "Entering the Evening",
         "arabic": "أَمْسَيْنَا وَأَمْسَى الْمُلْكُ لِلَّهِ، وَالْحَمْدُ لِلَّهِ، لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ",
         "transliteration": "Amsayna wa amsal-mulku lillah, walhamdu lillah, la ilaha illallahu wahdahu la sharika lah, lahul-mulku wa lahul-hamd, wa Huwa 'ala kulli shay'in Qadir.",
-        "amharic": "ማታ ደረስን፤ ሥልጣኑም ሁሉ ለአላህ ሆኖ ማታ ደረሰ። ምስጋናው ሁሉ ለአላህ ነው። ከአላህ ሌላ በሕቅ የሚገዛ አምላክ የለም — ብቻው ነው፤ አጋር የለውም። ሥልጣኑ ሁሉ ለርሱ ነው፤ ምስጋናም ሁሉ ለርሱ ነው። እርሱ በሁሉ ነገር ላይ ቁቅ ቻይ ነው።",
+        "amharic": "ማታ ደረስን፤ ሥልጣኑም ሁሉ ለአላህ ሆኖ ማታ ደረሰ። ምስጋናው ሁሉ ለአላህ ነው። ከአላህ ሌላ በሕቅ የሚገዛ አምላክ የለም — ብቻው ነው፤ አጋር የለውም። ሥልጣኑ ሁሉ ለርሱ ነው፤ ምስጋናም ሁሉ ለርሱ ነው። እርሱ በሁሉ ነገር ላይ ሁሉ ቻይ ነው።",
         "count": 1,
         "source": "Muslim"
     },
@@ -243,7 +243,7 @@ EVENING_ADHKAR = [
         "title_en": "Ayat al-Kursi — Evening",
         "arabic": "اللَّهُ لَا إِلَٰهَ إِلَّا هُوَ الْحَيُّ الْقَيُّومُ...",
         "transliteration": "Allahu la ilaha illa huwal-Hayyul-Qayyum... (Al-Baqarah 2:255)",
-        "amharic": "አያቱ ኩርሲ — (ቁርዓን 2:255)። ያሁ ሰው ዛሬ ሌሊቱ ሙሉ ጠባቂ (ሐፊዝ) አላህ ይኾናል። ሸይጣን ሊቀርበው አይችልም።",
+        "amharic": "አያቱ ኩርሲ — (ቁርዓን 2:255)። ያ ሰው ዛሬ ሌሊቱ ሙሉ ጠባቂ (ሐፊዝ) አላህ ይኾናል። ሸይጣን ሊቀርበው አይችልም።",
         "count": 1,
         "source": "Bukhari"
     },
@@ -253,7 +253,7 @@ EVENING_ADHKAR = [
         "title_en": "Night Protection",
         "arabic": "بِاسْمِكَ رَبِّي وَضَعْتُ جَنْبِي، وَبِكَ أَرْفَعُهُ، فَإِنْ أَمْسَكْتَ نَفْسِي فَارْحَمْهَا، وَإِنْ أَرْسَلْتَهَا فَاحْفَظْهَا بِمَا تَحْفَظُ بِهِ عِبَادَكَ الصَّالِحِينَ",
         "transliteration": "Bismika Rabbi wada'tu janbi, wa bika arfa'uh, fa in amsakta nafsi farhamha, wa in arsaltaha fahfadha bima tahfadhu bihi 'ibadakas-salihin.",
-        "amharic": "በስምህ ጌታዬ ሆይ ጎኔን ዘረጋሁ። በስምህ ሁሉ አነሣሁ። ነፍሴን ብትይዝ ምሕረትህን ስጣት። ብትለቃት ደጋግ ባሪያዎቼን ትጠብቅበት ትጠብቀዋ።",
+        "amharic": "በስምህ ጌታዬ ሆይ ጎኔን ዘረጋሁ። በስምህ አነሳሁ። ነፍሴን ብትይዝ ምሕረትህን ስጣት። ብትለቃት ደጋሞቹን ባሪያዎችህን እንደምትጠብቅበት ጠብቃት።",
         "count": 1,
         "source": "Bukhari, Muslim"
     },
@@ -263,7 +263,7 @@ EVENING_ADHKAR = [
         "title_en": "Night Remembrance",
         "arabic": "اللَّهُمَّ قِنِي عَذَابَكَ يَوْمَ تَبْعَثُ عِبَادَكَ",
         "transliteration": "Allahumma qini 'adhabaka yawma tab'athu 'ibadak.",
-        "amharic": "አቤቱ አላህ ሆይ! ባሪያዎቼን የምትሰበስቡበት ቀን ቅጣትህን ጠብቀኝ። (ሦስቴ ጎኑን ከዘረጋ ቁለት፤ ሦስቴ ቅምጥ ቁለት)።",
+        "amharic": "አቤቱ አላህ ሆይ! ባሪያዎቸን የምትሰብሰቡበት ቀን ቅጣትህን ጠብቀኝ። (ሦስቴ — ጎኑን ሲዘረጋ ሲናገር፤ ሦስቴ — ሲቀምጥ ሲናገር)።",
         "count": 3,
         "source": "Abu Dawud, Tirmidhi"
     },
@@ -283,7 +283,7 @@ EVENING_ADHKAR = [
         "title_en": "Evening Tasbih",
         "arabic": "سُبْحَانَ اللَّهِ وَبِحَمْدِهِ",
         "transliteration": "Subhanallahi wa bihamdih.",
-        "amharic": "አላህ ሁሉ ንጽሕና ስሙ ምስጋናው ጭምር ይሁን። (ማምሻ ላይ 100 ጊዜ — ዂሉ ሰው ካለ ምንዱቡ ይበልጣል)።",
+        "amharic": "አላህ ሁሉ ንጽሕና ስሙ ምስጋናው ጭምር ይሁን። (ማምሻ ላይ 100 ጊዜ — ሌላ ሰው ካለ ምንዱቡ ሁሉ ይበልጣል)።",
         "count": 100,
         "source": "Muslim"
     },
@@ -293,7 +293,7 @@ EVENING_ADHKAR = [
         "title_en": "Protection from Jinn and Humans",
         "arabic": "أَعُوذُ بِكَلِمَاتِ اللَّهِ التَّامَّاتِ مِنْ شَرِّ مَا خَلَقَ",
         "transliteration": "A'udhu bikalimatillahit-tammati min sharri ma khalaq.",
-        "amharic": "ከፈጠሩት ሁሉ ክፋት ሊጠብቀኝ ፍጹማን ቃሎቹ አስከ አላህ ሸሻለሁ። (ሦስቴ — ምንም ጉዳት ሊደርስበት አይችልም)።",
+        "amharic": "ከፈጠሩት ሁሉ ክፋት ሊጠብቀኝ — ፍጹማን ቃሎቹ ዘንድ ወደ አላህ ሸሻለሁ። (ሦስቴ — ምንም ጉዳት ሊደርስበት አይችልም)።",
         "count": 3,
         "source": "Muslim"
     },
@@ -353,7 +353,7 @@ EVENING_ADHKAR = [
         "title_en": "Protection of Angels at Night",
         "arabic": "بِسْمِ اللَّهِ الَّذِي لَا يَضُرُّ مَعَ اسْمِهِ شَيْءٌ فِي الْأَرْضِ وَلَا فِي السَّمَاءِ وَهُوَ السَّمِيعُ الْعَلِيمُ",
         "transliteration": "Bismillahil-ladhi la yadurru ma'asmihi shay'un fil-ardi wa la fis-sama', wa Huwas-Sami'ul-'Alim.",
-        "amharic": "ስሙ ከጎነ ምድርም ሰማይም ምንም ጉዳት የማያደርስ አላህ ስሙ ሆኖ (እጀምራለሁ)፤ እርሱ ሰሚ አዋቂ ነው። (ሦስቴ — ድንገተኛ ጉዳት ሁሉ አያደርስበትም)።",
+        "amharic": "ስሙ ካለ ምድርም ሰማይም ምንም ጉዳት የማያደርስ አላህ ስም ሆኖ (እጀምራለሁ)፤ እርሱ ሰሚ አዋቂ ነው። (ሦስቴ — ድንገተኛ ጉዳት ሁሉ አያደርስበትም)።",
         "count": 3,
         "source": "Abu Dawud, Ibn Majah"
     }

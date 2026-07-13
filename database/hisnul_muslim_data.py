@@ -297,7 +297,7 @@ HISNUL_CHAPTERS = [
             {
                 "arabic": "اللَّهُمَّ أَسْلَمْتُ نَفْسِي إِلَيْكَ وَفَوَّضْتُ أَمْرِي إِلَيْكَ وَوَجَّهْتُ وَجْهِي إِلَيْكَ وَأَلْجَأْتُ ظَهْرِي إِلَيْكَ رَغْبَةً وَرَهْبَةً إِلَيْكَ لَا مَلْجَأَ وَلَا مَنْجَا مِنْكَ إِلَّا إِلَيْكَ آمَنْتُ بِكِتَابِكَ الَّذِي أَنْزَلْتَ وَبِنَبِيِّكَ الَّذِي أَرْسَلْتَ",
                 "transliteration": "Allahumma aslamtu nafsi ilayk, wa fawwadtu amri ilayk, wa wajjahtu wajhi ilayk, wa alja'tu dhahri ilayk, raghbatan wa rahbatan ilayk. La malja'a wa la manja minka illa ilayk. Amantu bikitabikil-ladhi anzalt, wa binabiyyikal-ladhi arsalt.",
-                "amharic": "አቤቱ አላህ ሆይ! ወደ አንተ ነፍሴን አሳለፍኩ። ጉዳዬን ሁሉ ወደ አንተ ሰጠሁ። ፊቴን ወደ አንተ አዞርኩ። ጀርባዬን ወደ አንተ ተደገፍኩ — ምኞትና ፍርሃት ሆኖ ወደ አንተ። ከአንተ ዘንድ ሸሻቸው ምን ወይም ምን ሲያምልጥ ወደ አንተ ካልሆነ አይኖርም። ያወረድቸውን ኪታቡን ያምናሁ። ያላክሸውን ነቢይህን ያምናሁ። (ያሁ ሰው ሞቶ ቢሆን በፍጥረቱ ሞቷቸዋል)።",
+                "amharic": "አቤቱ አላህ ሆይ! ወደ አንተ ነፍሴን አሳለፍኩ። ጉዳዬን ሁሉ ወደ አንተ ሰጠሁ። ፊቴን ወደ አንተ አዞርኩ። ጀርባዬን ወደ አንተ ተደገፍኩ — ናፍቆትና ፍርሃት ሆኖ ወደ አንተ። ከአንተ ዘንድ ከርሱ ለማምለጥ ምን መሸሸጊያ ወደ አንተ ካልሆነ የለም። ያወረደከውን ኪታብህን አምናለሁ። የላክኸውን ነቢይህን አምናለሁ። (ያ ሰው ቢሞት — በፍጥረቱ (እስልምና) ላይ ሞቷቸዋል)።",
                 "count": 1,
                 "source": "Bukhari 11/126, Muslim 4/2081"
             }
@@ -361,7 +361,7 @@ HISNUL_CHAPTERS = [
             {
                 "arabic": "اللَّهُمَّ إِنِّي عَبْدُكَ وَابْنُ عَبْدِكَ وَابْنُ أَمَتِكَ نَاصِيَتِي بِيَدِكَ مَاضٍ فِيَّ حُكْمُكَ عَدْلٌ فِيَّ قَضَاؤُكَ أَسْأَلُكَ بِكُلِّ اسْمٍ هُوَ لَكَ سَمَّيْتَ بِهِ نَفْسَكَ أَوْ أَنْزَلْتَهُ فِي كِتَابِكَ أَوْ عَلَّمْتَهُ أَحَدًا مِنْ خَلْقِكَ أَوِ اسْتَأْثَرْتَ بِهِ فِي عِلْمِ الْغَيْبِ عِنْدَكَ أَنْ تَجْعَلَ الْقُرْآنَ رَبِيعَ قَلْبِي وَنُورَ صَدْرِي وَجَلَاءَ حُزْنِي وَذَهَابَ هَمِّي",
                 "transliteration": "Allahumma inni 'abduka, wabnu 'abdika, wabnu amatika, nasiyati biyadika, madin fiyya hukmuka, 'adlun fiyya qada'uk. As'aluka bikulli ismin huwa laka, sammayta bihi nafsaka, aw anzaltahu fi kitabika, aw 'allamtahu ahadan min khalqika, awista'tharta bihi fi 'ilmil-ghaybi 'indaka, an taj'alal-Qur'ana rabi'a qalbi wa nura sadri wa jala'a huzni wa dhahaba hammi.",
-                "amharic": "አቤቱ አላህ ሆይ! ባሪያህ ነኝ፤ ባሪያህ ልጅ ነኝ፤ ባሪያሽ ልጅ ነኝ። ቅቤዬ በእጅህ ነው። ፍርዱ ሁሉ ለኔ ያልፋል — ፍርዱ ፍትሐዊ ነው። ለሌሎቹ ከምትሰጣቸው ወይም ኪታቡ ካወረድሃቸው ወይም ፈጠሩ ሰው ካስተማርሃቸው ወይም ለምስጢር ዕውቀት ካቀፋቸው ስሞቹ ሁሉ — ቁርዓንን ልቤ ፀደይ አድርግ፤ ደረቴ ብርሃን፤ ሐዘኔ ሊያልፍ ጭንቀቴ ሊሄድ እጠይቃለሁ። (አላህ ለጭንቀቱ ቅናሽ ሰጥቶ ሐዘኑን ለውጦ ደስታ ያሰጣቸዋል)።",
+                "amharic": "አቤቱ አላህ ሆይ! ባሪያህ ነኝ፤ ባሪያህ ልጅ ነኝ፤ ባሪያሽ ልጅ ነኝ። ናሺቴ (ቅናቴ) በእጅህ ነው። ፍርዱ ሁሉ ለኔ ያልፋል — ፍርዱ ፍትሐዊ ነው። ለሌሎቹ ከምትሰጣቸው ወይም ኪታቡ ካወረድሃቸው ወይም ፈጠሩ ሰው ካስተማርሃቸው ወይም ለምስጢር ዕውቀት ካቀፋቸው ስሞቹ ሁሉ — ቁርዓንን ልቤ ፀደይ አድርግ፤ ደረቴ ብርሃን፤ ሐዘኔ ሊያልፍ ጭንቀቴ ሊሄድ እጠይቃለሁ። (አላህ ለጭንቀቱ ቅናሽ ሰጥቶ ሐዘኑን ለውጦ ደስታ ያሰጣቸዋል)።",
                 "count": 1,
                 "source": "Ahmad 1/391"
             }
@@ -441,7 +441,7 @@ HISNUL_CHAPTERS = [
             {
                 "arabic": "الْحَمْدُ لِلَّهِ الَّذِي عَافَانِي مِمَّا ابْتَلَاكَ بِهِ وَفَضَّلَنِي عَلَى كَثِيرٍ مِمَّنْ خَلَقَ تَفْضِيلًا",
                 "transliteration": "Alhamdu lillahil-ladhi 'afani mimma ibtalaaka bihi wa faddalani 'ala kathirin mimman khalaqa tafdila.",
-                "amharic": "ሊፈታ አስቸጋሪ ላደረገህ ነፃ ያደረገኝ፤ ፈጠሩ ከብዙዎቹ ላይ ያበለጠኝ አላህ ምስጋና ይሁነው። (ያሁ ሰው ሚስጥሬ ጥሪ ሆኖ ሳይሰሙ ያነበበ — ያዩት ዓይን ዓፊያ ሊቀር ነው)።",
+                "amharic": "ያጠቃህ ችግር ያርቀኝ — ፈጠሩ ከብዙዎቹ ላይ ያበለጠኝ አላህ ምስጋና ይሁነው። (ያ ሰው ሳያሰሙ ጸሎቱ ሆኖ ያሉ — ያዩትን ዓይን ዓፊያ ሊቀር ነው)።",
                 "count": 1,
                 "source": "Tirmidhi 5/493"
             }
@@ -553,7 +553,7 @@ HISNUL_CHAPTERS = [
             {
                 "arabic": "اللَّهُمَّ إِنِّي أَسْأَلُكَ خَيْرَهَا وَخَيْرَ مَا فِيهَا وَخَيْرَ مَا أُرْسِلَتْ بِهِ، وَأَعُوذُ بِكَ مِنْ شَرِّهَا وَشَرِّ مَا فِيهَا وَشَرِّ مَا أُرْسِلَتْ بِهِ",
                 "transliteration": "Allahumma inni as'aluka khayra ha wa khayra ma fiha wa khayra ma ursilat bih, wa a'udhu bika min sharriha wa sharri ma fiha wa sharri ma ursilat bih.",
-                "amharic": "አቤቱ አላህ ሆይ! ከበጎዋ ምን ያለ ምን ዓይቤ ምን ዓይቤ የተላከ ሁሉ ክፍሉ እጠይቃለሁ። ከክፉዋ ምን ያለ ምን ዓይቤ ምን ዓይቤ የተላከ ሁሉ ወደ አንተ ሸሻለሁ።",
+                "amharic": "አቤቱ አላህ ሆይ! ከርሷ ክፍሉ፤ ከውስጧ ምን ያለ ሁሉ ክፍሉ፤ ስለ ምን ዓይቤ እንደ ተላከ ሁሉ ክፍሉ እጠይቃለሁ። ከርሷ ክፋት፤ ከውስጧ ምን ያለ ሁሉ ክፋት፤ ስለ ምን ዓይቤ እንደ ተላከ ሁሉ ክፋት ወደ አንተ ሸሻለሁ።",
                 "count": 1,
                 "source": "Muslim 2/616"
             }
@@ -949,7 +949,7 @@ HISNUL_CHAPTERS = [
             {
                 "arabic": "آيَةُ الْكُرْسِيِّ",
                 "transliteration": "Ayat al-Kursi (Al-Baqarah 2:255) after every prayer.",
-                "amharic": "አያቱ ኩርሲ — (ቁርዓን 2:255) — ሶላት ሁሉ ካቆሱ በኋላ። (ያሁ ሰው ሞቶ ጀነት ሊቀር ሌላ ዕንቅፋት የለውም)።",
+                "amharic": "አያቱ ኩርሲ — (ቁርዓን 2:255) — ሶላት ሁሉ ካቆሱ በኋላ። (ያ ሰው ሞቶ ጀነት ሊቀር ሌላ ዕንቅፋት የለውም)።",
                 "count": 1,
                 "source": "Nasai, Ibn Hibban"
             }
@@ -1107,7 +1107,7 @@ HISNUL_CHAPTERS = [
             {
                 "arabic": "أَعُوذُ بِكَلِمَاتِ اللَّهِ التَّامَّةِ مِنْ كُلِّ شَيْطَانٍ وَهَامَّةٍ وَمِنْ كُلِّ عَيْنٍ لَامَّةٍ",
                 "transliteration": "A'udhu bikalimatillahit-tammati min kulli shaytanin wa hammatin wa min kulli 'aynin lammah.",
-                "amharic": "ከሸይጣን ሁሉ፤ ከምር ሁሉ፤ ዐይን ሁሉ ሚጎዳ ሁሉ — ፍጹማን ቃሎቹ አስከ አላህ ሸሻለሁ። (ነቢዩ ሶ.ዐ.ወ. ሐሰን ሑሰይንን ሊጠቡ ያሉ)።",
+                "amharic": "ከሸይጣን ሁሉ፤ ከምር ሁሉ፤ ዐይን ሁሉ ሊጎዳ ከሚችል ሁሉ — ፍጹማን ቃሎቹ ዘንድ ወደ አላህ ሸሻለሁ። (ነቢዩ ሶ.ዐ.ወ. ሐሰን ሑሰይንን ሊጠቡ ያሉ)።",
                 "count": 1,
                 "source": "Bukhari 4/119"
             }
@@ -1944,7 +1944,7 @@ HISNUL_CHAPTERS = [
             {
                 "arabic": "أَعُوذُ بِكَلِمَاتِ اللَّهِ التَّامَّاتِ مِنْ كُلِّ شَيْطَانٍ وَهَامَّةٍ وَمِنْ كُلِّ عَيْنٍ لَامَّةٍ",
                 "transliteration": "A'udhu bikalimatillahit-tammati min kulli shaytanin wa hammatin wa min kulli 'aynin lammah.",
-                "amharic": "ከሸይጣን ሁሉ፤ ምር ሁሉ፤ ዐይን ሁሉ ሚጎዳ ሁሉ — ፍጹማን ቃሎቹ አስከ አላህ ሸሻለሁ።",
+                "amharic": "ከሸይጣን ሁሉ፤ ከምር ሁሉ፤ ዐይን ሁሉ ሊጎዳ ከሚችል ሁሉ — ፍጹማን ቃሎቹ ዘንድ ወደ አላህ ሸሻለሁ።",
                 "count": 1,
                 "source": "Bukhari 4/119"
             }
@@ -2152,7 +2152,7 @@ HISNUL_CHAPTERS = [
             {
                 "arabic": "اللَّهُمَّ أَجِرْنِي مِنَ النَّارِ",
                 "transliteration": "Allahumma ajirni minan-nar.",
-                "amharic": "አቤቱ አላህ ሆይ! ናር ጥበቀኝ። (ሰባቴ ጠዋት ሰባቴ ማምሻ — ናር ሊምናቸሩ ስጠኝ ይሉ — ዂሉ ጊዜ ጠቁምኩ ቃሉ — ሰሚ ናርን ጠብቅ ብሎ ይቀርባቸዋል)።",
+                "amharic": "አቤቱ አላህ ሆይ! ናር ጥበቀኝ። (ሰባቴ ጠዋት ሰባቴ ማምሻ — ናር ሊምናቸሩ ስጠኝ ሲሉ — ሁሉ ጊዜ ሲሉ ቃሉ ይሰማቸዋል — ሚሰማ ናርን ጠብቅ ብሎ ይቀርቦቸዋል)።",
                 "count": 7,
                 "source": "Abu Dawud 2/87, Ahmad"
             }

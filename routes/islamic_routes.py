@@ -18,7 +18,31 @@ from database.quran_surahs import SURAHS, RECITERS
 from database.islamic_data import get_today_quran_amharic, get_today_hadith
 from database.hadith_collections import get_collection, get_collections_meta
 from database.adhkar_data import get_morning_adhkar, get_evening_adhkar
-from database.hisnul_muslim_data import get_all_chapters, get_chapter_by_id
+from database.hisnul_muslim_data import get_all_chapters, get_chapter_by_id, HISNUL_CHAPTERS
+
+# ── Audio URL helpers ─────────────────────────────────────────────────────────
+# Build sequential dua-number map: (chapter_id, dua_index) -> sequential_int
+_HSN_SEQ: dict = {}
+_seq_counter = 1
+for _ch in HISNUL_CHAPTERS:
+    for _di in range(len(_ch['duas'])):
+        _HSN_SEQ[(_ch['id'], _di)] = _seq_counter
+        _seq_counter += 1
+_TOTAL_HSN_DUAS = _seq_counter - 1
+
+def _hsn_audio_url(chapter_id: int, dua_index: int) -> str | None:
+    seq = _HSN_SEQ.get((chapter_id, dua_index))
+    if seq:
+        return f"https://www.hisnmuslim.com/audio/ar/{seq:04d}.mp3"
+    return None
+
+def _adhkar_audio_url(adhkar_type: str, item_id: int) -> str:
+    """Morning/evening adhkar audio — sequential after the Hisnul book."""
+    if adhkar_type == 'morning':
+        seq = _TOTAL_HSN_DUAS + item_id
+    else:
+        seq = _TOTAL_HSN_DUAS + 20 + item_id
+    return f"https://www.hisnmuslim.com/audio/ar/{seq:04d}.mp3"
 
 islamic_bp = Blueprint('islamic', __name__)
 
@@ -649,7 +673,11 @@ def hadith_collection_detail(collection_id):
 @islamic_bp.route('/api/islamic/adhkar/morning')
 def adhkar_morning():
     try:
-        return jsonify({'success': True, 'adhkar': get_morning_adhkar()})
+        adhkar = [
+            {**a, 'audio_url': _adhkar_audio_url('morning', a.get('id', i + 1))}
+            for i, a in enumerate(get_morning_adhkar())
+        ]
+        return jsonify({'success': True, 'adhkar': adhkar})
     except Exception:
         current_app.logger.error("adhkar-morning error", exc_info=True)
         return jsonify({'success': False}), 500
@@ -657,7 +685,11 @@ def adhkar_morning():
 @islamic_bp.route('/api/islamic/adhkar/evening')
 def adhkar_evening():
     try:
-        return jsonify({'success': True, 'adhkar': get_evening_adhkar()})
+        adhkar = [
+            {**a, 'audio_url': _adhkar_audio_url('evening', a.get('id', i + 1))}
+            for i, a in enumerate(get_evening_adhkar())
+        ]
+        return jsonify({'success': True, 'adhkar': adhkar})
     except Exception:
         current_app.logger.error("adhkar-evening error", exc_info=True)
         return jsonify({'success': False}), 500
@@ -679,7 +711,15 @@ def hisnul_chapter(chapter_id):
         ch = get_chapter_by_id(chapter_id)
         if not ch:
             return jsonify({'success': False, 'error': 'Chapter not found'}), 404
-        return jsonify({'success': True, 'chapter': ch})
+        # Inject audio_url per dua
+        ch_out = {
+            **ch,
+            'duas': [
+                {**dua, 'audio_url': _hsn_audio_url(chapter_id, i)}
+                for i, dua in enumerate(ch.get('duas', []))
+            ]
+        }
+        return jsonify({'success': True, 'chapter': ch_out})
     except Exception:
         current_app.logger.error("hisnul-chapter error", exc_info=True)
         return jsonify({'success': False}), 500

@@ -1021,6 +1021,19 @@
 }
 .hsn-dua-cnt-target{font-size:11px;color:#7a6a50}
 .hsn-dua-cnt-done{color:#3f9d5c;font-weight:700;font-size:13px}
+/* ── Dua Audio Button ── */
+.dua-audio-row{display:flex;align-items:center;gap:10px;padding:4px 0}
+.dua-play-btn{
+    display:inline-flex;align-items:center;justify-content:center;
+    width:36px;height:36px;border-radius:50%;flex-shrink:0;
+    background:rgba(63,125,92,.18);border:1px solid rgba(63,157,92,.45);
+    color:#3f9d5c;font-size:15px;cursor:pointer;
+    transition:background .18s,border-color .18s,transform .12s;
+    line-height:1;
+}
+.dua-play-btn:hover{background:rgba(63,157,92,.32);border-color:rgba(63,157,92,.75);transform:scale(1.08)}
+.dua-play-btn.playing{background:rgba(63,157,92,.28);border-color:#3f9d5c;color:#6fdf9c}
+.dua-audio-label{font-size:11px;color:#7a9a7a;letter-spacing:.3px}
 @media(max-width:480px){
     .hsn-chapter-grid{grid-template-columns:repeat(2,1fr)}
     .adh-ar,.hsn-dua-ar{font-size:20px}
@@ -1441,8 +1454,9 @@
     </div>
 </div>
 
-<audio id="az-audio" preload="none"></audio>
+<audio id="az-audio"    preload="none"></audio>
 <audio id="quran-audio" preload="none"></audio>
+<audio id="dua-audio"   preload="none"></audio>
 {% endblock %}
 
 {% block extra_js %}
@@ -3090,12 +3104,20 @@ function adhOpen(type) {
     container.innerHTML = list.map((a, i) => {
         const key    = type + '-' + (a.id || i);
         const target = a.count || 1;
+        const audioHtml = a.audio_url
+            ? `<div class="dua-audio-row">
+                <button class="dua-play-btn" id="dua-btn-${key}"
+                        onclick="duaPlayAudio('${a.audio_url}','${key}')" title="ዓረቢኛ ድምፅ ያዳምጡ">▶</button>
+                <span class="dua-audio-label">ዓረቢኛ ድምፅ</span>
+               </div>`
+            : '';
         return `<div class="adh-item">
             <div class="adh-item-hdr">
                 <div class="adh-item-title">${a.title_am}</div>
                 <div class="adh-item-src">${a.source || ''}</div>
             </div>
             <div class="adh-ar">${a.arabic}</div>
+            ${audioHtml}
             ${a.transliteration ? `<div class="adh-trans">${a.transliteration}</div>` : ''}
             <div class="adh-am">${a.amharic}</div>
             <div class="adh-counter-row">
@@ -3219,12 +3241,20 @@ function hsnOpenChapter(id) {
             duaList.innerHTML = duas.map((dua, i) => {
                 const key    = `hsn-${id}-${i}`;
                 const target = dua.count || 1;
+                const audioHtml = dua.audio_url
+                    ? `<div class="dua-audio-row">
+                        <button class="dua-play-btn" id="dua-btn-${key}"
+                                onclick="duaPlayAudio('${dua.audio_url}','${key}')" title="ዓረቢኛ ድምፅ ያዳምጡ">▶</button>
+                        <span class="dua-audio-label">ዓረቢኛ ድምፅ</span>
+                       </div>`
+                    : '';
                 return `<div class="hsn-dua">
                     <div class="hsn-dua-hdr">
                         <span class="hsn-dua-num">${i + 1}</span>
                         <span class="hsn-dua-src">${dua.source || ''}</span>
                     </div>
                     <div class="hsn-dua-ar">${dua.arabic}</div>
+                    ${audioHtml}
                     ${dua.transliteration
                         ? `<div class="hsn-dua-trans">${dua.transliteration}</div>`
                         : ''}
@@ -3250,6 +3280,52 @@ function hsnOpenChapter(id) {
 function hsnBack() {
     document.getElementById('hsn-reader').style.display  = 'none';
     document.getElementById('hsn-browser').style.display = 'block';
+}
+
+// ═══════════════════════════════════════════════════════════════
+// DUA AUDIO PLAYER (Arabic-only, shared across Adhkar & Hisnul)
+// ═══════════════════════════════════════════════════════════════
+let _duaPlayingKey = null;
+
+function duaPlayAudio(url, key) {
+    const audio = document.getElementById('dua-audio');
+    const btn   = document.getElementById('dua-btn-' + key);
+
+    // If clicking the already-playing dua → pause it
+    if (_duaPlayingKey === key && !audio.paused) {
+        audio.pause();
+        if (btn) { btn.textContent = '▶'; btn.classList.remove('playing'); }
+        return;
+    }
+
+    // Stop whatever was playing before
+    if (_duaPlayingKey && _duaPlayingKey !== key) {
+        const prev = document.getElementById('dua-btn-' + _duaPlayingKey);
+        if (prev) { prev.textContent = '▶'; prev.classList.remove('playing'); }
+    }
+
+    // Resume if same key but paused
+    if (_duaPlayingKey === key && audio.paused && audio.src) {
+        audio.play().catch(() => {});
+        if (btn) { btn.textContent = '⏸'; btn.classList.add('playing'); }
+        return;
+    }
+
+    // Load new URL and play
+    _duaPlayingKey = key;
+    audio.src = url;
+    audio.load();
+    audio.play().catch(() => {
+        if (btn) { btn.textContent = '▶'; btn.classList.remove('playing'); }
+        _duaPlayingKey = null;
+    });
+    if (btn) { btn.textContent = '⏸'; btn.classList.add('playing'); }
+
+    // Reset button when playback ends
+    audio.onended = () => {
+        if (btn) { btn.textContent = '▶'; btn.classList.remove('playing'); }
+        _duaPlayingKey = null;
+    };
 }
 
 function hsnIncr(key, target) {
