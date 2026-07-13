@@ -17,6 +17,8 @@ except ImportError:
 from database.quran_surahs import SURAHS, RECITERS
 from database.islamic_data import get_today_quran_amharic, get_today_hadith
 from database.hadith_collections import get_collection, get_collections_meta
+from database.adhkar_data import get_morning_adhkar, get_evening_adhkar
+from database.hisnul_muslim_data import get_all_chapters, get_chapter_by_id
 
 islamic_bp = Blueprint('islamic', __name__)
 
