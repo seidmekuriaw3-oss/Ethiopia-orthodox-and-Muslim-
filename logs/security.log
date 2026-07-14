@@ -22988,3 +22988,9 @@ TypeError: 'str' object is not callable
 2026-07-13 03:40:10,704 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
 2026-07-13 05:26:16,130 - app - WARNING - Slow request: GET /api/islamic/audio/tts - 1.19s
 2026-07-13 05:26:28,358 - app - WARNING - Slow request: GET /api/islamic/audio/tts - 1.93s
+2026-07-14 03:11:23,478 - app - WARNING - 404 Error: http://5450a6fa-9c12-4f36-82b5-c3bc150029eb-00-dlgzdgkich6.worf.replit.dev/api/islamic/audio/1
+2026-07-14 03:11:27,044 - app - WARNING - 404 Error: http://5450a6fa-9c12-4f36-82b5-c3bc150029eb-00-dlgzdgkich6.worf.replit.dev/api/islamic/audio/1
+2026-07-14 03:11:48,483 - app - WARNING - 404 Error: http://5450a6fa-9c12-4f36-82b5-c3bc150029eb-00-dlgzdgkich6.worf.replit.dev/api/islamic/audio/1
+2026-07-14 03:12:09,473 - app - WARNING - 404 Error: http://5450a6fa-9c12-4f36-82b5-c3bc150029eb-00-dlgzdgkich6.worf.replit.dev/api/islamic/audio/1
+2026-07-14 03:12:10,725 - app - WARNING - 404 Error: http://5450a6fa-9c12-4f36-82b5-c3bc150029eb-00-dlgzdgkich6.worf.replit.dev/api/islamic/audio/1
+2026-07-14 03:12:16,884 - app - WARNING - 404 Error: http://5450a6fa-9c12-4f36-82b5-c3bc150029eb-00-dlgzdgkich6.worf.replit.dev/api/islamic/audio/3

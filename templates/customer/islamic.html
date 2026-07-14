@@ -1021,12 +1021,7 @@
 }
 .hsn-dua-cnt-target{font-size:11px;color:#7a6a50}
 .hsn-dua-cnt-done{color:#3f9d5c;font-weight:700;font-size:13px}
-/* ── Dua audio player ── */
-.dua-audio-row{display:flex;align-items:center;gap:10px;margin:8px 0 4px}
-.dua-play-btn{display:inline-flex;align-items:center;gap:6px;background:linear-gradient(135deg,#1e6b45,#2e8b5a);color:#fff;border:none;border-radius:20px;padding:6px 14px;font-size:13px;cursor:pointer;transition:opacity .15s}
-.dua-play-btn:hover{opacity:.85}
-.dua-play-btn.playing{background:linear-gradient(135deg,#a0522d,#c0622d)}
-.dua-audio-lbl{font-size:11px;color:#7a6a50;font-style:italic}
+
 @media(max-width:480px){
     .hsn-chapter-grid{grid-template-columns:repeat(2,1fr)}
     .adh-ar,.hsn-dua-ar{font-size:20px}
@@ -1449,7 +1444,6 @@
 
 <audio id="az-audio"    preload="none"></audio>
 <audio id="quran-audio" preload="none"></audio>
-<audio id="dua-audio"   preload="none"></audio>
 {% endblock %}
 
 {% block extra_js %}
@@ -3105,10 +3099,6 @@ function adhOpen(type) {
             <div class="adh-ar">${a.arabic}</div>
             ${a.transliteration ? `<div class="adh-trans">${a.transliteration}</div>` : ''}
             <div class="adh-am">${a.amharic}</div>
-            ${a.audio_url ? `<div class="dua-audio-row">
-                <button class="dua-play-btn" id="adh-play-${key}" onclick="duaPlayAudio('${a.audio_url}','adh-play-${key}')">▶ ያዳምጡ</button>
-                <span class="dua-audio-lbl">ሰዋዊ ድምፅ</span>
-            </div>` : ''}
             <div class="adh-counter-row">
                 <span class="adh-count-label">ብዛት (${target}x):</span>
                 <div class="adh-counter">
@@ -3240,10 +3230,6 @@ function hsnOpenChapter(id) {
                         ? `<div class="hsn-dua-trans">${dua.transliteration}</div>`
                         : ''}
                     <div class="hsn-dua-am">${dua.amharic}</div>
-                    ${dua.audio_url ? `<div class="dua-audio-row">
-                        <button class="dua-play-btn" id="hsn-play-${key}" onclick="duaPlayAudio('${dua.audio_url}','hsn-play-${key}')">▶ ያዳምጡ</button>
-                        <span class="dua-audio-lbl">ሰዋዊ ድምፅ</span>
-                    </div>` : ''}
                     <div class="hsn-dua-counter-row">
                         <span class="hsn-dua-count-label">ብዛት (${target}x):</span>
                         <div class="hsn-dua-counter">
@@ -3265,30 +3251,6 @@ function hsnOpenChapter(id) {
 function hsnBack() {
     document.getElementById('hsn-reader').style.display  = 'none';
     document.getElementById('hsn-browser').style.display = 'block';
-}
-
-// ── Dua audio player ───────────────────────────────────────────
-let _duaCurrentBtn = null;
-const _duaAudio = document.getElementById('dua-audio');
-
-function _duaReset() {
-    if (_duaCurrentBtn) {
-        const b = document.getElementById(_duaCurrentBtn);
-        if (b) { b.textContent = '▶ ያዳምጡ'; b.classList.remove('playing'); }
-        _duaCurrentBtn = null;
-    }
-    if (_duaAudio) { _duaAudio.pause(); _duaAudio.currentTime = 0; }
-}
-
-function duaPlayAudio(url, btnId) {
-    if (_duaCurrentBtn === btnId) { _duaReset(); return; }
-    _duaReset();
-    _duaCurrentBtn = btnId;
-    const b = document.getElementById(btnId);
-    if (b) { b.textContent = '⏹ አቁሙ'; b.classList.add('playing'); }
-    _duaAudio.src = url;
-    _duaAudio.play().catch(() => _duaReset());
-    _duaAudio.onended = () => _duaReset();
 }
 
 function hsnIncr(key, target) {

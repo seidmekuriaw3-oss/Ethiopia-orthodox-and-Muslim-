@@ -10,7 +10,7 @@ MORNING_ADHKAR = [
         "title_en": "Upon Waking Up",
         "arabic": "الْحَمْدُ لِلَّهِ الَّذِي أَحْيَانَا بَعْدَ مَا أَمَاتَنَا وَإِلَيْهِ النُّشُورُ",
         "transliteration": "Alhamdu lillahil-ladhi ahyana ba'da ma amatana wa ilayhin-nushur.",
-        "amharic": "ሞቱን ያስቀደሰ (ነፍሳችንን ወስዶ) ከሆነ በኋላ ሕይወትን ያጎናጸፈን አላህ ምስጋናና ክብር ይሁነው፤ ትንሣኤውም ወደ እርሱ ነው።",
+        "amharic": "ምስጋና ለዚያ ለሞት ካደረሰን በኋላ ሕያው ላደረገን አላህ ይገባው፤ መመለሻም ወደ እርሱ ብቻ ነው።",
         "count": 1,
         "source": "Bukhari"
     },
