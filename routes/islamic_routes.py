@@ -20,13 +20,6 @@ from database.hadith_collections import get_collection, get_collections_meta
 from database.adhkar_data import get_morning_adhkar, get_evening_adhkar
 from database.hisnul_muslim_data import get_all_chapters, get_chapter_by_id, HISNUL_CHAPTERS
 
-# ── Audio helpers — edge-tts TTS (reads ONLY the exact Arabic text on the card)
-from urllib.parse import quote as _url_quote
-
-def _tts_url(arabic_text: str) -> str:
-    """Return a same-origin TTS URL for the given Arabic text."""
-    return f"/api/islamic/audio/tts?t={_url_quote(arabic_text)}"
-
 islamic_bp = Blueprint('islamic', __name__)
 
 DEFAULT_LAT = 8.9806
@@ -653,64 +646,10 @@ def hadith_collection_detail(collection_id):
 
 # ── Daily Adhkar ─────────────────────────────────────────────────────────────
 
-@islamic_bp.route('/api/islamic/audio/tts')
-def tts_dua_audio():
-    """
-    Edge-TTS endpoint — generates audio for EXACTLY the Arabic text on the card.
-    Uses Microsoft Edge TTS (ar-SA-HamedNeural, high-quality male Arabic voice).
-    Results are cached on disk by MD5 hash so repeated requests are instant.
-    """
-    import asyncio, hashlib, os
-    try:
-        import edge_tts
-    except ImportError:
-        return jsonify({'error': 'edge-tts not installed'}), 503
-
-    text = request.args.get('t', '').strip()
-    if not text:
-        return jsonify({'error': 'no text'}), 400
-
-    cache_dir = '/tmp/dua_tts_cache'
-    os.makedirs(cache_dir, exist_ok=True)
-
-    text_hash = hashlib.md5(text.encode('utf-8')).hexdigest()
-    cache_path = os.path.join(cache_dir, f'{text_hash}.mp3')
-
-    if not os.path.exists(cache_path):
-        async def _generate():
-            communicate = edge_tts.Communicate(text, 'ar-SA-HamedNeural')
-            await communicate.save(cache_path)
-        try:
-            asyncio.run(_generate())
-        except Exception as exc:
-            current_app.logger.warning(f"TTS generation error: {exc}")
-            # Try fallback voice
-            try:
-                async def _fallback():
-                    communicate = edge_tts.Communicate(text, 'ar-EG-ShakirNeural')
-                    await communicate.save(cache_path)
-                asyncio.run(_fallback())
-            except Exception as exc2:
-                current_app.logger.error(f"TTS fallback error: {exc2}")
-                return jsonify({'error': 'TTS generation failed'}), 502
-
-    from flask import send_file
-    return send_file(
-        cache_path,
-        mimetype='audio/mpeg',
-        max_age=604800,   # cache 7 days in browser
-        conditional=True,
-    )
-
-
 @islamic_bp.route('/api/islamic/adhkar/morning')
 def adhkar_morning():
     try:
-        adhkar = [
-            {**a, 'audio_url': _tts_url(a['arabic'])}
-            for a in get_morning_adhkar()
-        ]
-        return jsonify({'success': True, 'adhkar': adhkar})
+        return jsonify({'success': True, 'adhkar': list(get_morning_adhkar())})
     except Exception:
         current_app.logger.error("adhkar-morning error", exc_info=True)
         return jsonify({'success': False}), 500
@@ -718,11 +657,7 @@ def adhkar_morning():
 @islamic_bp.route('/api/islamic/adhkar/evening')
 def adhkar_evening():
     try:
-        adhkar = [
-            {**a, 'audio_url': _tts_url(a['arabic'])}
-            for a in get_evening_adhkar()
-        ]
-        return jsonify({'success': True, 'adhkar': adhkar})
+        return jsonify({'success': True, 'adhkar': list(get_evening_adhkar())})
     except Exception:
         current_app.logger.error("adhkar-evening error", exc_info=True)
         return jsonify({'success': False}), 500
@@ -744,15 +679,9 @@ def hisnul_chapter(chapter_id):
         ch = get_chapter_by_id(chapter_id)
         if not ch:
             return jsonify({'success': False, 'error': 'Chapter not found'}), 404
-        # Inject TTS audio_url per dua (reads ONLY the exact Arabic on the card)
-        ch_out = {
-            **ch,
-            'duas': [
-                {**dua, 'audio_url': _tts_url(dua['arabic'])}
-                for dua in ch.get('duas', [])
-            ]
-        }
-        return jsonify({'success': True, 'chapter': ch_out})
+        # No audio_url injected — play buttons are suppressed until verified
+        # human recitation files are provided and mapped per-entry.
+        return jsonify({'success': True, 'chapter': ch})
     except Exception:
         current_app.logger.error("hisnul-chapter error", exc_info=True)
         return jsonify({'success': False}), 500

@@ -22986,3 +22986,5 @@ TypeError: 'str' object is not callable
 2026-07-13 03:40:03,068 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
 2026-07-13 03:40:06,858 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
 2026-07-13 03:40:10,704 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-07-13 05:26:16,130 - app - WARNING - Slow request: GET /api/islamic/audio/tts - 1.19s
+2026-07-13 05:26:28,358 - app - WARNING - Slow request: GET /api/islamic/audio/tts - 1.93s
