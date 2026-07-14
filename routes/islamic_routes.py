@@ -20,6 +20,35 @@ from database.hadith_collections import get_collection, get_collections_meta
 from database.adhkar_data import get_morning_adhkar, get_evening_adhkar
 from database.hisnul_muslim_data import get_all_chapters, get_chapter_by_id, HISNUL_CHAPTERS
 
+# ── Audio helpers — human recitations from hisnmuslim.com ─────────────────────
+# Builds a sequential map (chapter_id, dua_index) → 1-based integer that
+# matches the hisnmuslim.com audio library: /audio/ar/{n}.mp3
+_HSN_SEQ: dict = {}
+_seq_counter = 1
+_CH14_SEQS: list = []   # morning adhkar pool (ch 14)
+_CH15_SEQS: list = []   # evening adhkar pool (ch 15)
+for _ch in HISNUL_CHAPTERS:
+    for _di in range(len(_ch['duas'])):
+        _HSN_SEQ[(_ch['id'], _di)] = _seq_counter
+        if _ch['id'] == 14:
+            _CH14_SEQS.append(_seq_counter)
+        if _ch['id'] == 15:
+            _CH15_SEQS.append(_seq_counter)
+        _seq_counter += 1
+_TOTAL_HSN_DUAS = _seq_counter - 1
+
+def _proxy_url(seq: int) -> str:
+    return f"/api/islamic/audio/{seq}"
+
+def _hsn_audio_url(chapter_id: int, dua_index: int):
+    seq = _HSN_SEQ.get((chapter_id, dua_index))
+    return _proxy_url(seq) if seq else None
+
+def _adhkar_audio_url(adhkar_type: str, item_id: int) -> str:
+    pool = _CH14_SEQS if adhkar_type == 'morning' else _CH15_SEQS
+    seq = pool[(item_id - 1) % len(pool)] if pool else (18 if adhkar_type == 'morning' else 20)
+    return _proxy_url(seq)
+
 islamic_bp = Blueprint('islamic', __name__)
 
 DEFAULT_LAT = 8.9806
@@ -679,9 +708,14 @@ def hisnul_chapter(chapter_id):
         ch = get_chapter_by_id(chapter_id)
         if not ch:
             return jsonify({'success': False, 'error': 'Chapter not found'}), 404
-        # No audio_url injected — play buttons are suppressed until verified
-        # human recitation files are provided and mapped per-entry.
-        return jsonify({'success': True, 'chapter': ch})
+        ch_out = {
+            **ch,
+            'duas': [
+                {**dua, 'audio_url': _hsn_audio_url(chapter_id, i)}
+                for i, dua in enumerate(ch.get('duas', []))
+            ]
+        }
+        return jsonify({'success': True, 'chapter': ch_out})
     except Exception:
         current_app.logger.error("hisnul-chapter error", exc_info=True)
         return jsonify({'success': False}), 500

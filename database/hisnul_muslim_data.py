@@ -63,7 +63,7 @@ HISNUL_CHAPTERS = [
             {
                 "arabic": "تُبْلِي وَيُخْلِفُ اللَّهُ تَعَالَى",
                 "transliteration": "Tubli wa yukhliful-lahu ta'ala.",
-                "amharic": "ይበሉ (ሲሸሸ)፤ አላህ ተዐሎ ምትክ ይሰጣቸው።",
+                "amharic": "ልብሱ ሊቀደድ ይሁን፤ አላህ ተዐሏ ሌሎቹ ምትክ ይሰጣቸሁ።",
                 "count": 1,
                 "source": "Abu Dawud 4/41"
             },
@@ -86,7 +86,7 @@ HISNUL_CHAPTERS = [
             {
                 "arabic": "بِسْمِ اللَّهِ",
                 "transliteration": "Bismillah.",
-                "amharic": "የአላህ ስም ሆኖ (እጀምራለሁ)። (ዙፋናቸው ቦታ ሲቀይሩ — ጂኖቻቸው ኣዉሩን ሳያዩ)።",
+                "amharic": "በአላህ ስም (ይሉ)። ልብሱ ሲወልቁ ቢሉ — ጂኖቹ ዐውርታቸን ሊያዩ አይቻላቸውም።",
                 "count": 1,
                 "source": "Ibn As-Sunni, Tirmidhi"
             }
@@ -1091,7 +1091,7 @@ HISNUL_CHAPTERS = [
             {
                 "arabic": "أَحْسَبُهُ كَذَا وَكَذَا وَاللَّهُ حَسِيبُهُ وَلَا أُزَكِّي عَلَى اللَّهِ أَحَدًا",
                 "transliteration": "Ahsabuhu kadha wa kadha wallahu hasibuhu, wa la uzakki 'alallahi ahada.",
-                "amharic": "ፈለኛ (ጠቁም ምን ሆኖ ቀሩ) ያሰኘዋሁ — አላህ ሂሳቡን ሊሰራ — ከአላህ ሰዎቸ ላይ ምስጋና (ፍጹም ጽድቅ) አልሰጥም።",
+                "amharic": "ርሱን/ርሷን ፈለኛ ያደርጋቸዋል ብዬ ያሰኘዋቸዋሁ — አላህ ሂሳቡን (ፍርዱን) ሊያውቅ — ከአላህ ሰዎቹ ላይ ጽድቅ (ፍጹም ምስጋና) አልሰጥም።",
                 "count": 1,
                 "source": "Bukhari 3/209"
             }
@@ -1290,7 +1290,7 @@ HISNUL_CHAPTERS = [
             {
                 "arabic": "بِسْمِ اللَّهِ الَّذِي لَا إِلَهَ إِلَّا هُوَ",
                 "transliteration": "Bismillahil-ladhi la ilaha illa Huwa.",
-                "amharic": "ከርሱ ሌላ አምላክ ሌሎቹ ሌሎቹ ሌሎቹ ምን ሌሎቹ አይኖርም — ርሱ አምላኩ ስሙ ሆኖ (ሰጠሁ)።",
+                "amharic": "ከርሱ ሌላ አምላክ በሌለው አላህ ስም ሰጠሁ (ሰጡ)።",
                 "count": 1,
                 "source": "Ibn as-Sunni"
             }
@@ -1386,7 +1386,7 @@ HISNUL_CHAPTERS = [
             {
                 "arabic": "اللَّهُمَّ إِنِّي أَعُوذُ بِكَ مِنَ الْفَقْرِ وَالْقِلَّةِ وَالذِّلَّةِ وَأَعُوذُ بِكَ مِنْ أَنْ أَظْلِمَ أَوْ أُظْلَمَ",
                 "transliteration": "Allahumma inni a'udhu bika minal-faqri wal-qillati wadh-dhillati, wa a'udhu bika min an adhulima aw udhulam.",
-                "amharic": "አቤቱ አላህ ሆይ! ከድህነት፤ ከዝቅተኝነት፤ ከዋርድ ሆ ፡ ወደ አንተ ሸሻለሁ። ሌሎቹ ያደርሱ ሳይሆን — ላይ ሌሎቹ ሊያደርሱ ሳይሆን — ወደ አንተ ሸሻለሁ።",
+                "amharic": "አቤቱ አላህ ሆይ! ከድህነት፤ ከዝቅተኝነት፤ ከዋርድ (ሸክም) ወደ አንተ ሸሻለሁ። ሰዎቹ ላይ በደል ሳደርስ — ሰዎቹ ላይ በደል ሊያደርሱ ሳይሆን — ወደ አንተ ሸሻለሁ።",
                 "count": 1,
                 "source": "Abu Dawud 4/321, Nasai"
             }
@@ -1617,7 +1617,7 @@ HISNUL_CHAPTERS = [
             {
                 "arabic": "اللَّهُمَّ أَهِلَّهُ عَلَيْنَا بِالْأَمْنِ وَالْإِيمَانِ وَالسَّلَامَةِ وَالإِسْلَامِ وَالتَّوْفِيقِ لِمَا تُحِبُّ وَتَرْضَى رَبُّنَا وَرَبُّكَ اللَّهُ",
                 "transliteration": "Allahumma ahillahu 'alayna bil-amni wal-iman, was-salamati wal-Islam, wat-tawfiqi lima tuhibbu wa tarda, Rabbuna wa Rabbukallah.",
-                "amharic": "አቤቱ አላህ ሆይ! ደህንነት፤ ኢማን፤ ሰላምና ኢስላም፤ ምን ምሩ ምን ደስ ሁሉ ሊቢሏቸሁ — አዲሱ ወር ይምጣ። ጌታቸን ጌታቸሁ አላህ ነው።",
+                "amharic": "አቤቱ አላህ ሆይ! ይህን ወር ደህንነት፤ ኢማን፤ ሰላምና ኢስላም ጭምር ያምጣብን። ምን ምሩ ምን ደስ ሁሉ ወደ ቶፊቅ (ቅን ምግባር) ስጠን። ጌታቸን ጌታቸሁ አላህ ነው።",
                 "count": 1,
                 "source": "Tirmidhi 5/504, Ahmad"
             }
@@ -1816,7 +1816,7 @@ HISNUL_CHAPTERS = [
             {
                 "arabic": "سُبْحَانَ الَّذِي سَخَّرَ لَنَا هَذَا وَمَا كُنَّا لَهُ مُقْرِنِينَ وَإِنَّا إِلَى رَبِّنَا لَمُنْقَلِبُونَ",
                 "transliteration": "Subhanal-ladhi sakhkhara lana hadha wa ma kunna lahu muqrinin wa inna ila Rabbina lamunqalibun.",
-                "amharic": "ያሕ ሁሉ ሊቃቆሙ ሳንችል ይህን ያዘዘ ሁሉ ንጽሕና ስሙ ይሁን። ወደ ጌታቸን እንመለሳለን። (ቁርዓን 43:13)።",
+                "amharic": "አላህ ሁሉ ታላቅ ነው (x3)። ይህን ለኛ ያቀናጀ — ያለ ርሱ ረዳትነት ሊቃቆሙ ሳንችል ሳለ — ሁሉ ንጽሕና ለርሱ ይሁን። ወደ ጌታቸን (ለትንሣኤ) እርግጥ እንመለሳለን። (ቁርዓን 43:13)።",
                 "count": 1,
                 "source": "Quran 43:13, Abu Dawud 3/34"
             }
@@ -1976,7 +1976,7 @@ HISNUL_CHAPTERS = [
             {
                 "arabic": "أَعُوذُ بِاللَّهِ الَّذِي لَا إِلَهَ إِلَّا هُوَ مِنَ الشَّيْطَانِ الرَّجِيمِ وَمِنَ السِّحْرِ وَالْكَذَّابِينَ",
                 "transliteration": "A'udhu billahil-ladhi la ilaha illa Huwa minash-shaytanir-rajim wa minas-sihri wal-kadhdhabin.",
-                "amharic": "ከርሱ ሌላ አምላክ ሌሎቹ ሌሎቹ ምን ሌሎቹ አይኖርም — ርሱ አምላኩ ወደ አላህ ሸሻለሁ — ከተወገደ ሸይጣን ጥንቆላ ሐሰተኞቹ ሁሉ ጥበቃ።",
+                "amharic": "ከርሱ ሌላ አምላክ የሌለ አላህ ዘንድ ሸሻለሁ — ከተወገደው ሸይጣን፤ ከጥንቆላ ሰጪዎቹ፤ ከሐሰተኞቹ ሁሉ ጠብቀኝ።",
                 "count": 1,
                 "source": "Ibn as-Sunni"
             }
@@ -2072,7 +2072,7 @@ HISNUL_CHAPTERS = [
             {
                 "arabic": "اللَّهُمَّ سَلِّمْنِي لِرَمَضَانَ وَسَلِّمْ رَمَضَانَ لِي وَسَلِّمْهُ لِي مُتَقَبَّلًا",
                 "transliteration": "Allahumma sallimni liRamadan, wa sallim Ramadana li, wa sallimhu li mutaqabbala.",
-                "amharic": "አቤቱ አላህ ሆይ! ወደ ረመዳን ሙሉ ሰጠን። ረመዳን ወደ ኔ ሙሉ ሰጠ። ሙሉ ተቀባይ ሁቼ ሰጠ።",
+                "amharic": "አቤቱ አላህ ሆይ! ወደ ረመዳን ደርሰን አቁሰን። ረመዳን ወደ ኔ ሙሉ ሆኖ ያምጣ። ሙሉ ጾምን ተቀብለን።",
                 "count": 1,
                 "source": "Ibn as-Sunni, al-Bayhaqi"
             }
