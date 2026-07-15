@@ -283,7 +283,7 @@ HISNUL_CHAPTERS = [
     {
         "id": 16,
         "title_en": "Supplication before Sleeping",
-        "title_am": "ሲተኙ ሲተኙ",
+        "title_am": "ሲተኙ",
         "title_ar": "الدعاء عند النوم",
         "icon": "🌙",
         "duas": [
@@ -1649,7 +1649,7 @@ HISNUL_CHAPTERS = [
             {
                 "arabic": "اللَّهُمَّ اهْدِنِي فِيمَنْ هَدَيْتَ وَعَافِنِي فِيمَنْ عَافَيْتَ وَتَوَلَّنِي فِيمَنْ تَوَلَّيْتَ وَبَارِكْ لِي فِيمَا أَعْطَيْتَ وَقِنِي شَرَّ مَا قَضَيْتَ",
                 "transliteration": "Allahumma-hdini fiman hadayta, wa 'afini fiman 'afayta, wa tawallani fiman tawallayta, wa barik li fima a'tayta, wa qini sharra ma qadayta.",
-                "amharic": "አቤቱ አላህ ሆይ! መርሃቸሁ ሁሉ አካሉ ምርን። ዓፊያ ሰጥቻቸሁ ሁሉ አካሉ ዓፊያ ስጠን። ወዳጆቻቸሁ ሁሉ አካሉ ወዳጅ ሁን። ሰጥቻቸሁ ሁሉ ላይ ባርካ ሰጠን። ፈርዳቸሁ ሁሉ ክፋቱ ጠብቀን።",
+                "amharic": "አቤቱ አላህ ሆይ! ከመሩዋቸሁ ሁሉ ጋር ምርን። ዓፊያ ከሰጠሃቸሁ ሁሉ ጋር ዓፊያ ስጠኝ። ወዳጆቻቸሁ ሁሉ ጋር ወዳጄ ሁን። ከሰጠሃቸሁ ሁሉ ላይ ባርካ ስጥልኝ። ካዘዘሃቸሁ ሁሉ ክፋቱ ጠብቀኝ።",
                 "count": 1,
                 "source": "Abu Dawud 2/39, Tirmidhi 2/328"
             }
@@ -1688,7 +1688,7 @@ HISNUL_CHAPTERS = [
             {
                 "arabic": "رَبِّ اغْفِرْ لِي وَارْحَمْنِي وَاجْبُرْنِي وَارْفَعْنِي وَارْزُقْنِي وَاهْدِنِي وَعَافِنِي وَاعْفُ عَنِّي",
                 "transliteration": "Rabbi-ghfir li, warhamni, wajburni, warfa'ni, warzuqni, wahdini, wa 'afini, wa'fu 'anni.",
-                "amharic": "ጌታዬ ሆይ! ይቅር ብለኝ። ምሕረት ስጠኝ። ዕጣ ጨምርልኝ። ከፍ አድርገኝ። ሪዝቅ ስጠኝ። ምርን። ዓፊያ ስጠኝ። ፈቅር ብለኝ።",
+                "amharic": "ጌታዬ ሆይ! ይቅር ብለኝ። ምሕረት ስጠኝ። ሙሉ አድርገኝ። ከፍ አድርገኝ። ሪዝቅ ስጠኝ። ምርን። ዓፊያ ስጠኝ። ዐፍ ብለኝ።",
                 "count": 1,
                 "source": "Abu Dawud 1/231, Ibn Majah 1/295"
             }
@@ -1848,7 +1848,7 @@ HISNUL_CHAPTERS = [
             {
                 "arabic": "اللَّهُمَّ اغْفِرْ لِلْمُؤْمِنِينَ وَالْمُؤْمِنَاتِ",
                 "transliteration": "Allahumma-ghfir lil-mu'minina wal-mu'minat.",
-                "amharic": "አቤቱ አላህ ሆይ! ሙእሚናቱ ሁሉ — ሙእሚናቱ ሁሉ ይቅር ብልህ።",
+                "amharic": "አቤቱ አላህ ሆይ! ሙእሚናን (ወንዶቹ) ሁሉ — ሙእሚናት (ሴቶቹ) ሁሉ ይቅር ብልህ።",
                 "count": 1,
                 "source": "Quran 40:7"
             }
@@ -2008,7 +2008,7 @@ HISNUL_CHAPTERS = [
             {
                 "arabic": "سُبْحَانَكَ اللَّهُمَّ وَبِحَمْدِكَ أَشْهَدُ أَنْ لَا إِلَهَ إِلَّا أَنتَ أَسْتَغْفِرُكَ وَأَتُوبُ إِلَيْكَ",
                 "transliteration": "Subhanakal-lahumma wa bihamdika, ashhadu an la ilaha illa anta, astaghfiruka wa atubu ilaik.",
-                "amharic": "አቤቱ አላህ ሆይ! ሁሉ ንጽሕና ምስጋናህ ሆኖ ይሁን። ከአንተ ሌላ አምላክ እንደሌለ እምሰክርባለሁ። ይቅርታ እጠይቃለሁ — ወደ አንተ ንስሃ እገባለሁ।",
+                "amharic": "አቤቱ አላህ ሆይ! ሁሉ ንጽሕና ምስጋናህ ሆኖ ይሁን። ከአንተ ሌላ አምላክ እንደሌለ እምሰክርባለሁ። ይቅርታ እጠይቃለሁ — ወደ አንተ ንስሃ እገባለሁ።",
                 "count": 1,
                 "source": "Tirmidhi, Al-Hakim"
             }
