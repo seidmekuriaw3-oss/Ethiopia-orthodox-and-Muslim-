@@ -475,6 +475,26 @@ def _order_summary_keyboard(uid: int) -> InlineKeyboardMarkup:
     ])
 
 
+# ───────────────────────── safe edit helper ─────────────────────────
+async def _safe_edit_text(query, text: str, parse_mode=None, reply_markup=None):
+    """
+    Edit the current message as text.
+    If the current message is a photo (cannot edit text on it), reply with a new
+    text message and delete the old photo message instead.
+    """
+    try:
+        await query.edit_message_text(text, parse_mode=parse_mode, reply_markup=reply_markup)
+    except TelegramError:
+        try:
+            await query.message.reply_text(text, parse_mode=parse_mode, reply_markup=reply_markup)
+            try:
+                await query.message.delete()
+            except Exception:
+                pass
+        except Exception:
+            pass
+
+
 # ───────────────────────── handlers ─────────────────────────
 async def cmd_start(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
     uid = update.effective_user.id
@@ -553,8 +573,8 @@ async def on_callback(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
 
     # ── menu navigation ──
     if data == 'menu:home':
-        await query.edit_message_text(_(uid, 'welcome'), parse_mode=ParseMode.MARKDOWN,
-                                      reply_markup=_main_menu_keyboard(uid))
+        await _safe_edit_text(query, _(uid, 'welcome'), parse_mode=ParseMode.MARKDOWN,
+                              reply_markup=_main_menu_keyboard(uid))
         return ConversationHandler.END
 
     elif data == 'menu:products':
@@ -570,30 +590,30 @@ async def on_callback(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
         await _edit_products_page(query, uid, 0, 'featured')
 
     elif data == 'menu:cart':
-        await query.edit_message_text(_cart_text(uid), parse_mode=ParseMode.MARKDOWN,
-                                      reply_markup=_cart_keyboard(uid))
+        await _safe_edit_text(query, _cart_text(uid), parse_mode=ParseMode.MARKDOWN,
+                              reply_markup=_cart_keyboard(uid))
 
     elif data == 'menu:contact':
-        site = SITE_URL or 'ethiosadat.com'
+        site = os.environ.get('REPLIT_DEV_DOMAIN', '') or SITE_URL or 'semira.fashion'
         text = _(uid, 'contact_msg', wa=WHATSAPP, site=site)
         kb = InlineKeyboardMarkup([[
             InlineKeyboardButton('💬 WhatsApp', url=f'https://wa.me/{WHATSAPP}'),
             InlineKeyboardButton('🌐 Website', url=f'https://{site}'),
         ], [InlineKeyboardButton(_(uid, 'main_menu'), callback_data='menu:home')]])
-        await query.edit_message_text(text, parse_mode=ParseMode.MARKDOWN, reply_markup=kb)
+        await _safe_edit_text(query, text, parse_mode=ParseMode.MARKDOWN, reply_markup=kb)
 
     elif data == 'menu:language':
         await _edit_language_menu(query, uid)
 
     elif data == 'menu:search':
-        await query.edit_message_text(_(uid, 'search_prompt'),
-                                      reply_markup=_back_home(uid))
+        await _safe_edit_text(query, _(uid, 'search_prompt'),
+                              reply_markup=_back_home(uid))
         ctx.user_data['awaiting'] = 'search'
         return AWAIT_SEARCH
 
     elif data == 'menu:track':
-        await query.edit_message_text(_(uid, 'track_prompt'),
-                                      reply_markup=_back_home(uid))
+        await _safe_edit_text(query, _(uid, 'track_prompt'),
+                              reply_markup=_back_home(uid))
         ctx.user_data['awaiting'] = 'track'
         return AWAIT_TRACK
 
@@ -601,8 +621,8 @@ async def on_callback(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
     elif data.startswith('lang:'):
         lang = data.split(':')[1]
         _get_state(uid)['lang'] = lang
-        await query.edit_message_text(_(uid, 'welcome'), parse_mode=ParseMode.MARKDOWN,
-                                      reply_markup=_main_menu_keyboard(uid))
+        await _safe_edit_text(query, _(uid, 'welcome'), parse_mode=ParseMode.MARKDOWN,
+                              reply_markup=_main_menu_keyboard(uid))
 
     # ── category drill-down ──
     elif data.startswith('cat:'):
@@ -641,19 +661,19 @@ async def on_callback(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
     elif data == 'cart:checkout':
         cart = _get_state(uid).get('cart', {})
         if not cart:
-            await query.edit_message_text(_(uid, 'empty_cart'),
-                                          reply_markup=_back_home(uid))
+            await _safe_edit_text(query, _(uid, 'empty_cart'),
+                                  reply_markup=_back_home(uid))
             return ConversationHandler.END
-        await query.edit_message_text(_(uid, 'name_prompt'),
-                                      reply_markup=_back_home(uid))
+        await _safe_edit_text(query, _(uid, 'name_prompt'),
+                              reply_markup=_back_home(uid))
         return AWAIT_NAME
 
     elif data == 'order:confirm':
         return await _confirm_order(query, uid)
 
     elif data == 'order:cancel':
-        await query.edit_message_text(_(uid, 'cancelled'),
-                                      reply_markup=_main_menu_keyboard(uid))
+        await _safe_edit_text(query, _(uid, 'cancelled'),
+                              reply_markup=_main_menu_keyboard(uid))
         return ConversationHandler.END
 
     return ConversationHandler.END
@@ -699,7 +719,7 @@ def _products_page_kb_and_text(uid: int, products: list, page: int,
 async def _edit_products_page(query, uid: int, page: int, kind: str, cat_id=None):
     products = _get_products_for_kind(kind, cat_id)
     if not products:
-        await query.edit_message_text(_(uid, 'no_products'), reply_markup=_back_home(uid))
+        await _safe_edit_text(query, _(uid, 'no_products'), reply_markup=_back_home(uid))
         return
     text, kb, photo_url = _products_page_kb_and_text(uid, products, page, kind, cat_id or 0)
     try:
@@ -751,7 +771,7 @@ async def _edit_product_detail(query, uid: int, pid: int,
                                idx: int = -1, page: int = 0):
     p = _db_get_product(pid)
     if not p:
-        await query.edit_message_text(_(uid, 'no_products'), reply_markup=_back_home(uid))
+        await _safe_edit_text(query, _(uid, 'no_products'), reply_markup=_back_home(uid))
         return
     products = _get_products_for_kind(kind, cat_id or None)
     # Resolve idx if unknown
@@ -790,13 +810,13 @@ async def _edit_product_detail(query, uid: int, pid: int,
 async def _edit_categories(query, uid: int):
     cats = _db_get_categories()
     if not cats:
-        await query.edit_message_text(_(uid, 'no_cats'), reply_markup=_back_home(uid))
+        await _safe_edit_text(query, _(uid, 'no_cats'), reply_markup=_back_home(uid))
         return
     lang = _get_state(uid).get('lang', 'am')
     items = [(c['name'], f'cat:{c["id"]}:page:0') for c in cats]
     kb = _paginated_keyboard(uid, items, 0, 'catlist')
-    await query.edit_message_text(_(uid, 'categories'),
-                                  parse_mode=ParseMode.MARKDOWN, reply_markup=kb)
+    await _safe_edit_text(query, _(uid, 'categories'),
+                          parse_mode=ParseMode.MARKDOWN, reply_markup=kb)
 
 
 async def _show_language_menu(msg, uid: int):
@@ -814,7 +834,7 @@ async def _edit_language_menu(query, uid: int):
          InlineKeyboardButton('🇬🇧 English', callback_data='lang:en')],
         [InlineKeyboardButton(_(uid, 'main_menu'), callback_data='menu:home')],
     ])
-    await query.edit_message_text('🌐 Language / ቋንቋ', reply_markup=kb)
+    await _safe_edit_text(query, '🌐 Language / ቋንቋ', reply_markup=kb)
 
 
 async def _handle_cart_action(query, uid: int, data: str, ctx):
@@ -846,8 +866,8 @@ async def _handle_cart_action(query, uid: int, data: str, ctx):
     elif action == 'remove' and pid_str:
         cart.pop(pid_str, None)
         await query.answer(_(uid, 'removed'))
-        await query.edit_message_text(_cart_text(uid), parse_mode=ParseMode.MARKDOWN,
-                                      reply_markup=_cart_keyboard(uid))
+        await _safe_edit_text(query, _cart_text(uid), parse_mode=ParseMode.MARKDOWN,
+                              reply_markup=_cart_keyboard(uid))
 
     elif action == 'inc' and pid_str:
         p = _db_get_product(int(pid_str))
@@ -856,8 +876,8 @@ async def _handle_cart_action(query, uid: int, data: str, ctx):
             await query.answer(_(uid, 'out_stock'), show_alert=True)
         else:
             cart[pid_str] = cart.get(pid_str, 0) + 1
-        await query.edit_message_text(_cart_text(uid), parse_mode=ParseMode.MARKDOWN,
-                                      reply_markup=_cart_keyboard(uid))
+        await _safe_edit_text(query, _cart_text(uid), parse_mode=ParseMode.MARKDOWN,
+                              reply_markup=_cart_keyboard(uid))
 
     elif action == 'dec' and pid_str:
         qty = cart.get(pid_str, 0) - 1
@@ -865,8 +885,8 @@ async def _handle_cart_action(query, uid: int, data: str, ctx):
             cart.pop(pid_str, None)
         else:
             cart[pid_str] = qty
-        await query.edit_message_text(_cart_text(uid), parse_mode=ParseMode.MARKDOWN,
-                                      reply_markup=_cart_keyboard(uid))
+        await _safe_edit_text(query, _cart_text(uid), parse_mode=ParseMode.MARKDOWN,
+                              reply_markup=_cart_keyboard(uid))
 
     elif action == 'checkout':
         # This branch is handled in on_callback directly to return proper state
@@ -982,13 +1002,13 @@ async def _confirm_order(query, uid: int):
         lang = state.get('lang', 'am')
         text = (_(uid, 'order_ok') +
                 f"\n\n🔢 {'ትዕዛዝ ቁጥር' if lang=='am' else 'Order #'}: `{order_number}`")
-        await query.edit_message_text(text, parse_mode=ParseMode.MARKDOWN,
-                                      reply_markup=_main_menu_keyboard(uid))
+        await _safe_edit_text(query, text, parse_mode=ParseMode.MARKDOWN,
+                              reply_markup=_main_menu_keyboard(uid))
         # Notify admin
         await _notify_admin_new_order(query, uid, order_number, order_data, cart)
     else:
-        await query.edit_message_text(_(uid, 'order_err'),
-                                      reply_markup=_main_menu_keyboard(uid))
+        await _safe_edit_text(query, _(uid, 'order_err'),
+                              reply_markup=_main_menu_keyboard(uid))
     return ConversationHandler.END
 
 

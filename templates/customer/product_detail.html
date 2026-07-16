@@ -354,16 +354,23 @@
                 if (!found) allImages.unshift(thumb);
             }
 
-            // Normalise to full src URLs
+            // Normalise to full src URLs (handle http, /static/, static/, or bare uploads/ paths)
+            function _normSrc(s) {
+                if (!s) return null;
+                if (s.startsWith('http')) return s;
+                s = s.replace(/^\/static\//, '').replace(/^static\//, '');
+                return '/static/' + s;
+            }
+
             window._gallerySrcs = allImages.map(function(img) {
                 var s = typeof img === 'string' ? img : (img.url || img.path || '');
-                return s ? (s.startsWith('http') ? s : '/static/' + s.replace(/^\/static\//, '')) : null;
+                return _normSrc(s);
             }).filter(Boolean);
 
             window._galleryIdx = 0;
 
             function toFullSrc(s) {
-                return s.startsWith('http') ? s : '/static/' + s.replace(/^\/static\//, '');
+                return _normSrc(s) || s;
             }
 
             function updateMain(idx, animate) {
