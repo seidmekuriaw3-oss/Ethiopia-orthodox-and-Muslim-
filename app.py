@@ -144,7 +144,7 @@ if ADMIN_PASSWORD == '1234':
 # ── CSRF Protection ──────────────────────────────────────────────────────────
 app.jinja_env.globals['csrf_token'] = generate_csrf
 
-_CSRF_EXEMPT_PREFIXES = ('/api/', '/static/')
+_CSRF_EXEMPT_PREFIXES = ('/api/', '/static/', '/telegram/')
 
 
 @app.before_request

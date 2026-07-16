@@ -4,14 +4,20 @@ Telegram webhook + admin routes for SemiraFashionBot.
 
 import os
 import logging
-from flask import Blueprint, request, jsonify, render_template_string, abort
+from flask import Blueprint, request, jsonify, render_template_string, abort, current_app
 
 log = logging.getLogger(__name__)
 
 telegram_bp = Blueprint('telegram', __name__)
 
-TOKEN = os.environ.get('TELEGRAM_BOT_TOKEN', '')
-SITE_URL = os.environ.get('REPLIT_DEV_DOMAIN', '')
+
+def _token():
+    """Read token at request time, not import time."""
+    return os.environ.get('TELEGRAM_BOT_TOKEN', '')
+
+
+def _site_url():
+    return os.environ.get('REPLIT_DEV_DOMAIN', '')
 
 
 # ─────────────────────────────────────────────────────────────
@@ -20,11 +26,16 @@ SITE_URL = os.environ.get('REPLIT_DEV_DOMAIN', '')
 @telegram_bp.route('/telegram/webhook/<string:token>', methods=['POST'])
 def webhook(token: str):
     """Receive updates from Telegram."""
-    if not TOKEN or token != TOKEN:
+    expected = _token()
+    if not expected or token != expected:
+        log.warning(f"[TelegramWebhook] 403 — token mismatch (got {token[:10]}...)")
         abort(403)
-    from services.telegram_bot import process_update_sync
     update_data = request.get_json(force=True, silent=True) or {}
-    process_update_sync(update_data)
+    # Process inside Flask app context so DB helpers work
+    app = current_app._get_current_object()
+    from services.telegram_bot import process_update_sync
+    with app.app_context():
+        process_update_sync(update_data)
     return 'ok', 200
 
 
@@ -34,12 +45,12 @@ def webhook(token: str):
 @telegram_bp.route('/admin/telegram/setup', methods=['GET', 'POST'])
 def telegram_setup():
     """Admin page: register or delete the Telegram webhook."""
-    from middleware.auth import admin_required
-    # Simple token-based protection (admin must be logged in)
     from flask import session
     if not session.get('admin_logged_in'):
         abort(403)
 
+    tok  = _token()
+    site = _site_url()
     from services.telegram_bot import set_webhook_sync, delete_webhook_sync, get_bot_info
 
     result = None
@@ -48,7 +59,7 @@ def telegram_setup():
     if request.method == 'POST':
         action = request.form.get('action')
         if action == 'set':
-            webhook_url = f"https://{SITE_URL}/telegram/webhook/{TOKEN}"
+            webhook_url = f"https://{site}/telegram/webhook/{tok}"
             result = set_webhook_sync(webhook_url)
         elif action == 'delete':
             ok = delete_webhook_sync()
@@ -57,8 +68,8 @@ def telegram_setup():
     return render_template_string(_SETUP_TEMPLATE,
                                   bot_info=bot_info,
                                   result=result,
-                                  site_url=SITE_URL,
-                                  token_set=bool(TOKEN))
+                                  site_url=site,
+                                  token_set=bool(tok))
 
 
 # ─────────────────────────────────────────────────────────────
@@ -66,7 +77,7 @@ def telegram_setup():
 # ─────────────────────────────────────────────────────────────
 @telegram_bp.route('/telegram/status', methods=['GET'])
 def telegram_status():
-    configured = bool(TOKEN)
+    configured = bool(_token())
     info = None
     if configured:
         try:
