@@ -137,9 +137,13 @@ def _product_image_url(product) -> str | None:
     try:
         # Prefer thumbnail; fall back to first entry in images JSON
         thumb = product.get('thumbnail') or ''
-        imgs  = product.get('images', '[]')
+        imgs  = product.get('images', '[]') or '[]'
         if isinstance(imgs, str):
-            imgs = json.loads(imgs)
+            try:
+                imgs = json.loads(imgs)
+            except (json.JSONDecodeError, ValueError):
+                # plain path string stored directly — wrap it
+                imgs = [imgs] if imgs else []
         path = thumb or (imgs[0] if imgs else '')
         if not path:
             return None
