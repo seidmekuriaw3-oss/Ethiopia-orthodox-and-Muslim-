@@ -8,14 +8,14 @@ HISNUL_CHAPTERS = [
     {
         "id": 1,
         "title_en": "Upon Waking from Sleep",
-        "title_am": "ከእንቅልፍ ሲነቁ",
+        "title_am": "ከእንቅልፍ ሲነቁ የሚደረግ ዱዓ",
         "title_ar": "عند الاستيقاظ من النوم",
         "icon": "🌅",
         "duas": [
             {
                 "arabic": "الْحَمْدُ لِلَّهِ الَّذِي أَحْيَانَا بَعْدَ مَا أَمَاتَنَا وَإِلَيْهِ النُّشُورُ",
-                "transliteration": "Alhamdu lillahil-ladhi ahyana ba'da ma amatana wa ilayhin-nushur.",
-                "amharic": "ሞቱን (ነፍሳችንን ወሰደ) ካደረገ በኋላ ሕይወትን ያጎናጸፈን አላህ ምስጋና ይሁነው፤ ትንሣኤያችንም ወደ እርሱ ነው።",
+                "transliteration": "አልሐምዱሊልላሂልለዚ አህያና በዕደ ማአማተና ወኢለይሂንኑሹር",
+                "amharic": "ህይወታችንን በከፊል ከወሰደ በኋላ ነፍስ ለዘራብን እንድንነቃ ላደረገን አላህ ምስጋና ይገባው፤ ወደረሱም ተጓዦች ነን",
                 "count": 1,
                 "source": "Bukhari 11/113, Muslim 4/2083"
             }
@@ -24,14 +24,14 @@ HISNUL_CHAPTERS = [
     {
         "id": 2,
         "title_en": "Supplication when Putting on Clothes",
-        "title_am": "ልብስ ሲለብሱ",
+        "title_am": "ልብስ ሲለበስ",
         "title_ar": "عند لبس الثوب",
         "icon": "👔",
         "duas": [
             {
                 "arabic": "الْحَمْدُ لِلَّهِ الَّذِي كَسَانِي هَذَا الثَّوْبَ وَرَزَقَنِيهِ مِنْ غَيْرِ حَوْلٍ مِنِّي وَلَا قُوَّةٍ",
-                "transliteration": "Alhamdu lillahil-ladhi kasani hadhat-thawba wa razaqanihi min ghayri hawlin minni wa la quwwah.",
-                "amharic": "ከዐቅምም ቻይነትም ሳይሆን ያለ ልብሱን ያለበሰኝ ምግቡን የሰጠኝ አላህ ምስጋና ይሁነው። (ቀደምት ኃጢአቱ ሁሉ ይሠረዛሉ)።",
+                "transliteration": "አልሐምዱሊልላሂልለዚ ከሳኒ ሃዛ ወረዘቀኒሂ ሚን ገይሪ ሐውሊን ሚንኒ ወላ ቁዉዉቲ",
+                "amharic": "ከኔ ችሎታና ኃይል ውጭ ይህንን ልብስ ያጎናፀፈኝና የለገሠኝ የሆነው አላህ ምስጋና ይገባው",
                 "count": 1,
                 "source": "Abu Dawud 4/41, Tirmidhi 5/483"
             }
@@ -40,14 +40,14 @@ HISNUL_CHAPTERS = [
     {
         "id": 3,
         "title_en": "Supplication when Putting on New Clothes",
-        "title_am": "አዲስ ልብስ ሲለብሱ",
+        "title_am": "ልብስ በሚወልቅበት ጊዜ የሚባል ዱዓ",
         "title_ar": "ما يقول إذا لبس ثوباً جديداً",
         "icon": "🎽",
         "duas": [
             {
                 "arabic": "اللَّهُمَّ لَكَ الْحَمْدُ أَنْتَ كَسَوْتَنِيهِ أَسْأَلُكَ مِنْ خَيْرِهِ وَخَيْرِ مَا صُنِعَ لَهُ وَأَعُوذُ بِكَ مِنْ شَرِّهِ وَشَرِّ مَا صُنِعَ لَهُ",
-                "transliteration": "Allahumma lakal-hamd, anta kasawtanihi, as'aluka min khayrihi wa khayri ma suni'a lah, wa a'udhu bika min sharrihi wa sharri ma suni'a lah.",
-                "amharic": "አቤቱ አላህ ሆይ! ምስጋናው ሁሉ ለአንተ ነው — አንተ አለበስኸኝ። ከበጎው ለርሱ ከተሠራው ሁሉ ክፍሉ እጠይቃለሁ። ከክፉው ለርሱ ከተሠራው ሁሉ ወደ አንተ ሸሻለሁ።",
+                "transliteration": "አልሏሁምመ ለከል ሐምዱ፣ አንተ ከሰውተኒሂ፣ አስአሉከ ሚን ኸይሪሂ ወኸይሪ ማ ሱኒዐ፣ ወአዑዙ ቢከ ሚን ሸርሪሂ ወሸርሪ ማ ሱኒዐ ለሁ",
+                "amharic": "አላህ ሆይ ምስጋና ለአንተ የተገባ ነው፡፡ አንተ ነህ ያለበስከኝ፡፡ የዚህን ልብስ በጐ ገጽታና የተሰራበትን በጐ አላማ እንድትለግሰኝ እጠይቅሃለሁ፡፡ ከዚህ ልብስ መጥፎ ገጽታና ከተሰራበት መጥፎ አላማ ባንተ እጠበቃለሁ፡",
                 "count": 1,
                 "source": "Abu Dawud 4/41, Tirmidhi 2/252"
             }
@@ -56,21 +56,21 @@ HISNUL_CHAPTERS = [
     {
         "id": 4,
         "title_en": "Dua for Someone Wearing New Clothes",
-        "title_am": "አዲስ ልብስ ለለበሰ ሰው ዱዓ",
+        "title_am": "አዲስ ልብስ ለለበሰ ሰው የሚደረግ ዱዓ",
         "title_ar": "ما يقال لمن لبس ثوباً جديداً",
         "icon": "🤲",
         "duas": [
             {
                 "arabic": "تُبْلِي وَيُخْلِفُ اللَّهُ تَعَالَى",
-                "transliteration": "Tubli wa yukhliful-lahu ta'ala.",
-                "amharic": "ልብሱ ሊቀደድ ይሁን፤ አላህ ተዐሏ ሌሎቹ ምትክ ይሰጣቸሁ።",
+                "transliteration": "ቱብልየ ወዩኸሊፉልሏሁ ተዐላ",
+                "amharic": "ተለብሶ ይለቅ፣ የበላይ የሆነው አላህም ይተካልህ",
                 "count": 1,
                 "source": "Abu Dawud 4/41"
             },
             {
                 "arabic": "الْبَسْ جَدِيدًا وَعِشْ حَمِيدًا وَمُتْ شَهِيدًا",
-                "transliteration": "Ilbas jadidan wa 'ish hamidan wa mut shahida.",
-                "amharic": "አዲስ ልበሱ! ተወደስ ኑሩ! ሰማዕት ሁነው ሙቱ!",
+                "transliteration": "ኢልበስ ጀዲደን ወዒሽ ሐሚደን ወሙት ሸሂደን፡፡",
+                "amharic": "ሁሌም አዲስ ልብስ ልበስ፣ በህይወት እስካለህ ድረስ ለአላህ ፀጋዎች የምታመሰግን ሁን፣ ስትሞት ደግሞ ሸሂድ ሁነህ ሙት",
                 "count": 1,
                 "source": "Ibn Majah 2/1178"
             }
@@ -79,14 +79,14 @@ HISNUL_CHAPTERS = [
     {
         "id": 5,
         "title_en": "Supplication before Undressing",
-        "title_am": "ልብስ ሲወልቁ",
+        "title_am": "የሚያስደንቅየሚያስደስት ነገር ሲገጥምዎ",
         "title_ar": "ما يقول عند خلع الثياب",
         "icon": "🚿",
         "duas": [
             {
                 "arabic": "بِسْمِ اللَّهِ",
-                "transliteration": "Bismillah.",
-                "amharic": "በአላህ ስም (ይሉ)። ልብሱ ሲወልቁ ቢሉ — ጂኖቹ ዐውርታቸን ሊያዩ አይቻላቸውም።",
+                "transliteration": "ቢስሚልላህ",
+                "amharic": "በአላህ ስም",
                 "count": 1,
                 "source": "Ibn As-Sunni, Tirmidhi"
             }
@@ -95,14 +95,14 @@ HISNUL_CHAPTERS = [
     {
         "id": 6,
         "title_en": "Entering the Toilet",
-        "title_am": "ሽንት ቤት ሲገቡ",
+        "title_am": "ወደ ሽንት ቤት ሲገባ",
         "title_ar": "الدخول إلى الخلاء",
         "icon": "🚽",
         "duas": [
             {
                 "arabic": "اللَّهُمَّ إِنِّي أَعُوذُ بِكَ مِنَ الْخُبُثِ وَالْخَبَائِثِ",
-                "transliteration": "Allahumma inni a'udhu bika minal-khubuthi wal-khaba'ith.",
-                "amharic": "አቤቱ አላህ ሆይ! ከወንድ ሸይጣኖችና ከሴት ሸይጣኖች ወደ አንተ ሸሻለሁ።",
+                "transliteration": "ቢስሚልላሂ አሏሁምመ ኢንኒ አዑዙ ቢከ ሚነል ኹቡሲ ወል ኸባኢስ",
+                "amharic": "በአላህ ስም አላህ ሆይ ከወንድ ሰይጣንና ከሴት ሰይጣን በአንተ እጠበቃለሁ",
                 "count": 1,
                 "source": "Bukhari 1/45, Muslim 1/283"
             }
@@ -111,14 +111,14 @@ HISNUL_CHAPTERS = [
     {
         "id": 7,
         "title_en": "Leaving the Toilet",
-        "title_am": "ሽንት ቤት ሲወጡ",
+        "title_am": "ከሽንት ቤት ሲወጣ",
         "title_ar": "الخروج من الخلاء",
         "icon": "🚪",
         "duas": [
             {
                 "arabic": "غُفْرَانَكَ",
-                "transliteration": "Ghufranaka.",
-                "amharic": "ይቅርታህን (እጠይቃለሁ)።",
+                "transliteration": "ጉፍራነክ",
+                "amharic": "ማርታህን እከጅላለሁ፡፡",
                 "count": 1,
                 "source": "Abu Dawud 1/30, Tirmidhi 1/12"
             }
@@ -127,14 +127,14 @@ HISNUL_CHAPTERS = [
     {
         "id": 8,
         "title_en": "Before Ablution (Wudu)",
-        "title_am": "ዉዱእ ከመጀመሩ በፊት",
+        "title_am": "ከውዱዕ በፊት የሚባሉ",
         "title_ar": "قبل الوضوء",
         "icon": "💧",
         "duas": [
             {
                 "arabic": "بِسْمِ اللَّهِ",
-                "transliteration": "Bismillah.",
-                "amharic": "የአላህ ስም ሆኖ (እጀምራለሁ)። (ቢስሚሏ ሳይሉ ዉዱእ ሙሉ አይሆንም — ሐዲስ)።",
+                "transliteration": "ቢስሚልላህ",
+                "amharic": "በአላህ ስም",
                 "count": 1,
                 "source": "Abu Dawud 1/73, Ibn Majah 1/140"
             }
@@ -143,21 +143,21 @@ HISNUL_CHAPTERS = [
     {
         "id": 9,
         "title_en": "After Completing Ablution",
-        "title_am": "ዉዱእ ካጠናቀቁ በኋላ",
+        "title_am": "ከውዱዕ በኋላ",
         "title_ar": "بعد الفراغ من الوضوء",
         "icon": "✨",
         "duas": [
             {
                 "arabic": "أَشْهَدُ أَنْ لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ وَأَشْهَدُ أَنَّ مُحَمَّدًا عَبْدُهُ وَرَسُولُهُ",
-                "transliteration": "Ashhadu an la ilaha illallahu wahdahu la sharika lah, wa ashhadu anna Muhammadan 'abduhu wa rasuluh.",
-                "amharic": "ከአላህ ሌላ በሕቅ የሚገዛ አምላክ እንደሌለ፤ ብቻው ነው፤ አጋር እንደሌለው፤ ሙሐመድ ባሪያውና መልክተኛው ሆነው እምሰክርባለሁ። (ስምንቱ የጀነት ደጆች ሁሉ ሊከፈቱለት ነው — ሐዲስ)።",
+                "transliteration": "አሽሃዱ አን ላ ኢላሃ ኢልለልሏህ ፣ ወህደሁ ላ ሸሪከ ለሁ፣ ወአሽሃዱ አንነ ሙሐመደን ዐብዱሁ ወረሱሉሁ",
+                "amharic": "ከአላህ በቀር ሌላ አምላክ እንደሌለ እመሰክራለሁ፡፡ አንድ ነው፡፡ አጋር የለውም፡፡ ሙሃመድም ባሪያውና መልዕክተኛው መሆናቸውን እመሰክራለሁ፡፡",
                 "count": 1,
                 "source": "Muslim 1/209, Tirmidhi 1/78"
             },
             {
                 "arabic": "اللَّهُمَّ اجْعَلْنِي مِنَ التَّوَّابِينَ وَاجْعَلْنِي مِنَ الْمُتَطَهِّرِينَ",
-                "transliteration": "Allahumma-j'alni minat-tawwabina waj'alni minal-mutatahhirin.",
-                "amharic": "አቤቱ አላህ ሆይ! ከብዙ ንስሃ ሰጪዎቹ ወስደኝ፤ ከብዙ ፀዳ ሰጪዎቹም ወስደኝ።",
+                "transliteration": "አልሏሁምመ ኢጅዐልኒ ሚነትተዋቢን ወጅዐልኒ ሚነል ሙተጦሂሪን፡፡",
+                "amharic": "አላህ ሆይ ተውበት ንሰሀ ከሚያበዙ ሰዎች አድርገኝ፡፡ ከንጹሃንም አድርገኝ፡፡",
                 "count": 1,
                 "source": "Tirmidhi 1/78"
             }
@@ -166,14 +166,14 @@ HISNUL_CHAPTERS = [
     {
         "id": 10,
         "title_en": "Going to the Masjid",
-        "title_am": "ወደ መስጂድ ሲሄዱ",
+        "title_am": "ወደ መስጊድ ሲሄዱ",
         "title_ar": "الذهاب إلى المسجد",
         "icon": "🕌",
         "duas": [
             {
                 "arabic": "اللَّهُمَّ اجْعَلْ فِي قَلْبِي نُورًا، وَفِي لِسَانِي نُورًا، وَفِي سَمْعِي نُورًا، وَفِي بَصَرِي نُورًا، وَمِنْ فَوْقِي نُورًا، وَمِنْ تَحْتِي نُورًا، وَعَنْ يَمِينِي نُورًا، وَعَنْ شِمَالِي نُورًا، وَمِنْ بَيْنَ يَدَيَّ نُورًا، وَمِنْ خَلْفِي نُورًا، وَاجْعَلْ فِي نَفْسِي نُورًا، وَأَعْظِمْ لِي نُورًا",
-                "transliteration": "Allahummaj'al fi qalbi nuran, wa fi lisani nuran, wa fi sam'i nuran, wa fi basari nuran, wa min fawqi nuran, wa min tahti nuran, wa 'an yamini nuran, wa 'an shimali nuran, wa min bayni yadayya nuran, wa min khalfi nuran, waj'al fi nafsi nuran, wa a'dhim li nuran.",
-                "amharic": "አቤቱ አላህ ሆይ! ልቤ ላይ ብርሃን አድርግ፤ ምላሴ ላይ ብርሃን፤ ጆሮዬ ላይ ብርሃን፤ ዐይኔ ላይ ብርሃን፤ ከላዬ ላይ ብርሃን፤ ከታቼ ላይ ብርሃን፤ ቀኝ ዘነደ ብርሃን፤ ግራ ዘነደ ብርሃን፤ ፊቴ ብርሃን፤ ጀርባዬ ብርሃን፤ ነፍሴ ሁሉ ብርሃን አድርግ፤ ብርሃኑን ያዙልኝ።",
+                "transliteration": "አልሏሁምመ ኢጅዐል ፊ ቀልቢ ኑረን፥ ወፊ ሊሳኒ ኑረን፥ ወፊ ሰምዒ ኑረን ፥ ወፊ በሶሪ ኑረን፥ ወሚን ፈውቂ ኑረን፥ ወሚን ተህቲ ኑረን፥ ወዐን የሚኒ ኑረን፥ ወዐን ሺማሊ ኑረን፥ ወሚን አማሚ ኑረን፥ ወሚን ኸልፈ ኑረን፥ ወጀአል ፊ ነፍሲ ኑረን፥ ወአዕዚምሊ ኑረን፥ ወዐዝዚም ሊ ኑረን፥ ወጅዐል ሊ ኑረን፥ አልሏሁምመ አዕጢኒ ኑረን፥ ወጀአል ፊ ዐሶቢ ኑረን፥ ወፊ ለህሚ ኑረን፥ ወፊ ደሚ ኑረን፥ ወፊ ሸዕሪ ኑረን፥ ወፊ በሽሪ ኑረን፡፡ አልሏሁምመ ኢጅዐል ሊ ኑረን ፊ ቀብሪ ወኑረን ፊ ዒዟሚወዚድኒ ኑረን፥ወዚድኒ ኑረን፥ወዚድኒ ኑረን ወሃብ ሊ ኑረን ወላ ኑሪን",
+                "amharic": "አላህ ሆይ ልቦናዬ ውስጥ ብርሃን አድርግልኝ፡፡ ምላሴ ላይ ብርሃን አድርግልኝ፡፡ ጆሮዬ ውስጥ ብርሃን አድርግልኝ፡፡ አይኔ ውስጥ ብርሃን አድርግልኝ፡፡ከበላዬ ብርሃን አድርግልኝ፡፡ከበታቼም ብርሃን አድርግልኝ፡፡ በስተግራዬም ብርሃን አድርግልኝ፡፡ ከፊቴ ብርሃን አድርግልኝ፡፡ ከኋላዬም ብርሃን አድርግልኝ፡፡ ነፍሴ ውስጥ ብርሃን አድርግልኝ፡፡ የገዘፈ ብርሃን ለግሰኝ፡፡ ብርሃኔን ግዙፍ አድርግልኝ፡፡ አላህ ሆይ ብርሃን ለግሰኝ፡፡ስጋዬ ውስጥ ብርሃን አድርግልኝ፡፡ ደሜ ውስጥ ብርሃን አድርግልኝ፡፡ ፀጉሬ ውስጥ ብርሃን አድርግልኝ፡፡ ቆዳዬ ውስጥ ብርሃን አድርግልኝ፡፡ አላህ ሆይ ቀብሬ ውስጥ ብርሃን አድርግልኝ፡፡ አጥንቴ ውስጥ ብርሃን አድርግልኝ፡፡ ብርሃንን አክልልኝ፡፡ብርሃንን አክልልኝ፡፡ብርሃንን አክልልኝ፡፡ ከብርሃን ላይ ብርሃን ለግሠኝ፡፡",
                 "count": 1,
                 "source": "Bukhari 1/117, Muslim 1/526"
             }
@@ -182,14 +182,14 @@ HISNUL_CHAPTERS = [
     {
         "id": 11,
         "title_en": "Entering the Masjid",
-        "title_am": "መስጂድ ሲገቡ",
+        "title_am": "ወደ መስጊድ ሲገቡ",
         "title_ar": "الدخول إلى المسجد",
         "icon": "🕋",
         "duas": [
             {
                 "arabic": "أَعُوذُ بِاللَّهِ الْعَظِيمِ وَبِوَجْهِهِ الْكَرِيمِ وَسُلْطَانِهِ الْقَدِيمِ مِنَ الشَّيْطَانِ الرَّجِيمِ",
-                "transliteration": "A'udhu billahil-'Adhim, wa biwajhihil-Karim, wa sultanihil-qadim, minash-shaytanir-rajim.",
-                "amharic": "ከተወገደው ሸይጣን — ታላቁ አላህ፤ ክቡር ፊቱ፤ ጥንታዊ ሥልጣኑ ሊጠብቀኝ ሸሻለሁ። (ሸይጣን ወዲያ ሄዶ ይሄ ሰው ዛሬ ሙሉ ቀን ከኔ ጠበቀ ይላል)።",
+                "transliteration": "አዑዙ ቢልላሂል ዐዚም ወቢ ወጅሂሂል ከሪም ወሱልጧኒሂል ቀዲም ሚነሸሸይጧኒርረጂም፡፡ቢስሚልላህ ወስሶላቱ ወሰሰላሙ ዐላ ረሱሊልላህ፥ አልሏሂምመ ኢፍተሕ ሊ አብዋበ ረህመቲከ፡",
+                "amharic": "ታላቅ በሆነው አላህ፥ በላቀው እና መጀመሪያ በሌለው ሥልጣኑ አሳሳች ከሆነው ሰይጣን እጠበቃለሁ፡፡በአላህ ስምእገባለሁ፡ የአላህ ሰላምና ደህንነት በአላህ መልዕክተኛ ላይ ይስፈን፡፡ አላህ ሆይ የእዝነትህን በር ክፈትልኝ፡፡",
                 "count": 1,
                 "source": "Abu Dawud 1/126"
             },
@@ -205,14 +205,14 @@ HISNUL_CHAPTERS = [
     {
         "id": 12,
         "title_en": "Leaving the Masjid",
-        "title_am": "መስጂድ ሲወጡ",
+        "title_am": "ከመስጊድ ሲወጡ",
         "title_ar": "الخروج من المسجد",
         "icon": "🚶",
         "duas": [
             {
                 "arabic": "بِسْمِ اللَّهِ وَالصَّلَاةُ وَالسَّلَامُ عَلَى رَسُولِ اللَّهِ، اللَّهُمَّ إِنِّي أَسْأَلُكَ مِنْ فَضْلِكَ",
-                "transliteration": "Bismillah, wassalatu wassalamu 'ala Rasulillah. Allahumma inni as'aluka min fadlik.",
-                "amharic": "የአላህ ስም ሆኖ — የአላህ ሰለዋቱና ሰላሙ ለርሱ መልክተኛ ላይ ይሁን። አቤቱ አላህ ሆይ! ጸጋህን እጠይቅሃለሁ።",
+                "transliteration": "ቢስሚልላህ ወስሶላቱ ወሰሰላሙ ዐላ ረሱሊልላህ፥ አልሏሂምመ አንኒ አስአሉከ ሚን ፈድሊክ አልሏሁምመ ኢዕሲምኒ ሚነሽሸይጧኒ ረጂም፡፡",
+                "amharic": "በአላህ ስም፡ የአላህ ሰላምና ደህንነት በአላህ መልዕክተኛ ላይ ይስፈን፡፡ አላህ ሆይ እኔ ከቱሩፋትህ እጠይቅሃለሁ፡፡ አላህ ሆይ አሳሳች ከሆነው ሰይጣን ጠብቀኝ፡፡",
                 "count": 1,
                 "source": "Muslim 1/494, Ibn Majah 1/255"
             }
@@ -221,21 +221,21 @@ HISNUL_CHAPTERS = [
     {
         "id": 13,
         "title_en": "What to Say upon Hearing the Adhan",
-        "title_am": "አዛን ሲሰሙ",
+        "title_am": "በድንጋጤ ጊዜ የሚባል  ዱዓ",
         "title_ar": "ما يقال عند سماع الأذان",
         "icon": "📢",
         "duas": [
             {
                 "arabic": "وَأَنَا أَشْهَدُ أَنْ لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ وَأَنَّ مُحَمَّدًا عَبْدُهُ وَرَسُولُهُ رَضِيتُ بِاللَّهِ رَبًّا وَبِمُحَمَّدٍ رَسُولًا وَبِالإِسْلَامِ دِينًا",
-                "transliteration": "Wa ana ashhadu an la ilaha illallahu wahdahu la sharika lah, wa anna Muhammadan 'abduhu wa rasuluh, raditu billahi Rabba, wa bi-Muhammadin Rasula, wa bil-Islami dinan.",
-                "amharic": "እኔም ከአላህ ሌላ በሕቅ የሚገዛ አምላክ እንደሌለ እምሰክርባለሁ፤ ብቻው ነው፤ አጋር የለውም። ሙሐመድ ባሪያውና መልክተኛው ሆነው እምሰክርባለሁ። አላህ ጌታ ሆኖ ደስ አለኝ። ሙሐመድ መልክተኛ ሆኖ ደስ አለኝ። እስልምና ሃይማኖት ሆኖ ደስ አለኝ። (ኃጢአቱ ሁሉ ይሠረዛሉ)።",
+                "transliteration": "ወአነ አሽሃዱ አን ላ ኢላሃ ኢልለልሏህ ፣ ወህደሁ ላ ሸሪከ ለሁ፣ ረዲቱ ቢልላሂ ረብበን ወቢ ሙሐመዲን ረሱለን ወቢል ኢስላሚ ዲነን",
+                "amharic": "ከአላህ በቀር ሌላ አምላክ የሌለና እሱም፡ አንድ ና አጋር እንደሌለው ሙሃመድም የአላህ ባሪያውና መልዕክተኛው መሆናቸውን እመሰክራለሁ፡፡ በአላህ ፈጣሪነት በሙሃመድ መልዕክተኝነትና በኢስላም ሃይማኖትነት ረክቻለሁ፡፡",
                 "count": 1,
                 "source": "Muslim 1/290"
             },
             {
                 "arabic": "اللَّهُمَّ رَبَّ هَذِهِ الدَّعْوَةِ التَّامَّةِ وَالصَّلَاةِ الْقَائِمَةِ آتِ مُحَمَّدًا الْوَسِيلَةَ وَالْفَضِيلَةَ وَابْعَثْهُ مَقَامًا مَحْمُودًا الَّذِي وَعَدْتَهُ",
-                "transliteration": "Allahumma Rabba hadhihid-da'watit-tammah, wassalatil-qa'imah, ati Muhammadanil-wasilata wal-fadilah, wab'athhu maqamam-mahmudanil-ladhi wa'adtah.",
-                "amharic": "አቤቱ አላህ ሆይ! ይህ ፍጹም ጥሪ ጌታ! ቀጥ ያለ ሶላት ጌታ! ሙሐመዱን ወሲሌ (ቅርበት) ፋዲሌ (ልዕልና) ሰጠው፤ ቃልህ ሰጥቶ ወደ ምስጉን ደረጃ ከፍ አድርገው! (ዩዛ ሻፋዓዬ ሊቀርቢኝ ነው ብሎ ዱዓ ያደርጋሉ — አማልጅነቱ ይፍቀድላቸዋል)።",
+                "transliteration": "አልሏሁምመ ረብበ ሃዚሂ ዳዕወተ ታመህ ወስሶላቲል ቃኢመህ አቲ ሙሐመዲን አልወሲለተ ወልፈዲላ ወብዐሥሁ መቃመን መህሙደን አለዚ ወዐድተሁ ኢንነከ ላ ቱኸሊፉል ሚዓድ",
+                "amharic": "አላህ ሆይ የዝህች ሙሉ ጥሪና የዚህች ለመስገድ የተቃረበች ሶላት አምላክ ነህ፡፡ ሙሃመድን ‹ወሲላ› ና ‹ፈዲላ› የተባሉትን የክብር ደረጃዎች ለግሳቸው፡፡ ቃል የገባህላቸውን የተመሰገነ ደረጃም አጐናጽፈህከሞት ቀስቅሳቸው፡፡ አንተ ቃልህን የምታጥፍ አይደለህምና፡፡",
                 "count": 1,
                 "source": "Bukhari 1/152"
             }
@@ -244,21 +244,21 @@ HISNUL_CHAPTERS = [
     {
         "id": 14,
         "title_en": "Morning Remembrances (Adhkar al-Sabah)",
-        "title_am": "ጠዋት ዚክሮቹ (አዝካሩ ሰባሕ)",
+        "title_am": "በአዛን እና ከአዛን በኋላ የምደርጉ ዚክሮች",
         "title_ar": "أذكار الصباح",
         "icon": "🌄",
         "duas": [
             {
                 "arabic": "أَصْبَحْنَا وَأَصْبَحَ الْمُلْكُ لِلَّهِ، وَالْحَمْدُ لِلَّهِ، لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ",
-                "transliteration": "Asbahna wa asbahal-mulku lillah, walhamdu lillah, la ilaha illallahu wahdahu la sharika lah.",
-                "amharic": "ጠዋት ደረስን፤ ሥልጣኑ ሁሉ ለአላህ ሆኖ ጠዋት ደረሰ። ምስጋናው ሁሉ ለአላህ ነው። ከአላህ ሌላ በሕቅ የሚገዛ አምላክ የለም — ብቻው ነው፤ አጋር የለውም።",
+                "transliteration": "አሰባሕና ወአሰበሐል መልኩ ሊልላህ ወልሐምዱ ሊልላህ ላኢላሀ ኢልለሏሀ ወሕደሁ ላሸሪክ ለሁ ለሁል መል ወለሁል ሐምዱ ወሁወ ዐላ ኩልሊ ሸይኢን ቀዲይር፤ ረብቢ አስአሉከ ኸይረ ማፊ ሃዝል የውመ ወኸይረ ማባዕደሁ ወአዑዙ ቢከ ሚንሸርሪ ማፊ ሐዘል የውመ ወሸርሪ ማ በዕደሁ፤ ረብቢ አዑዙ ቢከሚነል ከስሊ ወሱኢል ኪበር፤ ረብቢ አዑዙ ቢከ ሚን ዐዛቢን ፈንናር ወዐዛቢን ፊል ቀብር",
+                "amharic": "ማለዳ ላይ ለመድረስ ነቅተናል፡፡ በዚህ ሰዓት ሉዓላልነት የዓላማት ጌታ የሆነው አላህ ነው፡፡ ምስጋና ከአላህ ነው፡፡ ከአላህ ውጭ ሌላ\\አምላክ የለም፡፡ አንድ ነው፡፡ አገር የለውም፡፡ ሉዓላዊነት የርሱ ብቻ ነው፡፡ ምስጋናም የርሱ ብቻ ነው፡፡ ጌታዬ ሆይ የዚህን\\ቅና የቀጠዩን የሌሊቱን መልካም ነገር እጠይቅሃለሁ፡፡ ከዚህ ቀንና ከቀጣዩ ከሌሊቱ ክፉ ነገር በአንተ እጠበቃለሁ፡፡ ጌታዬ\\ሆይ ከእሳት ቅጣት ከቀብር ውስጥ ቅጣትም በአንተ እጠበቃለሁ፡፡\n\u0000",
                 "count": 1,
                 "source": "Muslim 4/2088"
             },
             {
                 "arabic": "اللَّهُمَّ أَنْتَ رَبِّي لَا إِلَهَ إِلَّا أَنْتَ، عَلَيْكَ تَوَكَّلْتُ، وَأَنْتَ رَبُّ الْعَرْشِ الْعَظِيمِ",
-                "transliteration": "Allahumma anta Rabbi la ilaha illa anta, 'alayka tawakkaltu, wa anta Rabbul-'Arshil-'Adhim.",
-                "amharic": "አቤቱ አላህ ሆይ! አንተ ጌታዬ ነህ፤ ከአንተ ሌላ ምንም አምላክ የለም። ወደ አንተ ተመካሁ፤ አንተ ታላቁ ዙፋን ጌታ ነህ።",
+                "transliteration": "ሐሥቢየልላሁ ላኢላህ ኢላሁ  ዐለይሒ ተወክከልቱ ወሁወ ረብቡል ዐርሺል ዐዚም (7X)",
+                "amharic": "አላህ በቂዬ ነው፡፡ ከርሱ ሌላ ሊመለክ የሚገባው ሀይል የለም፡፡ በርሱ ተመካሁ፡፡ እርሱ የታላቅ ዐርሽ ጌታ ነው፡፡ ሰባት ጊዜ፡፡",
                 "count": 1,
                 "source": "Tirmidhi 5/457"
             }
@@ -267,14 +267,14 @@ HISNUL_CHAPTERS = [
     {
         "id": 15,
         "title_en": "Evening Remembrances (Adhkar al-Masa)",
-        "title_am": "ማታ ዚክሮቹ (አዝካሩ ማሳእ)",
+        "title_am": "ከመኝታ በፊት የሚባሉ",
         "title_ar": "أذكار المساء",
         "icon": "🌙",
         "duas": [
             {
                 "arabic": "أَمْسَيْنَا وَأَمْسَى الْمُلْكُ لِلَّهِ وَالْحَمْدُ لِلَّهِ لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ",
-                "transliteration": "Amsayna wa amsal-mulku lillah, walhamdu lillah, la ilaha illallahu wahdahu la sharika lah.",
-                "amharic": "ማታ ደረስን፤ ሥልጣኑ ሁሉ ለአላህ ሆኖ ማታ ደረሰ። ምስጋናው ሁሉ ለአላህ ነው። ከአላህ ሌላ አምላክ የለም — ብቻው ነው፤ አጋር የለውም።",
+                "transliteration": "አሰባሕና ወአሰበሐል መልኩ ሊልላህ ወልሐምዱ ሊልላህ ላኢላሀ ኢልለሏሀ ወሕደሁ ላሸሪክ ለሁ ለሁል መል ወለሁል ሐምዱ ወሁወ ዐላ ኩልሊ ሸይኢን ቀዲይር፤ ረብቢ አስአሉከ ኸይረ ማፊ ሃዝል የውመ ወኸይረ ማባዕደሁ ወአዑዙ ቢከ ሚንሸርሪ ማፊ ሐዘል የውመ ወሸርሪ ማ በዕደሁ፤ ረብቢ አዑዙ ቢከሚነል ከስሊ ወሱኢል ኪበር፤ ረብቢ አዑዙ ቢከ ሚን ዐዛቢን ፈንናር ወዐዛቢን ፊል ቀብር",
+                "amharic": "ማለዳ ላይ ለመድረስ ነቅተናል፡፡ በዚህ ሰዓት ሉዓላልነት የዓላማት ጌታ የሆነው አላህ ነው፡፡ ምስጋና ከአላህ ነው፡፡ ከአላህ ውጭ ሌላ\\አምላክ የለም፡፡ አንድ ነው፡፡ አገር የለውም፡፡ ሉዓላዊነት የርሱ ብቻ ነው፡፡ ምስጋናም የርሱ ብቻ ነው፡፡ ጌታዬ ሆይ የዚህን\\ቅና የቀጠዩን የሌሊቱን መልካም ነገር እጠይቅሃለሁ፡፡ ከዚህ ቀንና ከቀጣዩ ከሌሊቱ ክፉ ነገር በአንተ እጠበቃለሁ፡፡ ጌታዬ\\ሆይ ከእሳት ቅጣት ከቀብር ውስጥ ቅጣትም በአንተ እጠበቃለሁ፡፡\n\u0000",
                 "count": 1,
                 "source": "Muslim 4/2088"
             }
@@ -283,21 +283,21 @@ HISNUL_CHAPTERS = [
     {
         "id": 16,
         "title_en": "Supplication before Sleeping",
-        "title_am": "ሲተኙ",
+        "title_am": "በጠላት ላይ ዱአ ማድረግ",
         "title_ar": "الدعاء عند النوم",
         "icon": "🌙",
         "duas": [
             {
                 "arabic": "بِاسْمِكَ اللَّهُمَّ أَمُوتُ وَأَحْيَا",
-                "transliteration": "Bismika Allahumma amutu wa ahya.",
-                "amharic": "በስምህ አቤቱ አላህ ሆይ! እሞታለሁ (የተኛሁ) እኖራለሁ (ሲነቃ)።",
+                "transliteration": "ቢስምከልሏሁምመ አሙቱ ወአህያ",
+                "amharic": "አላህ ሆይ በስምህ እሞታለሁ፤ ነፍስም እዘራለሁ፡፡",
                 "count": 1,
                 "source": "Bukhari 11/113, Muslim 4/2083"
             },
             {
                 "arabic": "اللَّهُمَّ أَسْلَمْتُ نَفْسِي إِلَيْكَ وَفَوَّضْتُ أَمْرِي إِلَيْكَ وَوَجَّهْتُ وَجْهِي إِلَيْكَ وَأَلْجَأْتُ ظَهْرِي إِلَيْكَ رَغْبَةً وَرَهْبَةً إِلَيْكَ لَا مَلْجَأَ وَلَا مَنْجَا مِنْكَ إِلَّا إِلَيْكَ آمَنْتُ بِكِتَابِكَ الَّذِي أَنْزَلْتَ وَبِنَبِيِّكَ الَّذِي أَرْسَلْتَ",
-                "transliteration": "Allahumma aslamtu nafsi ilayk, wa fawwadtu amri ilayk, wa wajjahtu wajhi ilayk, wa alja'tu dhahri ilayk, raghbatan wa rahbatan ilayk. La malja'a wa la manja minka illa ilayk. Amantu bikitabikil-ladhi anzalt, wa binabiyyikal-ladhi arsalt.",
-                "amharic": "አቤቱ አላህ ሆይ! ወደ አንተ ነፍሴን አሳለፍኩ። ጉዳዬን ሁሉ ወደ አንተ ሰጠሁ። ፊቴን ወደ አንተ አዞርኩ። ጀርባዬን ወደ አንተ ተደገፍኩ — ናፍቆትና ፍርሃት ሆኖ ወደ አንተ። ከአንተ ዘንድ ከርሱ ለማምለጥ ምን መሸሸጊያ ወደ አንተ ካልሆነ የለም። ያወረደከውን ኪታብህን አምናለሁ። የላክኸውን ነቢይህን አምናለሁ። (ያ ሰው ቢሞት — በፍጥረቱ (እስልምና) ላይ ሞቷቸዋል)።",
+                "transliteration": "አልሏሁምመ አስለምቱ ነፍሲ ኢለይከ ቀፈውወድቱ አምሪ ኢለይከ ወወጅጀህቱ ወጂሂ ኢለይከ ወአልጀእቱ ዛህሪ ኢለይከ ረግበተን ወረህበተን ኢለይከ ላመልጀአ ወላ መንጃ ሚንከ ኢልላ ኢለይከ አመንቱ ቢኪታቢከልለዚ አንዘልተ ወቢነቢይይከልለዚ አርሰልተ",
+                "amharic": "አላህ ሆይ ነፍሴን ለአንተ አስረክቢያለሁ፡፡ ጉዳዩን ሁሉ ወደ አንተ አስጠግቻለሁ፡፡ ፊቴን ወደ አንተ አዙሪ ያለሁ፡፡ ጀርባዬን ወደ አንተ መልሻለሁ፡፡ እርካታህን ለማግኘት በመጓጓት፤ ቁጣህን በመፍራት፡፡ መመላሻም፣ ከአንተ ከቅጣትህ ነፃ መውጫም ወደአንተ ከመመለስ ውጭ ሌላ መንገድ የለም፡፡ ባወረድከው ኪታብ፣ በላከው ነብይም አምኛለሁ፡፡",
                 "count": 1,
                 "source": "Bukhari 11/126, Muslim 4/2081"
             }
@@ -312,8 +312,8 @@ HISNUL_CHAPTERS = [
         "duas": [
             {
                 "arabic": "لَا إِلَهَ إِلَّا اللَّهُ الْوَاحِدُ الْقَهَّارُ رَبُّ السَّمَاوَاتِ وَالْأَرْضِ وَمَا بَيْنَهُمَا الْعَزِيزُ الْغَفَّارُ",
-                "transliteration": "La ilaha illallahul-Wahidul-Qahhar, Rabbus-samawati wal-ardi wa ma baynahuma, al-'Azizul-Ghaffar.",
-                "amharic": "ከአላህ ሌላ አምላክ የለም — ብቸኛ ሁሉ ቻይ — ሰማያትና ምድርና ሁለቱ መካከል ያለ ሁሉ ጌታ — ጠንካራ ይቅር ባይ።",
+                "transliteration": "ላ ኢላሀ ኢልለልሏህ አል-ዋሂድ አልቀሀር። ረቢ ሰማዋት ወል አርድ ወማ በይነሁማ አል-አዚዝ አል-ቀሃር፡፡",
+                "amharic": "ኀያል አንድ ከኾነው አላህ በቀር ምንም አምላክ የለም፡፡\nየሰማያትና የምድር በመካከላቸውም ያለው ሁሉ ጌታ አሸናፊው መሓሪው ነው፡፡",
                 "count": 1,
                 "source": "Al-Hakim 1/540"
             }
@@ -344,8 +344,8 @@ HISNUL_CHAPTERS = [
         "duas": [
             {
                 "arabic": "أَعُوذُ بِاللَّهِ مِنَ الشَّيْطَانِ الرَّجِيمِ وَمِنْ شَرِّ هَذِهِ الرُّؤْيَا",
-                "transliteration": "A'udhu billahi minash-shaytanir-rajim, wa min sharri hadhihi-r-ru'ya.",
-                "amharic": "ከተወገደው ሸይጣን፤ ከዚህ ሕልም ክፋት ወደ አላህ ሸሻለሁ። (ሦስቴ ወደ ግራ ምራቅ ይምሩ፤ የሕልሙ ጉዳት አይደርስም)።",
+                "transliteration": "አዑዙ ቢልላሂ ሚነሽሸይጧኒር ረጅም",
+                "amharic": "እርጉም ከሆነው ሸይጧን በአላህ እጠበቃለሁ፡፡",
                 "count": 3,
                 "source": "Muslim 4/1772-1773"
             }
@@ -354,14 +354,14 @@ HISNUL_CHAPTERS = [
     {
         "id": 20,
         "title_en": "Supplication for Worry and Grief",
-        "title_am": "ሐዘንና ጭንቀት ላይ",
+        "title_am": "በትካዜና በሃዘን ወቅት",
         "title_ar": "دعاء الهم والحزن",
         "icon": "💔",
         "duas": [
             {
                 "arabic": "اللَّهُمَّ إِنِّي عَبْدُكَ وَابْنُ عَبْدِكَ وَابْنُ أَمَتِكَ نَاصِيَتِي بِيَدِكَ مَاضٍ فِيَّ حُكْمُكَ عَدْلٌ فِيَّ قَضَاؤُكَ أَسْأَلُكَ بِكُلِّ اسْمٍ هُوَ لَكَ سَمَّيْتَ بِهِ نَفْسَكَ أَوْ أَنْزَلْتَهُ فِي كِتَابِكَ أَوْ عَلَّمْتَهُ أَحَدًا مِنْ خَلْقِكَ أَوِ اسْتَأْثَرْتَ بِهِ فِي عِلْمِ الْغَيْبِ عِنْدَكَ أَنْ تَجْعَلَ الْقُرْآنَ رَبِيعَ قَلْبِي وَنُورَ صَدْرِي وَجَلَاءَ حُزْنِي وَذَهَابَ هَمِّي",
-                "transliteration": "Allahumma inni 'abduka, wabnu 'abdika, wabnu amatika, nasiyati biyadika, madin fiyya hukmuka, 'adlun fiyya qada'uk. As'aluka bikulli ismin huwa laka, sammayta bihi nafsaka, aw anzaltahu fi kitabika, aw 'allamtahu ahadan min khalqika, awista'tharta bihi fi 'ilmil-ghaybi 'indaka, an taj'alal-Qur'ana rabi'a qalbi wa nura sadri wa jala'a huzni wa dhahaba hammi.",
-                "amharic": "አቤቱ አላህ ሆይ! ባሪያህ ነኝ፤ ባሪያህ ልጅ ነኝ፤ ባሪያሽ ልጅ ነኝ። ናሺቴ (ቅናቴ) በእጅህ ነው። ፍርዱ ሁሉ ለኔ ያልፋል — ፍርዱ ፍትሐዊ ነው። ለሌሎቹ ከምትሰጣቸው ወይም ኪታቡ ካወረድሃቸው ወይም ፈጠሩ ሰው ካስተማርሃቸው ወይም ለምስጢር ዕውቀት ካቀፋቸው ስሞቹ ሁሉ — ቁርዓንን ልቤ ፀደይ አድርግ፤ ደረቴ ብርሃን፤ ሐዘኔ ሊያልፍ ጭንቀቴ ሊሄድ እጠይቃለሁ። (አላህ ለጭንቀቱ ቅናሽ ሰጥቶ ሐዘኑን ለውጦ ደስታ ያሰጣቸዋል)።",
+                "transliteration": "አልሏሁምመ ኢንኒ ዐብዱከ ኢብኑ አብዲከ ኢብኑ አመቲከ ናሲየቲከ ቢየዲከ ማዲን ፊይየ ሑክሙክ አድሉን ፊይየ ቀዳኡከ አስአሉከ ቢኩልሊ ኢስሚን ሁወ ለከስምመይቱ ቢሂ ነፍሰከ አው አንዘልተሁ ፊኪታቢከ ቢሂ ነፍሰከ አው አንዘልተሁ ፊኪታቢከ አው አልለምተሁ አሐደን ሚን ኸልቂከ አዊስተእስርተ ቢሂ ፊይ ኢልሚን ገይቢ ኢንደከ አንተጅአለል ቁርአን ረኒዐ ቀልቢ ወኑረ ሰድሪ ወጀላአ ሑዝኒ ቀዘሃበ ሐምሚ",
+                "amharic": "አላህ ሆይ እኔ ባሪያህ፣ የወንድ ባሪያህም፤ የሴት ባሪያህም ልጅ ነኝ፡፡ ሁሉ ነገሬ በእግህ ነው፡፡ ውሳኔህ በኔ ላይ ተፈጻሚ ብይንህ ፍትሃዊ ነው፡፡ ቁርአንን የቀልቤ መርጊያ፣ የልቦናዬ ብገርሃን፣ የሐዘኔ መፅናኛና የጭንቄ ማስወገጃ ታደርግልኝ ዘንድ በስሞችህ ሁሉ እማፀንሃለሁ፡፡ አንተ ራስህን በጠራህባቸው ወይም ኪታብህ ውስጥ ባሰፈርካቸው÷ ከፍጡራንህ ለአንዱ ባስተማርካቸው ወይም ለማንም ባልገለፅካቸው ስሞችህ፡፡",
                 "count": 1,
                 "source": "Ahmad 1/391"
             }
@@ -370,14 +370,14 @@ HISNUL_CHAPTERS = [
     {
         "id": 21,
         "title_en": "Supplication for Anxiety",
-        "title_am": "ለጭንቀት ሌላ ዱዓ",
+        "title_am": "የጭንቅ ጊዜ ዱዓ",
         "title_ar": "دعاء آخر عند الكرب",
         "icon": "🌊",
         "duas": [
             {
                 "arabic": "لَا إِلَهَ إِلَّا اللَّهُ الْعَظِيمُ الْحَلِيمُ، لَا إِلَهَ إِلَّا اللَّهُ رَبُّ الْعَرْشِ الْعَظِيمِ، لَا إِلَهَ إِلَّا اللَّهُ رَبُّ السَّمَاوَاتِ وَرَبُّ الْأَرْضِ وَرَبُّ الْعَرْشِ الْكَرِيمِ",
-                "transliteration": "La ilaha illallahul-'Adhimul-Halim, la ilaha illallahu Rabbul-'Arshil-'Adhim, la ilaha illallahu Rabbus-samawati wa Rabbul-ardi wa Rabbul-'Arshil-Karim.",
-                "amharic": "ከአላህ ሌላ አምላክ የለም — ታላቁ ምሕረተኛ። ከአላህ ሌላ አምላክ የለም — ታላቁ ዙፋን ጌታ። ከአላህ ሌላ አምላክ የለም — ሰማያት ጌታ፤ ምድር ጌታ፤ ክቡር ዙፋን ጌታ።",
+                "transliteration": "ላኢላህ ኢ ለልላሁል አዚይሙል ሐሊይሙ ላኢላሀኢልለልላሁ ረብቡል ዐርሺል ዐዚይም ላኢላሀ ኢልለልላሁ ረብቡስሰማዋቲ ወረብቡል አርዲ ወረብቡል ዐርሺል ከሪይም",
+                "amharic": "ከአላህ ውጭ ሌላ አምላክ የለም፡፡ ታላቅና ፅኑ ነው፡፡ ከአላህ ውጪ ሌላ አምላክ የለም፡፡ የታላቁ ዐርሸ ጌታ ነው፡፡ ከአላህ ውጭ ሌላ አምላክ የለም፡፡ የሰማያትና የምድር÷ እንዲሁም የታላቁ ዓርሽ ጌታ ነው፡፡",
                 "count": 1,
                 "source": "Bukhari 8/154, Muslim 4/2092"
             }
@@ -402,14 +402,14 @@ HISNUL_CHAPTERS = [
     {
         "id": 23,
         "title_en": "Supplication for Debt Repayment",
-        "title_am": "ዕዳ ለመክፈል",
+        "title_am": "እዳ ያለበት ሰው የሚያደርገው ዱዓ",
         "title_ar": "دعاء قضاء الدين",
         "icon": "💰",
         "duas": [
             {
                 "arabic": "اللَّهُمَّ اكْفِنِي بِحَلَالِكَ عَنْ حَرَامِكَ وَأَغْنِنِي بِفَضْلِكَ عَمَّنْ سِوَاكَ",
-                "transliteration": "Allahumma-kfini bihalali ka 'an haramik, wa aghnimi bifadlika 'amman siwak.",
-                "amharic": "አቤቱ አላህ ሆይ! ሀላሏዊ ጸጋህ ሐራምህን ሊተካሊኝ ያብቃ። ጸጋህ ከአንተ ሌላ ሰው ሳልሻ ሊበቃኝ ያብቃ።",
+                "transliteration": "አልሏሁምመ ኢክፊኒ ቢሐሊከ ዐን ሐራሚከ ወአግኒኒ ቢፈድሊከ ዐምመን ሲዋከ",
+                "amharic": "አላህ ሆይ በሐላልህ ከሐራምህ አብቃቃኝ፡፡ በትሩፋትህ ከአንተ ውጭ ያሉ አካላትን ከመጠየቅ አድነኝ፡፡",
                 "count": 1,
                 "source": "Tirmidhi 5/560"
             }
@@ -418,14 +418,14 @@ HISNUL_CHAPTERS = [
     {
         "id": 24,
         "title_en": "Supplication when Afflicted with Doubt",
-        "title_am": "ጥርጣሬ ሲፈጠር",
+        "title_am": "የጭንቅ ጊዜ ዱዓ",
         "title_ar": "دعاء التشكك",
         "icon": "🌀",
         "duas": [
             {
                 "arabic": "آمَنْتُ بِاللَّهِ وَرُسُلِهِ",
-                "transliteration": "Amantu billahi wa rusulih.",
-                "amharic": "በአላህና ሁሉ መልክተኞቹ አምናሁ። (ጥርጣሬ ካጠቃ ሲሉ ሸይጣን ሸሽቶ ይሄዳል)።",
+                "transliteration": "አመንቱ ቢልላሃ ወረሱሊሂ",
+                "amharic": "በአላህና በመልዕክተኛው አመንኩ ይበል፡፡",
                 "count": 1,
                 "source": "Muslim 1/120, Abu Dawud"
             }
@@ -434,14 +434,14 @@ HISNUL_CHAPTERS = [
     {
         "id": 25,
         "title_en": "Supplication said upon seeing someone afflicted",
-        "title_am": "ሲያዝኑ ሌሎቹን ሲያዩ",
+        "title_am": "የፍራፍሬ እሸት በሚመለከቱበት ግዜ የሚባል ዱዓ",
         "title_ar": "الدعاء عند رؤية المبتلى",
         "icon": "👁️",
         "duas": [
             {
                 "arabic": "الْحَمْدُ لِلَّهِ الَّذِي عَافَانِي مِمَّا ابْتَلَاكَ بِهِ وَفَضَّلَنِي عَلَى كَثِيرٍ مِمَّنْ خَلَقَ تَفْضِيلًا",
-                "transliteration": "Alhamdu lillahil-ladhi 'afani mimma ibtalaaka bihi wa faddalani 'ala kathirin mimman khalaqa tafdila.",
-                "amharic": "ያጠቃህ ችግር ያርቀኝ — ፈጠሩ ከብዙዎቹ ላይ ያበለጠኝ አላህ ምስጋና ይሁነው። (ያ ሰው ሳያሰሙ ጸሎቱ ሆኖ ያሉ — ያዩትን ዓይን ዓፊያ ሊቀር ነው)።",
+                "transliteration": "አልሐምዱ ሊልላሂልለዚ ዐፋኒ ሚምመብተላከ ቢሂ ወፈድደለኒ ዐላ ከሢረን ሚምመን ኸለቀ ተፍዲላ",
+                "amharic": "አንተን ከሞከረህ ነገር ለጠበቀኝ÷ ከፍጡራኖቹ ከብዙዎች ላላቀኝ አላህ ምስጋና ይገባው፡፡",
                 "count": 1,
                 "source": "Tirmidhi 5/493"
             }
@@ -456,8 +456,8 @@ HISNUL_CHAPTERS = [
         "duas": [
             {
                 "arabic": "اللَّهُمَّ إِنِّي أَسْأَلُكَ عِلْمًا نَافِعًا وَرِزْقًا طَيِّبًا وَعَمَلًا مُتَقَبَّلًا",
-                "transliteration": "Allahumma inni as'aluka 'ilman nafi'an, wa rizqan tayyiban, wa 'amalan mutaqabbala.",
-                "amharic": "አቤቱ አላህ ሆይ! ጠቃሚ ዕውቀት፤ ፀዳ ሪዝቅ (ምግብ)፤ ተቀባይ ዐምሎ — እጠይቃለሁ።",
+                "transliteration": "አልሏሁምመ ኢንኒ አስአሉከ ዒልመን ናፊዐን ወሪዝቀን ጦይበን ወዐመለን ሙተቀቢላ",
+                "amharic": "ኣላህ ሆይ ጠቃሚ እውቀትን መልካም የሆነ ሲሳይን ተቀባይነት ያለውን ተግባርን እጠይቅሃለው፡፡›› ንጋት ላይ፡፡",
                 "count": 1,
                 "source": "Ibn Majah 1/152"
             }
@@ -466,14 +466,14 @@ HISNUL_CHAPTERS = [
     {
         "id": 27,
         "title_en": "Supplication before Eating",
-        "title_am": "ምግብ ከመቁሳቸው በፊት",
+        "title_am": "ከምግብ በፊት የሚደረግ ዱዓ",
         "title_ar": "الدعاء قبل الطعام",
         "icon": "🍽️",
         "duas": [
             {
                 "arabic": "بِسْمِ اللَّهِ",
-                "transliteration": "Bismillah.",
-                "amharic": "የአላህ ስም ሆኖ (እጀምራለሁ)። (ሲረሱ ቁሱ ሊሉ — ቢስሚሏ ኢፊ አወሊሂ ወ ኣኺሪሂ)።",
+                "transliteration": "ቢስሚልላህ",
+                "amharic": "በአላህ ስም",
                 "count": 1,
                 "source": "Abu Dawud 3/347, Tirmidhi 4/288"
             }
@@ -482,14 +482,14 @@ HISNUL_CHAPTERS = [
     {
         "id": 28,
         "title_en": "Supplication after Eating",
-        "title_am": "ምግብ ካቆሱ በኋላ",
+        "title_am": "ከምግብ በፊት የሚደረግ ዱዓ",
         "title_ar": "الدعاء بعد الطعام",
         "icon": "🙏",
         "duas": [
             {
                 "arabic": "الْحَمْدُ لِلَّهِ الَّذِي أَطْعَمَنِي هَذَا وَرَزَقَنِيهِ مِنْ غَيْرِ حَوْلٍ مِنِّي وَلَا قُوَّةٍ",
-                "transliteration": "Alhamdu lillahil-ladhi at'amani hadha wa razaqanihi min ghayri hawlin minni wa la quwwah.",
-                "amharic": "ምንም ዐቅም ቻይነት ሳይኖረኝ — ይህን ምግብ ያበሉኝ ሪዝቁን የሰጠኝ አላህ ምስጋና ይሁነው። (ቀደምት ኃጢአቱ ሁሉ ይሠረዛሉ)።",
+                "transliteration": "አልሐምዱ ሊልላሂልለዚ አጥዐመኒ ሐዛ ወረዘቀኒሂ ሚን ገይሪ ሐውሊን ሚንኒ ወላ ቁወህ",
+                "amharic": "ያለኔ ኃይልና ብልሐት ይህንን ምግብ ለለገሰኝ አላህ ምስጋና ይገባው",
                 "count": 1,
                 "source": "Abu Dawud 4/318, Tirmidhi 5/507"
             }
@@ -498,7 +498,7 @@ HISNUL_CHAPTERS = [
     {
         "id": 29,
         "title_en": "Supplication of the Guest for the Host",
-        "title_am": "እንግዳ ለቤቱ ጌታ ዱዓ",
+        "title_am": "እንግዳ ለጋባዡ የሚያደርገው ዱዓ",
         "title_ar": "دعاء الضيف لصاحب الطعام",
         "icon": "🏠",
         "duas": [
@@ -520,8 +520,8 @@ HISNUL_CHAPTERS = [
         "duas": [
             {
                 "arabic": "ذَهَبَ الظَّمَأُ وَابْتَلَّتِ الْعُرُوقُ وَثَبَتَ الْأَجْرُ إِنْ شَاءَ اللَّهُ",
-                "transliteration": "Dhahabadh-dhama'u wabtallatil-'uruqu wa thabatal-ajru inshallah.",
-                "amharic": "ጥም ሄደ፤ ደም ሥሮቹ ርጠቁ፤ ምዳቡ አላህ ቢፈቅድ ቀረ።",
+                "transliteration": "ዘሐበዝዘመኡ ውበተልለቲል ዑሩቁ፣ ወሠበተል አጅሩ ኢንሻአልላህ",
+                "amharic": "ጥማችን ተቆርጧል፡፡ የደም ሥሮቻችን ረጥበቃል፡፡ የአላህ ፈቃድ ከሆነ ምንዳም ተረጋግጦልናል፡፡",
                 "count": 1,
                 "source": "Abu Dawud 2/306"
             }
@@ -530,7 +530,7 @@ HISNUL_CHAPTERS = [
     {
         "id": 31,
         "title_en": "Supplication when Sneezing",
-        "title_am": "ሲያስነጥሱ",
+        "title_am": "ያስነጠሰ ሰው የሚለው ዱዓ",
         "title_ar": "الدعاء عند العطاس",
         "icon": "🤧",
         "duas": [
@@ -546,14 +546,14 @@ HISNUL_CHAPTERS = [
     {
         "id": 32,
         "title_en": "Supplication when the Wind Blows",
-        "title_am": "ንፋስ ሲነፍስ",
+        "title_am": "በድንጋጤ ጊዜ የሚባል  ዱዓ",
         "title_ar": "ما يقال عند هبوب الريح",
         "icon": "💨",
         "duas": [
             {
                 "arabic": "اللَّهُمَّ إِنِّي أَسْأَلُكَ خَيْرَهَا وَخَيْرَ مَا فِيهَا وَخَيْرَ مَا أُرْسِلَتْ بِهِ، وَأَعُوذُ بِكَ مِنْ شَرِّهَا وَشَرِّ مَا فِيهَا وَشَرِّ مَا أُرْسِلَتْ بِهِ",
-                "transliteration": "Allahumma inni as'aluka khayra ha wa khayra ma fiha wa khayra ma ursilat bih, wa a'udhu bika min sharriha wa sharri ma fiha wa sharri ma ursilat bih.",
-                "amharic": "አቤቱ አላህ ሆይ! ከርሷ ክፍሉ፤ ከውስጧ ምን ያለ ሁሉ ክፍሉ፤ ስለ ምን ዓይቤ እንደ ተላከ ሁሉ ክፍሉ እጠይቃለሁ። ከርሷ ክፋት፤ ከውስጧ ምን ያለ ሁሉ ክፋት፤ ስለ ምን ዓይቤ እንደ ተላከ ሁሉ ክፋት ወደ አንተ ሸሻለሁ።",
+                "transliteration": "አልሏሁምመ ኢንኒ አስአሉከ ኸይረሃ ወኸይረ ማፊሃ ወኸይረ ማ ኡርሲለት ቢሂ፣ ወአዑዙ ቢከ ሚን ሸርሪሃ ወሸርሪ ማፊሃ ወሸርሪ ማ ኡርሲለት ቢሂ",
+                "amharic": "አላህ ሆይ መልካሟን÷ በውስጧ የያዘችውን መልካም ነገርና የተላከችበትን መልካም ነገር እጠይቅሃለሁ፡፡ ከክፉዋ፣ በውስጧ ከያዘቸችው ክፉ ነገርና ከተላከችበት ክፉ ነገር በአንተ እጠበቃለሁ፡",
                 "count": 1,
                 "source": "Muslim 2/616"
             }
@@ -562,14 +562,14 @@ HISNUL_CHAPTERS = [
     {
         "id": 33,
         "title_en": "Supplication when it Rains",
-        "title_am": "ዝናብ ሲዘንብ",
+        "title_am": "ዝናብ ከዘነበ በኋላ የሚባል ዚክር",
         "title_ar": "ما يقال عند نزول المطر",
         "icon": "🌧️",
         "duas": [
             {
                 "arabic": "اللَّهُمَّ صَيِّباً نَافِعاً",
-                "transliteration": "Allahumma sayyiban nafi'an.",
-                "amharic": "አቤቱ አላህ ሆይ! ጠቃሚ ዝናብ (ዝናምቴ)።",
+                "transliteration": "አልሏሁምመ ሰይበን ናፊዐን",
+                "amharic": "አላህ ሆይ ጠቃሚ ዝናብ አድርገው፡፡",
                 "count": 1,
                 "source": "Bukhari 1/205"
             }
@@ -578,14 +578,14 @@ HISNUL_CHAPTERS = [
     {
         "id": 34,
         "title_en": "Supplication After it Rains",
-        "title_am": "ዝናብ ከዘነበ በኋላ",
+        "title_am": "ዝናብ ከዘነበ በኋላ የሚባል ዚክር",
         "title_ar": "بعد نزول المطر",
         "icon": "🌈",
         "duas": [
             {
                 "arabic": "مُطِرْنَا بِفَضْلِ اللَّهِ وَرَحْمَتِهِ",
-                "transliteration": "Mutirna bifadlillahi wa rahmatih.",
-                "amharic": "የአላህ ጸጋና ምሕረት ሆኖ ዝናም ዘነምን (ዘነበ)።",
+                "transliteration": "ሙጢርና ቢፈድሊልላሂ ወራሕመቲሂ",
+                "amharic": "በአላህ ትሩፋትና እዝነት ዝናብ ለማግኘት በቃን፡፡",
                 "count": 1,
                 "source": "Bukhari 1/205, Muslim 1/83"
             }
@@ -594,14 +594,14 @@ HISNUL_CHAPTERS = [
     {
         "id": 35,
         "title_en": "Supplication upon Hearing Thunder",
-        "title_am": "ነጎድጓድ ሲሰሙ",
+        "title_am": "በጉርምርምታ ወቅት የሚባል",
         "title_ar": "دعاء سماع الرعد",
         "icon": "⛈️",
         "duas": [
             {
                 "arabic": "سُبْحَانَ الَّذِي يُسَبِّحُ الرَّعْدُ بِحَمْدِهِ وَالْمَلَائِكَةُ مِنْ خِيفَتِهِ",
-                "transliteration": "Subhanal-ladhi yusabbihu-r-ra'du bihamdihi wal-mala'ikatu min khifatih.",
-                "amharic": "ነጎድጓዱ ምስጋናሁ ሆኖ ሲያወድሰው፤ ቅዱሳን መላዕክቱ ፍርሃቱ ሆኖ ሲያወድሱት — ሁሉ ንጽሕና ለርሱ ይሁን።",
+                "transliteration": "ሱብሐነልለዚ ዩሰብቢሑ አርሪዕዱ ቢሐምዲሂ ወል መላኢከቱ ሚን ኺፈቲሂ",
+                "amharic": "ጉርምርምታ በምስጋናና ውዳሴ÷ መላዕክት ደግሞ ፍርሃት በተሞላበት ሁኔታ የሚያጠሩት ጌታ ከጎደሎ ባህሪያት የጠራ ነው፡፡",
                 "count": 1,
                 "source": "Al-Muwatta 2/992"
             }
@@ -610,14 +610,14 @@ HISNUL_CHAPTERS = [
     {
         "id": 36,
         "title_en": "Supplication against Oppressors",
-        "title_am": "ጨካኞቹ ላይ",
+        "title_am": "ስብሰባመጅሊስ ላይ የሚባል\\ዱዓ",
         "title_ar": "ما يقال في مواجهة الظالم",
         "icon": "⚔️",
         "duas": [
             {
                 "arabic": "اللَّهُمَّ إِنَّا نَجْعَلُكَ فِي نُحُورِهِمْ وَنَعُوذُ بِكَ مِنْ شُرُورِهِمْ",
-                "transliteration": "Allahumma inna naj'aluka fi nuhurihim, wa na'udhu bika min shururihim.",
-                "amharic": "አቤቱ አላህ ሆይ! አንተን በፊታቸው ጋሻና ዕንቅፋት አድርጎ አቆምናቸዋለን፤ ከክፋታቸው ወደ አንተ ሸሻለን።",
+                "transliteration": "አልሏሁምመ ኢንና ነጅዐሉከ ሪይኑሪሂም ወነዑዙ ቢከ ሚን ሹሩሪሂም",
+                "amharic": "አላህ ሆይ እኛ ከጠላቶቻችን ግንባር አድርገንሃል፡፡ ከተንኮላቸውም በአንተ እንጠበቃለን፡፡",
                 "count": 1,
                 "source": "Abu Dawud 2/89, Ibn Majah"
             }
@@ -626,14 +626,14 @@ HISNUL_CHAPTERS = [
     {
         "id": 37,
         "title_en": "Supplication for Travelling",
-        "title_am": "ጉዞ ሲጀምሩ",
+        "title_am": "ለጉዞ ሲወጡ የሚባል ዱዓ",
         "title_ar": "دعاء السفر",
         "icon": "🚗",
         "duas": [
             {
                 "arabic": "اللَّهُ أَكْبَرُ، اللَّهُ أَكْبَرُ، اللَّهُ أَكْبَرُ، سُبْحَانَ الَّذِي سَخَّرَ لَنَا هَذَا وَمَا كُنَّا لَهُ مُقْرِنِينَ وَإِنَّا إِلَى رَبِّنَا لَمُنْقَلِبُونَ، اللَّهُمَّ إِنَّا نَسْأَلُكَ فِي سَفَرِنَا هَذَا الْبِرَّ وَالتَّقْوَى وَمِنَ الْعَمَلِ مَا تَرْضَى، اللَّهُمَّ هَوِّنْ عَلَيْنَا سَفَرَنَا هَذَا وَاطْوِ عَنَّا بُعْدَهُ",
-                "transliteration": "Allahu Akbar, Allahu Akbar, Allahu Akbar. Subhana-l-ladhi sakhkhara lana hadha wa ma kunna lahu muqrinin, wa inna ila Rabbina lamunqalibun. Allahumma inna nas'aluka fi safarina hadhal-birra wat-taqwa, wa minal-'amali ma tarda, Allahumma hawwin 'alayna safarana hadha watwi 'anna bu'dah.",
-                "amharic": "አላህ ሁሉ ታላቅ ነው፤ አላህ ሁሉ ታላቅ ነው፤ አላህ ሁሉ ታላቅ ነው። ይህን ለኛ ያቀናጀ — ያለ ርሱ ረዳትነት ሊቃቆሙ ሳንችል ሳለ — ሁሉ ንጽሕና ለርሱ ይሁን። ወደ ጌታቸን (ለትንሣኤ) እርግጥ እንመለሳለን። አቤቱ አላህ ሆይ! በዚህ ጉዟቸን ቅን ምግባርና ጥንቃቄ ስጠን፤ ደስ ሚያሰኝህ ዐምሎ ሰጠን። አቤቱ አላህ ሆይ! ጉዟቸንን አቃልልልን — ርቀቱን ዝጋው።",
+                "transliteration": "አልላሁ አክበር፣ አልሏሁ አክበር፣ አልሏሁ አክበር፤ ሱብሐነለዚ ሰኸሪ ለና ሐዛወማ ኩንና ለሁ ሙቅሪኒን ወኢንና ኢላ ረብቢና ለሙንቀሊቡን፤ አልሏሁምመ ኢንና ነስአሉከ ፊ ሰፈሪና ሐዛ፣ አል ቢርረ ወትተቅዋ፣ ወሚነል ዓመሊ ማተርዷ፣ አልሏሁምመ ሀውዊን ዓለይና ሰፈረና ሐዛ ወጥዊ ዐንና ቡዕደሁ፣ አልሏሁምመ አንተስሳሂቡ ፊለሰፈሪ፣ ወልኸሊፈቱ ፊልአህሊ፣ አልሏሁምመ ኢንኒ አዑዙ ቢከ ሚንወዕሳኢስሰፈሪ፣ ወካበቲል መንዟሪ፣ ወሱኢል ሙንቀለቢ ፊል ማሊ ወልአህሊ",
+                "amharic": "አላህ ከሁሉም የላቀ ነው፡፡ አላህ ከሁሉም የላቀ ነው፡፡ አላህ ከሁሉም የላቀ ነው፡፡ ‹ይህን መጓጓዣ ያገራልን ጌታ ጥራት ይገባው፡፡ እኛ ይህን ለመፈፀም የምንችል አልነበርንም፡፡ ወደ ጌታችን ተመላሾች ነን፡፡› አላህ ሆይ በዚህ በጉዟችን መልካም ነገርንና ጥንቁቅነትን ትለግሰን ÷ አንተን የሚያረካህን ተግባር እንድፈፅም ታስችለን ዘንድ እንማፀንሃለን፡፡ አላህ ሆይ ይህን ጉዟችንን ቀላል አድርግልን፡፡ ርቀቱን አሳጥርልን፡፡ አላህ ሆይ የጉዞ ወቅት ባልደረባችን፣ ለቤተሰቦቻችንም ወኪል ምትክ አንተ ነህ፡፡ አላህ ሆይ ከጉዞ ጣጣ፣ ከአመለካከት ለውጥና በቤተሰብም ሆነ በንብረት ላይ ከሚደርስ መጥፎ ነገር በአንተ እጠበቃለሁ፡፡",
                 "count": 1,
                 "source": "Muslim 2/978, Abu Dawud 3/34"
             }
@@ -642,7 +642,7 @@ HISNUL_CHAPTERS = [
     {
         "id": 38,
         "title_en": "Supplication on Returning from Travel",
-        "title_am": "ጉዞ ሲጨርሱ ሲመለሱ",
+        "title_am": "ሽርክ ሲያሰጋዎ  የሚባል ዱዓ",
         "title_ar": "دعاء العودة من السفر",
         "icon": "🏠",
         "duas": [
@@ -664,8 +664,8 @@ HISNUL_CHAPTERS = [
         "duas": [
             {
                 "arabic": "بِسْمِ اللَّهِ، الْحَمْدُ لِلَّهِ، سُبْحَانَ الَّذِي سَخَّرَ لَنَا هَذَا وَمَا كُنَّا لَهُ مُقْرِنِينَ وَإِنَّا إِلَى رَبِّنَا لَمُنْقَلِبُونَ",
-                "transliteration": "Bismillah, alhamdu lillah. Subhanal-ladhi sakhkhara lana hadha wa ma kunna lahu muqrinin, wa inna ila Rabbina lamunqalibun.",
-                "amharic": "የአላህ ስም ሆኖ (እጀምራለሁ) — ምስጋናው ሁሉ ለአላህ ነው። ይህን ለኛ ያቀናጀ — ያለ ርሱ ረዳትነት ሊቃቆሙ ሳንችል ሳለ — ሁሉ ንጽሕና ለርሱ ይሁን፤ ወደ ጌታቸን (ለትንሣኤ) እርግጥ እንመለሳለን።",
+                "transliteration": "ቢሰስሚልላሂ አልሐምዱ ሊላሂ፤ ሱብሐነለዚ ሰኸረ ለና ሐዛ ወማ ኩንና ለሁ ሙቅሪኒን፣ ወኢንና ኢላ ረብቢና ለሙንቀሊቡን፤ አልሐምዱ ሊልላህ፣ አልሐምዱ ሊልላህ፣ አልሐምዱ ሊልላህ፣ አልሏሁ አክበር፣ አልሏሁ አክበር፣ አልሏሁ አክበር፣ ሱብሐነከልሏሁምመ ኢንኒ ዘለምቱ ነፍሲ ፈግፊር ሊ፣ ፈኢንነሁ ላየግፊሩ ዝዙኑብ ኢልላ አንተ",
+                "amharic": "በአላህ ስም፤ ምስጋና ለአላህ የተገባ ይሁን፡፡ ‹ይህን መጓጓዣ ያገራልን ጌታ ጥራት ይገባው፡፡ እኛ ለመፈፀም የምንችል አልነበርንም፡፡ እኛ ወደጌታችን ተመላሾች ነን፡፡› ምስጋና ለአላህ የተገባ ነው፡፡ ምስጋና ለአላህ የተገባ ነው፡፡ ምስጋና ለአላህ የተገባ ነው፡፡ አላህ ከሁሉም የላቀ ነው፡፡ አላህ ከሁሉም የላቀ ነው፡፡ አላህ ከሁሉም የላቀ ነው፡፡ አላህ ሆይ ጥራት ይገባህ፡፡ እኔ በነፍሴ ላይ ግፍ ፈፅሚ ያለሁ፡፡ ማረኝ፡፡ ከአንተ ውጭ ወንጀልን የሚምር የለም፡፡",
                 "count": 1,
                 "source": "Abu Dawud 3/34, Tirmidhi 5/501"
             }
@@ -674,14 +674,14 @@ HISNUL_CHAPTERS = [
     {
         "id": 40,
         "title_en": "Supplication upon Entering a Town",
-        "title_am": "ከተማ ሲገቡ",
+        "title_am": "ወደ ሽንት ቤት ሲገባ",
         "title_ar": "دعاء دخول البلد",
         "icon": "🏙️",
         "duas": [
             {
                 "arabic": "اللَّهُمَّ رَبَّ السَّمَاوَاتِ السَّبْعِ وَمَا أَظْلَلْنَ وَرَبَّ الْأَرَضِينَ السَّبْعِ وَمَا أَقْلَلْنَ وَرَبَّ الشَّيَاطِينِ وَمَا أَضْلَلْنَ وَرَبَّ الرِّيَاحِ وَمَا ذَرَيْنَ أَسْأَلُكَ خَيْرَ هَذِهِ الْقَرْيَةِ وَخَيْرَ أَهْلِهَا وَخَيْرَ مَا فِيهَا وَأَعُوذُ بِكَ مِنْ شَرِّهَا وَشَرِّ أَهْلِهَا وَشَرِّ مَا فِيهَا",
-                "transliteration": "Allahumma Rabb as-samawatis-sab'i wa ma adhallalna, wa Rabbal-aradinas-sab'i wa ma aqllalna, wa Rabbash-shayatini wa ma adallalna, wa Rabbir-riyahi wa ma dharayna. As'aluka khayra hadzihil-qaryati wa khayra ahliha wa khayra ma fiha, wa a'udhu bika min sharriha wa sharri ahliha wa sharri ma fiha.",
-                "amharic": "አቤቱ አላህ ሆይ! ሰባቱ ሰማያት ጌታ ምን ያጠለሉ ሁሉ ጌታ! ሰባቱ ምድር ጌታ ምን ያቀፉ ሁሉ ጌታ! ሸይጣኖቹ ጌታ ምን ያሳቱ ሁሉ ጌታ! ነፋሶቹ ጌታ ምን የበተኑ ሁሉ ጌታ! — ከዚህ ከተማ ቡራኬ፤ ሰዎቿ ቡራኬ፤ ውስጧ ምን ያለ ቡራኬ ሁሉ እጠይቃለሁ። ከርሷ ክፋት፤ ሰዎቿ ክፋት፤ ውስጧ ምን ያለ ክፋት ሁሉ ወደ አንተ ሸሻለሁ።",
+                "transliteration": "አልሏሁምመ ረብበስሰማዋቲስ ሰብዒ ወማ አዝለልነ፣ ወረብበል አረዲነስ ሰብዒ ወማ አቀለልነ፣ ወረብበሸሽያጢኒ ወማ አድለልነ ወረብበርሪያሒ ወማ ዘረይነ፣ አስአሉከ ኸይረ ሐዚሂል ቀርየህ ወኸይረ አህለሐ ወኸይረ ማፊሃ፣ ወአዑዙ ቢከ ሚን ሸርሪሐ ወሸርሪ አህሊሃ ወሸርሪ ማፊሐ",
+                "amharic": "የሰባቱ ሰማያት ያጠለሉት ÷ የሰባቱ ምድሮችና የተሸከሙት ÷ የሰይጣናትና ያጠመሙት ÷ የንፋስና የሚነፍሱበት አካባቢ አምላክ የሆንከው አላህ ሆይ የዚህችን ሰፈርና የነዋሪዎቿን፣ ከውስጧ ያለውን መልካም ነገር እጠይቅሃለሁ፡፡ ከክፋቷ፣ ከነዋሪዎቿና በውስጧ ካሉ ነገሮች ክፋት በአንተ እጠበቃለሁ፡፡",
                 "count": 1,
                 "source": "Al-Hakim 1/446, Nasai"
             }
@@ -690,14 +690,14 @@ HISNUL_CHAPTERS = [
     {
         "id": 41,
         "title_en": "Supplication when Entering the Home",
-        "title_am": "ቤት ሲገቡ",
+        "title_am": "የገበያ ቦታ ሲገባ የሚባል  ዱዓ",
         "title_ar": "دعاء دخول البيت",
         "icon": "🏡",
         "duas": [
             {
                 "arabic": "بِسْمِ اللَّهِ وَلَجْنَا وَبِسْمِ اللَّهِ خَرَجْنَا وَعَلَى اللَّهِ رَبِّنَا تَوَكَّلْنَا",
-                "transliteration": "Bismillahi walajna, wa bismillahi kharajna, wa 'ala Allahi Rabbina tawakkalna.",
-                "amharic": "የአላህ ስም ሆኖ ገባን። የአላህ ስም ሆኖ ወጣን። ጌታቸን አላህ ላይ ተመካን። (ቤት ሲገቡ ሰላምም ይሉ)።",
+                "transliteration": "ቢስሚልላሂ ወለጅና፤ ወቢስሚልላሂ ኸሪጅና፤ ወዓላ ረብቢና ተወከልና",
+                "amharic": "በአላህ ስም ተመለስን፤ በአላህ ስም መጣን፡፡ በጌታችን ተመካንም፡፡",
                 "count": 1,
                 "source": "Abu Dawud 4/325"
             }
@@ -706,14 +706,14 @@ HISNUL_CHAPTERS = [
     {
         "id": 42,
         "title_en": "Supplication for the Market",
-        "title_am": "ወደ ገበያ ሲሄዱ",
+        "title_am": "የገበያ ቦታ ሲገባ የሚባል  ዱዓ",
         "title_ar": "دعاء دخول السوق",
         "icon": "🛒",
         "duas": [
             {
                 "arabic": "لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ يُحْيِي وَيُمِيتُ وَهُوَ حَيٌّ لَا يَمُوتُ بِيَدِهِ الْخَيْرُ وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ",
-                "transliteration": "La ilaha illallahu wahdahu la sharika lah, lahul-mulku wa lahul-hamd, yuhyi wa yumitu wa Huwa Hayyun la yamutu, biyadihil-khayru wa Huwa 'ala kulli shay'in Qadir.",
-                "amharic": "ከአላህ ሌላ አምላክ የለም — ብቻው ነው፤ አጋር የለውም። ሥልጣኑ ሁሉ ለርሱ ነው፤ ምስጋናም ሁሉ ለርሱ ነው። ሕይወት ሰጪ ሞት ሰጪ ነው — ርሱ ሕያው ሂሞት አይደርስበትም። ደበቦቹ ሁሉ በእጁ ነው። በሁሉ ነገር ቻይ ነው።",
+                "transliteration": "ላኢላሐ ኢልለልሏህ ወሕደሁ ላሸሪከ ለሁ፣ ለሁል ሙልኩ ወለሁል ሐምዱ፣ ዩሕዪ ወዩሚቱ ወሑወ ሐዩን ላየሙት፣ ቢየዲሂል ኸይሩ፣ ወሁወ ዐላ ኩልሊ ሸየኢን ቀዲር",
+                "amharic": "ከአላህ ውጭ ሌላ አምላክ የለም፡፡ አንድ ነው፡፡ አጋር የለውም፡፡ ንግስና የርሱ ብቻ ነው፡፡ ምስጋናም የርሱ ብቻ ነው፡፡ ህይወት ይለግሳል፡፡ ይገድላልም፡፡ ህያው ነው፡፡ አይሞትም፡፡ መልካም ነገር ሁሉ በእጁ ነው፡፡ እርሱ በሁሉም ነገር ላይ ቻይ ነው፡፡",
                 "count": 1,
                 "source": "Tirmidhi 5/491, Ibn Majah 2/752"
             }
@@ -722,21 +722,21 @@ HISNUL_CHAPTERS = [
     {
         "id": 43,
         "title_en": "Supplication when Visiting the Sick",
-        "title_am": "ሕሙምን ሲጠይቁ",
+        "title_am": "በሽተኛን የመጠየቅ ቱሩፋት",
         "title_ar": "دعاء عيادة المريض",
         "icon": "🏥",
         "duas": [
             {
                 "arabic": "لَا بَأْسَ طَهُورٌ إِنْ شَاءَ اللَّهُ",
-                "transliteration": "La ba'sa, tahurun inshallah.",
-                "amharic": "ምንም ስጋት የለ — አላህ ቢፈቅድ ፀዳ (ኃጢአቱን ሊጠርግ) ነው።",
+                "transliteration": "ላበእሰ ጠሁሩን ኢንሻአልሏህ",
+                "amharic": "አይዞህ፡፡ ምንም አይደለም፡፡ ምንአልባትም አላህ ከፈቀደ ይህ በሽታ የወንጀልህ ማበሻ ሊሆን ይችላል፡፡",
                 "count": 1,
                 "source": "Bukhari 4/154"
             },
             {
                 "arabic": "أَسْأَلُ اللَّهَ الْعَظِيمَ رَبَّ الْعَرْشِ الْعَظِيمِ أَنْ يَشْفِيَكَ",
-                "transliteration": "As'alullaha-l-'Adhim, Rabbal-'Arshil-'Adhim an yashfiyaka.",
-                "amharic": "ታላቅ ዙፋን ጌታ — ታላቁ አላህ ሊፈውስህ እጠይቀዋለሁ። (ሰባቴ ያለ — ምን ዓይቤ ሕመሙ ሆኖ ሳይሞቱ ዕጣ ሊፈወሱ ነው)።",
+                "transliteration": "አስአሉልላሀል ዐዚም ረብበል ዐርሹል ዐዚይም አን የሽፊክ",
+                "amharic": "የታላቅን አርሽ ጌታ ከበሽታህ ይፈውስህ ዘንድ እማፀነዋለሁ፡፡ (ሰባት ጊዜ)",
                 "count": 7,
                 "source": "Abu Dawud 3/187, Tirmidhi 2/210"
             }
@@ -745,7 +745,7 @@ HISNUL_CHAPTERS = [
     {
         "id": 44,
         "title_en": "Supplication for the Sick Person",
-        "title_am": "ሕሙም ለራሳቸው ዱዓ",
+        "title_am": "መንገደኛ ያልሆነሙቂም ለመንገደኛሙሳፊር የሚባል ዱዓ",
         "title_ar": "دعاء المريض لنفسه",
         "icon": "🤒",
         "duas": [
@@ -761,14 +761,14 @@ HISNUL_CHAPTERS = [
     {
         "id": 45,
         "title_en": "Supplication for Pain in the Body",
-        "title_am": "ሰውነት ሲያም",
+        "title_am": "በሽተኛን በሚጠይቁበት ወቅት የሚባል",
         "title_ar": "دعاء الألم في الجسد",
         "icon": "💊",
         "duas": [
             {
                 "arabic": "بِسْمِ اللَّهِ × ثَلَاثَاً، أَعُوذُ بِاللَّهِ وَقُدْرَتِهِ مِنْ شَرِّ مَا أَجِدُ وَأُحَاذِرُ × سَبْعَاً",
-                "transliteration": "Bismillah (x3). A'udhu billahi wa qudratihi min sharri ma ajidu wa uhadhir (x7).",
-                "amharic": "ቢስሚሏ (ሦስቴ)። ከሚያሙኝ ከምፈራ ሁሉ ክፋት — የአላህና ዐቅሙ ሊጠብቀኝ ሸሻለሁ (ሰባቴ)። (ሕመሙ ሰፈፍ ሊሆን ነው)።",
+                "transliteration": "እጅዎን ህመሙ ከሚሰማዎ የአካል ክፍልዎ ላይ በማስቀመጥ     ሦስት ጊዜ፡‹‹ቢስሚልላህ››  ይበሉ፡፡\n\n ከዛ ይህን ዱዓ ይበሉ:\n\n ሰባት ጊዜ ደግሞ፡‹‹አዑዙ ቢልላሂ ወቅድረቲሂ ሚንሸርሪ ማአጂዱ ወኡሀዚሩ›› ይበሉ፡፡\n\nአዑዙ ቢልላሂ ወቅድረቲሂ ሚንሸርሪ ማአጂዱ ወኡሀዚሩ››",
+                "amharic": "እጅዎን ህመሙ ከሚሰማዎ የአካል ክፍልዎ ላይ በማስቀመጥ     ሦስት ጊዜ፡‹‹ቢስሚልላህ››  \n\nበአላህ ስም›› ይበሉ፡፡ ከዛ ይህን ዱዓ ይበሉ:\n\n ሰባት ጊዜ ደግሞ፡‹‹አዑዙ ቢልላሂ ወቅድረቲሂ ሚንሸርሪ ማአጂዱ ወኡሀዚሩ›› \n\nካገኘኝና ወደፊት እንዳያገኘኝ ከሚፈራው መጥፎ ነገር በአላህና በችሎታው እጠበቃለሁ›› ይበሉ፡፡",
                 "count": 7,
                 "source": "Muslim 4/1728"
             }
@@ -777,14 +777,14 @@ HISNUL_CHAPTERS = [
     {
         "id": 46,
         "title_en": "Supplication when Closing the Eyes of the Deceased",
-        "title_am": "ሰው ሲሞት",
+        "title_am": "የሞተን ሰው አይን ሲከድኑ",
         "title_ar": "دعاء تغميض الميت",
         "icon": "🕊️",
         "duas": [
             {
                 "arabic": "اللَّهُمَّ اغْفِرْ لِـ(فُلَانٍ) وَارْفَعْ دَرَجَتَهُ فِي الْمَهْدِيِّينَ وَاخْلُفْهُ فِي عَقِبِهِ فِي الْغَابِرِينَ وَاغْفِرْ لَنَا وَلَهُ يَا رَبَّ الْعَالَمِينَ",
-                "transliteration": "Allahumma-ghfir li (fulan) warfa' darajatahu fil-mahdiyyin, wakhlufhu fi 'aqibihi fil-ghabirin, wa-ghfir lana wa lahu ya Rabbal-'alamin.",
-                "amharic": "አቤቱ አላህ ሆይ! [ለ...] ይቅር ብልህ — ደረጃቸን ቀጥተኛ ሰዎቹ ዘንድ ከፍ አድርግ። ቀሪ ዘሮቻቸው ዘንድ ምትካቸን ሁን። ለኛም ለርሳቸውም ይቅር ብልህ — አቤቱ ዐለም ሁሉ ጌታ ሆይ!",
+                "transliteration": "አልሏሁምመ ኢግፊር ሊ… ወርፈዕ ደረጀተሁ ፊል መሀዲየይን ወኽሉፍሁ ፊ ዐቂቢሂ ፊል ጋቢሪይን፤ ወግፊር ለና ወለሁ ያረብበል ዐለሚን፤ ወፍሰሃ ለሁ ፊ ቀብሪሂ ወነውዊር ለሁ ፊሂ",
+                "amharic": "አላህ ሆይ ለእገሌ ስሙ ይጠቀስ ምህረትህን ለግስው፡፡ ደረጃውን ከፍ አድርግለት፡፡ ቅን ከሆኑ ሰዎች ፈርጀው፡፡ እኛንም እርሱንም ይቅር በለን፡፡ የዓለማት ጌታ ሆይ ቀብሩን ሰፊና ብርሃናማ አድርግለት፡፡",
                 "count": 1,
                 "source": "Muslim 2/634"
             }
@@ -793,14 +793,14 @@ HISNUL_CHAPTERS = [
     {
         "id": 47,
         "title_en": "Supplication at the Funeral Prayer",
-        "title_am": "የጀናዛ ሶላት",
+        "title_am": "የሶላተል ኢስቲኻራ የምርጫ ሶላት ዱዓ",
         "title_ar": "الدعاء في صلاة الجنازة",
         "icon": "⚰️",
         "duas": [
             {
                 "arabic": "اللَّهُمَّ اغْفِرْ لَهُ وَارْحَمْهُ وَعَافِهِ وَاعْفُ عَنْهُ وَأَكْرِمْ نُزُلَهُ وَوَسِّعْ مُدْخَلَهُ وَاغْسِلْهُ بِالْمَاءِ وَالثَّلْجِ وَالْبَرَدِ وَنَقِّهِ مِنَ الْخَطَايَا كَمَا نَقَّيْتَ الثَّوْبَ الْأَبْيَضَ مِنَ الدَّنَسِ وَأَبْدِلْهُ دَارًا خَيْرًا مِنْ دَارِهِ وَأَهْلًا خَيْرًا مِنْ أَهْلِهِ وَزَوْجًا خَيْرًا مِنْ زَوْجِهِ وَأَدْخِلْهُ الْجَنَّةَ وَأَعِذْهُ مِنْ عَذَابِ الْقَبْرِ وَعَذَابِ النَّارِ",
-                "transliteration": "Allahumma-ghfir lahu warhamhu wa 'afihi wa'fu 'anhu wa akrim nuzulahu wa wassi' mudkhalahu waghsilhu bil-ma'i wath-thalji wal-baradi wa naqqihi minal-khataaya kama naqqayta-th-thawbal-abyada minal-danas, wa abdilhu daran khayran min darih, wa ahlan khayran min ahlih, wa zawjan khayran min zawjih, wa adkhilhul-jannata wa a'idhhu min 'adhabul-qabri wa 'adhabun-nar.",
-                "amharic": "አቤቱ አላህ ሆይ! ይቅር ብልሃቸው፤ ምሕረት ስጣቸው፤ ዓፊያ ሰጣቸው፤ ፈቅር ብልሃቸው። ክቡር ማረፊያ ሰጣቸው። ፍቅዳቸው ሰፊ ያድርግ። በውሃ፤ ነፍስ፤ ውርጭ ሁሉ ጻዱ። ነጭ ልብስ ቆሻሻ ሲጸዱ ኃጢአቶቻቸን ጸዳ። ቤቱ ቤታቸን ለዋጭ፤ ሰዎቻቸው ቤተሰቦቻቸን ለዋጭ፤ ትዳራቸው ትዳራቸን ለዋጭ ሁሉ ከነርሱ ይሻሉ። ጀነት አስገቧቸው። ቀብርና እሳት ቅጣት ጠብቃቸው።",
+                "transliteration": "አልሏሁምመ ኢግፊር ለሁ ወርሀምሁ፤ ወዓፊሂ ወዕፉ ዐንሁ፤ ወአክሪም ኑዙለሁ፤ ወወስሲዕ ሙድኸለሁ፤ ወግሲልሁ ቢልማኢ ወስሰልጅ ወልበረዲ፤ ወነቅቂሂ ሚነል ኸጧያ ከማ ነቅቀስሰውቡል አብየዱ ሚነድደነስ፤ ወአብዲልሁ ዳረን ኸይረን ሚን ዳሪሂ፤ ወአሀለን ኸይረን ሚን አህሊሂ፤ ወዘውጀን ኸይረን ሚን ዘውጅሂ፤ ወአድኺልሁልጀንነተ፤ ወአዒዝሁ ሚን ዐዛቢል ቀብር ወዐዛቢንናር",
+                "amharic": "አላህ ሆይ ምህረትህን ለግሰው፡፡ እዘንለት፡፡ አስመቸው፡፡ ይቅር በለውም፡፡ መስተንግዶውን መልካም፤ የሚገባበትን ቦታቀብር ሰፊ አድርግለት፡፡ በውሃ፤ በወርጭና በበረዶ እጠበው፡፡ነጭ ልብስ ከእድፍ እንደሚፀዳው እርሱንም ከወንጀል አፅዳው፡፡ ከነበረበት የበለጠ መኖሪያ ለግሰው፡፡ የተሻሉ ቤተሰቦችንም አድርግለት፡፡ የተሻለች ሚስትም ለግሰው፡፡ጀንነት አስገባው፡፡ ከቀብርእና ከእሳት ቅጣት ጠብቀው፡፡",
                 "count": 1,
                 "source": "Muslim 2/663"
             }
@@ -809,7 +809,7 @@ HISNUL_CHAPTERS = [
     {
         "id": 48,
         "title_en": "Supplication at the Graveside after Burial",
-        "title_am": "ቀብር ካደረሱ በኋላ",
+        "title_am": "ሟች ከተቀበረ በኋላ የሚባል",
         "title_ar": "دعاء بعد دفن الميت",
         "icon": "🌿",
         "duas": [
@@ -825,14 +825,14 @@ HISNUL_CHAPTERS = [
     {
         "id": 49,
         "title_en": "Supplication upon Condolence",
-        "title_am": "ሐዘን ለደረሰ ቤተሰብ",
+        "title_am": "የሐዘን መግለጫ ዱዓ",
         "title_ar": "دعاء التعزية",
         "icon": "🤲",
         "duas": [
             {
                 "arabic": "إِنَّ لِلَّهِ مَا أَخَذَ وَلَهُ مَا أَعْطَى وَكُلُّ شَيْءٍ عِنْدَهُ بِأَجَلٍ مُسَمَّى",
-                "transliteration": "Inna lillahi ma akhadha, wa lahu ma a'ta, wa kullu shay'in 'indahu bi ajalin musamman.",
-                "amharic": "አላህ ወሰደ — ለርሱ ነው (ምን ወሰደ)። ለርሱ ሰጠ — (ምን ሰጠ)። ሁሉ ነገር ዘንድ ርሱ ጊዜ ወስኗቸዋል — (ስለዚህ) ሀሴ ያድርጉ ምዳቡ ይጠብቋቸው።",
+                "transliteration": "ኢንና ሊልላሂ ማአኸዘ፤ ወለሁ ማ አዕጧ ወኩልሉ ሸይኢን ዒንደሁ ቢአጀሊን ሙሰማ… ፈልተስቢር ወልተሀተሲብ\n\n አዕዘመልሏሁ አጅረክ፤ ወአህሰነ ዐዛአክ፤ ወገፈረ ሊመይቲክ",
+                "amharic": "የወሰደውም የሰጠውም የአላህ ነው፡፡ ሁሉም ነገር ከርሱ ዘንድ የተወሰነ ቀን ቀጠሮ አለው፡፡ ትታገስ፡፡ከአላህ ምንዳዋ ትፈልግ፡፡ \\ \\ወይም እንዲህ  ቢልም በላጭነት ይኖረዋል\\   162 \\      \\\\ አዕዘመሏሁ አጅረክ ፤ ወ አህሰነ ዐዛአከ፤ ወገፈረ ሊመይቲከአላህ \n\n  ምንዳህን ከፍ ያድርግልህ፡፡ሀዘንህን ያቃልልህ፡፡ ለሟቹም ምህረትን ይለግሰው፡፡››\n\u0000",
                 "count": 1,
                 "source": "Bukhari 2/80, Muslim 2/636"
             }
@@ -841,14 +841,14 @@ HISNUL_CHAPTERS = [
     {
         "id": 50,
         "title_en": "Supplication when in Debt",
-        "title_am": "ዕዳ ሲኖር",
+        "title_am": "እዳ ያለበት ሰው የሚያደርገው ዱዓ",
         "title_ar": "دعاء الدين",
         "icon": "💳",
         "duas": [
             {
                 "arabic": "اللَّهُمَّ اكْفِنِي بِحَلَالِكَ عَنْ حَرَامِكَ وَأَغْنِنِي بِفَضْلِكَ عَمَّنْ سِوَاكَ",
-                "transliteration": "Allahumma-kfini bihalali ka 'an haramik, wa aghnimi bifadlika 'amman siwak.",
-                "amharic": "አቤቱ አላህ ሆይ! ሀላሏዊ ጸጋህ ሐራምህን ሊተካሊኝ ያብቃ። ጸጋህ ከአንተ ሌላ ሰው ሳልሻ ሊበቃኝ ያብቃ።",
+                "transliteration": "አልሏሁምመ ኢክፊኒ ቢሐሊከ ዐን ሐራሚከ ወአግኒኒ ቢፈድሊከ ዐምመን ሲዋከ",
+                "amharic": "አላህ ሆይ በሐላልህ ከሐራምህ አብቃቃኝ፡፡ በትሩፋትህ ከአንተ ውጭ ያሉ አካላትን ከመጠየቅ አድነኝ፡፡",
                 "count": 1,
                 "source": "Tirmidhi 5/560"
             }
@@ -857,14 +857,14 @@ HISNUL_CHAPTERS = [
     {
         "id": 51,
         "title_en": "Supplication for Seeking Forgiveness",
-        "title_am": "ኢስቲግፋር — ይቅርታ ጠያቄ",
+        "title_am": "እስቲግፋር እና ተውባህ",
         "title_ar": "الاستغفار",
         "icon": "🙏",
         "duas": [
             {
                 "arabic": "أَسْتَغْفِرُ اللَّهَ وَأَتُوبُ إِلَيْهِ",
-                "transliteration": "Astaghfirullaha wa atubu ilaih.",
-                "amharic": "አላህን ይቅርታ እጠይቃለሁ — ወደ እርሱ ንስሃ እገባለሁ። (ቀን 100 ጊዜ ነቢዩ ሶ.ዐ.ወ. ያሉ)።",
+                "transliteration": "አስተግፊሩልላሂ ወአቱቡ ኢለይህ  (100X)",
+                "amharic": "አላህን ምህረትን እምፀ ናለሁ፡፡ወደርሱ በፀፀት እመለሳለሁ፡፡\n( በቀን መቶ ጊዜ )",
                 "count": 100,
                 "source": "Bukhari 11/101, Muslim 4/2075"
             }
@@ -873,14 +873,14 @@ HISNUL_CHAPTERS = [
     {
         "id": 52,
         "title_en": "Supplication for Seeking Guidance (Istikhara)",
-        "title_am": "ኢስቲኻራ — ሁሉ ዓይቤ ምርጫ",
+        "title_am": "የሶላተል ኢስቲኻራ የምርጫ ሶላት ዱዓ",
         "title_ar": "دعاء الاستخارة",
         "icon": "🧭",
         "duas": [
             {
                 "arabic": "اللَّهُمَّ إِنِّي أَسْتَخِيرُكَ بِعِلْمِكَ وَأَسْتَقْدِرُكَ بِقُدْرَتِكَ وَأَسْأَلُكَ مِنْ فَضْلِكَ الْعَظِيمِ فَإِنَّكَ تَقْدِرُ وَلَا أَقْدِرُ وَتَعْلَمُ وَلَا أَعْلَمُ وَأَنْتَ عَلَّامُ الْغُيُوبِ اللَّهُمَّ إِنْ كُنْتَ تَعْلَمُ أَنَّ هَذَا الْأَمْرَ خَيْرٌ لِي فِي دِينِي وَمَعَاشِي وَعَاقِبَةِ أَمْرِي فَاقْدُرْهُ لِي وَيَسِّرْهُ لِي ثُمَّ بَارِكْ لِي فِيهِ",
-                "transliteration": "Allahumma inni astakhiruka bi'ilmika wa astaqdiruka biqudratika wa as'aluka min fadlikal-'Adhim, fa innaka taqdiru wa la aqdir, wa ta'lamu wa la a'lam, wa anta 'Allamu-l-Ghuyub. Allahumma in kunta ta'lamu anna hadhal-amra khayrun li fi dini wa ma'ashi wa 'aqibati amri, faqdurhu li wa yassirhu li thumma barik li fih.",
-                "amharic": "አቤቱ አላህ ሆይ! ዕውቀትህ ሆኖ ምርጡን እጠይቃለሁ። ዐቅምህ ሆኖ ዐቅምን እጠይቃለሁ። ታላቅ ጸጋህ እጠይቃለሁ — አንተ ቻይ ነህ፤ እኔ አልቻልኩ። አንተ ታውቃለህ፤ እኔ አላውቅ። አንተ ሁሉ ሚስጥር አዋቂ ነህ። አቤቱ አላህ ሆይ! ይህ ጉዳይ ሃይማኖቴ ኑሮዬ ዓኺራዬ ላይ ጠቃሚ ሆኖ ካወቅህ — ያዘዘው፤ ቀለለው፤ ካቆምህ ባርካ ደርሷቸው።",
+                "transliteration": "ጃቢር ኢብን ዓብደላህ እንዲህ ሱለ አስተላልፈዋል፡ የአላህ መልዕክተና ሰዑወ የቁርአን ምዕራፎችን እንደሚያስተምሩን ሁሉ በሁሉም ነገር በጎውን ለመምረጥ ፀሎት ኢስቲኻራ እናደርግ ዘንድ ያስተምሩን ነበር፡፡ አንድ የሚያሳስበን ጉዳይ ሲገጥመን ከፈርድ ግዴታ ሶላቶች ውጪ የሆኑ ሁለት ረከዓዎችን እንድንሰግድና ተከታዩን ዱዓ እንድናደርግ አስተምረውናል፡፡\n\nአልሏሁምመ ኢንኒ አስተኺሩክ፣ ቢዒልሚክ ወአስተቅዲሩከ ቢቁድረቲከ ወአስአሉከ ሚን ፈድሊከል ዐዚም፣ ፈኢንነከ ተቅዲሩ ወላ አቅዲሩ፣ ወተዕለሙ ወላ አዕለሙ፣ ወአንተ ዐልላሙል ጉዩብ፡፡ አልሏሁምመ ኢን ኩንተ ተዕለሙ አንነ ሃዘል አምር ኸይሩን ሊ ፊ ዲኒ፣ ወመዕሺ፣ ወዐቂበቲ አምሪ አው ቃለ ዓጂሊሂ ወአጂሊሂ ፈቅዱርሁ ሊ፣ ወየስሲርሁ ሊ፣ ሡምመ ባሪክ ሊ ፊሂ፣ ወኢን ኩንተ ተዕለሙ አንነ ሀዘል አምረ ሸሩን ሊ ፊ ዲኒ፣ወመዓሺ ወዓቂበተ አምሪ አው ቃለ ዓጂሊሂ ወኣጂሊሂ ፈስሪፍሁ ዐንኒ ወስሪፍኒ ዐንሁ፣ ወቅዱር ሊየል ኸይረ ሐይሱ ካነ ሱምመ አርዲኒ ቢሂ፡፡",
+                "amharic": "በዕውቀትህ በጐውን ነገር እንድትመርጥልኝ እጠይቃለሁ፡፡ በችሎታህም እተማመናለሁ በጐውን ምረጥልኝ፡፡ ከታላቁ ትሩፋትህም እጠይቅሃለሁ፡፡ አንተ እንጂ እኔ ወሳኝ አይደለሁም፡፡ አንተ አዋቂ ነህ፡፡ እኔ ግን መሃይም ነኝ፡፡ አንተ የሩቁን አዋቂ ነህ፡፡ አላህ ሆይ ይህ ገዳይጉዳዩን ይጥቀሱ ለኔ፣ ለሃይማኖቴ፣ ለህይወቴና ለመጨረሻዬ በጐ ከሆነ ወስንልኝ፤ አቅልልኝም፣ ረድዔትህንም ሙላልኝ፡፡ይህ ገዳይጉዳዩን ይጥቀሱ ለኔ፣ ለሃይማኖቴ ናለህይወቴ መጥፎ ሆኖ የሚገኝ መሆኑን የምታውቅ በመሆኑ መጥፎ ከሆነ ከኔ አስወግደው፣ እኔንም ከርሱ አርቀኝ፡፡ ምንም ይሁን ምን መልካም ነገርን ወስንልኝ፡፡ከዚያም እኔ ውሳኔውን እንድወድ እንድቀበል አድርገኝ፡፡",
                 "count": 1,
                 "source": "Bukhari 8/168"
             }
@@ -889,7 +889,7 @@ HISNUL_CHAPTERS = [
     {
         "id": 53,
         "title_en": "Supplication for the Night of Power (Laylat al-Qadr)",
-        "title_am": "ሌሊቱ ቀደር ዱዓ",
+        "title_am": "በቀብር ጉብኝት ወቅት የሚባል",
         "title_ar": "دعاء ليلة القدر",
         "icon": "⭐",
         "duas": [
@@ -905,14 +905,14 @@ HISNUL_CHAPTERS = [
     {
         "id": 54,
         "title_en": "Supplications after the Final Tashahhud",
-        "title_am": "ሶላት ዉስጥ ሰሙ ታሸሁድ ቀጥሎ",
+        "title_am": "ከመጨረሻው ተሽሁድ በኋላ ከማሰላመት በፊት",
         "title_ar": "الدعاء بعد التشهد الأخير",
         "icon": "🕌",
         "duas": [
             {
                 "arabic": "اللَّهُمَّ إِنِّي أَعُوذُ بِكَ مِنْ عَذَابِ الْقَبْرِ وَمِنْ عَذَابِ النَّارِ وَمِنْ فِتْنَةِ الْمَحْيَا وَالْمَمَاتِ وَمِنْ شَرِّ فِتْنَةِ الْمَسِيحِ الدَّجَّالِ",
-                "transliteration": "Allahumma inni a'udhu bika min 'adhabul-qabr wa min 'adhabun-nar wa min fitnatil-mahya wal-mamat wa min sharri fitnatil-Masihid-Dajjal.",
-                "amharic": "አቤቱ አላህ ሆይ! ከቀብር ቅጣት፤ ከናር ቅጣት፤ ከሕይወትና ሞት ፈተና፤ ከሐሰተኛ ምሢሕ (ደጃል) ፈተና ክፋት ወደ አንተ ሸሻለሁ።",
+                "transliteration": "አልሏሁምመ ኢንኒ አዑዙ ቢከ ሚን ዐዛቢል ቀብሪ ወሚን አዛቢል ጀሃንነም ወሚን ፊትነቲል መህያ ወልመማቲ ወሚን ሸሪ ፊትነቲል መሲሐድደጃል፡፡",
+                "amharic": "አላህ ሆይ ከቀብር ቅጣትና ከጀሃነም ቅጣት ከህይወትና ከሞት ፈተና እንዲሁም ከአታላዩ መሲሕ እድደጃል ፈተና በአንተ እጠበቃለሁ፡፡",
                 "count": 1,
                 "source": "Bukhari 2/102, Muslim 1/412"
             }
@@ -921,21 +921,21 @@ HISNUL_CHAPTERS = [
     {
         "id": 55,
         "title_en": "Remembrances after Salah",
-        "title_am": "ሶላት ካቆሱ በኋላ",
+        "title_am": "ሶላት ከተጠናቀቀ በኃላ",
         "title_ar": "الأذكار بعد الصلاة",
         "icon": "🌟",
         "duas": [
             {
                 "arabic": "أَسْتَغْفِرُ اللَّهَ (×٣)، اللَّهُمَّ أَنْتَ السَّلَامُ وَمِنْكَ السَّلَامُ تَبَارَكْتَ يَا ذَا الْجَلَالِ وَالْإِكْرَامِ",
-                "transliteration": "Astaghfirullah (x3). Allahumma antas-Salamu wa minkas-salam, tabarakta ya Dhal-Jalali wal-Ikram.",
-                "amharic": "አላህ ይቅር ብለኝ (ሦስቴ)። አቤቱ አላህ ሆይ! አንተ ሰላም ነህ — ሰላምም ከአንተ ነው። ክቡርነቱ ክፈቱ (ሀ.ሏ) ጌታ ሆይ ተባረክ!",
+                "transliteration": "አስተገፊሩልላህ (3X)\n\nአልሏሁምመ አንተስሰላሙ ወሚንከስሰላም ተባረክተ ያዘል ጀላሊ ወልኢክራም",
+                "amharic": "አላህን ምህረተን እጠይቀዋለሁ፡፡ {ሶስት ጊዜ፡፡}\nአላህ ሆይ አንተ ሰላም ነህ ሰላምም የሚገኘው ከአንተ ነው የታላቅነትና የልግስና ባለቤት የሆንከው ጌታ ሆይ ረድዔተ ብዙ ነህ፡፡",
                 "count": 3,
                 "source": "Muslim 1/414"
             },
             {
                 "arabic": "لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ",
-                "transliteration": "La ilaha illallahu wahdahu la sharika lah, lahul-mulku wa lahul-hamd, wa Huwa 'ala kulli shay'in Qadir.",
-                "amharic": "ከአላህ ሌላ አምላክ የለም ብቻው ነው አጋር የለውም። ሥልጣኑ ሁሉ ለርሱ ነው ምስጋናም ሁሉ ለርሱ ነው። በሁሉ ነገር ቻይ ነው።",
+                "transliteration": "ከዱዓዎች ሁሉ በላጩ የዐረፋህ ዕለት የሚደረግ ዱዓ ነው፡፡ እኔና ከኔ በፊት የሚደረግ ዱዓ ነው፡፡ እኔና ከኔ በፊት የነበሩ ነብያት ከተናገሯቸው ሁሉ በላጩ፡\n\nለኢላሃ ኢልለላህ ዋህደሁ ላሸሪከ ለሁ፣ ለሁል ሙልኩ ወለሁል ሐምዱ ወሁወ ዐላ ኩሊ ሸይኢን ቀዲር",
+                "amharic": "ከአላህ ውጭ ሌላ አምላክ የለም፡፡ አንድ ነው፡፡ አጋር የለውም፡፡ ንግሥና የርሱ ብቻ ነው፡፡ ምስጋናም ተገቢነቱ የርሱ ነው፡፡",
                 "count": 1,
                 "source": "Muslim 1/415"
             },
@@ -958,14 +958,14 @@ HISNUL_CHAPTERS = [
     {
         "id": 56,
         "title_en": "Supplication when Going to the Bathroom",
-        "title_am": "ሽንት ቤት ሲሄዱ",
+        "title_am": "ወደ ሽንት ቤት ሲገባ",
         "title_ar": "دعاء دخول الخلاء",
         "icon": "🚻",
         "duas": [
             {
                 "arabic": "بِسْمِ اللَّهِ اللَّهُمَّ إِنِّي أَعُوذُ بِكَ مِنَ الْخُبُثِ وَالْخَبَائِثِ",
-                "transliteration": "Bismillah. Allahumma inni a'udhu bika minal-khubuthi wal-khaba'ith.",
-                "amharic": "ቢስሚሏ። አቤቱ አላህ ሆይ! ከወንድ ሸይጣኖቹና ሴት ሸይጣኖቹ ወደ አንተ ሸሻለሁ።",
+                "transliteration": "ቢስሚልላሂ አሏሁምመ ኢንኒ አዑዙ ቢከ ሚነል ኹቡሲ ወል ኸባኢስ",
+                "amharic": "በአላህ ስም አላህ ሆይ ከወንድ ሰይጣንና ከሴት ሰይጣን በአንተ እጠበቃለሁ",
                 "count": 1,
                 "source": "Bukhari 1/45, Muslim 1/283"
             }
@@ -974,14 +974,14 @@ HISNUL_CHAPTERS = [
     {
         "id": 57,
         "title_en": "Supplication at the Time of Anger",
-        "title_am": "ሲቆጡ",
+        "title_am": "በቁጣ ወቅት የሚደረግ ዱዓ",
         "title_ar": "دعاء الغضب",
         "icon": "😤",
         "duas": [
             {
                 "arabic": "أَعُوذُ بِاللَّهِ مِنَ الشَّيْطَانِ الرَّجِيمِ",
-                "transliteration": "A'udhu billahi minash-shaytanir-rajim.",
-                "amharic": "ከተወገደው ሸይጣን ወደ አላህ ሸሻለሁ። (ቁጣ ሲወሰዳቸው ሸይጣን ነው — ዑዙ ቢሉ ሸይጣን ይሸሻቸዋል)።",
+                "transliteration": "አዑዙ ቢልላሂ ሚነሽሸይጧኒር ረጅም",
+                "amharic": "እርጉም ከሆነው ሸይጧን በአላህ እጠበቃለሁ፡፡",
                 "count": 1,
                 "source": "Bukhari 6/337, Muslim 4/2015"
             }
@@ -990,7 +990,7 @@ HISNUL_CHAPTERS = [
     {
         "id": 58,
         "title_en": "Supplication for Seeking Knowledge",
-        "title_am": "ዕውቀት ለማሳደግ",
+        "title_am": "ከምግብ በፊት የሚደረግ ዱዓ",
         "title_ar": "دعاء طلب العلم",
         "icon": "📚",
         "duas": [
@@ -1003,8 +1003,8 @@ HISNUL_CHAPTERS = [
             },
             {
                 "arabic": "اللَّهُمَّ إِنِّي أَسْأَلُكَ عِلْمًا نَافِعًا وَرِزْقًا طَيِّبًا وَعَمَلًا مُتَقَبَّلًا",
-                "transliteration": "Allahumma inni as'aluka 'ilman nafi'an, wa rizqan tayyiban, wa 'amalan mutaqabbala.",
-                "amharic": "አቤቱ አላህ ሆይ! ጠቃሚ ዕውቀት፤ ፀዳ ሪዝቅ (ምግብ)፤ ተቀባይ ዐምሎ — እጠይቃለሁ።",
+                "transliteration": "አልሏሁምመ ኢንኒ አስአሉከ ዒልመን ናፊዐን ወሪዝቀን ጦይበን ወዐመለን ሙተቀቢላ",
+                "amharic": "ኣላህ ሆይ ጠቃሚ እውቀትን መልካም የሆነ ሲሳይን ተቀባይነት ያለውን ተግባርን እጠይቅሃለው፡፡›› ንጋት ላይ፡፡",
                 "count": 1,
                 "source": "Ibn Majah 1/152"
             }
@@ -1013,7 +1013,7 @@ HISNUL_CHAPTERS = [
     {
         "id": 59,
         "title_en": "Supplication for Parents",
-        "title_am": "ወላጆቹ ዱዓ",
+        "title_am": "እዳ ያለበት ሰው የሚያደርገው ዱዓ",
         "title_ar": "دعاء للوالدين",
         "icon": "👨‍👩‍👧",
         "duas": [
@@ -1029,7 +1029,7 @@ HISNUL_CHAPTERS = [
     {
         "id": 60,
         "title_en": "Supplication for Children",
-        "title_am": "ልጆቻቸን ዱዓ",
+        "title_am": "ሱጁድ ላይ የሚደረግ ዱዓ",
         "title_ar": "دعاء للأولاد",
         "icon": "👶",
         "duas": [
@@ -1052,14 +1052,14 @@ HISNUL_CHAPTERS = [
     {
         "id": 61,
         "title_en": "Supplication upon Hearing Good News",
-        "title_am": "ደስ የሚያሰኝ ዜና ሲሰሙ",
+        "title_am": "ለጉዞ ሲወጡ የሚባል ዱዓ",
         "title_ar": "دعاء السرور والفرح",
         "icon": "🎉",
         "duas": [
             {
                 "arabic": "الْحَمْدُ لِلَّهِ الَّذِي بِنِعْمَتِهِ تَتِمُّ الصَّالِحَاتُ",
-                "transliteration": "Alhamdu lillahil-ladhi bini'matihi tatimmus-salihat.",
-                "amharic": "ጸጋው ሆኖ ደጋናቱ ሁሉ ፍጹም ሚሆኑ አላህ ምስጋና ይሁነው።",
+                "transliteration": "ረሱል ሰለላሁ አለይሂ ወሰለም የሚያስደስት ዜና በደረሳቸው ጊዜ እንዲህ ይሉ ነበር \n\nአልሐምዱ ሊላሂለዚ ቢኒዕመቲሂ ተቲሙ ስሷሊሃቱ  \n\nረሱል ሰለላሁ አለይሂ ወሰለም አንዳች የሚጠሉት ነገር በሚገጥማቸው ወቅት ደግሞ፡  \n\n አልሐምዱ ሊላሂ ዓላ ኩልሊ ሐል   ይሉ ነበር ፡፡",
+                "amharic": "ረሱል ሰለላሁ አለይሂ ወሰለም የሚያስደስት ዜና በደረሳቸው ጊዜ እንዲህ ይሉ ነበር\n\n አልሐምዱ ሊላሂለዚ ቢኒዕመቲሂ ተቲሙ ስሷሊሃቱ  \n\nለአላህ ምስጋና ይገባው፡፡ በፀጋው መልካም ነገሮች ምሉዕ ይሆናል፡፡ ይላሉ፡፡ \n\nረሱል ሰለላሁ አለይሂ ወሰለም አንዳች የሚጠሉት ነገር በሚገጥማቸው ወቅት ደግሞ፡\n\n አልሐምዱ ሊላሂ ዓላ ኩልሊ ሐል  \n\n በማናቸውም ሁኔታ ለአላህ ምስጋና ተገቢው ነው፡፡ ይላሉ፡፡",
                 "count": 1,
                 "source": "Ibn Majah 2/1276"
             }
@@ -1068,14 +1068,14 @@ HISNUL_CHAPTERS = [
     {
         "id": 62,
         "title_en": "Supplication upon Hearing Bad News",
-        "title_am": "ስህተት ዜና ሲሰሙ",
+        "title_am": "የሐዘን መግለጫ ዱዓ",
         "title_ar": "دعاء المصيبة",
         "icon": "😔",
         "duas": [
             {
                 "arabic": "إِنَّا لِلَّهِ وَإِنَّا إِلَيْهِ رَاجِعُونَ، اللَّهُمَّ أْجُرْنِي فِي مُصِيبَتِي وَأَخْلِفْ لِي خَيْرًا مِنْهَا",
-                "transliteration": "Inna lillahi wa inna ilayhi raji'un. Allahumma-jirni fi musibati wa akhlif li khayran minha.",
-                "amharic": "ወደ አላህ ነን — ወደ እርሱ ሁሉ እንመለሳለን። አቤቱ አላህ ሆይ! ለምሥቃቄዬ ምዳቤን ስጠኝ — ምትኩ ክፍሉ ከርሱ ሻለ ስጠኝ። (ዑሙ ሰለማ ሶ.ዐ.ወ. ሰሚ ያሁ ያለ — ምትካቸን ሁሉ ካስፈቀዱ ቀሩ)።",
+                "transliteration": "ኢንና ሊልላሂ ወኢንና ኢለይሂ ራጂዑን፤ አልሏሁምመ አጂርኒ ፊ ሙሲበቲ፤ ወአኽሊፍ ሊ ኸይረን ሚንሀ",
+                "amharic": "እኛ የአላህ ነን፡፡ ወደርሱም ተመላሾች ነን፡፡ አላህ ሆይ ለደረሰብኝ ችግር ምንዳ ስጠኝ፡፡ በርሷ ምትክም የተሸለ ነገር ተካልኝ፡፡",
                 "count": 1,
                 "source": "Muslim 2/632"
             }
@@ -1084,7 +1084,7 @@ HISNUL_CHAPTERS = [
     {
         "id": 63,
         "title_en": "Supplication when Praising a fellow Muslim",
-        "title_am": "ወንድም ሙስሊምን ሲያሞካሹ",
+        "title_am": "በጉርምርምታ ወቅት የሚባል",
         "title_ar": "دعاء المدح",
         "icon": "👍",
         "duas": [
@@ -1100,14 +1100,14 @@ HISNUL_CHAPTERS = [
     {
         "id": 64,
         "title_en": "Supplication for Protection Against the Evil Eye",
-        "title_am": "ዐይን ጥሩ ዱዓ",
+        "title_am": "የሐዘን መግለጫ ዱዓ",
         "title_ar": "دعاء العين",
         "icon": "👁️",
         "duas": [
             {
                 "arabic": "أَعُوذُ بِكَلِمَاتِ اللَّهِ التَّامَّةِ مِنْ كُلِّ شَيْطَانٍ وَهَامَّةٍ وَمِنْ كُلِّ عَيْنٍ لَامَّةٍ",
-                "transliteration": "A'udhu bikalimatillahit-tammati min kulli shaytanin wa hammatin wa min kulli 'aynin lammah.",
-                "amharic": "ከሸይጣን ሁሉ፤ ከምር ሁሉ፤ ዐይን ሁሉ ሊጎዳ ከሚችል ሁሉ — ፍጹማን ቃሎቹ ዘንድ ወደ አላህ ሸሻለሁ። (ነቢዩ ሶ.ዐ.ወ. ሐሰን ሑሰይንን ሊጠቡ ያሉ)።",
+                "transliteration": "ኡዒዙኩማ ቢከሊ ማቲልላሂ አትታመህ ሚን ኩልሊ ሸይጣኒን ወሐምመሀ፤ ወሚን ኩልሊ ዐይኒን ላምመህ",
+                "amharic": "ምሉዕና ፍፁም በሆኑት የአላህ ቃላት ከሰይጣናት ሁሉና ከእኩይ ሰው ተንኮል እንዲሁም ጎጅ ከሆነ ዓይን ሁሉ እጠብቃችኃለሁ፡፡",
                 "count": 1,
                 "source": "Bukhari 4/119"
             }
@@ -1116,7 +1116,7 @@ HISNUL_CHAPTERS = [
     {
         "id": 65,
         "title_en": "Supplication upon Seeing someone Beautiful",
-        "title_am": "አስደናቂ ነገር ሲያዩ",
+        "title_am": "ጨረቃን ሲያዩ የሚደረግ",
         "title_ar": "دعاء رؤية ما يعجب",
         "icon": "😍",
         "duas": [
@@ -1148,14 +1148,14 @@ HISNUL_CHAPTERS = [
     {
         "id": 67,
         "title_en": "Supplication for Repelling the Shaytan",
-        "title_am": "ሸይጣን ሲፈተን",
+        "title_am": "ሸይጧንን ለማባረርና ጉትጎታውን ለመቋቋም",
         "title_ar": "دعاء دفع الشيطان",
         "icon": "🛡️",
         "duas": [
             {
                 "arabic": "أَعُوذُ بِاللَّهِ مِنَ الشَّيْطَانِ الرَّجِيمِ",
-                "transliteration": "A'udhu billahi minash-shaytanir-rajim.",
-                "amharic": "ከተወገደው ሸይጣን ወደ አላህ ሸሻለሁ። (ሲፈተኑ ሲሉ — ሸይጣን ሚወሰዳቸው ዐቅሙ ይደርቃል)።",
+                "transliteration": "አዑዙ ቢልላሂ ሚነሽሸይጧኒር ረጅም",
+                "amharic": "እርጉም ከሆነው ሸይጧን በአላህ እጠበቃለሁ፡፡",
                 "count": 1,
                 "source": "Quran 7:200, Muslim"
             }
@@ -1164,14 +1164,14 @@ HISNUL_CHAPTERS = [
     {
         "id": 68,
         "title_en": "Supplication for Rain (Salat al-Istisqa)",
-        "title_am": "ዝናም ለማምጣት",
+        "title_am": "የሰላት መግቢያ ዱዓ",
         "title_ar": "دعاء الاستسقاء",
         "icon": "🌧️",
         "duas": [
             {
                 "arabic": "اللَّهُمَّ اسْقِنَا غَيْثًا مُغِيثًا مَرِيئًا مَرِيعًا نَافِعًا غَيْرَ ضَارٍّ عَاجِلًا غَيْرَ آجِلٍ",
-                "transliteration": "Allahumma-sqi na ghayathan mughithan, mari'an mari'an, nafi'an ghayra darrin, 'ajilan ghayra ajil.",
-                "amharic": "አቤቱ አላህ ሆይ! ዳኝ ዳኝ — ፈወሱ ሙሉ ጠቃሚ — ጠቃሚ ሊጎዳ ሳይሆን — ቶሎ ሳይዘዬ (ዝናም ስጠን)።",
+                "transliteration": "አልሏሁምመ አስቂና ገይሰን ሙጊሰን መሪአን መሪዓ፣ ናሪዐን ገይረ ዷርሪን፣ ዐጂሉን ገይረ አጂሊን",
+                "amharic": "አላህ ሆይ የሚበጅ፣ ምሉዕ፣ ጤናማ፣ ጠቃሚና ጎጅ ያልሆነን÷ ወቅታዊና የማይዘገይ የሆነን ዝናብ አጠጣን፡፡",
                 "count": 1,
                 "source": "Abu Dawud 1/303"
             }
@@ -1180,7 +1180,7 @@ HISNUL_CHAPTERS = [
     {
         "id": 69,
         "title_en": "Supplication for Protection from the Dajjal",
-        "title_am": "ደጃሉ ጥበቃ",
+        "title_am": "ከሽንት ቤት ሲወጣ",
         "title_ar": "دعاء الحماية من الدجال",
         "icon": "⚠️",
         "duas": [
@@ -1202,8 +1202,8 @@ HISNUL_CHAPTERS = [
         "duas": [
             {
                 "arabic": "أَعُوذُ بِاللَّهِ مِنَ الشَّيْطَانِ الرَّجِيمِ",
-                "transliteration": "A'udhu billahi minash-shaytanir-rajim.",
-                "amharic": "ከተወገደው ሸይጣን ወደ አላህ ሸሻለሁ። (ቁርዓን 16:98 — ቢቁሩ ዑዙ ቢሉ — ሸይጣን ልቡ ሊደፍን አይቻልም)።",
+                "transliteration": "አዑዙ ቢልላሂ ሚነሽሸይጧኒር ረጅም",
+                "amharic": "እርጉም ከሆነው ሸይጧን በአላህ እጠበቃለሁ፡፡",
                 "count": 1,
                 "source": "Quran 16:98"
             }
@@ -1212,14 +1212,14 @@ HISNUL_CHAPTERS = [
     {
         "id": 71,
         "title_en": "Supplication at the Start of any Action",
-        "title_am": "ሥራ ሲጀምሩ",
+        "title_am": "ከምግብ በኋላ የሚደረግ ዱዓ",
         "title_ar": "الدعاء عند البدء بأي عمل",
         "icon": "🚀",
         "duas": [
             {
                 "arabic": "بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ",
-                "transliteration": "Bismillahir-Rahmanir-Rahim.",
-                "amharic": "የምሕረተኛ ምሕረቱ ሰፊ አላህ ስሙ ሆኖ (እጀምራለሁ)። (ሁሉ ዐምሎ ቢስሚሏ ካልጀመሩ ቱርፋ ምናምን)።",
+                "transliteration": "ሰሚዐልሏሁ ሊመን ሐሚደሀ",
+                "amharic": "አላህ የሚያመሰግነውን ይሰማል፡፡",
                 "count": 1,
                 "source": "Quran 1:1, Abu Dawud"
             }
@@ -1228,14 +1228,14 @@ HISNUL_CHAPTERS = [
     {
         "id": 72,
         "title_en": "Supplication for Welcoming a New Baby",
-        "title_am": "ልጅ ሲወለድ",
+        "title_am": "ሱጁድ ላይ የሚደረግ ዱዓ",
         "title_ar": "دعاء المولود",
         "icon": "👶",
         "duas": [
             {
                 "arabic": "بَارَكَ اللَّهُ لَكَ فِي الْمَوْهُوبِ لَكَ وَشَكَرْتَ الْوَاهِبَ وَبَلَغَ أَشُدَّهُ وَرُزِقْتَ بِرَّهُ",
-                "transliteration": "Barakallahu laka fil-mawhubu laka wa shakart al-wahib, wa balagha ashuddahu wa ruziqta birrah.",
-                "amharic": "አላህ ለምን ሰጣቸሁ ሁሉ ላይ ባርካ ያሳርፍ። ሰጪውን ምስጋናን ሰጡ። ጉልምስናቸን (ሙሉ ዕድሜ) ደርሰው — ምስጋናቸን ልዩ ይሁን።",
+                "transliteration": "ባረከሏሁ ለከ ፊል መውሂቢ ለከ፤ ወሸከርተን ዋሂበ፤ ወበለገ አሸዱደሁ፤ ወሩዚቅተ ቢርረሁ  \n\nብሥራት የተደረገለት ሰው እንዲህ በማለት ይመልስ፡፡\n\nባረከልሏሁ ለከ ወባረከ ዐለይ፤ ወጃዛለልሏሁ\\ኸይረን ወረዘቀቁልሏሁ ሚስለሁ፤ ወአጅዘሰ ሰዋበከ",
+                "amharic": "የተሰጠህን ልጅ አላህ ይባርክልህ፡፡ ለጋሹን አላህን አመስጋኝ ሁን፡፡ ለማድረግ ያበቃው መብትህን ጠባቂ፤ ፈቀድህን ፈጻሚ ያደርግልህ፡፡ \n\nብሥራት የተደረገለት ሰው እንዲህ በማለት ይመልስ፡፡\n\nአላህ ላንተም ረድኤቱን ይለግስህ፡፡ አላህ ዋንዳህን አይንፈግህ፡፡ አላህ አምሳያውን ልጅ ይለግስህ፡፡ ምንዳህን ያብዛልህ፡፡",
                 "count": 1,
                 "source": "Ibn as-Sunni, Al-Hakim"
             }
@@ -1244,7 +1244,7 @@ HISNUL_CHAPTERS = [
     {
         "id": 73,
         "title_en": "Supplication for Repentance (Tawbah)",
-        "title_am": "ንስሃ (ተዉባ)",
+        "title_am": "መጓጓዣ ላይ ሲወጡ የሚባል ዱዓ",
         "title_ar": "دعاء التوبة",
         "icon": "🔄",
         "duas": [
@@ -1257,8 +1257,8 @@ HISNUL_CHAPTERS = [
             },
             {
                 "arabic": "لَا إِلَهَ إِلَّا أَنتَ سُبْحَانَكَ إِنِّي كُنتُ مِنَ الظَّالِمِينَ",
-                "transliteration": "La ilaha illa anta subhanaka inni kuntu minaz-zalimin.",
-                "amharic": "ከአንተ ሌላ አምላክ የለም — ንጹሐ ስምህ ይሁን — ጨካኞቹ (ነፍሳቸን ላይ) ነበርኩ። (ዮናስ ዐ.ሰ. ዱዓ — ቁርዓን 21:87 — ምን ሙስሊም ይህን ዱዓ ቢያደርጉ ሊቀበሉ ነው)።",
+                "transliteration": "ላኢላህ ኢልላ አንተ ሱብሃነከ ኢንኒ ኩንቱ ሚን አዝዛሊሚይን",
+                "amharic": "ከአንተ ውጭ ሌላ አምላክ የለም፡፡ ጥራት ይገባህ፡፡ እኔ ከበደለኞች አንዱ ነኝ፡፡",
                 "count": 1,
                 "source": "Quran 21:87, Tirmidhi"
             }
@@ -1267,14 +1267,14 @@ HISNUL_CHAPTERS = [
     {
         "id": 74,
         "title_en": "Supplication when Doubting the Faith",
-        "title_am": "ጥርጣሬ ሲፈጠር",
+        "title_am": "ለጉዞ ሲወጡ የሚባል ዱዓ",
         "title_ar": "دعاء الوسوسة",
         "icon": "🤔",
         "duas": [
             {
                 "arabic": "هُوَ الْأَوَّلُ وَالْآخِرُ وَالظَّاهِرُ وَالْبَاطِنُ وَهُوَ بِكُلِّ شَيْءٍ عَلِيمٌ",
-                "transliteration": "Huwal-Awwalu wal-Akhiru wadh-Dhahiru wal-Batin wa Huwa bikulli shay'in 'Alim.",
-                "amharic": "እርሱ ፊተኛ ኋለኛ ዐይናቸን ሚስጥሩ ሁሉ አዋቂ ነው። (ቁርዓን 57:3 — ዊስዋስ (ጥርጣሬ) ሲፈጠር ሊሉ ሸይጣን ይሄዳቸዋል)።",
+                "transliteration": "ሁወል አውወሉ ወል አኸሩ ወዝዟሂሩ ወል ባጢኑ ወሁወ ቢኩልሊ ሸይኢን ዐሊይም",
+                "amharic": "የመጀመሪያውም የመጨረሻውም÷ ግልፁም ስውሩም እርሱ ነው፡፡ እርሱ የሁሉም ነገር አዋቂ ነው፡፡",
                 "count": 1,
                 "source": "Quran 57:3, Muslim 1/120"
             }
@@ -1283,7 +1283,7 @@ HISNUL_CHAPTERS = [
     {
         "id": 75,
         "title_en": "Supplication for Protection of Property",
-        "title_am": "ንብረት ጥበቃ",
+        "title_am": "በትካዜና በሃዘን ወቅት",
         "title_ar": "دعاء حفظ المال",
         "icon": "🔒",
         "duas": [
@@ -1299,14 +1299,14 @@ HISNUL_CHAPTERS = [
     {
         "id": 76,
         "title_en": "Supplication when Afraid",
-        "title_am": "ሲፈሩ",
+        "title_am": "ለጉዞ ሲወጡ የሚባል ዱዓ",
         "title_ar": "دعاء الخوف",
         "icon": "😨",
         "duas": [
             {
                 "arabic": "حَسْبُنَا اللَّهُ وَنِعْمَ الْوَكِيلُ",
-                "transliteration": "Hasbunallahu wa ni'mal-wakil.",
-                "amharic": "አላህ ይበቃናል — ምርጥ ጠባቂ ነው። (ቁርዓን 3:173 — ኢብራሂም ዐ.ሰ. ናርን ሊወረዉሩ — ዐ.ሰ. ይህን አሉ — ናር ቁር ሆናቸዋለች)።",
+                "transliteration": "ሀስቡነልሏሁ ወኒእመል ወኪል",
+                "amharic": "አላህ ጠባቂያችን ነው፡፡ አላህ ያማረ መመኪያ",
                 "count": 1,
                 "source": "Quran 3:173, Bukhari 5/172"
             }
@@ -1315,7 +1315,7 @@ HISNUL_CHAPTERS = [
     {
         "id": 77,
         "title_en": "Supplication for Guidance",
-        "title_am": "ትክክለኛ መንገድ ዱዓ",
+        "title_am": "የሐዘን መግለጫ ዱዓ",
         "title_ar": "دعاء الهداية",
         "icon": "🌟",
         "duas": [
@@ -1331,14 +1331,14 @@ HISNUL_CHAPTERS = [
     {
         "id": 78,
         "title_en": "Supplication for a Happy Life",
-        "title_am": "ደስተኛ ሕይወት ዱዓ",
+        "title_am": "በገድ ያለማመንን ለማመልከት የሚደረግ ዱዓ",
         "title_ar": "دعاء الحياة الطيبة",
         "icon": "🌺",
         "duas": [
             {
                 "arabic": "رَبَّنَا آتِنَا فِي الدُّنْيَا حَسَنَةً وَفِي الْآخِرَةِ حَسَنَةً وَقِنَا عَذَابَ النَّارِ",
-                "transliteration": "Rabbana atina fid-dunya hasanatan wa fil-akhirati hasanatan wa qina 'adhaban-nar.",
-                "amharic": "ጌታቸን ሆይ! ዱንያ ጥቃቄ ስጠን — አኺራ ጥቃቄ ስጠን — ናር ቅጣቱ ጠብቀን። (ቁርዓን 2:201 — ሁሉ ዱዓ ሙሉ ዱዓ ነው)።",
+                "transliteration": "ነብዩ ሶዐወ የአላህን ቤት በ”ሩክነል የማኒ” እና በ”ሐጀረል አሰወድ” መካከል:ሲደርሱ\\ ‘ረብበና አቲና ፊድዱንያ ሐሰነተን ወፊል አኺረቲ ሐሰነተን ወቂና ዐዛበንናር",
+                "amharic": "ጌታችን ሆይ በዚህች ዓለም መልካምን÷ በቀጣዩ ዓለምም መልካም ነገር ለግሠን፡፡ ከእሳት ቅጣ ትም ጠብቀን፡፡",
                 "count": 1,
                 "source": "Quran 2:201, Bukhari 6/52"
             }
@@ -1347,14 +1347,14 @@ HISNUL_CHAPTERS = [
     {
         "id": 79,
         "title_en": "Supplication for Entering Paradise",
-        "title_am": "ጀነት ለመግባት ዱዓ",
+        "title_am": "ወደ መስጊድ ሲገቡ",
         "title_ar": "دعاء دخول الجنة",
         "icon": "🌿",
         "duas": [
             {
                 "arabic": "اللَّهُمَّ إِنِّي أَسْأَلُكَ الْجَنَّةَ وَأَعُوذُ بِكَ مِنَ النَّارِ",
-                "transliteration": "Allahumma inni as'alukal-jannata wa a'udhu bika minan-nar.",
-                "amharic": "አቤቱ አላህ ሆይ! ጀነት እጠይቃለሁ — ናር ወደ አንተ ሸሻለሁ። (ሦስቴ ጀነት ሊያምናቸሩ ናር ሊያምናቸሩ — ሁሉ ቤያቸን ሊሆን ለኔ ስጥ ይሉ ነቢዩ ሶ.ዐ.ወ.)።",
+                "transliteration": "አልሏሁምመ ኢንኒ አሰአሉከል ጀንነተ ወአዑዙ ቢከ ሚነንናር፡፡",
+                "amharic": "አላህ ሆይ እኔ ጀነትን እጠይቅሃለሁ፡፡ ከእሳትም በአንተ እጠበቃለሁ፡፡",
                 "count": 3,
                 "source": "Tirmidhi 5/534, Ibn Majah 2/1266"
             }
@@ -1363,7 +1363,7 @@ HISNUL_CHAPTERS = [
     {
         "id": 80,
         "title_en": "Supplication at Times of Hardship",
-        "title_am": "ቸገርቱ ሲደርስ",
+        "title_am": "በጉርምርምታ ወቅት የሚባል",
         "title_ar": "دعاء الشدة",
         "icon": "💪",
         "duas": [
@@ -1379,7 +1379,7 @@ HISNUL_CHAPTERS = [
     {
         "id": 81,
         "title_en": "Supplication for Seeking Refuge from Poverty",
-        "title_am": "ድህነት ጥበቃ",
+        "title_am": "ከሩኩዕ ሲነሱ የሚደረግ ዱዓ",
         "title_ar": "دعاء الاستعاذة من الفقر",
         "icon": "🌾",
         "duas": [
@@ -1395,7 +1395,7 @@ HISNUL_CHAPTERS = [
     {
         "id": 82,
         "title_en": "Supplication when Experiencing Difficulties in Reciting Quran",
-        "title_am": "ቁርዓን ሲያዩ ቢቸግር",
+        "title_am": "በቀብር ጉብኝት ወቅት የሚባል",
         "title_ar": "دعاء تيسير القرآن",
         "icon": "📿",
         "duas": [
@@ -1411,7 +1411,7 @@ HISNUL_CHAPTERS = [
     {
         "id": 83,
         "title_en": "Supplication for Accepting Good Deeds",
-        "title_am": "ሥራ ሊቀበሉ ዱዓ",
+        "title_am": "ከምግብ በፊት የሚደረግ ዱዓ",
         "title_ar": "دعاء قبول العمل الصالح",
         "icon": "✅",
         "duas": [
@@ -1427,7 +1427,7 @@ HISNUL_CHAPTERS = [
     {
         "id": 84,
         "title_en": "Supplication for Steadfastness in Faith",
-        "title_am": "እምነት ማጽናናት",
+        "title_am": "ወደ መስጊድ ሲሄዱ",
         "title_ar": "دعاء الثبات على الدين",
         "icon": "⚓",
         "duas": [
@@ -1443,14 +1443,14 @@ HISNUL_CHAPTERS = [
     {
         "id": 85,
         "title_en": "Supplication before Reciting Al-Fatihah in Prayer",
-        "title_am": "ሶላት ዉስጥ ፋቲሃ ከበፊት",
+        "title_am": "የሰላት መግቢያ ዱዓ",
         "title_ar": "دعاء الاستفتاح",
         "icon": "🕌",
         "duas": [
             {
                 "arabic": "سُبْحَانَكَ اللَّهُمَّ وَبِحَمْدِكَ وَتَبَارَكَ اسْمُكَ وَتَعَالَى جَدُّكَ وَلَا إِلَهَ غَيْرُكَ",
-                "transliteration": "Subhanakal-lahumma wa bihamdika wa tabarakasmuka wa ta'ala jadduka wa la ilaha ghayruk.",
-                "amharic": "አቤቱ አላህ ሆይ ሁሉ ንጽሕና ስምህ ምስጋናህ ሆኖ ይሁን። ስምህ ተባረከ። ሥልጣንህ ልዕሉ ሆነ። ከአንተ ሌላ አምላክ የለም።",
+                "transliteration": "ሱብሃነከልሏሁመ ወቢሐምዲከ ወተባረከ ኢስሙከ ወተዐላ ጀድዱከ ወላኢላሀ ገይሩክ",
+                "amharic": "አላህ ሆይ ከጐደሎ ነገሮች ሁሉ የጠራህ ነህ፡፡ ምስጋናዬንም አቀርባለሁ፡፡ ስምህ የተቀደሰ ነው፡፡ ልዕልናህ ከፍ ያለ ነው፡፡ ከአንተ ሌላ አምላክ የለም",
                 "count": 1,
                 "source": "Abu Dawud 1/124, Tirmidhi 2/3"
             }
@@ -1459,7 +1459,7 @@ HISNUL_CHAPTERS = [
     {
         "id": 86,
         "title_en": "Supplication upon Completing Recitation of Quran",
-        "title_am": "ቁርዓን ካጠናቀቁ",
+        "title_am": "የዊትር ቁኑት",
         "title_ar": "دعاء ختم القرآن",
         "icon": "📖",
         "duas": [
@@ -1475,7 +1475,7 @@ HISNUL_CHAPTERS = [
     {
         "id": 87,
         "title_en": "Supplication when in the Company of Righteous People",
-        "title_am": "ደጋጎቹ ሰዎቹ ሲጠጉ",
+        "title_am": "በትካዜና በሃዘን ወቅት",
         "title_ar": "دعاء مجالسة الصالحين",
         "icon": "👥",
         "duas": [
@@ -1491,14 +1491,14 @@ HISNUL_CHAPTERS = [
     {
         "id": 88,
         "title_en": "Supplication upon Leaving a Gathering",
-        "title_am": "ስብሰባ ሲቋጩ",
+        "title_am": "ከስብሰባ ሲነሱ የሚሉት ዚክር",
         "title_ar": "كفارة المجلس",
         "icon": "🏁",
         "duas": [
             {
                 "arabic": "سُبْحَانَكَ اللَّهُمَّ وَبِحَمْدِكَ أَشْهَدُ أَنْ لَا إِلَهَ إِلَّا أَنْتَ أَسْتَغْفِرُكَ وَأَتُوبُ إِلَيْكَ",
-                "transliteration": "Subhanakal-lahumma wa bihamdika, ashhadu an la ilaha illa anta, astaghfiruka wa atubu ilaik.",
-                "amharic": "አቤቱ አላህ ሆይ! ሁሉ ንጽሕና ምስጋናህ ሆኖ ይሁን። ከአንተ ሌላ አምላክ እንደሌለ እምሰክርባለሁ። ይቅርታ እጠይቃለሁ — ወደ አንተ ንስሃ እገባለሁ። (ካፋራቱ ማጅሊስ — ስብሰባ ጉዳቱ ሁሉ ሊሠረዝ ነው)።",
+                "transliteration": "ሱብሐነከልሏሁምመ ወቢሐምዲከ አሽሃዱ አን ላ ኢላሃ ኢልላ አንተ አሰተግፊሩከ ወአቱቡ ኢለይክ፡፡",
+                "amharic": "አላህ ሆይ ጥራት የተገባህ ነህ፡፡ ምስጋናም ላንተ ይድረስ፡፡ ምህረትህን እጠይቃለሁ፡፡ ወዳንተም ንሰሀ እገባለሁ፡፡",
                 "count": 1,
                 "source": "Tirmidhi 5/495, Ibn Majah 1/302"
             }
@@ -1507,7 +1507,7 @@ HISNUL_CHAPTERS = [
     {
         "id": 89,
         "title_en": "Supplication for Good Character",
-        "title_am": "ሥነ ምግባር ዱዓ",
+        "title_am": "ወደ ሽንት ቤት ሲገባ",
         "title_ar": "دعاء حسن الخلق",
         "icon": "😊",
         "duas": [
@@ -1530,14 +1530,14 @@ HISNUL_CHAPTERS = [
     {
         "id": 90,
         "title_en": "Supplication for Gratitude",
-        "title_am": "ምስጋና (ሹክር) ዱዓ",
+        "title_am": "የጭንቅ ጊዜ ዱዓ",
         "title_ar": "دعاء الشكر",
         "icon": "🙏",
         "duas": [
             {
                 "arabic": "اللَّهُمَّ أَعِنِّي عَلَى ذِكْرِكَ وَشُكْرِكَ وَحُسْنِ عِبَادَتِكَ",
-                "transliteration": "Allahumma a'inni 'ala dhikrika wa shukrika wa husni 'ibadatik.",
-                "amharic": "አቤቱ አላህ ሆይ! ዚክርህ (ማስታወስ)፤ ምስጋናህ (ሹክር)፤ ምርጥ ዐምሎህ ላይ ቻይ ሁን። (ሙዓዝ ቢን ጀበሊ ሶ.ዐ.ወ. ሰጣቸሁ ዱዓ — ሶላት ሁሉ ካቆሱ ቡ ይሉ)።",
+                "transliteration": "አልሏሁምመ አዒንኒ አላ ዚክሪከ ወሹክሪከ፣ ወሑስኒ ዒባደቲክ",
+                "amharic": "አላህ ሆይ አንተን ለማስታወስ ለማመስገንና በሚገባ እገዛህ ዘንድ እገዘኝ፡",
                 "count": 1,
                 "source": "Abu Dawud 2/86, Nasai 3/53"
             }
@@ -1546,7 +1546,7 @@ HISNUL_CHAPTERS = [
     {
         "id": 91,
         "title_en": "Supplication upon Losing Something",
-        "title_am": "ንብረት ሲጠፋ",
+        "title_am": "በቁጣ ወቅት የሚደረግ ዱዓ",
         "title_ar": "دعاء الضالة",
         "icon": "🔍",
         "duas": [
@@ -1562,7 +1562,7 @@ HISNUL_CHAPTERS = [
     {
         "id": 92,
         "title_en": "Supplication when Performing Ruqyah (Healing Recitation)",
-        "title_am": "ሩቅያ (ፈወሳ ቁርዓን)",
+        "title_am": "ነፋስ ሲነፍስ የሚደረግ",
         "title_ar": "دعاء الرقية",
         "icon": "🌿",
         "duas": [
@@ -1594,14 +1594,14 @@ HISNUL_CHAPTERS = [
     {
         "id": 94,
         "title_en": "Supplication when Leaving Home",
-        "title_am": "ቤት ሲወጡ",
+        "title_am": "ከሽንት ቤት ሲወጣ",
         "title_ar": "دعاء الخروج من البيت",
         "icon": "🚪",
         "duas": [
             {
                 "arabic": "بِسْمِ اللَّهِ تَوَكَّلْتُ عَلَى اللَّهِ وَلَا حَوْلَ وَلَا قُوَّةَ إِلَّا بِاللَّهِ",
-                "transliteration": "Bismillahi tawakkaltu 'alallahi wa la hawla wa la quwwata illa billah.",
-                "amharic": "የአላህ ስም ሆኖ — አላህ ላይ ተመካሁ። ዐቅምም ቻይነትም አላህ ብቻ ነው። (ሸይጣን ቀርቦ ሊቀርብ አይቻልም — ዱዓ ያለ)።",
+                "transliteration": "ቡስሚልላህ፣ ተወከልቱ ዐለ አላህ ወላ ሐውላ ወላ ቁወታ ኢላ ቢላህ ፡፡",
+                "amharic": "በአላህ ስም በአላህ ላይ ተጠጋሁ። ከአላህ ጋር ካልሆነ በስተቀር ምንም አቅምም ሆነ ሃይል የለም።",
                 "count": 1,
                 "source": "Abu Dawud 4/325, Tirmidhi 5/490"
             }
@@ -1610,14 +1610,14 @@ HISNUL_CHAPTERS = [
     {
         "id": 95,
         "title_en": "Supplication for the Start of New Month",
-        "title_am": "አዲስ ወር ሲጀምር",
+        "title_am": "በትካዜና በሃዘን ወቅት",
         "title_ar": "دعاء الهلال",
         "icon": "🌙",
         "duas": [
             {
                 "arabic": "اللَّهُمَّ أَهِلَّهُ عَلَيْنَا بِالْأَمْنِ وَالْإِيمَانِ وَالسَّلَامَةِ وَالإِسْلَامِ وَالتَّوْفِيقِ لِمَا تُحِبُّ وَتَرْضَى رَبُّنَا وَرَبُّكَ اللَّهُ",
-                "transliteration": "Allahumma ahillahu 'alayna bil-amni wal-iman, was-salamati wal-Islam, wat-tawfiqi lima tuhibbu wa tarda, Rabbuna wa Rabbukallah.",
-                "amharic": "አቤቱ አላህ ሆይ! ይህን ወር ደህንነት፤ ኢማን፤ ሰላምና ኢስላም ጭምር ያምጣብን። ምን ምሩ ምን ደስ ሁሉ ወደ ቶፊቅ (ቅን ምግባር) ስጠን። ጌታቸን ጌታቸሁ አላህ ነው።",
+                "transliteration": "አልሏሁ አክበር፣ አልሏሁምመ አሒልለሁ ዐለይና ቢል አምኒ ወል ኢማን፣ ወስሰላመቲ ወል ኢስላም፣ ወትተውፊቂ ሊማ ቱሒብቡ ረብበና ወተርዷ፣ ረብበና ወረብቡከልሏህ",
+                "amharic": "አላህ ከሁሉም የላቀ ነው፡፡ አላህ ሂይ ይችን ጨረቃ በጤና፣ በእምነት፣ በሰላም፣ በኢስላምና አንተ በምትወደውና በንታፈቅረው መልኩ በዙሪያችን እንድታበራ አድርጋት፡፡ ጨረቃ ሆይ የአንችም የኛም ጌታ አላህ ነው፡",
                 "count": 1,
                 "source": "Tirmidhi 5/504, Ahmad"
             }
@@ -1626,7 +1626,7 @@ HISNUL_CHAPTERS = [
     {
         "id": 96,
         "title_en": "Supplication for Protection from Specific Trials",
-        "title_am": "ፈተናዎቹ ጥበቃ",
+        "title_am": "ሽርክ ሲያሰጋዎ  የሚባል ዱዓ",
         "title_ar": "دعاء الحماية من الفتن",
         "icon": "🛡️",
         "duas": [
@@ -1642,14 +1642,14 @@ HISNUL_CHAPTERS = [
     {
         "id": 97,
         "title_en": "Witr Prayer Supplication (Qunut)",
-        "title_am": "ዊትር ሶላት ቁኑቱ",
+        "title_am": "የዊትር ቁኑት",
         "title_ar": "دعاء القنوت في الوتر",
         "icon": "🌙",
         "duas": [
             {
                 "arabic": "اللَّهُمَّ اهْدِنِي فِيمَنْ هَدَيْتَ وَعَافِنِي فِيمَنْ عَافَيْتَ وَتَوَلَّنِي فِيمَنْ تَوَلَّيْتَ وَبَارِكْ لِي فِيمَا أَعْطَيْتَ وَقِنِي شَرَّ مَا قَضَيْتَ",
-                "transliteration": "Allahumma-hdini fiman hadayta, wa 'afini fiman 'afayta, wa tawallani fiman tawallayta, wa barik li fima a'tayta, wa qini sharra ma qadayta.",
-                "amharic": "አቤቱ አላህ ሆይ! ከመሩዋቸሁ ሁሉ ጋር ምርን። ዓፊያ ከሰጠሃቸሁ ሁሉ ጋር ዓፊያ ስጠኝ። ወዳጆቻቸሁ ሁሉ ጋር ወዳጄ ሁን። ከሰጠሃቸሁ ሁሉ ላይ ባርካ ስጥልኝ። ካዘዘሃቸሁ ሁሉ ክፋቱ ጠብቀኝ።",
+                "transliteration": "አልሏሁምመህዲኒ ፊይመን ሃደይተ ወአፊኒ ፊይመን ዓፈይተ ወተወለኒ ፊይመን ተወለይተ ወባሪክ ሊ ፊይማ አእጠይተ ወቂኒ ሸርረ ማቀደይተ ፊኢንነከ ተቅዲ ወላ ዩቅዳ አለይከ ኢንነሁ ላየዚልሉ መን ዋለይተ ወላ የኢዝዙ መን ዋለይተ ወላ የኢዝዙ መን አደይተ ተባረክተ ረብበና ወተአለይተ",
+                "amharic": "አላህ ሆይ ሌሎችን እንዳቀናኸው እኔንም አቅናኝ፡፡ ለሌሎች ጤና እንደሰጠኸው ለእኔም ስጠኝ፡፡ ለሌሎች ዋቢ እንደሆንክ ለኔም ዋኒ ሁነኝ፡፡ በሰጠኸኝ ፀጋ ረድኤትህን ጨምርልኝ፡፡ ከወሰንከው ክፉ ነገር ጠብቀኝ፡፡ አንተ ትወስናለህ፡፡ በአንተ ላይ አይወሰንብክም፡፡ አንተ የተወዳጀኸው አይዋረድም፡፡ አንተ ጠላት የሆንከው ክብር አይጎናፀፍም፡፡ የተቀደክና ልዑል ነህ፡፡",
                 "count": 1,
                 "source": "Abu Dawud 2/39, Tirmidhi 2/328"
             }
@@ -1658,21 +1658,21 @@ HISNUL_CHAPTERS = [
     {
         "id": 98,
         "title_en": "Supplication during Prostration (Sujud)",
-        "title_am": "ሱጁድ (ሰጂደ) ዱዓ",
+        "title_am": "ሱጁድ ላይ የሚደረግ ዱዓ",
         "title_ar": "دعاء السجود",
         "icon": "🕌",
         "duas": [
             {
                 "arabic": "سُبْحَانَ رَبِّيَ الْأَعْلَى",
-                "transliteration": "Subhana Rabbiyal-A'la.",
-                "amharic": "ልዕሉ ጌታዬ ሁሉ ንጽሕና ስሙ ይሁን። (ሦስቴ ወይም ሰባቴ)።",
+                "transliteration": "ሱብሐነ ረብቢየል አዕላ ሱብሐነ ረብቢየል አዕላ  ሱብሐነ ረብቢየል አዕላ",
+                "amharic": "ልዑል የሆነው አላህ ጥራት ይገባው (ሦስት ጊዜ)",
                 "count": 3,
                 "source": "Abu Dawud 1/230, Ibn Majah 1/287"
             },
             {
                 "arabic": "اللَّهُمَّ اغْفِرْ لِي ذَنْبِي كُلَّهُ دِقَّهُ وَجِلَّهُ وَأَوَّلَهُ وَآخِرَهُ وَعَلَانِيَتَهُ وَسِرَّهُ",
-                "transliteration": "Allahumma-ghfir li dhanbi kullahu diqqahu wa jillahu wa awwalahu wa akhirahu wa 'alaniyyatahu wa sirrahu.",
-                "amharic": "አቤቱ አላህ ሆይ! ኃጢአቴን ሁሉ — ትናንሹ ትልቅ — ፊተኛ ኋለኛ — ዐይናቸን ሚስጥሩ — ሁሉ ይቅር ብለኝ።",
+                "transliteration": "አልሏሁምመ ኢግፊርሊ ዘንቢ ከልለሁ፣ ዲቅቀሁ፣ ወጂልለሁ፣ ወአውወለሁ፣ ወአኺረሁ፣ ወዐላኒየተሁ ወሲርረሁ፡፡",
+                "amharic": "አላህ ሆይ ሁሉንም ወንጀሌን ማረኝ፡፡ ትንሹንም ትልቁንም፡፡ የመጀመሪያውንም የኋለኛውንም፡፡ ይፋ የሆነውንም ምስጢራዊ የሆነውንም፡፡",
                 "count": 1,
                 "source": "Muslim 1/350"
             }
@@ -1681,14 +1681,14 @@ HISNUL_CHAPTERS = [
     {
         "id": 99,
         "title_en": "Supplication when Sitting between the two Prostrations",
-        "title_am": "ሁለቱ ሱጁዶቹ መካከል",
+        "title_am": "በስጁድ መካከል የሚባል ዱዓ",
         "title_ar": "دعاء الجلوس بين السجدتين",
         "icon": "🕌",
         "duas": [
             {
                 "arabic": "رَبِّ اغْفِرْ لِي وَارْحَمْنِي وَاجْبُرْنِي وَارْفَعْنِي وَارْزُقْنِي وَاهْدِنِي وَعَافِنِي وَاعْفُ عَنِّي",
-                "transliteration": "Rabbi-ghfir li, warhamni, wajburni, warfa'ni, warzuqni, wahdini, wa 'afini, wa'fu 'anni.",
-                "amharic": "ጌታዬ ሆይ! ይቅር ብለኝ። ምሕረት ስጠኝ። ሙሉ አድርገኝ። ከፍ አድርገኝ። ሪዝቅ ስጠኝ። ምርን። ዓፊያ ስጠኝ። ዐፍ ብለኝ።",
+                "transliteration": "አልሏሁምመ ኢግፊርሊ ወርሐምኒ ወህዲኒ ወጅቡርኒ ወዓፊኒ ወርዙቅኒ ወርፈዕኒ፡፡",
+                "amharic": "አላህ ሆይ ማረኝ፣ እዘንልኝ፣ ትክክለኛውን ጐዳና ምራኝ፤ ጠግነኝ፤ ሲሳይን ለግሰኝ፤ የላቀ ደረጃን አጐናፅፈኝ፡፡",
                 "count": 1,
                 "source": "Abu Dawud 1/231, Ibn Majah 1/295"
             }
@@ -1697,14 +1697,14 @@ HISNUL_CHAPTERS = [
     {
         "id": 100,
         "title_en": "Supplication after completing Hajj",
-        "title_am": "ሐጅ ካጠናቀቁ",
+        "title_am": "ወደ መስጊድ ሲገቡ",
         "title_ar": "دعاء بعد الحج",
         "icon": "🕋",
         "duas": [
             {
                 "arabic": "رَبَّنَا آتِنَا فِي الدُّنْيَا حَسَنَةً وَفِي الآخِرَةِ حَسَنَةً وَقِنَا عَذَابَ النَّارِ",
-                "transliteration": "Rabbana atina fid-dunya hasanatan wa fil-akhirati hasanatan wa qina 'adhaban-nar.",
-                "amharic": "ጌታቸን ሆይ! ዱንያ ጥቃቄ ስጠን — አኺራ ጥቃቄ ስጠን — ናር ቅጣቱ ጠብቀን። (ቁርዓን 2:201 — ኢብን ዑመር ሐጅ ዑምራ ሁሉ ዙፋናቸን ይህን ዱዓ ያሉ)።",
+                "transliteration": "ነብዩ ሶዐወ የአላህን ቤት በ”ሩክነል የማኒ” እና በ”ሐጀረል አሰወድ” መካከል:ሲደርሱ\\ ‘ረብበና አቲና ፊድዱንያ ሐሰነተን ወፊል አኺረቲ ሐሰነተን ወቂና ዐዛበንናር",
+                "amharic": "ጌታችን ሆይ በዚህች ዓለም መልካምን÷ በቀጣዩ ዓለምም መልካም ነገር ለግሠን፡፡ ከእሳት ቅጣ ትም ጠብቀን፡፡",
                 "count": 1,
                 "source": "Quran 2:201, Bukhari"
             }
@@ -1719,8 +1719,8 @@ HISNUL_CHAPTERS = [
         "duas": [
             {
                 "arabic": "لَّا إِلَٰهَ إِلَّا أَنتَ سُبْحَانَكَ إِنِّي كُنتُ مِنَ الظَّالِمِينَ",
-                "transliteration": "La ilaha illa anta subhanaka inni kuntu minaz-zalimin.",
-                "amharic": "ከአንተ ሌላ አምላክ የለም — ንጹሐ ስምህ ይሁን — ጨካኞቹ (ነፍሳቸን ላይ) ነበርኩ። (ቁርዓን 21:87 — ዓሳ ሆዱ ሲሆን ዩኑስ ዐ.ሰ. ያሉ — ሙስሊሙ ሁሉ ቢያደርጉ ሊቀበሉ ነው)።",
+                "transliteration": "ላኢላህ ኢልላ አንተ ሱብሃነከ ኢንኒ ኩንቱ ሚን አዝዛሊሚይን",
+                "amharic": "ከአንተ ውጭ ሌላ አምላክ የለም፡፡ ጥራት ይገባህ፡፡ እኔ ከበደለኞች አንዱ ነኝ፡፡",
                 "count": 1,
                 "source": "Quran 21:87, Tirmidhi 5/529"
             }
@@ -1777,7 +1777,7 @@ HISNUL_CHAPTERS = [
     {
         "id": 105,
         "title_en": "Supplication for Entering Medina",
-        "title_am": "ወደ መዲና ሲሄዱ",
+        "title_am": "ወደ መስጊድ ሲገቡ",
         "title_ar": "دعاء دخول المدينة",
         "icon": "🕌",
         "duas": [
@@ -1793,7 +1793,7 @@ HISNUL_CHAPTERS = [
     {
         "id": 106,
         "title_en": "Supplication at the time of Drought",
-        "title_am": "ዝናም ሲቋረጥ",
+        "title_am": "ለጉዞ ሲወጡ የሚባል ዱዓ",
         "title_ar": "دعاء الجفاف",
         "icon": "☀️",
         "duas": [
@@ -1809,14 +1809,14 @@ HISNUL_CHAPTERS = [
     {
         "id": 107,
         "title_en": "Supplication when Mounting an Animal or Vehicle",
-        "title_am": "ተሸከርካሪ ሲጫኑ",
+        "title_am": "በስጁደተል ቲላዋህ ወቅት የሚባል ዱዓ",
         "title_ar": "دعاء ركوب الدابة",
         "icon": "🏇",
         "duas": [
             {
                 "arabic": "سُبْحَانَ الَّذِي سَخَّرَ لَنَا هَذَا وَمَا كُنَّا لَهُ مُقْرِنِينَ وَإِنَّا إِلَى رَبِّنَا لَمُنْقَلِبُونَ",
-                "transliteration": "Subhanal-ladhi sakhkhara lana hadha wa ma kunna lahu muqrinin wa inna ila Rabbina lamunqalibun.",
-                "amharic": "አላህ ሁሉ ታላቅ ነው (x3)። ይህን ለኛ ያቀናጀ — ያለ ርሱ ረዳትነት ሊቃቆሙ ሳንችል ሳለ — ሁሉ ንጽሕና ለርሱ ይሁን። ወደ ጌታቸን (ለትንሣኤ) እርግጥ እንመለሳለን። (ቁርዓን 43:13)።",
+                "transliteration": "ቢሰስሚልላሂ አልሐምዱ ሊላሂ፤ ሱብሐነለዚ ሰኸረ ለና ሐዛ ወማ ኩንና ለሁ ሙቅሪኒን፣ ወኢንና ኢላ ረብቢና ለሙንቀሊቡን፤ አልሐምዱ ሊልላህ፣ አልሐምዱ ሊልላህ፣ አልሐምዱ ሊልላህ፣ አልሏሁ አክበር፣ አልሏሁ አክበር፣ አልሏሁ አክበር፣ ሱብሐነከልሏሁምመ ኢንኒ ዘለምቱ ነፍሲ ፈግፊር ሊ፣ ፈኢንነሁ ላየግፊሩ ዝዙኑብ ኢልላ አንተ",
+                "amharic": "በአላህ ስም፤ ምስጋና ለአላህ የተገባ ይሁን፡፡ ‹ይህን መጓጓዣ ያገራልን ጌታ ጥራት ይገባው፡፡ እኛ ለመፈፀም የምንችል አልነበርንም፡፡ እኛ ወደጌታችን ተመላሾች ነን፡፡› ምስጋና ለአላህ የተገባ ነው፡፡ ምስጋና ለአላህ የተገባ ነው፡፡ ምስጋና ለአላህ የተገባ ነው፡፡ አላህ ከሁሉም የላቀ ነው፡፡ አላህ ከሁሉም የላቀ ነው፡፡ አላህ ከሁሉም የላቀ ነው፡፡ አላህ ሆይ ጥራት ይገባህ፡፡ እኔ በነፍሴ ላይ ግፍ ፈፅሚ ያለሁ፡፡ ማረኝ፡፡ ከአንተ ውጭ ወንጀልን የሚምር የለም፡፡",
                 "count": 1,
                 "source": "Quran 43:13, Abu Dawud 3/34"
             }
@@ -1825,7 +1825,7 @@ HISNUL_CHAPTERS = [
     {
         "id": 108,
         "title_en": "Supplication upon Seeing a Good Omen",
-        "title_am": "መልካም ሥጦታ ሲያዩ",
+        "title_am": "ጨረቃን ሲያዩ የሚደረግ",
         "title_ar": "دعاء عند رؤية الفأل",
         "icon": "🌈",
         "duas": [
@@ -1857,7 +1857,7 @@ HISNUL_CHAPTERS = [
     {
         "id": 110,
         "title_en": "Supplication for Mercy",
-        "title_am": "ምሕረት ዱዓ",
+        "title_am": "ነፋስ ሲነፍስ የሚደረግ",
         "title_ar": "دعاء الرحمة",
         "icon": "💗",
         "duas": [
@@ -1873,14 +1873,14 @@ HISNUL_CHAPTERS = [
     {
         "id": 111,
         "title_en": "Supplication for Ease after Difficulty",
-        "title_am": "ቸገርቱ ቀጥሎ ቀለሉ",
+        "title_am": "በጉርምርምታ ወቅት የሚባል",
         "title_ar": "دعاء الفرج بعد الضيق",
         "icon": "🌤️",
         "duas": [
             {
                 "arabic": "اللَّهُمَّ لَا سَهْلَ إِلَّا مَا جَعَلْتَهُ سَهْلًا وَأَنْتَ تَجْعَلُ الْحَزْنَ إِذَا شِئْتَ سَهْلًا",
-                "transliteration": "Allahumma la sahla illa ma ja'altahu sahlan, wa anta taj'alul-hazna idha shi'ta sahlan.",
-                "amharic": "አቤቱ አላህ ሆይ! ቀለሉ ሁሉ አሁን ቀለለ — ሐዘን ፈቅደህ ቀለሎ — ሁሉ ቀለል ትሆናለህ። (ቸገርቱ ሁሉ ቀልሎ ሊሆን ዱዓ — Ibn Hibban)።",
+                "transliteration": "አልሏሁምመ ላ ለሀለ ኢልላ ማ ጀዐልተሁ ሳህላ፣ ወአንተ ተጅዐሉል ሐዝነ ኢዛ ሺእተ ለህላ",
+                "amharic": "አላህ ሆይ አንተ ቀላል ካደረግከው ነገር ውጭ ቀላል የለም፡፡ አንተ ሀዘንን ከሻህ ቀላል ታደርጋለህ፡፡",
                 "count": 1,
                 "source": "Ibn Hibban, Ibn as-Sunni"
             }
@@ -1889,14 +1889,14 @@ HISNUL_CHAPTERS = [
     {
         "id": 112,
         "title_en": "Supplication for Rizq (Provision)",
-        "title_am": "ሪዝቅ (ምግብ) ዱዓ",
+        "title_am": "የጭንቅ ጊዜ ዱዓ",
         "title_ar": "دعاء الرزق",
         "icon": "🍞",
         "duas": [
             {
                 "arabic": "اللَّهُمَّ إِنِّي أَسْأَلُكَ رِزْقًا وَاسِعًا طَيِّبًا مِنْ رِزْقِكَ",
-                "transliteration": "Allahumma inni as'aluka rizqan wasi'an tayyiban min rizqik.",
-                "amharic": "አቤቱ አላህ ሆይ! ከሪዝቅህ ሰፊ ፀዳ ሪዝቅ እጠይቃለሁ።",
+                "transliteration": "አልሏሁምመ ኢንኒ አስአሉከ ኸይረሃ ወኸይረ ማፊሃ ወኸይረ ማ ኡርሲለት ቢሂ፣ ወአዑዙ ቢከ ሚን ሸርሪሃ ወሸርሪ ማፊሃ ወሸርሪ ማ ኡርሲለት ቢሂ",
+                "amharic": "አላህ ሆይ መልካሟን÷ በውስጧ የያዘችውን መልካም ነገርና የተላከችበትን መልካም ነገር እጠይቅሃለሁ፡፡ ከክፉዋ፣ በውስጧ ከያዘቸችው ክፉ ነገርና ከተላከችበት ክፉ ነገር በአንተ እጠበቃለሁ",
                 "count": 1,
                 "source": "Ibn as-Sunni"
             }
@@ -1921,7 +1921,7 @@ HISNUL_CHAPTERS = [
     {
         "id": 114,
         "title_en": "Supplication for Seeking Good in all Affairs",
-        "title_am": "ሁሉ ጉዳይ ደህና ዱዓ",
+        "title_am": "በቀብር ጉብኝት ወቅት የሚባል",
         "title_ar": "دعاء خير الأمور",
         "icon": "🌟",
         "duas": [
@@ -1937,14 +1937,14 @@ HISNUL_CHAPTERS = [
     {
         "id": 115,
         "title_en": "Supplication against Envy",
-        "title_am": "ቅናት ጥበቃ",
+        "title_am": "ሱጁድ ላይ የሚደረግ ዱዓ",
         "title_ar": "دعاء الحسد",
         "icon": "💚",
         "duas": [
             {
                 "arabic": "أَعُوذُ بِكَلِمَاتِ اللَّهِ التَّامَّاتِ مِنْ كُلِّ شَيْطَانٍ وَهَامَّةٍ وَمِنْ كُلِّ عَيْنٍ لَامَّةٍ",
-                "transliteration": "A'udhu bikalimatillahit-tammati min kulli shaytanin wa hammatin wa min kulli 'aynin lammah.",
-                "amharic": "ከሸይጣን ሁሉ፤ ከምር ሁሉ፤ ዐይን ሁሉ ሊጎዳ ከሚችል ሁሉ — ፍጹማን ቃሎቹ ዘንድ ወደ አላህ ሸሻለሁ።",
+                "transliteration": "ኡዒዙኩማ ቢከሊ ማቲልላሂ አትታመህ ሚን ኩልሊ ሸይጣኒን ወሐምመሀ፤ ወሚን ኩልሊ ዐይኒን ላምመህ",
+                "amharic": "ምሉዕና ፍፁም በሆኑት የአላህ ቃላት ከሰይጣናት ሁሉና ከእኩይ ሰው ተንኮል እንዲሁም ጎጅ ከሆነ ዓይን ሁሉ እጠብቃችኃለሁ፡፡",
                 "count": 1,
                 "source": "Bukhari 4/119"
             }
@@ -1969,7 +1969,7 @@ HISNUL_CHAPTERS = [
     {
         "id": 117,
         "title_en": "Supplication for Protection from Sihr (Black Magic)",
-        "title_am": "ሲሕር (ጥንቆላ) ጥበቃ",
+        "title_am": "ሽርክ ሲያሰጋዎ  የሚባል ዱዓ",
         "title_ar": "دعاء الحماية من السحر",
         "icon": "🔮",
         "duas": [
@@ -1985,7 +1985,7 @@ HISNUL_CHAPTERS = [
     {
         "id": 118,
         "title_en": "Supplication for All the Deceased Muslims",
-        "title_am": "ሁሉ የሞቱ ሙስሊሞቹ ዱዓ",
+        "title_am": "በቀብር ጉብኝት ወቅት የሚባል",
         "title_ar": "دعاء أهل القبور",
         "icon": "🌿",
         "duas": [
@@ -2001,14 +2001,14 @@ HISNUL_CHAPTERS = [
     {
         "id": 119,
         "title_en": "Supplication upon Completing Wudu in the Mosque",
-        "title_am": "መስጂድ ዉዱእ ካቆሱ",
+        "title_am": "ከመስጊድ ሲወጡ",
         "title_ar": "دعاء الفراغ من الوضوء في المسجد",
         "icon": "💧",
         "duas": [
             {
                 "arabic": "سُبْحَانَكَ اللَّهُمَّ وَبِحَمْدِكَ أَشْهَدُ أَنْ لَا إِلَهَ إِلَّا أَنتَ أَسْتَغْفِرُكَ وَأَتُوبُ إِلَيْكَ",
-                "transliteration": "Subhanakal-lahumma wa bihamdika, ashhadu an la ilaha illa anta, astaghfiruka wa atubu ilaik.",
-                "amharic": "አቤቱ አላህ ሆይ! ሁሉ ንጽሕና ምስጋናህ ሆኖ ይሁን። ከአንተ ሌላ አምላክ እንደሌለ እምሰክርባለሁ። ይቅርታ እጠይቃለሁ — ወደ አንተ ንስሃ እገባለሁ።",
+                "transliteration": "ሱብሐነከልሏሁምመ ወቢሐምዲከ አሽሃዱ አን ላ ኢላሃ ኢልላ አንተ አሰተግፊሩከ ወአቱቡ ኢለይክ፡፡",
+                "amharic": "አላህ ሆይ ጥራት የተገባህ ነህ፡፡ ምስጋናም ላንተ ይድረስ፡፡ ምህረትህን እጠይቃለሁ፡፡ ወዳንተም ንሰሀ እገባለሁ፡፡",
                 "count": 1,
                 "source": "Tirmidhi, Al-Hakim"
             }
@@ -2033,7 +2033,7 @@ HISNUL_CHAPTERS = [
     {
         "id": 121,
         "title_en": "Supplication for Wellbeing of Heart",
-        "title_am": "ልብ ደህናነት ዱዓ",
+        "title_am": "በቀብር ጉብኝት ወቅት የሚባል",
         "title_ar": "دعاء سلامة القلب",
         "icon": "❤️",
         "duas": [
@@ -2065,7 +2065,7 @@ HISNUL_CHAPTERS = [
     {
         "id": 123,
         "title_en": "Supplication at the beginning of Ramadan",
-        "title_am": "ረመዳን ሲጀምር",
+        "title_am": "የገበያ ቦታ ሲገባ የሚባል  ዱዓ",
         "title_ar": "دعاء دخول رمضان",
         "icon": "🌙",
         "duas": [
@@ -2081,7 +2081,7 @@ HISNUL_CHAPTERS = [
     {
         "id": 124,
         "title_en": "Supplication for Night of Decree",
-        "title_am": "ቀደር ሌሊቱ ዱዓ",
+        "title_am": "የሶላተል ኢስቲኻራ የምርጫ ሶላት ዱዓ",
         "title_ar": "دعاء ليلة القدر الخاص",
         "icon": "⭐",
         "duas": [
@@ -2097,14 +2097,14 @@ HISNUL_CHAPTERS = [
     {
         "id": 125,
         "title_en": "Supplication for Marriage (Nikah)",
-        "title_am": "ጋብቻ (ኒካህ) ዱዓ",
+        "title_am": "በትካዜና በሃዘን ወቅት",
         "title_ar": "دعاء الزواج والنكاح",
         "icon": "💍",
         "duas": [
             {
                 "arabic": "بَارَكَ اللَّهُ لَكَ وَبَارَكَ عَلَيْكَ وَجَمَعَ بَيْنَكُمَا فِي خَيْرٍ",
-                "transliteration": "Barakallahu laka wa baraka 'alayka wa jama'a baynakuma fi khayr.",
-                "amharic": "አላህ ለሃቸሁ ባርካ ሰጥ — አላህ ላይ ባርካ ሰጥ — ሁለቱ ሁሉ ምርጥ ሁሉ ሊቀጥሉ አደረጉ።",
+                "transliteration": "ባረከልሏሁ ለከ፣ ወባረከ ዐለይከ፣ ወጀማዐ በይነኩማ ኸይር",
+                "amharic": "አላህ ባለቤትህን ይባርክልህ፡፡ አንተንም ይባርክህ፡፡ በመካከላችሁ የሚኖረው ትስስርም መልካም ይሁን፡፡",
                 "count": 1,
                 "source": "Abu Dawud 2/142, Tirmidhi"
             }
@@ -2119,8 +2119,8 @@ HISNUL_CHAPTERS = [
         "duas": [
             {
                 "arabic": "بِسْمِ اللَّهِ، اللَّهُمَّ جَنِّبْنَا الشَّيْطَانَ وَجَنِّبِ الشَّيْطَانَ مَا رَزَقْتَنَا",
-                "transliteration": "Bismillah. Allahumma jannibnas-shaytana wa jannibish-shaytana ma razaqtana.",
-                "amharic": "ቢስሚሏ። አቤቱ አላህ ሆይ! ሸይጣን ጠብቀን — ሸጥቻቸን ሪዝቅ (ልጅ) ሸይጣን ሊቀርበው ጠብቅ። (ያሁ ዱዓ ሲሉ — ሸይጣን ቶሎ ሊጎዳ አይቻልም)።",
+                "transliteration": "ቢስሚልላህ፣ አልሏሁምመ ጀንኒብና ሽሸይጧን ወጀንኒቢሸይጧነ ማረዘቅተና",
+                "amharic": "በአላህ ስም፤ አላህ ከሸይጧን ተንኮል ጠብቀን፡፡ የምትለገሰንን ልጅም ከሸይጧን ተንኮል ጠብቀው፡፡",
                 "count": 1,
                 "source": "Bukhari 9/167, Muslim 2/1028"
             }
@@ -2129,14 +2129,14 @@ HISNUL_CHAPTERS = [
     {
         "id": 127,
         "title_en": "Supplication when Angry with Another Person",
-        "title_am": "ሰው ላይ ሲቆጡ",
+        "title_am": "በቁጣ ወቅት የሚደረግ ዱዓ",
         "title_ar": "دعاء الغضب على شخص",
         "icon": "😠",
         "duas": [
             {
                 "arabic": "أَعُوذُ بِاللَّهِ مِنَ الشَّيْطَانِ الرَّجِيمِ",
-                "transliteration": "A'udhu billahi minash-shaytanir-rajim.",
-                "amharic": "ከተወገደው ሸይጣን ወደ አላህ ሸሻለሁ። (ነቢዩ ሶ.ዐ.ወ. ቁጣ ሲፈጠር ዑዙ ቢ ሊሉ ያዙ)።",
+                "transliteration": "አዑዙ ቢልላሂ ሚነሽሸይጧኒር ረጅም",
+                "amharic": "እርጉም ከሆነው ሸይጧን በአላህ እጠበቃለሁ፡፡",
                 "count": 1,
                 "source": "Bukhari 6/337"
             }
@@ -2145,7 +2145,7 @@ HISNUL_CHAPTERS = [
     {
         "id": 128,
         "title_en": "Supplication for Seeking Refuge from Hellfire",
-        "title_am": "ናር (ሲኦል) ጥበቃ",
+        "title_am": "ከሩኩዕ ሲነሱ የሚደረግ ዱዓ",
         "title_ar": "دعاء الاستعاذة من النار",
         "icon": "🔥",
         "duas": [
@@ -2161,14 +2161,14 @@ HISNUL_CHAPTERS = [
     {
         "id": 129,
         "title_en": "Supplication when Something Good Happens",
-        "title_am": "ደስ የሚያስሳቅ ሲሆን",
+        "title_am": "የገበያ ቦታ ሲገባ የሚባል  ዱዓ",
         "title_ar": "دعاء عند السرور",
         "icon": "🎊",
         "duas": [
             {
                 "arabic": "الْحَمْدُ لِلَّهِ بِنِعْمَتِهِ تَتِمُّ الصَّالِحَاتُ",
-                "transliteration": "Alhamdu lillahi bini'matihi tatimmus-salihat.",
-                "amharic": "ጸጋው ሆኖ ደጋናቱ ሁሉ ፍጹም ሚሆኑ አላህ ምስጋና ይሁነው።",
+                "transliteration": "ረሱል ሰለላሁ አለይሂ ወሰለም የሚያስደስት ዜና በደረሳቸው ጊዜ እንዲህ ይሉ ነበር \n\nአልሐምዱ ሊላሂለዚ ቢኒዕመቲሂ ተቲሙ ስሷሊሃቱ  \n\nረሱል ሰለላሁ አለይሂ ወሰለም አንዳች የሚጠሉት ነገር በሚገጥማቸው ወቅት ደግሞ፡  \n\n አልሐምዱ ሊላሂ ዓላ ኩልሊ ሐል   ይሉ ነበር ፡፡",
+                "amharic": "ረሱል ሰለላሁ አለይሂ ወሰለም የሚያስደስት ዜና በደረሳቸው ጊዜ እንዲህ ይሉ ነበር\n\n አልሐምዱ ሊላሂለዚ ቢኒዕመቲሂ ተቲሙ ስሷሊሃቱ  \n\nለአላህ ምስጋና ይገባው፡፡ በፀጋው መልካም ነገሮች ምሉዕ ይሆናል፡፡ ይላሉ፡፡ \n\nረሱል ሰለላሁ አለይሂ ወሰለም አንዳች የሚጠሉት ነገር በሚገጥማቸው ወቅት ደግሞ፡\n\n አልሐምዱ ሊላሂ ዓላ ኩልሊ ሐል  \n\n በማናቸውም ሁኔታ ለአላህ ምስጋና ተገቢው ነው፡፡ ይላሉ፡፡",
                 "count": 1,
                 "source": "Ibn Majah 2/1276"
             }
@@ -2183,8 +2183,8 @@ HISNUL_CHAPTERS = [
         "duas": [
             {
                 "arabic": "قُلْ هُوَ اللَّهُ أَحَدٌ + قُلْ أَعُوذُ بِرَبِّ الْفَلَقِ + قُلْ أَعُوذُ بِرَبِّ النَّاسِ",
-                "transliteration": "Qul Huwa Allahu Ahad + Qul A'udhu Bi-Rabb al-Falaq + Qul A'udhu Bi-Rabb an-Nas (x3 each).",
-                "amharic": "ሦስቱ ቁልስ (ኢኽላስ + ፈለቅ + ናስ) ሦስት ሦስቴ ያንብቡ። (ሌሊቱ ሙሉ ይቢሷቸዋል ብሏቸዋል ነቢዩ ሶ.ዐ.ወ.)።",
+                "transliteration": "112. ቁል ሁወልሏሁ አሕዱ፤ አልሏሁስሰመድ ለምየሊድ ወለም ዩውለድ፤ ወለም የኩን ለሁ ኩፋወን አሐድ፡፡ \n\n113. ቁል አዑዙ ቢረቢል ፈለቅ፣ ሚን ሸርሪ ማኸለቅ፣ ወሚንሸርሪ ጋሲቂን ኢዛ ወቀብ፣ ወሚን ሽርሪንነፋሳቲ ፊል ዑቀድ፣ ወሚን ሸርሪ ሐሲዲን ኢዛ ሐስድ፡፡\n\n114. ቁል አዑዙ ቢረብቢንናስ፤ መለኪንናስ፤ ኢላሂንናስ፤ ሚንሽርሪል ወሰማሲል ኸንናስ፤ አልለዘ ዮወሰዊሉ ፊ ሱዱሪንናስ፤ ሚነልጂንነቲ ወናንስ፡፡",
+                "amharic": "በል፡ አላህ አንድ ነው፡፡ አላህ የሁሉ መጠጊያ ነው፡፡ አልወለደም አልተወለደምም፡፡ ለርሱ አንድም ቢጤ የለውም፡፡ አልኢኸላስ\n\nበል፡ በተፋለቅላቲው ጎህ ጌታ እጠበቃለሁ፡፡ ከፈጠው ፍጡር ሁሉ ክፋት፤ ከሌሊትም ክፋት፣ በጨለመ ጊዜ በተቋጠሩ ክሮች ላይ ተፈዎች ከሆኑ ደጋሚ ሴቶችም ክፋት፤ ክቀኛም ክፋት በተመቀኘ ጊዜ እጠብቃለሁ በል፡፡ አልፈለቅ\n\nበል «በሰዎች ፈጣሪ እጠበቃለሁ፡፡  «የሰዎች ሁሉ ንጉሥ በኾነው፡፡ «የሰዎች አምላክ በኾነው፡፡ «ብቅ እልም ባይ ከኾነው ጎትጓች ሰይጣን ክፋት፡፡ «ከዚያ በሰዎች ልቦች ውስጥ የሚጎተጉት ከኾነው፡፡ «ከጋኔኖችም ከሰዎችም ሰይጣናት እጠበቃለሁ በል፡፡»",
                 "count": 3,
                 "source": "Abu Dawud 4/311, Tirmidhi 5/567"
             }
@@ -2193,7 +2193,7 @@ HISNUL_CHAPTERS = [
     {
         "id": 131,
         "title_en": "Supplication for Patience and Gratitude",
-        "title_am": "ሰበር (ትዕግሥት) ሹክር ዱዓ",
+        "title_am": "በትካዜና በሃዘን ወቅት",
         "title_ar": "دعاء الصبر والشكر",
         "icon": "🌱",
         "duas": [
@@ -2209,7 +2209,7 @@ HISNUL_CHAPTERS = [
     {
         "id": 132,
         "title_en": "Final Comprehensive Supplication",
-        "title_am": "ሙሉ ጥቅስ (ዱዓ ሁሉ ሙሉ)",
+        "title_am": "ከምግብ በፊት የሚደረግ ዱዓ",
         "title_ar": "الدعاء الجامع الخاتم",
         "icon": "🌟",
         "duas": [
