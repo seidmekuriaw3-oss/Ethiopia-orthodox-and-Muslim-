@@ -632,11 +632,18 @@ async def on_callback(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
         await _edit_products_page(query, uid, page, 'cat', cat_id=cid)
 
     # ── product list page ──
-    elif data.startswith('products:page:') or data.startswith('new:page:') or data.startswith('featured:page:'):
+    elif (data.startswith('all:page:') or data.startswith('products:page:') or
+          data.startswith('new:page:') or data.startswith('featured:page:')):
         parts = data.split(':')
-        kind = parts[0]
+        raw_kind = parts[0]
+        kind = 'all' if raw_kind == 'products' else raw_kind   # normalise legacy prefix
         page = int(parts[2])
         await _edit_products_page(query, uid, page, kind)
+
+    # ── category list pagination ──
+    elif data.startswith('catlist:page:'):
+        page = int(data.split(':')[2])
+        await _edit_categories(query, uid, page)
 
     # ── single product (with full nav context) ──
     elif data.startswith('prod:'):
@@ -701,17 +708,29 @@ def _products_page_kb_and_text(uid: int, products: list, page: int,
     total = len(products)
     pages = (total + PRODUCTS_PER_PAGE - 1) // PRODUCTS_PER_PAGE
     pg_info = f'({page+1}/{pages})' if pages > 1 else ''
-    text = f"{title} *{label}* {pg_info}\n_{total} {'ምርቶች' if lang=='am' else 'products'}_"
+
+    # First product on this page — identify it in the caption so the cover photo makes sense
+    start = page * PRODUCTS_PER_PAGE
+    page_products = products[start:start + PRODUCTS_PER_PAGE]
+    first_p = page_products[0] if page_products else None
+    photo_url = None
+    cover_name = ''
+    for pp in page_products:
+        url = _product_image_url(pp)
+        if url:
+            photo_url = url
+            cover_name = pp.get('name', '')
+            break
+
+    if lang == 'am':
+        hint = 'ምርቱን ለማየት ከታች ያለውን አዝራር ይጫኑ 👇'
+    else:
+        hint = 'Tap a product button below to view details 👇'
+
+    cover_line = f'📸 _{cover_name}_\n' if cover_name else ''
+    text = f"{title} *{label}* {pg_info}\n{cover_line}_{total} {'ምርቶች' if lang=='am' else 'products'}_\n{hint}"
 
     kb = _paginated_keyboard(uid, all_items, page, prefix)
-
-    # First photo on this page
-    start = page * PRODUCTS_PER_PAGE
-    photo_url = None
-    for pp in products[start:start + PRODUCTS_PER_PAGE]:
-        photo_url = _product_image_url(pp)
-        if photo_url:
-            break
 
     return text, kb, photo_url
 
@@ -807,14 +826,13 @@ async def _edit_product_detail(query, uid: int, pid: int,
             pass
 
 
-async def _edit_categories(query, uid: int):
+async def _edit_categories(query, uid: int, page: int = 0):
     cats = _db_get_categories()
     if not cats:
         await _safe_edit_text(query, _(uid, 'no_cats'), reply_markup=_back_home(uid))
         return
-    lang = _get_state(uid).get('lang', 'am')
     items = [(c['name'], f'cat:{c["id"]}:page:0') for c in cats]
-    kb = _paginated_keyboard(uid, items, 0, 'catlist')
+    kb = _paginated_keyboard(uid, items, page, 'catlist')
     await _safe_edit_text(query, _(uid, 'categories'),
                           parse_mode=ParseMode.MARKDOWN, reply_markup=kb)
 
@@ -1061,18 +1079,23 @@ def build_application() -> Application:
         ],
         states={
             AWAIT_SEARCH: [
+                CallbackQueryHandler(on_callback),
                 MessageHandler(filters.TEXT & ~filters.COMMAND, on_search_input),
             ],
             AWAIT_NAME: [
+                CallbackQueryHandler(on_callback),
                 MessageHandler(filters.TEXT & ~filters.COMMAND, on_name_input),
             ],
             AWAIT_PHONE: [
+                CallbackQueryHandler(on_callback),
                 MessageHandler(filters.TEXT & ~filters.COMMAND, on_phone_input),
             ],
             AWAIT_ADDRESS: [
+                CallbackQueryHandler(on_callback),
                 MessageHandler(filters.TEXT & ~filters.COMMAND, on_address_input),
             ],
             AWAIT_TRACK: [
+                CallbackQueryHandler(on_callback),
                 MessageHandler(filters.TEXT & ~filters.COMMAND, on_track_input),
             ],
         },
