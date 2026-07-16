@@ -970,6 +970,27 @@ try:
 except Exception as _sched_err:
     app.logger.warning(f"Scheduler could not start: {_sched_err}")
 
+# ==================== TELEGRAM BOT WEBHOOK AUTO-REGISTRATION ====================
+def _register_telegram_webhook():
+    """Register the Telegram webhook after app startup (runs in background thread)."""
+    try:
+        _tg_token  = os.environ.get('TELEGRAM_BOT_TOKEN', '')
+        _tg_domain = os.environ.get('REPLIT_DEV_DOMAIN', '')
+        if not _tg_token or not _tg_domain:
+            return
+        from services.telegram_bot import set_webhook_sync
+        webhook_url = f"https://{_tg_domain}/telegram/webhook/{_tg_token}"
+        result = set_webhook_sync(webhook_url)
+        if result.get('ok'):
+            app.logger.info(f"✅ Telegram webhook registered: {result.get('webhook_url','')[:60]}...")
+        else:
+            app.logger.warning(f"⚠️  Telegram webhook registration failed: {result}")
+    except Exception as _e:
+        app.logger.warning(f"⚠️  Telegram webhook setup error: {_e}")
+
+import threading as _threading
+_threading.Thread(target=_register_telegram_webhook, daemon=True).start()
+
 
 # ==================== 14. MAIN ENTRY POINT ====================
 
