@@ -35,16 +35,20 @@ FREE_SHIPPING = int(os.environ.get('FREE_SHIPPING_THRESHOLD', 5000))
 PRODUCTS_PER_PAGE = 6
 
 # ───────────────────────── conversation states ─────────────────────────
-(AWAIT_SEARCH, AWAIT_NAME, AWAIT_PHONE, AWAIT_ADDRESS, AWAIT_TRACK) = range(5)
+(AWAIT_SEARCH, AWAIT_NAME, AWAIT_PHONE, AWAIT_ADDRESS, AWAIT_TRACK,
+ AWAIT_ORDERS_PHONE, AWAIT_REG_NAME, AWAIT_REG_PHONE,
+ AWAIT_REG_EMAIL, AWAIT_REG_PASS) = range(10)
 
 # ───────────────────────── in-memory user state ─────────────────────────
-# { telegram_user_id: { 'lang': 'am', 'cart': {product_id: qty}, 'order': {} } }
+# { telegram_user_id: { 'lang': 'am', 'cart': {}, 'order': {}, 'wishlist': [] } }
 _user_state: dict = {}
 
 def _get_state(uid: int) -> dict:
     if uid not in _user_state:
-        _user_state[uid] = {'lang': 'am', 'cart': {}, 'order': {}}
-    return _user_state[uid]
+        _user_state[uid] = {'lang': 'am', 'cart': {}, 'order': {}, 'wishlist': []}
+    s = _user_state[uid]
+    s.setdefault('wishlist', [])
+    return s
 
 # ───────────────────────── translations ─────────────────────────
 T = {
@@ -120,6 +124,40 @@ T = {
     },
     'increase': {'am': '➕', 'en': '➕'},
     'decrease': {'am': '➖', 'en': '➖'},
+    # ── new features ──
+    'orders':        {'am': '📦 ትዕዛዞቼ',      'en': '📦 My Orders'},
+    'wishlist':      {'am': '💝 ምኞቴ',         'en': '💝 Wishlist'},
+    'branches':      {'am': '🏪 ቅርንጫፎቻችን',   'en': '🏪 Our Branches'},
+    'account':       {'am': '👤 መለያዬ',        'en': '👤 My Account'},
+    'orders_prompt': {'am': '📱 ትዕዛዞቹን ለማየት ስልክ ቁጥርዎን ያስገቡ:',
+                      'en': '📱 Enter your phone number to view your orders:'},
+    'no_orders':     {'am': '📦 ለዚህ ስልክ ቁጥር ትዕዛዝ አልተገኘም።',
+                      'en': '📦 No orders found for this phone number.'},
+    'no_branches':   {'am': '🏪 ቅርንጫፍ አልተገኘም።', 'en': '🏪 No branches found.'},
+    'wish_add':      {'am': '❤️ ምኞቴ ጨምር',    'en': '❤️ Save to Wishlist'},
+    'wish_remove':   {'am': '💔 ምኞቴ አስወግድ',  'en': '💔 Remove from Wishlist'},
+    'wish_added':    {'am': '❤️ ወደ ምኞቴ ተጨምሯል!', 'en': '❤️ Added to wishlist!'},
+    'wish_removed':  {'am': '💔 ከምኞቴ ተወግዷል!',   'en': '💔 Removed from wishlist!'},
+    'empty_wish':    {'am': '💝 ምኞቴ ዝርዝር ባዶ ነው።\nምርቶቹን ሲያዩ ❤️ ይጫኑ።',
+                      'en': '💝 Your wishlist is empty.\nTap ❤️ on any product to save it.'},
+    'reg_intro':     {'am': ('👤 *ምዝገባ*\n\n'
+                             'ሰሚራ ፋሽን ድረ-ገጽ ላይ ካለዎት መለያ *10% ቅናሽ* ያገኛሉ!\n\n'
+                             'ምዝገባ ይፈልጋሉ?'),
+                      'en': ('👤 *Register*\n\n'
+                             'Get *10% discount* on every order with a Semira Fashion account!\n\n'
+                             'Would you like to register?')},
+    'already_reg':   {'am': '✅ ቀደም ሲል ተመዝግበዋል! 10% ቅናሽ ይሰጥዎታል።',
+                      'en': '✅ You already have an account! 10% discount applied.'},
+    'reg_name':      {'am': '📝 ሙሉ ስምዎን ያስገቡ:',        'en': '📝 Enter your full name:'},
+    'reg_phone':     {'am': '📱 ስልክ ቁጥርዎን ያስገቡ (+251...):', 'en': '📱 Enter your phone number (+251...):'},
+    'reg_email':     {'am': '📧 ኢሜልዎን ያስገቡ (ወይም "skip" ይጻፉ):', 'en': '📧 Enter your email (or type "skip"):'},
+    'reg_pass':      {'am': '🔐 ይለፍ ቃልዎን ያስገቡ (ቢያንስ 6 ፊደላት):', 'en': '🔐 Enter a password (min 6 chars):'},
+    'reg_ok':        {'am': '✅ ምዝገባ ተሳክቷል! ከአሁን በኋላ 10% ቅናሽ ያገኛሉ።',
+                      'en': '✅ Registered! You now get 10% off every order.'},
+    'reg_dup':       {'am': '⚠️ ይህ ስልክ ቁጥር ወይም ኢሜል ቀደም ሲል ተመዝግቧል።\nወደ ድህረ-ገጽ ያስገቡ።',
+                      'en': '⚠️ This phone/email is already registered. Log in on the website.'},
+    'reg_err':       {'am': '❌ ምዝገባ አልተሳካም። እባክዎ ዳግም ሞክሩ።', 'en': '❌ Registration failed. Please try again.'},
+    'reg_start_btn': {'am': '📝 ምዝገባ ጀምር', 'en': '📝 Start Registration'},
 }
 
 def _(uid: int, key: str, **kwargs) -> str:
@@ -180,6 +218,10 @@ def _main_menu_keyboard(uid: int) -> InlineKeyboardMarkup:
         [InlineKeyboardButton(t('search'),     callback_data='menu:search'),
          InlineKeyboardButton(t('cart'),       callback_data='menu:cart')],
         [InlineKeyboardButton(t('track'),      callback_data='menu:track'),
+         InlineKeyboardButton(t('orders'),     callback_data='menu:orders')],
+        [InlineKeyboardButton(t('wishlist'),   callback_data='menu:wishlist'),
+         InlineKeyboardButton(t('branches'),   callback_data='menu:branches')],
+        [InlineKeyboardButton(t('account'),    callback_data='menu:account'),
          InlineKeyboardButton(t('contact'),    callback_data='menu:contact')],
         [InlineKeyboardButton(t('language'),   callback_data='menu:language')],
     ]
@@ -272,6 +314,63 @@ def _db_track_order(order_number):
 def _db_get_order_items(order_id):
     from database.models import Order
     return Order.get_items(order_id)
+
+def _db_get_branches():
+    from database.db import get_db
+    db = get_db()
+    return db.execute(
+        "SELECT name, name_am, address, address_am, phone, working_hours "
+        "FROM branches WHERE is_active=1 ORDER BY sort_order"
+    ).fetchall()
+
+def _db_get_orders_by_phone(phone: str):
+    from database.db import get_db
+    db = get_db()
+    phone = phone.strip()
+    rows = db.execute(
+        "SELECT order_number, status, total, created_at "
+        "FROM orders WHERE shipping_phone=%s OR shipping_phone=%s "
+        "ORDER BY created_at DESC LIMIT 10",
+        (phone, phone.replace('+', ''))
+    ).fetchall()
+    return rows
+
+def _db_register_user(name: str, phone: str, email: str | None, password: str):
+    """Create a customer account. Returns 'ok', 'dup', or 'err'."""
+    from database.db import get_db, commit_or_rollback
+    from werkzeug.security import generate_password_hash
+    import random, string
+    db = get_db()
+    try:
+        # Check duplicate phone or email
+        phone = phone.strip()
+        email = email.strip().lower() if email and email.lower() != 'skip' else None
+        dup = db.execute(
+            "SELECT id FROM users WHERE phone=%s" + (" OR email=%s" if email else ""),
+            (phone, email) if email else (phone,)
+        ).fetchone()
+        if dup:
+            return 'dup'
+        username = 'tg_' + ''.join(random.choices(string.ascii_lowercase + string.digits, k=8))
+        pw_hash = generate_password_hash(password)
+        db.execute(
+            "INSERT INTO users (username, full_name, phone, email, password_hash, is_admin, is_active, created_at) "
+            "VALUES (%s,%s,%s,%s,%s,0,1,NOW())",
+            (username, name.strip(), phone, email or '', pw_hash)
+        )
+        commit_or_rollback(db)
+        return 'ok'
+    except Exception as e:
+        log.error(f"[Register] {e}")
+        return 'err'
+
+def _db_user_exists_by_phone(phone: str) -> bool:
+    from database.db import get_db
+    db = get_db()
+    row = db.execute(
+        "SELECT id FROM users WHERE phone=%s AND is_admin=0", (phone.strip(),)
+    ).fetchone()
+    return row is not None
 
 def _db_place_order(cart: dict, user_data: dict) -> str | None:
     """Place an order, return order number or None on failure."""
@@ -368,10 +467,16 @@ def _product_keyboard(uid: int, pid: int, in_cart: bool = False,
     if nav:
         rows.append(nav)
 
-    # ── Cart button ─────────────────────────────────────────────────────────
+    # ── Cart + Wishlist buttons ──────────────────────────────────────────────
     cart_lbl = _(uid, 'remove') if in_cart else _(uid, 'add_cart')
     cart_cb  = f'cart:remove:{pid}' if in_cart else f'cart:add:{pid}'
-    rows.append([InlineKeyboardButton(cart_lbl, callback_data=cart_cb)])
+    wl = _get_state(uid).get('wishlist', [])
+    in_wish = pid in wl
+    wish_lbl = _(uid, 'wish_remove') if in_wish else _(uid, 'wish_add')
+    rows.append([
+        InlineKeyboardButton(cart_lbl, callback_data=cart_cb),
+        InlineKeyboardButton(wish_lbl, callback_data=f'wish:toggle:{pid}'),
+    ])
 
     # ── View on website ─────────────────────────────────────────────────────
     if site:
@@ -620,6 +725,53 @@ async def on_callback(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
                               reply_markup=_back_home(uid))
         ctx.user_data['awaiting'] = 'track'
         return AWAIT_TRACK
+
+    elif data == 'menu:orders':
+        await _safe_edit_text(query, _(uid, 'orders_prompt'),
+                              reply_markup=_back_home(uid))
+        return AWAIT_ORDERS_PHONE
+
+    elif data == 'menu:wishlist':
+        await _show_wishlist(query, uid)
+
+    elif data == 'menu:branches':
+        await _show_branches(query, uid)
+
+    elif data == 'menu:account':
+        state = _get_state(uid)
+        phone = state.get('order', {}).get('phone') or state.get('reg_phone', '')
+        if phone and _db_user_exists_by_phone(phone):
+            await _safe_edit_text(query, _(uid, 'already_reg'),
+                                  reply_markup=_main_menu_keyboard(uid))
+        else:
+            kb = InlineKeyboardMarkup([
+                [InlineKeyboardButton(_(uid, 'reg_start_btn'), callback_data='reg:start')],
+                [InlineKeyboardButton(_(uid, 'main_menu'), callback_data='menu:home')],
+            ])
+            await _safe_edit_text(query, _(uid, 'reg_intro'),
+                                  parse_mode=ParseMode.MARKDOWN, reply_markup=kb)
+
+    elif data == 'reg:start':
+        await _safe_edit_text(query, _(uid, 'reg_name'), reply_markup=_back_home(uid))
+        return AWAIT_REG_NAME
+
+    # ── wishlist toggle ──
+    elif data.startswith('wish:toggle:'):
+        pid = int(data.split(':')[2])
+        wl = _get_state(uid).setdefault('wishlist', [])
+        if pid in wl:
+            wl.remove(pid)
+            await query.answer(_(uid, 'wish_removed'))
+        else:
+            wl.append(pid)
+            await query.answer(_(uid, 'wish_added'))
+        # Refresh the product detail to update the button label
+        last = _get_state(uid).get('last_prod', {})
+        await _edit_product_detail(query, uid, pid,
+                                   kind=last.get('kind', 'all'),
+                                   cat_id=last.get('cat_id', 0),
+                                   idx=last.get('idx', -1),
+                                   page=last.get('page', 0))
 
     # ── language selection ──
     elif data.startswith('lang:'):
@@ -1057,6 +1209,130 @@ async def _notify_admin_new_order(query, uid: int, order_number, order_data: dic
         log.warning(f"[TelegramBot] admin notify failed: {e}")
 
 
+# ── wishlist display ──
+async def _show_wishlist(query, uid: int):
+    wl = _get_state(uid).get('wishlist', [])
+    lang = _get_state(uid).get('lang', 'am')
+    if not wl:
+        await _safe_edit_text(query, _(uid, 'empty_wish'), reply_markup=_back_home(uid))
+        return
+    rows = []
+    for pid in wl:
+        p = _db_get_product(pid)
+        if not p:
+            continue
+        name = (p['name'][:24] + '…') if len(p['name']) > 24 else p['name']
+        price = _fmt_price(p['price'])
+        rows.append([
+            InlineKeyboardButton(f"{name} — {price}",
+                                 callback_data=_prod_cb(pid, 'all', 0, -1, 0)),
+            InlineKeyboardButton('💔', callback_data=f'wish:toggle:{pid}'),
+        ])
+    rows.append([InlineKeyboardButton(_(uid, 'main_menu'), callback_data='menu:home')])
+    title = '💝 *ምኞቴ ዝርዝር*' if lang == 'am' else '💝 *My Wishlist*'
+    hint  = '_ምርቱን ለማየት ስሙን ይጫኑ | 💔 ለማስወጣት_' if lang == 'am' else '_Tap name to view | 💔 to remove_'
+    await _safe_edit_text(query, f"{title}\n{hint}", parse_mode=ParseMode.MARKDOWN,
+                          reply_markup=InlineKeyboardMarkup(rows))
+
+
+# ── branches display ──
+async def _show_branches(query, uid: int):
+    branches = _db_get_branches()
+    lang = _get_state(uid).get('lang', 'am')
+    if not branches:
+        await _safe_edit_text(query, _(uid, 'no_branches'), reply_markup=_back_home(uid))
+        return
+    lines = [f"🏪 *{'ቅርንጫፎቻችን' if lang=='am' else 'Our Branches'}*\n"]
+    for b in branches:
+        name    = b.get('name_am') or b.get('name') or ''
+        address = b.get('address_am') or b.get('address') or ''
+        phone   = b.get('phone') or ''
+        hours   = b.get('working_hours') or ''
+        lines.append(f"📍 *{name}*")
+        if address: lines.append(f"🗺 {address}")
+        if phone:   lines.append(f"📞 {phone}")
+        if hours:   lines.append(f"🕐 {hours}")
+        lines.append('')
+    await _safe_edit_text(query, '\n'.join(lines), parse_mode=ParseMode.MARKDOWN,
+                          reply_markup=_back_home(uid))
+
+
+# ── new conversation handlers ──
+async def on_orders_phone_input(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
+    uid = update.effective_user.id
+    phone = update.message.text.strip()
+    lang = _get_state(uid).get('lang', 'am')
+    orders = _db_get_orders_by_phone(phone)
+    if not orders:
+        await update.message.reply_text(_(uid, 'no_orders'), reply_markup=_main_menu_keyboard(uid))
+        return ConversationHandler.END
+    lines = [f"📦 *{'ትዕዛዞቼ' if lang=='am' else 'My Orders'}* ({len(orders)})\n"]
+    for o in orders:
+        num    = o.get('order_number', '')
+        status = o.get('status', '')
+        total  = _fmt_price(o.get('total', 0))
+        date   = o.get('created_at', '')
+        if date and hasattr(date, 'strftime'):
+            date = date.strftime('%Y-%m-%d')
+        status_lbl = T['status_labels'][lang].get(status, status)
+        lines.append(f"🔢 `{num}` — {status_lbl}")
+        lines.append(f"   💰 {total}  |  🕐 {date}\n")
+    await update.message.reply_text('\n'.join(lines), parse_mode=ParseMode.MARKDOWN,
+                                    reply_markup=_main_menu_keyboard(uid))
+    return ConversationHandler.END
+
+
+async def on_reg_name_input(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
+    uid = update.effective_user.id
+    name = update.message.text.strip()
+    if len(name) < 2:
+        await update.message.reply_text(_(uid, 'reg_name'))
+        return AWAIT_REG_NAME
+    ctx.user_data['reg'] = {'name': name}
+    await update.message.reply_text(_(uid, 'reg_phone'))
+    return AWAIT_REG_PHONE
+
+
+async def on_reg_phone_input(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
+    uid  = update.effective_user.id
+    phone = update.message.text.strip()
+    ctx.user_data.setdefault('reg', {})['phone'] = phone
+    _get_state(uid)['reg_phone'] = phone
+    await update.message.reply_text(_(uid, 'reg_email'))
+    return AWAIT_REG_EMAIL
+
+
+async def on_reg_email_input(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
+    uid = update.effective_user.id
+    email = update.message.text.strip()
+    ctx.user_data.setdefault('reg', {})['email'] = email
+    await update.message.reply_text(_(uid, 'reg_pass'))
+    return AWAIT_REG_PASS
+
+
+async def on_reg_pass_input(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
+    uid = update.effective_user.id
+    password = update.message.text.strip()
+    if len(password) < 6:
+        await update.message.reply_text(_(uid, 'reg_pass'))
+        return AWAIT_REG_PASS
+    reg = ctx.user_data.get('reg', {})
+    result = _db_register_user(
+        name=reg.get('name', ''),
+        phone=reg.get('phone', ''),
+        email=reg.get('email', ''),
+        password=password,
+    )
+    if result == 'ok':
+        await update.message.reply_text(_(uid, 'reg_ok'), reply_markup=_main_menu_keyboard(uid))
+    elif result == 'dup':
+        await update.message.reply_text(_(uid, 'reg_dup'), reply_markup=_main_menu_keyboard(uid))
+    else:
+        await update.message.reply_text(_(uid, 'reg_err'), reply_markup=_main_menu_keyboard(uid))
+    ctx.user_data.pop('reg', None)
+    return ConversationHandler.END
+
+
 # ── fallback for unexpected text ──
 async def on_unknown_text(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
     uid = update.effective_user.id
@@ -1101,6 +1377,26 @@ def build_application() -> Application:
             AWAIT_TRACK: [
                 CallbackQueryHandler(on_callback),
                 MessageHandler(filters.TEXT & ~filters.COMMAND, on_track_input),
+            ],
+            AWAIT_ORDERS_PHONE: [
+                CallbackQueryHandler(on_callback),
+                MessageHandler(filters.TEXT & ~filters.COMMAND, on_orders_phone_input),
+            ],
+            AWAIT_REG_NAME: [
+                CallbackQueryHandler(on_callback),
+                MessageHandler(filters.TEXT & ~filters.COMMAND, on_reg_name_input),
+            ],
+            AWAIT_REG_PHONE: [
+                CallbackQueryHandler(on_callback),
+                MessageHandler(filters.TEXT & ~filters.COMMAND, on_reg_phone_input),
+            ],
+            AWAIT_REG_EMAIL: [
+                CallbackQueryHandler(on_callback),
+                MessageHandler(filters.TEXT & ~filters.COMMAND, on_reg_email_input),
+            ],
+            AWAIT_REG_PASS: [
+                CallbackQueryHandler(on_callback),
+                MessageHandler(filters.TEXT & ~filters.COMMAND, on_reg_pass_input),
             ],
         },
         fallbacks=[
