@@ -131,19 +131,28 @@ def _(uid: int, key: str, **kwargs) -> str:
 # ───────────────────────── helpers ─────────────────────────
 def _product_image_url(product) -> str | None:
     """Return the first product image as a full URL, or None."""
-    if not SITE_URL:
+    site = os.environ.get('REPLIT_DEV_DOMAIN', '') or SITE_URL
+    if not site:
         return None
     try:
-        imgs = product['images']
+        # Prefer thumbnail; fall back to first entry in images JSON
+        thumb = product.get('thumbnail') or ''
+        imgs  = product.get('images', '[]')
         if isinstance(imgs, str):
             imgs = json.loads(imgs)
-        if imgs and isinstance(imgs, list):
-            path = imgs[0]
-            if path.startswith(('http://', 'https://')):
-                return path
-            if not path.startswith('static/'):
-                path = f"static/uploads/products/{path}"
-            return f"https://{SITE_URL}/{path}"
+        path = thumb or (imgs[0] if imgs else '')
+        if not path:
+            return None
+        if path.startswith(('http://', 'https://')):
+            return path
+        # Normalise: paths may be "uploads/...", "images/...", or bare filename
+        if path.startswith('static/'):
+            pass                                      # already correct
+        elif path.startswith(('uploads/', 'images/')):
+            path = f"static/{path}"                  # prepend static/ only
+        else:
+            path = f"static/uploads/products/{path}" # bare filename
+        return f"https://{site}/{path}"
     except Exception:
         pass
     return None
