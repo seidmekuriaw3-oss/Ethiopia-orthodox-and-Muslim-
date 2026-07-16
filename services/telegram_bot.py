@@ -188,6 +188,23 @@ def _back_home(uid: int) -> InlineKeyboardMarkup:
     ]])
 
 
+# ── product navigation helpers ──────────────────────────────────────────────
+def _prod_cb(pid: int, kind: str, cat_id: int, idx: int, page: int) -> str:
+    """Compact callback_data for a product (always < 64 bytes)."""
+    return f'prod:{pid}:{kind}:{cat_id}:{idx}:{page}'
+
+
+def _parse_prod_cb(data: str):
+    """Return (pid, kind, cat_id, idx, page) from a prod: callback string."""
+    parts = data.split(':')
+    pid    = int(parts[1])
+    kind   = parts[2] if len(parts) > 2 else 'all'
+    cat_id = int(parts[3]) if len(parts) > 3 else 0
+    idx    = int(parts[4]) if len(parts) > 4 else -1
+    page   = int(parts[5]) if len(parts) > 5 else 0
+    return pid, kind, cat_id, idx, page
+
+
 def _paginated_keyboard(uid: int, items, page: int, prefix: str,
                         extra_rows=None) -> InlineKeyboardMarkup:
     """Build a paginated inline keyboard for a list of (label, data) items."""
@@ -321,15 +338,49 @@ def _product_text(uid: int, p) -> str:
     return '\n'.join(lines)
 
 
-def _product_keyboard(uid: int, pid: int, in_cart: bool = False) -> InlineKeyboardMarkup:
-    cart_btn = (InlineKeyboardButton(_(uid, 'remove'), callback_data=f'cart:remove:{pid}')
-                if in_cart else
-                InlineKeyboardButton(_(uid, 'add_cart'), callback_data=f'cart:add:{pid}'))
-    rows = [
-        [cart_btn],
-        [InlineKeyboardButton(_(uid, 'cart'), callback_data='menu:cart')],
-        [InlineKeyboardButton(_(uid, 'main_menu'), callback_data='menu:home')],
-    ]
+def _product_keyboard(uid: int, pid: int, in_cart: bool = False,
+                      kind: str = 'all', cat_id: int = 0,
+                      idx: int = -1, page: int = 0,
+                      products: list = None) -> InlineKeyboardMarkup:
+    lang = _get_state(uid).get('lang', 'am')
+    site = os.environ.get('REPLIT_DEV_DOMAIN', '') or SITE_URL
+    rows = []
+
+    # ── Prev / Next navigation ──────────────────────────────────────────────
+    products = products or []
+    nav = []
+    if idx > 0:
+        pp = products[idx - 1]
+        prev_page = (idx - 1) // PRODUCTS_PER_PAGE
+        nav.append(InlineKeyboardButton(
+            '◀️ ቀዳሚ' if lang == 'am' else '◀️ Prev',
+            callback_data=_prod_cb(pp['id'], kind, cat_id, idx - 1, prev_page)))
+    if 0 <= idx < len(products) - 1:
+        np_ = products[idx + 1]
+        next_page = (idx + 1) // PRODUCTS_PER_PAGE
+        nav.append(InlineKeyboardButton(
+            'ቀጣይ ▶️' if lang == 'am' else 'Next ▶️',
+            callback_data=_prod_cb(np_['id'], kind, cat_id, idx + 1, next_page)))
+    if nav:
+        rows.append(nav)
+
+    # ── Cart button ─────────────────────────────────────────────────────────
+    cart_lbl = _(uid, 'remove') if in_cart else _(uid, 'add_cart')
+    cart_cb  = f'cart:remove:{pid}' if in_cart else f'cart:add:{pid}'
+    rows.append([InlineKeyboardButton(cart_lbl, callback_data=cart_cb)])
+
+    # ── View on website ─────────────────────────────────────────────────────
+    if site:
+        view_lbl = '🌐 ድህረ-ገጽ ላይ እይ' if lang == 'am' else '🌐 View on Website'
+        rows.append([InlineKeyboardButton(view_lbl, url=f'https://{site}/product/{pid}')])
+
+    # ── Back to list + Cart ─────────────────────────────────────────────────
+    back_lbl = '◀️ ዝርዝር ተመለስ' if lang == 'am' else '◀️ Back to List'
+    rows.append([
+        InlineKeyboardButton(back_lbl, callback_data=f'back_list:{kind}:{cat_id}:{page}'),
+        InlineKeyboardButton('🛒 ' + _(uid, 'cart'), callback_data='menu:cart'),
+    ])
+    rows.append([InlineKeyboardButton(_(uid, 'main_menu'), callback_data='menu:home')])
     return InlineKeyboardMarkup(rows)
 
 
@@ -560,17 +611,27 @@ async def on_callback(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
         page = int(parts[3]) if len(parts) > 3 else 0
         await _edit_products_page(query, uid, page, 'cat', cat_id=cid)
 
-    # ── product page ──
+    # ── product list page ──
     elif data.startswith('products:page:') or data.startswith('new:page:') or data.startswith('featured:page:'):
         parts = data.split(':')
         kind = parts[0]
         page = int(parts[2])
         await _edit_products_page(query, uid, page, kind)
 
-    # ── single product ──
+    # ── single product (with full nav context) ──
     elif data.startswith('prod:'):
-        pid = int(data.split(':')[1])
-        await _edit_product_detail(query, uid, pid)
+        pid, kind, cat_id, idx, page = _parse_prod_cb(data)
+        await _edit_product_detail(query, uid, pid,
+                                   kind=kind, cat_id=cat_id, idx=idx, page=page)
+
+    # ── back to product list ──
+    elif data.startswith('back_list:'):
+        parts = data.split(':')
+        kind   = parts[1]
+        cat_id = int(parts[2])
+        page   = int(parts[3])
+        await _edit_products_page(query, uid, page, kind,
+                                  cat_id=cat_id if cat_id else None)
 
     # ── cart actions ──
     elif data.startswith('cart:'):
@@ -599,20 +660,63 @@ async def on_callback(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
 
 
 # ── product list helpers ──
+def _products_page_kb_and_text(uid: int, products: list, page: int,
+                                kind: str, cat_id: int):
+    """Return (text, keyboard, photo_url) for a product list page."""
+    cid    = cat_id or 0
+    prefix = f'{kind}:{cid}' if cid else kind
+    lang   = _get_state(uid).get('lang', 'am')
+
+    # Build items with full navigation context embedded in callback_data
+    all_items = [
+        (
+            (p['name'][:26] + '…') if len(p['name']) > 26 else p['name'],
+            _prod_cb(p['id'], kind, cid, i, i // PRODUCTS_PER_PAGE)
+        )
+        for i, p in enumerate(products)
+    ]
+
+    title = {'all': '🛍️', 'new': '🆕', 'featured': '⭐', 'cat': '🗂️'}.get(kind, '🛍️')
+    label = _(uid, kind if kind in T else 'products')
+    total = len(products)
+    pages = (total + PRODUCTS_PER_PAGE - 1) // PRODUCTS_PER_PAGE
+    pg_info = f'({page+1}/{pages})' if pages > 1 else ''
+    text = f"{title} *{label}* {pg_info}\n_{total} {'ምርቶች' if lang=='am' else 'products'}_"
+
+    kb = _paginated_keyboard(uid, all_items, page, prefix)
+
+    # First photo on this page
+    start = page * PRODUCTS_PER_PAGE
+    photo_url = None
+    for pp in products[start:start + PRODUCTS_PER_PAGE]:
+        photo_url = _product_image_url(pp)
+        if photo_url:
+            break
+
+    return text, kb, photo_url
+
+
 async def _edit_products_page(query, uid: int, page: int, kind: str, cat_id=None):
-    lang = _get_state(uid).get('lang', 'am')
     products = _get_products_for_kind(kind, cat_id)
     if not products:
-        await query.edit_message_text(_(uid, 'no_products'),
-                                      reply_markup=_back_home(uid))
+        await query.edit_message_text(_(uid, 'no_products'), reply_markup=_back_home(uid))
         return
-    prefix = f'{kind}:{cat_id}' if cat_id else kind
-    items = [((p['name'][:28] + '…') if len(p['name']) > 28 else p['name'],
-              f'prod:{p["id"]}') for p in products]
-    title = {'all': '🛍️', 'new': '🆕', 'featured': '⭐', 'cat': '🗂️'}.get(kind, '🛍️')
-    text = f"{title} *{_(uid, kind if kind in T else 'products')}*"
-    kb = _paginated_keyboard(uid, items, page, prefix)
-    await query.edit_message_text(text, parse_mode=ParseMode.MARKDOWN, reply_markup=kb)
+    text, kb, photo_url = _products_page_kb_and_text(uid, products, page, kind, cat_id or 0)
+    try:
+        if photo_url:
+            await query.message.reply_photo(photo=photo_url, caption=text,
+                                            parse_mode=ParseMode.MARKDOWN, reply_markup=kb)
+            try:
+                await query.message.delete()
+            except Exception:
+                pass
+        else:
+            await query.edit_message_text(text, parse_mode=ParseMode.MARKDOWN, reply_markup=kb)
+    except TelegramError:
+        try:
+            await query.edit_message_text(text, parse_mode=ParseMode.MARKDOWN, reply_markup=kb)
+        except Exception:
+            pass
 
 
 async def _show_products_page(msg, uid: int, page: int, kind: str, cat_id=None):
@@ -620,13 +724,15 @@ async def _show_products_page(msg, uid: int, page: int, kind: str, cat_id=None):
     if not products:
         await msg.reply_text(_(uid, 'no_products'), reply_markup=_back_home(uid))
         return
-    prefix = f'{kind}:{cat_id}' if cat_id else kind
-    items = [((p['name'][:28] + '…') if len(p['name']) > 28 else p['name'],
-              f'prod:{p["id"]}') for p in products]
-    title = {'all': '🛍️', 'new': '🆕', 'featured': '⭐'}.get(kind, '🛍️')
-    text = f"{title} *{_(uid, 'products')}*"
-    kb = _paginated_keyboard(uid, items, page, prefix)
-    await msg.reply_text(text, parse_mode=ParseMode.MARKDOWN, reply_markup=kb)
+    text, kb, photo_url = _products_page_kb_and_text(uid, products, page, kind, cat_id or 0)
+    try:
+        if photo_url:
+            await msg.reply_photo(photo=photo_url, caption=text,
+                                  parse_mode=ParseMode.MARKDOWN, reply_markup=kb)
+        else:
+            await msg.reply_text(text, parse_mode=ParseMode.MARKDOWN, reply_markup=kb)
+    except TelegramError:
+        await msg.reply_text(text, parse_mode=ParseMode.MARKDOWN, reply_markup=kb)
 
 
 def _get_products_for_kind(kind: str, cat_id=None):
@@ -640,25 +746,45 @@ def _get_products_for_kind(kind: str, cat_id=None):
         return _db_get_products_all()
 
 
-async def _edit_product_detail(query, uid: int, pid: int):
+async def _edit_product_detail(query, uid: int, pid: int,
+                               kind: str = 'all', cat_id: int = 0,
+                               idx: int = -1, page: int = 0):
     p = _db_get_product(pid)
     if not p:
         await query.edit_message_text(_(uid, 'no_products'), reply_markup=_back_home(uid))
         return
+    products = _get_products_for_kind(kind, cat_id or None)
+    # Resolve idx if unknown
+    if idx < 0:
+        for i, prod in enumerate(products):
+            if prod['id'] == pid:
+                idx = i
+                break
+    # Save nav context so cart actions can restore it
+    _get_state(uid)['last_prod'] = {'kind': kind, 'cat_id': cat_id, 'idx': idx, 'page': page}
     cart = _get_state(uid).get('cart', {})
     in_cart = str(pid) in cart
     text = _product_text(uid, p)
-    kb = _product_keyboard(uid, pid, in_cart)
+    kb = _product_keyboard(uid, pid, in_cart,
+                           kind=kind, cat_id=cat_id,
+                           idx=idx, page=page, products=products)
     img_url = _product_image_url(p)
     try:
         if img_url:
             await query.message.reply_photo(photo=img_url, caption=text,
                                             parse_mode=ParseMode.MARKDOWN, reply_markup=kb)
-            await query.message.delete()
+            try:
+                await query.message.delete()
+            except Exception:
+                pass
         else:
             await query.edit_message_text(text, parse_mode=ParseMode.MARKDOWN, reply_markup=kb)
-    except TelegramError:
-        await query.edit_message_text(text, parse_mode=ParseMode.MARKDOWN, reply_markup=kb)
+    except TelegramError as e:
+        log.warning(f"[ProductDetail] TelegramError: {e}")
+        try:
+            await query.edit_message_text(text, parse_mode=ParseMode.MARKDOWN, reply_markup=kb)
+        except Exception:
+            pass
 
 
 async def _edit_categories(query, uid: int):
@@ -709,8 +835,13 @@ async def _handle_cart_action(query, uid: int, data: str, ctx):
             return
         cart[pid_str] = current_qty + 1
         await query.answer(_(uid, 'added'))
-        # Refresh the product view to show updated cart state
-        await _edit_product_detail(query, uid, int(pid_str))
+        # Refresh product view — restore nav context from user state
+        nav = _get_state(uid).get('last_prod', {})
+        await _edit_product_detail(query, uid, int(pid_str),
+                                   kind=nav.get('kind', 'all'),
+                                   cat_id=nav.get('cat_id', 0),
+                                   idx=nav.get('idx', -1),
+                                   page=nav.get('page', 0))
 
     elif action == 'remove' and pid_str:
         cart.pop(pid_str, None)
@@ -750,12 +881,27 @@ async def on_search_input(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
     if not results:
         await update.message.reply_text(_(uid, 'no_products'), reply_markup=_main_menu_keyboard(uid))
         return ConversationHandler.END
-    items = [((p['name'][:28] + '…') if len(p['name']) > 28 else p['name'],
-              f'prod:{p["id"]}') for p in results]
-    kb = _paginated_keyboard(uid, items, 0, 'search_res')
     lang = _get_state(uid).get('lang', 'am')
+    # Embed full context in search results so Prev/Next works
+    items = [
+        (
+            (p['name'][:26] + '…') if len(p['name']) > 26 else p['name'],
+            _prod_cb(p['id'], 'all', 0, i, 0)
+        )
+        for i, p in enumerate(results)
+    ]
+    kb = _paginated_keyboard(uid, items, 0, 'search_res')
     text = f"🔍 {'ውጤቶች' if lang=='am' else 'Results'} ({len(results)})"
-    await update.message.reply_text(text, parse_mode=ParseMode.MARKDOWN, reply_markup=kb)
+    # Show first result's photo alongside the list
+    photo_url = _product_image_url(results[0]) if results else None
+    try:
+        if photo_url:
+            await update.message.reply_photo(photo=photo_url, caption=text,
+                                             parse_mode=ParseMode.MARKDOWN, reply_markup=kb)
+        else:
+            await update.message.reply_text(text, parse_mode=ParseMode.MARKDOWN, reply_markup=kb)
+    except TelegramError:
+        await update.message.reply_text(text, parse_mode=ParseMode.MARKDOWN, reply_markup=kb)
     return ConversationHandler.END
 
 
