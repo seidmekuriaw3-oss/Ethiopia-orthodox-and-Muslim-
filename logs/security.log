@@ -23796,3 +23796,5 @@ jinja2.exceptions.TemplateNotFound: customer/index.html
 2026-07-16 02:39:28,000 - app - WARNING - 404 Error: http://127.0.0.1:5000/api/hisnul/chapter/24
 2026-07-16 02:39:28,038 - app - WARNING - 404 Error: http://127.0.0.1:5000/api/hisnul/chapters
 2026-07-16 02:39:32,101 - app - WARNING - 404 Error: http://127.0.0.1:5000/api/hisnul/chapter/1
+2026-07-16 03:16:29,981 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-07-16 03:17:50,683 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
