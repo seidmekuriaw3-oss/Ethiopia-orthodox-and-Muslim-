@@ -1880,8 +1880,9 @@ select.form-control {
         display: none !important;
     }
     
-    /* Hide mobile bell in header-icons on desktop — bell already shown in desktop-nav */
-    #mobileBellLink {
+    /* Hide mobile bell & account in header-icons on desktop — already in desktop-nav */
+    #mobileBellLink,
+    #mobileAccountLink {
         display: none !important;
     }
     
