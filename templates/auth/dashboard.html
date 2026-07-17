@@ -1254,7 +1254,7 @@
         <div class="db-hist-name">Previous Photo</div>
         <div class="db-hist-actions">
             <button class="db-lb-btn green" id="dbHistSetBtn" onclick="dbSetHistAsCurrent()">✅ Set as Profile</button>
-            <button class="db-lb-btn red" onclick="dbDeleteHistFromPreview()">🗑️ Delete</button>
+            <button class="db-lb-btn red"   id="dbHistDelBtn" onclick="dbDeleteHistFromPreview()">🗑️ Delete</button>
             <button class="db-lb-btn" onclick="dbCloseHist()">Cancel</button>
         </div>
     </div>
@@ -1891,32 +1891,129 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 /* ═══════════════════════════════════════════════
-   CSRF TOKEN
+   PROFILE — STATE
 ═══════════════════════════════════════════════ */
 const _dbCsrf = '{{ csrf_token() }}';
-let _dbHasPhoto = {{ 'true' if user.profile_photo else 'false' }};
-let _dbActiveHistId = null;
+let _dbHasPhoto    = {{ 'true' if user.profile_photo else 'false' }};
+let _dbActiveHistId = null;   // null = current photo preview, number = history item
 
-/* ═══════════════════════════════════════════════
-   PROFILE PHOTO UPLOAD
-═══════════════════════════════════════════════ */
+/* ─────────────────────────────────────────────
+   Helper: apply a new current photo to all DOM
+   elements without a page reload
+───────────────────────────────────────────── */
+function dbApplyCurrentPhoto(src) {
+    _dbHasPhoto = true;
+
+    // Main hero avatar
+    const av = document.getElementById('dbTgAvatar');
+    if (av) av.innerHTML = `<img src="${src}" alt="Profile" id="dbTgAvatarImg" style="width:100%;height:100%;object-fit:cover;border-radius:50%;display:block;">`;
+
+    // Blurred hero background
+    const bg = document.getElementById('dbTgBg');
+    if (bg) bg.style.backgroundImage = `url('${src}')`;
+
+    // Show Remove button
+    const rb = document.getElementById('dbTgRmBtn');
+    if (rb) rb.style.display = '';
+
+    // Sidebar avatar
+    const si = document.getElementById('sidebarAvatarImg');
+    if (si) { si.src = src; si.style.display = 'block'; }
+    const sx = document.getElementById('sidebarAvatarInitial');
+    if (sx) sx.style.display = 'none';
+
+    // Top-nav avatar (base.html elements)
+    document.querySelectorAll('.nav-avatar-img').forEach(el => { el.src = src; el.style.display = 'block'; });
+    document.querySelectorAll('.nav-avatar-initials').forEach(el => el.style.display = 'none');
+}
+
+/* Helper: clear current photo from all DOM elements */
+function dbClearCurrentPhoto() {
+    _dbHasPhoto = false;
+    const init = '{{ (user.full_name or user.email or "U")[0]|upper }}';
+
+    const av = document.getElementById('dbTgAvatar');
+    if (av) av.innerHTML = `<span id="dbTgAvatarInit" style="font-size:46px;font-weight:900;color:#fff;">${init}</span>`;
+
+    const bg = document.getElementById('dbTgBg');
+    if (bg) bg.style.backgroundImage = '';
+
+    const rb = document.getElementById('dbTgRmBtn');
+    if (rb) rb.style.display = 'none';
+
+    const si = document.getElementById('sidebarAvatarImg');
+    if (si) si.style.display = 'none';
+    const sx = document.getElementById('sidebarAvatarInitial');
+    if (sx) sx.style.display = 'flex';
+
+    document.querySelectorAll('.nav-avatar-img').forEach(el => el.style.display = 'none');
+    document.querySelectorAll('.nav-avatar-initials').forEach(el => el.style.display = 'flex');
+}
+
+/* Helper: prepend an item to the history carousel */
+function dbPrependHistoryItem(histId, histSrc) {
+    const car = document.getElementById('dbTgCar');
+    if (!car) return;
+
+    const item = document.createElement('div');
+    item.className = 'db-tg-car-item';
+    item.setAttribute('data-hist-id', String(histId));
+    item.setAttribute('data-src', histSrc);
+    item.style.cssText = 'opacity:0;transform:scale(.7);flex-shrink:0;position:relative;cursor:pointer;';
+    item.innerHTML =
+        `<div class="db-tg-thumb" onclick="dbOpenHistPreview(${histId},'${histSrc}')">` +
+        `  <img src="${histSrc}" alt="Previous photo" style="width:100%;height:100%;object-fit:cover;display:block;">` +
+        `</div>` +
+        `<div class="db-tg-del" onclick="dbDeleteHistPhoto(event,${histId})" title="Delete">✕</div>`;
+
+    // Insert right after the ＋ add card
+    const addCard = car.querySelector('.db-tg-add');
+    if (addCard && addCard.nextSibling) {
+        car.insertBefore(item, addCard.nextSibling);
+    } else {
+        car.appendChild(item);
+    }
+
+    // Double-rAF so the browser renders opacity:0 first, THEN transitions to 1
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+        item.style.transition = 'opacity .32s ease, transform .32s ease';
+        item.style.opacity    = '1';
+        item.style.transform  = 'scale(1)';
+    }));
+
+    // Show "Previous Photos" label
+    const lbl = document.getElementById('dbCarLbl');
+    if (lbl) lbl.style.display = '';
+}
+
+/* ─────────────────────────────────────────────
+   Upload
+───────────────────────────────────────────── */
 async function uploadProfilePhoto(input) {
     const file = input.files[0];
     if (!file) return;
-    const MAX = 5 * 1024 * 1024;
-    if (file.size > MAX) { showToast('ፎቶ ከ5MB ማለፍ የለበትም', 'error'); input.value=''; return; }
+    if (file.size > 5 * 1024 * 1024) {
+        showToast('ፎቶ ከ5MB ማለፍ የለበትም', 'error');
+        input.value = '';
+        return;
+    }
 
+    // Progress bar elements (may be null if profile panel hidden — use ?. guards)
     const prog = document.getElementById('dbTgProg');
     const fill = document.getElementById('dbTgProgFill');
-    const lbl  = document.getElementById('dbTgProgLbl');
+    const pLbl = document.getElementById('dbTgProgLbl');
     const av   = document.getElementById('dbTgAvatar');
-    prog.classList.add('show');
-    fill.style.width = '0%';
-    lbl.textContent = 'Uploading…';
-    if (av) av.classList.add('uploading');
+
+    if (prog) { prog.classList.add('show'); }
+    if (fill) { fill.style.width = '0%'; }
+    if (pLbl) { pLbl.textContent = 'Uploading…'; }
+    if (av)   { av.classList.add('uploading'); }
 
     let pct = 0;
-    const iv = setInterval(() => { pct = Math.min(pct + Math.random()*18, 88); fill.style.width = pct+'%'; }, 120);
+    const iv = setInterval(() => {
+        pct = Math.min(pct + Math.random() * 16, 88);
+        if (fill) fill.style.width = pct + '%';
+    }, 110);
 
     const fd = new FormData();
     fd.append('photo', file);
@@ -1924,7 +2021,8 @@ async function uploadProfilePhoto(input) {
 
     try {
         const r = await fetch('/profile/upload-photo', {
-            method: 'POST', body: fd,
+            method: 'POST',
+            body: fd,
             headers: { 'X-Requested-With': 'XMLHttpRequest', 'X-CSRFToken': _dbCsrf }
         });
         const data = await r.json();
@@ -1932,162 +2030,93 @@ async function uploadProfilePhoto(input) {
         if (av) av.classList.remove('uploading');
 
         if (data.success) {
-            fill.style.width = '100%';
-            lbl.textContent = 'Done ✅';
-            setTimeout(() => { prog.classList.remove('show'); fill.style.width='0%'; }, 1400);
+            if (fill) fill.style.width = '100%';
+            if (pLbl) pLbl.textContent = 'Done ✅';
+            setTimeout(() => { if (prog) prog.classList.remove('show'); if (fill) fill.style.width = '0%'; }, 1400);
 
-            const src = data.photo_src + '?t=' + Date.now();
-            // Prepend old photo to carousel if backend returned history info
+            // If there was a previous photo it was moved to history — add to carousel
             if (data.hist_id && data.hist_src) {
                 dbPrependHistoryItem(data.hist_id, data.hist_src);
             }
-            dbApplyCurrentPhoto(src);
+            dbApplyCurrentPhoto(data.photo_src + '?t=' + Date.now());
             showToast('ፎቶ ተቀይሯል! ✅', 'success');
         } else {
-            prog.classList.remove('show');
+            if (prog) prog.classList.remove('show');
             showToast(data.error || 'ስህተት ተፈጥሯል', 'error');
         }
-    } catch(e) {
+    } catch (err) {
         clearInterval(iv);
-        if (av) av.classList.remove('uploading');
-        prog.classList.remove('show');
+        if (av)   av.classList.remove('uploading');
+        if (prog) prog.classList.remove('show');
         showToast('ፎቶ ለመጫን አልተቻለም', 'error');
     }
     input.value = '';
 }
 
-function dbApplyCurrentPhoto(src) {
-    _dbHasPhoto = true;
-
-    // Hero avatar
-    const av = document.getElementById('dbTgAvatar');
-    if (av) av.innerHTML = `<img src="${src}" alt="Profile" id="dbTgAvatarImg">`;
-
-    // Blurred hero background
-    const bg = document.getElementById('dbTgBg');
-    if (bg) bg.style.backgroundImage = `url('${src}')`;
-
-    // Sidebar avatar
-    ['sidebarAvatarImg'].forEach(id => {
-        const el = document.getElementById(id);
-        if (el) { el.src = src; el.style.display = 'block'; }
-    });
-    ['sidebarAvatarInitial'].forEach(id => {
-        const el = document.getElementById(id);
-        if (el) el.style.display = 'none';
-    });
-
-    // Show remove button
-    const rb = document.getElementById('dbTgRmBtn');
-    if (rb) rb.style.display = '';
-
-    // Nav bar avatar
-    document.querySelectorAll('.nav-avatar-img').forEach(el => { el.src = src; el.style.display = 'block'; });
-    document.querySelectorAll('.nav-avatar-initials').forEach(el => el.style.display = 'none');
-
-    // Show carousel label
-    const lbl = document.getElementById('dbCarLbl');
-    if (lbl) lbl.style.display = '';
-}
-
+/* ─────────────────────────────────────────────
+   Remove current photo
+───────────────────────────────────────────── */
 async function dbRemovePhoto() {
     if (!_dbHasPhoto) { showToast('ፎቶ የለም', 'error'); return; }
     if (!confirm('ፎቶ ለማስወገድ ይፈልጋሉ?')) return;
     try {
         const r = await fetch('/profile/remove-photo', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest', 'X-CSRFToken': _dbCsrf }
+            headers: { 'X-Requested-With': 'XMLHttpRequest', 'X-CSRFToken': _dbCsrf }
         });
         const data = await r.json();
         if (data.success) {
-            _dbHasPhoto = false;
-            const init = '{{ (user.full_name or user.email or "U")[0]|upper }}';
-            const av = document.getElementById('dbTgAvatar');
-            if (av) av.innerHTML = `<span id="dbTgAvatarInit">${init}</span>`;
-            const bg = document.getElementById('dbTgBg');
-            if (bg) bg.style.backgroundImage = '';
-            const rb = document.getElementById('dbTgRmBtn');
-            if (rb) rb.style.display = 'none';
-            ['sidebarAvatarImg'].forEach(id => { const el=document.getElementById(id); if(el) el.style.display='none'; });
-            ['sidebarAvatarInitial'].forEach(id => { const el=document.getElementById(id); if(el) el.style.display='flex'; });
-            document.querySelectorAll('.nav-avatar-img').forEach(el => el.style.display='none');
-            document.querySelectorAll('.nav-avatar-initials').forEach(el => el.style.display='flex');
-            showToast('ፎቶ ተወግዷል — እየዘጋሁ ነው…', 'success');
-            setTimeout(() => location.reload(), 1300);
+            // If the removed photo was saved to history, prepend it to carousel
+            if (data.hist_id && data.hist_src) {
+                dbPrependHistoryItem(data.hist_id, data.hist_src);
+            }
+            dbClearCurrentPhoto();
+            showToast('ፎቶ ተወግዷል ✅', 'success');
         } else {
             showToast(data.error || 'ስህተት ተፈጥሯል', 'error');
         }
-    } catch(e) {
+    } catch (err) {
         showToast('ስህተት ተፈጥሯል', 'error');
     }
 }
 
-/* ═══════════════════════════════════════════════
-   HISTORY CAROUSEL
-═══════════════════════════════════════════════ */
-function dbOpenCurPreview() {
-    const img = document.getElementById('dbTgAvatarImg');
-    if (!img) return; // no photo set — nothing to preview
-    document.getElementById('dbHistImg').src = img.src;
-    // Hide "Set as Profile" button for the current photo preview
+/* ─────────────────────────────────────────────
+   Lightbox / preview modal
+───────────────────────────────────────────── */
+function dbOpenModal(src, isHistory) {
+    document.getElementById('dbHistImg').src = src;
     const setBtn = document.getElementById('dbHistSetBtn');
-    if (setBtn) setBtn.style.display = 'none';
-    _dbActiveHistId = null; // current photo, not history
+    const delBtn = document.getElementById('dbHistDelBtn');
+    if (setBtn) setBtn.style.display = isHistory ? '' : 'none';
+    if (delBtn) delBtn.style.display = isHistory ? '' : 'none';
     document.getElementById('dbHistModal').classList.add('open');
     document.body.style.overflow = 'hidden';
 }
 
-function dbPrependHistoryItem(histId, histSrc) {
-    const car = document.getElementById('dbTgCar');
-    if (!car) return;
-    const addCard = car.querySelector('.db-tg-add');
-
-    const item = document.createElement('div');
-    item.className = 'db-tg-car-item';
-    item.dataset.histId = histId;
-    item.dataset.src = histSrc;
-    item.style.opacity = '0';
-    item.style.transform = 'scale(.7)';
-    item.innerHTML = `
-        <div class="db-tg-thumb" onclick="dbOpenHistPreview(${histId}, '${histSrc}')">
-            <img src="${histSrc}" alt="Previous photo" loading="lazy">
-        </div>
-        <div class="db-tg-del" onclick="dbDeleteHistPhoto(event, ${histId})" title="Delete">✕</div>`;
-
-    // Insert right after the + card
-    if (addCard && addCard.nextSibling) {
-        car.insertBefore(item, addCard.nextSibling);
-    } else {
-        car.appendChild(item);
-    }
-    // Animate in
-    requestAnimationFrame(() => {
-        item.style.transition = 'opacity .3s, transform .3s';
-        item.style.opacity = '1';
-        item.style.transform = 'scale(1)';
-    });
-    // Show label
-    const lbl = document.getElementById('dbCarLbl');
-    if (lbl) lbl.style.display = '';
+function dbOpenCurPreview() {
+    const img = document.getElementById('dbTgAvatarImg');
+    if (!img || !img.src) return;   // no photo — nothing to show
+    _dbActiveHistId = null;
+    dbOpenModal(img.src, false);    // not a history item → hide Set/Delete
 }
 
 function dbOpenHistPreview(histId, src) {
     _dbActiveHistId = histId;
-    document.getElementById('dbHistImg').src = src;
-    const setBtn = document.getElementById('dbHistSetBtn');
-    if (setBtn) setBtn.style.display = ''; // restore for history items
-    document.getElementById('dbHistModal').classList.add('open');
-    document.body.style.overflow = 'hidden';
+    dbOpenModal(src, true);
 }
+
 function dbCloseHist() {
     document.getElementById('dbHistModal').classList.remove('open');
     document.body.style.overflow = '';
 }
 
+/* ─────────────────────────────────────────────
+   Set history photo as current
+───────────────────────────────────────────── */
 async function dbSetHistAsCurrent() {
     if (!_dbActiveHistId) return;
     const btn = document.getElementById('dbHistSetBtn');
-    btn.disabled = true; btn.innerHTML = '<span class="spinner"></span>';
+    if (btn) { btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> Setting…'; }
     try {
         const r = await fetch('/profile/set-history-photo', {
             method: 'POST',
@@ -2097,24 +2126,40 @@ async function dbSetHistAsCurrent() {
         const d = await r.json();
         if (d.success) {
             dbCloseHist();
+
+            // Remove chosen history item from carousel with animation
+            const selItem = document.querySelector(`.db-tg-car-item[data-hist-id="${_dbActiveHistId}"]`);
+            if (selItem) {
+                selItem.style.transition = 'opacity .3s, transform .3s';
+                selItem.style.opacity   = '0';
+                selItem.style.transform = 'scale(.7)';
+                setTimeout(() => selItem.remove(), 320);
+            }
+
+            // If old current photo was moved to history, prepend it to carousel
+            if (d.new_hist_id && d.new_hist_src) {
+                dbPrependHistoryItem(d.new_hist_id, d.new_hist_src);
+            }
+
             dbApplyCurrentPhoto(d.photo_src + '?t=' + Date.now());
-            const item = document.querySelector(`.db-tg-car-item[data-hist-id="${_dbActiveHistId}"]`);
-            if (item) { item.style.transition='opacity .3s,transform .3s'; item.style.opacity='0'; item.style.transform='scale(.7)'; setTimeout(()=>item.remove(),320); }
             showToast('ፎቶ ተቀይሯል! ✅', 'success');
         } else {
             showToast(d.error || 'ስህተት ተፈጥሯል', 'error');
         }
-    } catch(e) { showToast('Network error', 'error'); }
-    finally { btn.disabled=false; btn.innerHTML='✅ Set as Profile'; }
+    } catch (err) { showToast('Network error', 'error'); }
+    finally { if (btn) { btn.disabled = false; btn.innerHTML = '✅ Set as Profile'; } }
 }
 
+/* ─────────────────────────────────────────────
+   Delete history photo
+───────────────────────────────────────────── */
 function dbDeleteHistFromPreview() {
+    // No extra confirm here — dbDeleteHistPhoto already asks
     if (!_dbActiveHistId) return;
-    if (!confirm('ይህን ፎቶ ሙሉ በሙሉ ለመሰረዝ ይፈልጋሉ?')) return;
     dbDeleteHistPhoto(null, _dbActiveHistId, () => dbCloseHist());
 }
 
-async function dbDeleteHistPhoto(e, histId, cb) {
+async function dbDeleteHistPhoto(e, histId, onDone) {
     if (e) { e.stopPropagation(); e.preventDefault(); }
     if (!confirm('ፎቶ ሙሉ በሙሉ ይሰረዝ?')) return;
     try {
@@ -2126,14 +2171,27 @@ async function dbDeleteHistPhoto(e, histId, cb) {
         const d = await r.json();
         if (d.success) {
             const item = document.querySelector(`.db-tg-car-item[data-hist-id="${histId}"]`);
-            if (item) { item.style.transition='opacity .28s,transform .28s'; item.style.opacity='0'; item.style.transform='scale(.65)'; setTimeout(()=>{ item.remove(); const rem=document.querySelectorAll('.db-tg-car-item'); const lbl=document.getElementById('dbCarLbl'); if(!rem.length && lbl) lbl.style.display='none'; },300); }
+            if (item) {
+                item.style.transition = 'opacity .28s, transform .28s';
+                item.style.opacity    = '0';
+                item.style.transform  = 'scale(.65)';
+                setTimeout(() => {
+                    item.remove();
+                    // Hide label if carousel is now empty
+                    const remaining = document.querySelectorAll('.db-tg-car-item');
+                    const lbl = document.getElementById('dbCarLbl');
+                    if (!remaining.length && lbl) lbl.style.display = 'none';
+                }, 300);
+            }
             showToast('ፎቶ ተሰርዟል', 'success');
-            if (cb) cb();
-        } else { showToast(d.error || 'ስህተት', 'error'); }
-    } catch(e2) { showToast('Network error', 'error'); }
+            if (onDone) onDone();
+        } else {
+            showToast(d.error || 'ስህተት', 'error');
+        }
+    } catch (err) { showToast('Network error', 'error'); }
 }
 
-/* Keep legacy removeProfilePhoto alias so old calls still work */
+/* Legacy alias */
 async function removeProfilePhoto() { await dbRemovePhoto(); }
 
 /* ═══════════════════════════════════════════════

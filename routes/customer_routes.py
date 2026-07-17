@@ -999,6 +999,8 @@ def remove_profile_photo():
         photo_path = (row['profile_photo'] if row else None) or session.get('user_photo', '')
 
         # Move current photo to history instead of deleting
+        rm_hist_id  = None
+        rm_hist_src = None
         if photo_path:
             old_abs = os.path.join(current_app.root_path, 'static', photo_path)
             if os.path.exists(old_abs):
@@ -1011,9 +1013,13 @@ def remove_profile_photo():
                     import shutil
                     shutil.copy2(old_abs, os.path.join(hist_dir, hist_name))
                     cursor.execute(
-                        "INSERT INTO user_photo_history (user_id, photo_path) VALUES (%s, %s)",
+                        "INSERT INTO user_photo_history (user_id, photo_path) VALUES (%s, %s) RETURNING id",
                         (uid, hist_rel)
                     )
+                    ins = cursor.fetchone()
+                    if ins:
+                        rm_hist_id  = ins['id']
+                        rm_hist_src = f"/static/{hist_rel}"
                     os.remove(old_abs)
                 except Exception as he:
                     current_app.logger.warning(f"Photo history on remove: {he}")
@@ -1024,7 +1030,11 @@ def remove_profile_photo():
         )
         conn.commit()
         session['user_photo'] = ''
-        return jsonify({'success': True})
+        resp = {'success': True}
+        if rm_hist_id:
+            resp['hist_id']  = rm_hist_id
+            resp['hist_src'] = rm_hist_src
+        return jsonify(resp)
     except Exception as e:
         current_app.logger.error(f"Remove photo error: {e}")
         return jsonify({'success': False, 'error': 'Error removing photo'}), 500
@@ -1055,6 +1065,8 @@ def set_history_photo():
         hist_abs = os.path.join(current_app.root_path, 'static', hist_rel)
 
         # Move current photo → history
+        new_hist_id  = None
+        new_hist_src = None
         cursor.execute("SELECT profile_photo FROM users WHERE id = %s", (uid,))
         urow = cursor.fetchone()
         cur_rel = urow['profile_photo'] if urow else None
@@ -1070,9 +1082,13 @@ def set_history_photo():
                     import shutil
                     shutil.copy2(cur_abs, os.path.join(hist_dir, new_hist_name))
                     cursor.execute(
-                        "INSERT INTO user_photo_history (user_id, photo_path) VALUES (%s, %s)",
+                        "INSERT INTO user_photo_history (user_id, photo_path) VALUES (%s, %s) RETURNING id",
                         (uid, new_hist_rel)
                     )
+                    ins2 = cursor.fetchone()
+                    if ins2:
+                        new_hist_id  = ins2['id']
+                        new_hist_src = f"/static/{new_hist_rel}"
                     ALLOWED_EXT = {'jpg', 'jpeg', 'png', 'gif', 'webp'}
                     for oe in ALLOWED_EXT:
                         p = os.path.join(current_app.root_path, 'static', 'uploads', 'users', f"{uid}.{oe}")
@@ -1101,7 +1117,11 @@ def set_history_photo():
         )
         conn.commit()
         session['user_photo'] = new_cur_rel
-        return jsonify({'success': True, 'photo_src': f"/static/{new_cur_rel}", 'photo_url': new_cur_rel})
+        resp = {'success': True, 'photo_src': f"/static/{new_cur_rel}", 'photo_url': new_cur_rel}
+        if new_hist_id:
+            resp['new_hist_id']  = new_hist_id
+            resp['new_hist_src'] = new_hist_src
+        return jsonify(resp)
     except Exception as e:
         current_app.logger.error(f"set_history_photo error: {e}")
         return jsonify({'success': False, 'error': 'Error setting photo'}), 500
