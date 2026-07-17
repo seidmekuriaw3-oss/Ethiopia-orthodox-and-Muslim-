@@ -1,981 +1,830 @@
 {% extends "base.html" %}
 
-{% block title %}My Profile - SEMIRA FASHION{% endblock %}
+{% block title %}My Profile — SEMIRA FASHION{% endblock %}
 
 {% block extra_css %}
 <style>
-/* ══════════════════════════════════════════
-   SEMIRA FASHION — Modern User Profile
-══════════════════════════════════════════ */
+/* ══════════════════════════════════════════════════════
+   SEMIRA — Telegram-style User Profile
+══════════════════════════════════════════════════════ */
 
-/* ── Page Wrapper ── */
-.up-page {
-    min-height: 100vh;
-    background: linear-gradient(160deg, #f0f7f3 0%, #f8f9fc 60%, #f0f4ff 100%);
-    padding-bottom: 60px;
-}
+/* ─── Reset / base ─── */
+.tg-page { min-height: 100vh; background: #f2f3f5; padding-bottom: 60px; }
 
-/* ── Cover Banner ── */
-.up-cover {
-    height: 180px;
-    background: linear-gradient(135deg, #0a1f52 0%, #1a7a4a 50%, #0e4a2e 100%);
+/* ─────────────────────────────────────────────────────
+   HERO  (dark blurred cover + avatar + info + carousel)
+───────────────────────────────────────────────────── */
+.tg-hero {
     position: relative;
     overflow: hidden;
+    background: #1c2733;
+    min-height: 360px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-bottom: 24px;
 }
-.up-cover::before {
-    content: '';
-    position: absolute;
-    top: -80px; right: -80px;
-    width: 320px; height: 320px;
-    background: rgba(255,255,255,0.06);
-    border-radius: 50%;
-}
-.up-cover::after {
-    content: '';
-    position: absolute;
-    bottom: -100px; left: -60px;
-    width: 360px; height: 360px;
-    background: rgba(255,255,255,0.04);
-    border-radius: 50%;
-}
-.cover-pattern {
+
+/* blurred photo backdrop */
+.tg-hero-bg {
     position: absolute;
     inset: 0;
-    background-image: radial-gradient(circle, rgba(255,255,255,0.08) 1px, transparent 1px);
-    background-size: 28px 28px;
+    background-size: cover;
+    background-position: center;
+    filter: blur(28px) brightness(0.45) saturate(1.3);
+    transform: scale(1.12);
+    transition: background-image 0.5s ease;
+}
+.tg-hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg,
+        rgba(10,20,35,0.45) 0%,
+        rgba(10,20,35,0.25) 50%,
+        rgba(10,20,35,0.78) 100%);
 }
 
-/* ── Container ── */
-.up-container {
-    max-width: 980px;
-    margin: 0 auto;
-    padding: 0 20px;
-}
+/* all hero children above the overlay */
+.tg-hero > *:not(.tg-hero-bg):not(.tg-hero-overlay) { position: relative; z-index: 2; }
 
-/* ── Profile Header Card ── */
-.up-header-card {
-    background: #fff;
-    border-radius: 24px;
-    padding: 0 28px 24px;
-    margin-top: -50px;
+/* ─── Avatar ─── */
+.tg-avatar-wrap {
+    margin-top: 36px;
     position: relative;
-    box-shadow: 0 8px 40px rgba(0,0,0,0.10);
-    margin-bottom: 24px;
-    z-index: 10;
+    display: inline-block;
 }
-
-/* ── Avatar Section ── */
-.up-avatar-row {
-    display: flex;
-    align-items: flex-end;
-    justify-content: space-between;
-    gap: 16px;
-    flex-wrap: wrap;
-    padding-top: 0;
-    margin-bottom: 20px;
-}
-.up-avatar-wrap {
-    position: relative;
-    margin-top: -52px;
-    flex-shrink: 0;
-}
-.up-avatar {
-    width: 104px;
-    height: 104px;
+.tg-avatar {
+    width: 148px; height: 148px;
     border-radius: 50%;
-    border: 4px solid #fff;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
-    background: linear-gradient(135deg, #1a7a4a, #0a1f52);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 38px;
-    font-weight: 800;
-    color: #fff;
-    letter-spacing: -1px;
+    border: 4px solid rgba(255,255,255,0.90);
+    box-shadow: 0 8px 40px rgba(0,0,0,0.55);
+    background: linear-gradient(135deg, #1a7a4a 0%, #0a1f52 100%);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 56px; font-weight: 900; color: #fff;
     overflow: hidden;
     cursor: pointer;
-    transition: transform 0.2s, box-shadow 0.2s;
+    transition: transform 0.22s, box-shadow 0.22s;
+    user-select: none;
 }
-.up-avatar:hover { transform: scale(1.04); box-shadow: 0 8px 28px rgba(0,0,0,0.22); }
-.up-avatar img {
-    width: 100%; height: 100%;
-    object-fit: cover;
-    border-radius: 50%;
-}
+.tg-avatar:hover { transform: scale(1.045); box-shadow: 0 14px 50px rgba(0,0,0,0.65); }
+.tg-avatar img { width:100%; height:100%; object-fit:cover; border-radius:50%; display:block; }
 
-/* camera overlay */
-.up-avatar-cam {
-    position: absolute;
-    bottom: 4px; right: 4px;
-    width: 30px; height: 30px;
-    background: #1a7a4a;
-    border: 2px solid #fff;
-    border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 13px;
-    cursor: pointer;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.20);
-    transition: background 0.2s, transform 0.2s;
-    z-index: 2;
+/* upload spinner ring */
+.tg-avatar.uploading::after {
+    content:'';
+    position:absolute; inset:-6px;
+    border-radius:50%;
+    border:4px solid transparent;
+    border-top-color:#22c55e;
+    animation: spin 0.7s linear infinite;
 }
-.up-avatar-cam:hover { background: #0f5232; transform: scale(1.1); }
+@keyframes spin { to { transform: rotate(360deg); } }
 
-/* hidden file input */
-#photoFileInput { display: none; }
-
-/* ── User Meta ── */
-.up-meta {
-    flex: 1;
-    min-width: 0;
-    padding-top: 14px;
-}
-.up-name {
-    font-size: 22px;
-    font-weight: 800;
-    color: #111;
-    margin: 0 0 4px;
-    line-height: 1.2;
-}
-.up-email {
-    font-size: 13px;
-    color: #888;
-    margin: 0 0 8px;
-}
-.up-badges {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-}
-.up-badge {
-    font-size: 11px;
-    font-weight: 700;
-    padding: 4px 11px;
-    border-radius: 20px;
-    letter-spacing: 0.3px;
-}
-.badge-member { background: linear-gradient(135deg, #1a7a4a22, #1a7a4a11); color: #1a7a4a; border: 1px solid #1a7a4a44; }
-.badge-discount { background: linear-gradient(135deg, #f59e0b22, #f59e0b11); color: #b45309; border: 1px solid #f59e0b44; }
-
-/* ── Header Actions ── */
-.up-header-actions {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    flex-wrap: wrap;
-    padding-top: 14px;
-    flex-shrink: 0;
-}
-.btn-primary-sm {
-    background: linear-gradient(135deg, #1a7a4a, #0f5232);
+/* ─── Name / email ─── */
+.tg-name {
+    margin-top: 16px;
+    font-size: 24px; font-weight: 800;
     color: #fff;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 12px;
-    font-size: 13px;
-    font-weight: 700;
-    cursor: pointer;
-    display: flex; align-items: center; gap: 6px;
-    transition: all 0.2s;
-    white-space: nowrap;
-    text-decoration: none;
+    text-shadow: 0 2px 12px rgba(0,0,0,0.5);
+    text-align: center;
+    letter-spacing: -0.3px;
 }
-.btn-primary-sm:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(26,122,74,0.36); }
-.btn-ghost-sm {
-    background: #f4f6f8;
-    color: #444;
-    border: 1.5px solid #e0e0e0;
-    padding: 9px 16px;
-    border-radius: 12px;
-    font-size: 13px;
-    font-weight: 600;
-    cursor: pointer;
-    display: flex; align-items: center; gap: 6px;
-    transition: all 0.2s;
-    white-space: nowrap;
-}
-.btn-ghost-sm:hover { background: #eaecf0; border-color: #ccc; }
-
-/* ── Stats Strip ── */
-.up-divider {
-    height: 1px;
-    background: linear-gradient(to right, transparent, #e8eaf0, transparent);
-    margin: 4px 0 20px;
-}
-.up-stats {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 0;
+.tg-email {
+    margin-top: 4px;
+    font-size: 13px; color: rgba(255,255,255,0.72);
     text-align: center;
 }
-.up-stat {
-    padding: 10px 8px;
-    border-right: 1px solid #f0f0f0;
-    position: relative;
+.tg-badges {
+    display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; justify-content: center;
 }
-.up-stat:last-child { border-right: none; }
-.up-stat-num {
-    font-size: 26px;
-    font-weight: 900;
-    line-height: 1;
-    margin-bottom: 4px;
+.tg-badge {
+    font-size: 11px; font-weight: 700;
+    padding: 3px 11px; border-radius: 20px;
+    backdrop-filter: blur(8px);
 }
-.up-stat-lbl {
-    font-size: 10px;
-    font-weight: 700;
-    color: #aaa;
-    text-transform: uppercase;
-    letter-spacing: 0.6px;
-}
-.stat-c1 .up-stat-num { color: #1a7a4a; }
-.stat-c2 .up-stat-num { color: #22c55e; }
-.stat-c3 .up-stat-num { color: #f59e0b; }
-.stat-c4 .up-stat-num { color: #6366f1; }
+.tg-badge-green { background: rgba(26,122,74,0.50); border: 1px solid rgba(26,122,74,0.70); color: #86efac; }
+.tg-badge-amber { background: rgba(245,158,11,0.30); border: 1px solid rgba(245,158,11,0.55); color: #fde68a; }
 
-/* ── Flash ── */
-.up-flash {
-    padding: 13px 18px;
-    border-radius: 14px;
-    margin-bottom: 20px;
-    font-size: 14px;
-    font-weight: 500;
-    display: flex; align-items: center; gap: 10px;
-    animation: flash-in 0.3s ease;
+/* ─── Change / Remove buttons ─── */
+.tg-photo-btns {
+    display: flex; gap: 10px; margin-top: 18px; flex-wrap: wrap; justify-content: center;
 }
-@keyframes flash-in { from { opacity:0; transform:translateY(-6px); } to { opacity:1; transform:none; } }
-.up-flash.success { background: #f0fdf4; color: #166534; border: 1px solid #bbf7d0; }
-.up-flash.error   { background: #fff1f2; color: #9f1239; border: 1px solid #fecdd3; }
-
-/* ── Tab Bar ── */
-.up-tabs {
-    display: flex;
-    gap: 4px;
-    background: #f1f3f7;
-    border-radius: 16px;
-    padding: 5px;
-    margin-bottom: 22px;
-}
-.up-tab {
-    flex: 1;
-    border: none;
-    background: none;
-    border-radius: 12px;
-    padding: 11px 12px;
-    font-size: 13px;
-    font-weight: 600;
-    cursor: pointer;
-    color: #888;
-    transition: all 0.22s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 7px;
-}
-.up-tab.active {
-    background: #fff;
-    color: #1a7a4a;
-    box-shadow: 0 2px 12px rgba(0,0,0,0.09);
-}
-.tab-badge {
-    background: #1a7a4a;
+.tg-btn-change {
+    background: rgba(255,255,255,0.18);
+    backdrop-filter: blur(10px);
+    border: 1.5px solid rgba(255,255,255,0.35);
     color: #fff;
-    font-size: 10px;
-    padding: 1px 6px;
+    padding: 10px 22px;
+    border-radius: 40px;
+    font-size: 13px; font-weight: 700;
+    cursor: pointer;
+    display: flex; align-items: center; gap: 7px;
+    transition: background 0.2s, transform 0.18s;
+    white-space: nowrap;
+}
+.tg-btn-change:hover { background: rgba(255,255,255,0.28); transform: translateY(-2px); }
+
+.tg-btn-remove {
+    background: rgba(220,38,38,0.22);
+    backdrop-filter: blur(10px);
+    border: 1.5px solid rgba(220,38,38,0.45);
+    color: #fca5a5;
+    padding: 10px 20px;
+    border-radius: 40px;
+    font-size: 13px; font-weight: 700;
+    cursor: pointer;
+    display: flex; align-items: center; gap: 7px;
+    transition: background 0.2s, transform 0.18s;
+    white-space: nowrap;
+}
+.tg-btn-remove:hover { background: rgba(220,38,38,0.36); transform: translateY(-2px); }
+
+/* ─── Upload progress ─── */
+.tg-progress-wrap {
+    width: 148px;
+    margin-top: 10px;
+    display: none;
+}
+.tg-progress-wrap.show { display: block; }
+.tg-progress-bar {
+    height: 4px; background: rgba(255,255,255,0.2);
+    border-radius: 20px; overflow: hidden;
+}
+.tg-progress-fill {
+    height: 100%;
+    background: linear-gradient(to right, #22c55e, #86efac);
     border-radius: 20px;
-    font-weight: 800;
+    width: 0%; transition: width 0.25s;
+}
+.tg-progress-label {
+    font-size: 11px; color: rgba(255,255,255,0.7);
+    text-align: center; margin-top: 5px;
 }
 
-/* ── Tab Panels ── */
-.up-panel { display: none; }
-.up-panel.active { display: block; animation: panel-in 0.25s ease; }
-@keyframes panel-in { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:none; } }
+/* ─────────────────────────────────────────────────────
+   PHOTO CAROUSEL  (Telegram-style history strip)
+───────────────────────────────────────────────────── */
+.tg-carousel-wrap {
+    width: 100%;
+    margin-top: 24px;
+    padding: 0 20px 4px;
+    box-sizing: border-box;
+}
+.tg-carousel-label {
+    font-size: 10px; font-weight: 700;
+    color: rgba(255,255,255,0.45);
+    text-transform: uppercase; letter-spacing: 1px;
+    margin-bottom: 10px;
+    text-align: center;
+}
+.tg-carousel {
+    display: flex;
+    gap: 12px;
+    overflow-x: auto;
+    padding-bottom: 6px;
+    justify-content: center;
+    flex-wrap: nowrap;
+    scrollbar-width: none;
+}
+.tg-carousel::-webkit-scrollbar { display: none; }
 
-/* ── Photo Management Card ── */
-.photo-card {
+/* each history item */
+.tg-carousel-item {
+    flex-shrink: 0;
+    position: relative;
+    cursor: pointer;
+}
+.tg-thumb {
+    width: 64px; height: 64px;
+    border-radius: 50%;
+    border: 2.5px solid rgba(255,255,255,0.40);
+    overflow: hidden;
+    background: rgba(255,255,255,0.10);
+    display: flex; align-items: center; justify-content: center;
+    transition: border-color 0.18s, transform 0.18s;
+}
+.tg-thumb img { width:100%; height:100%; object-fit:cover; display:block; }
+.tg-thumb:hover { border-color: rgba(255,255,255,0.85); transform: scale(1.08); }
+
+/* "+" add card */
+.tg-thumb-add {
+    width: 64px; height: 64px;
+    border-radius: 50%;
+    border: 2.5px dashed rgba(255,255,255,0.40);
+    background: rgba(255,255,255,0.08);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    transition: border-color 0.18s, background 0.18s, transform 0.18s;
+    font-size: 24px; color: rgba(255,255,255,0.65);
+    flex-shrink: 0;
+}
+.tg-thumb-add:hover {
+    border-color: rgba(255,255,255,0.75);
+    background: rgba(255,255,255,0.16);
+    transform: scale(1.08);
+    color: #fff;
+}
+
+/* delete badge on hover */
+.tg-carousel-item .tg-del-btn {
+    display: none;
+    position: absolute;
+    top: -3px; right: -3px;
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    background: rgba(220,38,38,0.85);
+    border: 1.5px solid #fff;
+    color: #fff;
+    font-size: 10px; font-weight: 900;
+    align-items: center; justify-content: center;
+    cursor: pointer;
+    z-index: 4;
+    transition: background 0.15s;
+}
+.tg-carousel-item:hover .tg-del-btn { display: flex; }
+.tg-del-btn:hover { background: rgba(220,38,38,1); }
+
+/* ─────────────────────────────────────────────────────
+   CONTENT AREA
+───────────────────────────────────────────────────── */
+.tg-content {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 0 16px;
+}
+
+/* ─── Stats strip ─── */
+.tg-stats-card {
+    background: #fff;
+    border-radius: 20px;
+    margin: 20px 0 0;
+    box-shadow: 0 2px 16px rgba(0,0,0,0.07);
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    overflow: hidden;
+}
+.tg-stat {
+    padding: 18px 8px;
+    text-align: center;
+    border-right: 1px solid #f0f0f0;
+    transition: background 0.15s;
+}
+.tg-stat:last-child { border-right: none; }
+.tg-stat:hover { background: #f8fafb; }
+.tg-stat-num { font-size: 24px; font-weight: 900; line-height: 1; margin-bottom: 5px; }
+.tg-stat-lbl { font-size: 10px; font-weight: 700; color: #aab; text-transform: uppercase; letter-spacing: 0.6px; }
+.sc1 .tg-stat-num { color: #1a7a4a; }
+.sc2 .tg-stat-num { color: #22c55e; }
+.sc3 .tg-stat-num { color: #f59e0b; }
+.sc4 .tg-stat-num { color: #6366f1; }
+
+/* ─── Flash messages ─── */
+.tg-flash {
+    margin: 14px 0 0;
+    padding: 12px 18px;
+    border-radius: 14px;
+    font-size: 14px; font-weight: 500;
+    display: flex; align-items: center; gap: 9px;
+    animation: fadein .3s ease;
+}
+@keyframes fadein { from { opacity:0; transform:translateY(-5px); } to { opacity:1; transform:none; } }
+.tg-flash.success { background:#f0fdf4; color:#166534; border:1px solid #bbf7d0; }
+.tg-flash.error   { background:#fff1f2; color:#9f1239; border:1px solid #fecdd3; }
+
+/* ─── Tab bar ─── */
+.tg-tabs {
+    display: flex; gap: 4px;
+    background: #fff;
+    border-radius: 18px;
+    padding: 5px;
+    margin: 18px 0 0;
+    box-shadow: 0 2px 16px rgba(0,0,0,0.07);
+}
+.tg-tab {
+    flex: 1; border: none; background: none;
+    border-radius: 14px;
+    padding: 11px 10px;
+    font-size: 13px; font-weight: 600; color: #999;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+    transition: all 0.2s;
+}
+.tg-tab.active { background: #1a7a4a; color: #fff; box-shadow: 0 3px 12px rgba(26,122,74,0.30); }
+.tg-tab-badge {
+    background: #fff; color: #1a7a4a;
+    font-size: 10px; padding: 1px 6px;
+    border-radius: 20px; font-weight: 800;
+}
+.tg-tab.active .tg-tab-badge { background: rgba(255,255,255,0.25); color: #fff; }
+
+/* ─── Panels ─── */
+.tg-panel { display: none; padding-top: 18px; }
+.tg-panel.active { display: block; animation: panelin 0.22s ease; }
+@keyframes panelin { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:none; } }
+
+/* ─── Info card ─── */
+.tg-card {
     background: #fff;
     border-radius: 20px;
     padding: 24px;
-    box-shadow: 0 2px 16px rgba(0,0,0,0.06);
-    margin-bottom: 18px;
-    display: flex;
-    align-items: center;
-    gap: 22px;
-    flex-wrap: wrap;
+    box-shadow: 0 2px 16px rgba(0,0,0,0.07);
+    margin-bottom: 14px;
 }
-.photo-large {
-    width: 88px; height: 88px;
-    border-radius: 18px;
-    background: linear-gradient(135deg, #1a7a4a, #0a1f52);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 30px; font-weight: 800; color: #fff;
-    overflow: hidden;
-    flex-shrink: 0;
-    cursor: pointer;
-    border: 3px solid #e8f5ee;
-    box-shadow: 0 4px 16px rgba(26,122,74,0.20);
-    transition: transform 0.2s;
+.tg-card-title {
+    font-size: 14px; font-weight: 800; color: #111;
+    margin: 0 0 18px;
+    display: flex; align-items: center; gap: 8px;
 }
-.photo-large:hover { transform: scale(1.04); }
-.photo-large img { width:100%; height:100%; object-fit:cover; border-radius:15px; }
-.photo-info { flex: 1; min-width: 180px; }
-.photo-info h4 { margin: 0 0 4px; font-size: 15px; font-weight: 700; color: #111; }
-.photo-info p { margin: 0 0 14px; font-size: 12px; color: #999; line-height: 1.5; }
-.photo-actions { display: flex; gap: 10px; flex-wrap: wrap; }
-.btn-upload {
+.tg-card-hd {
+    display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: 10px; margin-bottom: 18px;
+}
+.tg-card-hd .tg-card-title { margin-bottom: 0; }
+
+.tg-info-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+}
+.tg-field {
+    background: #f7f9fb;
+    border-radius: 13px; padding: 13px 15px;
+    border: 1.5px solid #eef0f3;
+    transition: border-color 0.18s;
+}
+.tg-field:hover { border-color: #a7f3d0; }
+.tg-field.span2 { grid-column: 1 / -1; }
+.tg-field-lbl {
+    display: block; font-size: 10px; font-weight: 700;
+    color: #b0b8c1; text-transform: uppercase; letter-spacing: 0.7px;
+    margin-bottom: 4px;
+}
+.tg-field-val { font-size: 14px; font-weight: 600; color: #111; }
+.tg-field-val.muted { color: #ccc; font-style: italic; font-weight: 400; }
+
+/* ─── Order cards ─── */
+.tg-order {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 16px 20px; margin-bottom: 10px;
+    background: #fff; border-radius: 16px;
+    border: 1.5px solid transparent;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    text-decoration: none; gap: 12px; flex-wrap: wrap;
+    transition: all 0.2s; cursor: pointer;
+}
+.tg-order:hover { border-color: #1a7a4a; box-shadow: 0 6px 24px rgba(26,122,74,0.12); transform: translateY(-2px); }
+.oi-num { font-size: 14px; font-weight: 800; color: #1a7a4a; margin-bottom: 2px; }
+.oi-date { font-size: 12px; color: #bbb; }
+.oi-right { display: flex; align-items: center; gap: 12px; }
+.oi-total { font-size: 15px; font-weight: 900; color: #111; }
+.oi-badge { font-size: 11px; font-weight: 700; padding: 4px 12px; border-radius: 20px; white-space: nowrap; }
+.s-pending    { background:#fff7ed; color:#c2410c; }
+.s-confirmed  { background:#eff6ff; color:#1d4ed8; }
+.s-processing { background:#faf5ff; color:#7c3aed; }
+.s-shipped    { background:#f0fdf4; color:#15803d; }
+.s-delivered  { background:#f0fdf4; color:#166534; }
+.s-cancelled  { background:#fff1f2; color:#be123c; }
+
+.tg-empty { text-align:center; padding:60px 20px; }
+.tg-empty-icon { font-size:56px; margin-bottom:12px; }
+.tg-empty p { font-size:15px; color:#bbb; margin:0 0 20px; }
+
+/* ─── Security card ─── */
+.tg-sec-item {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 15px 0; border-bottom: 1px solid #f0f2f5; gap: 12px; flex-wrap: wrap;
+}
+.tg-sec-item:last-child { border-bottom: none; }
+.tg-sec-left { display: flex; align-items: center; gap: 13px; }
+.tg-sec-icon {
+    width: 42px; height: 42px; border-radius: 13px;
+    display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0;
+}
+.si-green { background: #f0fdf4; }
+.si-amber { background: #fffbeb; }
+.si-red   { background: #fff1f2; }
+.tg-sec-title { font-size: 14px; font-weight: 700; color: #111; margin-bottom: 2px; }
+.tg-sec-desc  { font-size: 12px; color: #aab; }
+.tg-btn-sec {
+    background: #f4f6f8; border: 1.5px solid #e5e7eb; color: #444;
+    padding: 9px 18px; border-radius: 11px;
+    font-size: 13px; font-weight: 600; cursor: pointer;
+    transition: all 0.18s; white-space: nowrap;
+}
+.tg-btn-sec:hover { background: #eaecf0; }
+.tg-btn-sec.danger { background: #fff1f2; color: #be123c; border-color: #fecdd3; }
+.tg-btn-sec.danger:hover { background: #ffe4e6; }
+
+/* ─── Edit btn ─── */
+.tg-btn-edit {
     background: linear-gradient(135deg, #1a7a4a, #0f5232);
     color: #fff; border: none;
-    padding: 9px 18px; border-radius: 11px;
+    padding: 10px 20px; border-radius: 12px;
     font-size: 13px; font-weight: 700;
     cursor: pointer; display: flex; align-items: center; gap: 7px;
     transition: all 0.2s;
 }
-.btn-upload:hover { transform: translateY(-2px); box-shadow: 0 5px 16px rgba(26,122,74,0.38); }
-.btn-remove-photo {
-    background: #fff5f5; color: #dc2626;
-    border: 1.5px solid #fecaca;
-    padding: 8px 16px; border-radius: 11px;
-    font-size: 13px; font-weight: 600;
-    cursor: pointer; display: flex; align-items: center; gap: 6px;
-    transition: all 0.2s;
-}
-.btn-remove-photo:hover { background: #fee2e2; }
+.tg-btn-edit:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(26,122,74,0.34); }
 
-/* drag-over state */
-.photo-card.drag-over { border: 2px dashed #1a7a4a; background: #f0fdf4; }
-
-/* ── Upload Progress ── */
-.upload-progress {
-    display: none;
-    width: 100%;
-    margin-top: 12px;
-}
-.upload-progress.show { display: block; }
-.progress-bar-wrap {
-    height: 6px;
-    background: #e8eaf0;
-    border-radius: 20px;
-    overflow: hidden;
-}
-.progress-bar-fill {
-    height: 100%;
-    background: linear-gradient(to right, #1a7a4a, #43a047);
-    border-radius: 20px;
-    transition: width 0.3s;
-    width: 0%;
-}
-
-/* ── Info Card ── */
-.info-card {
-    background: #fff;
-    border-radius: 20px;
-    padding: 28px;
-    box-shadow: 0 2px 16px rgba(0,0,0,0.06);
-    margin-bottom: 18px;
-}
-.card-title {
-    font-size: 15px;
-    font-weight: 800;
-    color: #111;
-    margin: 0 0 20px;
-    display: flex; align-items: center; gap: 8px;
-}
-.info-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 14px;
-}
-.info-field {
-    background: #f8faf9;
-    border-radius: 14px;
-    padding: 14px 16px;
-    border: 1.5px solid #edf0ec;
-    transition: border-color 0.2s;
-}
-.info-field:hover { border-color: #1a7a4a44; }
-.info-field.span2 { grid-column: 1 / -1; }
-.field-label {
-    display: block;
-    font-size: 10px;
-    font-weight: 700;
-    color: #b0b8c1;
-    text-transform: uppercase;
-    letter-spacing: 0.7px;
-    margin-bottom: 5px;
-}
-.field-value {
-    display: block;
-    font-size: 15px;
-    font-weight: 600;
-    color: #111;
-}
-.field-value.muted { color: #ccc; font-style: italic; font-weight: 400; }
-
-/* ── Order Cards ── */
-.order-item {
-    background: #fff;
-    border-radius: 16px;
-    padding: 18px 20px;
-    margin-bottom: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-    flex-wrap: wrap;
-    border: 1.5px solid transparent;
-    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
-    text-decoration: none;
-    transition: all 0.22s;
-    cursor: pointer;
-}
-.order-item:hover {
-    border-color: #1a7a4a;
-    box-shadow: 0 6px 24px rgba(26,122,74,0.12);
-    transform: translateY(-2px);
-}
-.oi-num { font-size: 14px; font-weight: 800; color: #1a7a4a; margin-bottom: 2px; }
-.oi-date { font-size: 12px; color: #bbb; }
-.oi-right { display: flex; align-items: center; gap: 14px; }
-.oi-total { font-size: 16px; font-weight: 900; color: #111; }
-.oi-badge {
-    font-size: 11px; font-weight: 700;
-    padding: 4px 12px; border-radius: 20px;
-    text-transform: capitalize; white-space: nowrap;
-}
-.s-pending    { background: #fff7ed; color: #c2410c; }
-.s-confirmed  { background: #eff6ff; color: #1d4ed8; }
-.s-processing { background: #faf5ff; color: #7c3aed; }
-.s-shipped    { background: #f0fdf4; color: #15803d; }
-.s-delivered  { background: #f0fdf4; color: #166534; }
-.s-cancelled  { background: #fff1f2; color: #be123c; }
-
-.empty-state {
-    text-align: center; padding: 60px 20px; color: #ccc;
-}
-.empty-icon { font-size: 56px; margin-bottom: 14px; }
-.empty-state p { font-size: 15px; color: #bbb; margin: 0 0 22px; }
-
-/* ── Security Card ── */
-.security-item {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 16px 0;
-    border-bottom: 1px solid #f0f0f0;
-    flex-wrap: wrap;
-    gap: 12px;
-}
-.security-item:last-child { border-bottom: none; }
-.sec-left { display: flex; align-items: center; gap: 14px; }
-.sec-icon {
-    width: 44px; height: 44px;
-    border-radius: 14px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 20px;
-    flex-shrink: 0;
-}
-.sec-ic-green { background: #f0fdf4; }
-.sec-ic-amber { background: #fffbeb; }
-.sec-ic-red   { background: #fff1f2; }
-.sec-title { font-size: 14px; font-weight: 700; color: #111; margin-bottom: 2px; }
-.sec-desc  { font-size: 12px; color: #aaa; }
-.btn-sec {
-    background: #f4f6f8;
-    border: 1.5px solid #e5e7eb;
-    color: #444;
-    padding: 9px 18px;
-    border-radius: 11px;
-    font-size: 13px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s;
-    white-space: nowrap;
-}
-.btn-sec:hover { background: #eaecf0; }
-.btn-sec.danger {
-    background: #fff1f2; color: #be123c;
-    border-color: #fecdd3;
-}
-.btn-sec.danger:hover { background: #ffe4e6; }
-
-/* ══════════════════════════════════════════
+/* ══════════════════════════════════════════════════════
    MODALS
-══════════════════════════════════════════ */
-.up-modal-bg {
-    display: none;
-    position: fixed; inset: 0;
-    background: rgba(5,15,35,0.6);
-    backdrop-filter: blur(4px);
+══════════════════════════════════════════════════════ */
+.tg-modal-bg {
+    display: none; position: fixed; inset: 0;
+    background: rgba(5,10,25,0.65);
+    backdrop-filter: blur(5px);
     z-index: 600;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
+    align-items: center; justify-content: center; padding: 20px;
 }
-.up-modal-bg.open { display: flex; }
-.up-modal {
-    background: #fff;
-    border-radius: 24px;
-    padding: 32px;
-    width: 100%;
-    max-width: 560px;
-    max-height: 90vh;
-    overflow-y: auto;
+.tg-modal-bg.open { display: flex; }
+.tg-modal {
+    background: #fff; border-radius: 26px;
+    padding: 30px; width: 100%; max-width: 560px;
+    max-height: 92vh; overflow-y: auto;
     box-shadow: 0 32px 80px rgba(0,0,0,0.28);
     position: relative;
-    animation: modal-pop 0.24s cubic-bezier(0.34,1.56,0.64,1);
+    animation: mpop 0.24s cubic-bezier(0.34,1.56,0.64,1);
 }
-.up-modal.narrow { max-width: 420px; }
-@keyframes modal-pop {
-    from { opacity: 0; transform: scale(0.92) translateY(12px); }
-    to   { opacity: 1; transform: scale(1)   translateY(0); }
-}
-.modal-hd {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 26px;
-    padding-bottom: 18px;
-    border-bottom: 2px solid #f3f4f6;
-}
-.modal-hd h3 { margin: 0; font-size: 18px; font-weight: 800; color: #111; }
-.modal-x {
-    width: 34px; height: 34px;
-    background: #f4f6f8;
-    border: none; border-radius: 50%;
-    font-size: 17px; color: #666;
-    cursor: pointer; display: flex; align-items: center; justify-content: center;
-    transition: background 0.15s;
-}
-.modal-x:hover { background: #e5e7eb; }
+.tg-modal.narrow { max-width: 420px; }
+@keyframes mpop { from { opacity:0; transform:scale(0.92) translateY(12px); } to { opacity:1; transform:scale(1) translateY(0); } }
+.modal-hd { display:flex; align-items:center; justify-content:space-between; margin-bottom:24px; padding-bottom:18px; border-bottom:2px solid #f3f4f6; }
+.modal-hd h3 { margin:0; font-size:18px; font-weight:800; color:#111; }
+.modal-x { width:34px; height:34px; background:#f4f6f8; border:none; border-radius:50%; font-size:17px; color:#666; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:background .15s; }
+.modal-x:hover { background:#e5e7eb; }
+.mfg { margin-bottom:16px; }
+.mfg label { display:block; margin-bottom:7px; font-size:12px; font-weight:700; color:#888; text-transform:uppercase; letter-spacing:.5px; }
+.mfg input, .mfg textarea { width:100%; padding:12px 14px; border:1.5px solid #e5e7eb; border-radius:12px; font-size:14px; color:#111; background:#fff; transition:border-color .2s, box-shadow .2s; box-sizing:border-box; }
+.mfg input:focus, .mfg textarea:focus { outline:none; border-color:#1a7a4a; box-shadow:0 0 0 4px rgba(26,122,74,.10); }
+.mfg input[readonly] { background:#f8f9fc; color:#aaa; cursor:not-allowed; }
+.mfg small { font-size:11px; color:#aaa; margin-top:5px; display:block; }
+.form-row2 { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+.modal-actions { display:flex; gap:12px; flex-wrap:wrap; margin-top:24px; padding-top:18px; border-top:1px solid #f3f4f6; }
+.btn-save { background:linear-gradient(135deg,#1a7a4a,#0f5232); color:#fff; border:none; padding:12px 26px; border-radius:12px; font-size:14px; font-weight:700; cursor:pointer; transition:all .2s; display:flex; align-items:center; gap:8px; }
+.btn-save:hover { transform:translateY(-2px); box-shadow:0 8px 24px rgba(26,122,74,.36); }
+.btn-save:disabled { opacity:.6; transform:none; cursor:not-allowed; }
+.btn-cancel { background:#f4f6f8; color:#555; border:none; padding:12px 22px; border-radius:12px; font-size:14px; font-weight:600; cursor:pointer; transition:background .15s; }
+.btn-cancel:hover { background:#e5e7eb; }
+.spinner { display:inline-block; width:15px; height:15px; border:2px solid rgba(255,255,255,.3); border-top-color:#fff; border-radius:50%; animation:spin .5s linear infinite; vertical-align:middle; }
 
-/* Form fields in modal */
-.mfg { margin-bottom: 16px; }
-.mfg label {
-    display: block; margin-bottom: 7px;
-    font-size: 12px; font-weight: 700;
-    color: #888; text-transform: uppercase; letter-spacing: 0.5px;
-}
-.mfg input, .mfg textarea {
-    width: 100%; padding: 12px 14px;
-    border: 1.5px solid #e5e7eb;
-    border-radius: 12px; font-size: 14px;
-    color: #111; background: #fff;
-    transition: border-color 0.2s, box-shadow 0.2s;
-    box-sizing: border-box;
-}
-.mfg input:focus, .mfg textarea:focus {
-    outline: none;
-    border-color: #1a7a4a;
-    box-shadow: 0 0 0 4px rgba(26,122,74,0.10);
-}
-.mfg input[readonly] {
-    background: #f8f9fc; color: #aaa; cursor: not-allowed;
-}
-.mfg small { font-size: 11px; color: #aaa; margin-top: 5px; display: block; }
-.form-row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-.modal-actions {
-    display: flex; gap: 12px; flex-wrap: wrap;
-    margin-top: 24px; padding-top: 18px;
-    border-top: 1px solid #f3f4f6;
-}
-.btn-save {
-    background: linear-gradient(135deg, #1a7a4a, #0f5232);
-    color: #fff; border: none;
-    padding: 12px 26px; border-radius: 12px;
-    font-size: 14px; font-weight: 700;
-    cursor: pointer; transition: all 0.2s;
-    display: flex; align-items: center; gap: 8px;
-}
-.btn-save:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(26,122,74,0.36); }
-.btn-save:disabled { opacity: 0.6; transform: none; cursor: not-allowed; }
-.btn-cancel {
-    background: #f4f6f8; color: #555;
-    border: none; padding: 12px 22px;
-    border-radius: 12px; font-size: 14px; font-weight: 600;
-    cursor: pointer; transition: background 0.15s;
-}
-.btn-cancel:hover { background: #e5e7eb; }
-@keyframes spin { to { transform: rotate(360deg); } }
-.spinner { display:inline-block; width:15px; height:15px; border:2px solid rgba(255,255,255,0.3); border-top-color:#fff; border-radius:50%; animation:spin 0.5s linear infinite; vertical-align:middle; }
-
-/* ── Photo Viewer Lightbox ── */
-.lightbox-bg {
-    display: none;
-    position: fixed; inset: 0;
-    background: rgba(0,0,0,0.92);
+/* ─── Photo preview modal ─── */
+.tg-preview-bg {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,0.93);
     z-index: 800;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-    gap: 20px;
-    padding: 20px;
+    align-items: center; justify-content: center;
+    flex-direction: column; gap: 18px; padding: 20px;
 }
-.lightbox-bg.open { display: flex; animation: lb-in 0.22s ease; }
-@keyframes lb-in { from { opacity:0; } to { opacity:1; } }
-.lightbox-img {
-    max-width: 420px;
-    max-height: 420px;
-    width: 100%;
-    height: auto;
-    border-radius: 24px;
+.tg-preview-bg.open { display: flex; animation: lbin .22s ease; }
+@keyframes lbin { from { opacity:0; } to { opacity:1; } }
+.tg-preview-img {
+    max-width: min(440px, 90vw);
+    max-height: min(440px, 65vh);
+    border-radius: 22px;
     object-fit: cover;
-    box-shadow: 0 32px 80px rgba(0,0,0,0.6);
-    animation: lb-scale 0.28s cubic-bezier(0.34,1.4,0.64,1);
+    box-shadow: 0 32px 80px rgba(0,0,0,0.7);
+    animation: lbscale .28s cubic-bezier(0.34,1.4,0.64,1);
 }
-@keyframes lb-scale { from { transform:scale(0.8); opacity:0; } to { transform:scale(1); opacity:1; } }
-.lightbox-name {
-    color: #fff; font-size: 18px; font-weight: 700; text-align: center;
+@keyframes lbscale { from { transform:scale(0.78); opacity:0; } to { transform:scale(1); opacity:1; } }
+.tg-preview-initial {
+    width: min(300px,80vw); height: min(300px,80vw);
+    border-radius: 22px;
+    background: linear-gradient(135deg,#1a7a4a,#0a1f52);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 100px; font-weight: 900; color: #fff;
+    animation: lbscale .28s cubic-bezier(0.34,1.4,0.64,1);
 }
-.lightbox-actions { display: flex; gap: 12px; }
+.tg-preview-name { color:#fff; font-size:18px; font-weight:700; text-align:center; }
+.tg-preview-actions { display:flex; gap:10px; flex-wrap:wrap; justify-content:center; }
 .lb-btn {
-    background: rgba(255,255,255,0.12);
-    border: 1px solid rgba(255,255,255,0.25);
-    color: #fff; padding: 10px 20px;
-    border-radius: 12px; font-size: 13px; font-weight: 600;
-    cursor: pointer; display: flex; align-items: center; gap: 7px;
-    transition: background 0.2s;
+    background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.28);
+    color:#fff; padding:10px 20px; border-radius:12px;
+    font-size:13px; font-weight:600; cursor:pointer;
+    display:flex; align-items:center; gap:7px; transition:background .2s;
 }
-.lb-btn:hover { background: rgba(255,255,255,0.22); }
-.lb-btn.red { background: rgba(220,38,38,0.18); border-color: rgba(220,38,38,0.4); }
-.lb-btn.red:hover { background: rgba(220,38,38,0.32); }
-.lb-close {
-    position: fixed;
-    top: 22px; right: 22px;
-    background: rgba(255,255,255,0.1);
-    border: 1px solid rgba(255,255,255,0.2);
-    color: #fff; width: 40px; height: 40px;
-    border-radius: 50%; font-size: 20px;
-    cursor: pointer; display: flex; align-items: center; justify-content: center;
-    transition: background 0.2s;
-}
-.lb-close:hover { background: rgba(255,255,255,0.22); }
+.lb-btn:hover { background:rgba(255,255,255,.24); }
+.lb-btn.red { background:rgba(220,38,38,.18); border-color:rgba(220,38,38,.45); }
+.lb-btn.red:hover { background:rgba(220,38,38,.34); }
+.lb-btn.green { background:rgba(26,122,74,.30); border-color:rgba(26,122,74,.55); }
+.lb-btn.green:hover { background:rgba(26,122,74,.50); }
+.lb-close { position:fixed; top:20px; right:20px; background:rgba(255,255,255,.10); border:1px solid rgba(255,255,255,.20); color:#fff; width:40px; height:40px; border-radius:50%; font-size:20px; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:background .2s; }
+.lb-close:hover { background:rgba(255,255,255,.22); }
 
-/* ── Toast ── */
-.up-toast {
-    position: fixed;
-    bottom: 28px; left: 50%;
+/* ─── Toast ─── */
+.tg-toast {
+    position: fixed; bottom: 26px; left: 50%;
     transform: translateX(-50%) translateY(80px);
-    background: #111;
-    color: #fff;
-    padding: 12px 22px;
-    border-radius: 14px;
-    font-size: 14px;
-    font-weight: 600;
+    background: #111; color: #fff;
+    padding: 12px 22px; border-radius: 14px;
+    font-size: 14px; font-weight: 600;
     box-shadow: 0 8px 32px rgba(0,0,0,0.32);
-    z-index: 900;
-    transition: transform 0.35s cubic-bezier(0.34,1.4,0.64,1), opacity 0.3s;
-    opacity: 0;
+    z-index: 900; opacity: 0;
+    transition: transform 0.32s cubic-bezier(0.34,1.4,0.64,1), opacity 0.28s;
     white-space: nowrap;
     display: flex; align-items: center; gap: 8px;
 }
-.up-toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
-.up-toast.success { background: linear-gradient(135deg, #1a7a4a, #22c55e); }
-.up-toast.error   { background: linear-gradient(135deg, #dc2626, #ef4444); }
+.tg-toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+.tg-toast.ok  { background: linear-gradient(135deg,#1a7a4a,#22c55e); }
+.tg-toast.err { background: linear-gradient(135deg,#dc2626,#ef4444); }
 
-/* ── Responsive ── */
-@media (max-width: 680px) {
-    .up-cover { height: 130px; }
-    .up-avatar { width: 88px; height: 88px; font-size: 30px; }
-    .up-avatar-wrap { margin-top: -44px; }
-    .up-header-card { padding: 0 18px 20px; }
-    .up-stats { grid-template-columns: repeat(2,1fr); }
-    .up-stat { padding: 8px 4px; }
-    .info-grid { grid-template-columns: 1fr; }
-    .info-field.span2 { grid-column: auto; }
-    .form-row2 { grid-template-columns: 1fr; gap: 0; }
-    .up-name { font-size: 18px; }
-    .up-avatar-row { gap: 10px; }
-    .up-modal { padding: 24px 18px; }
+/* ─── Responsive ─── */
+@media (max-width: 640px) {
+    .tg-avatar { width:120px; height:120px; font-size:44px; }
+    .tg-name { font-size:20px; }
+    .tg-stats-card { grid-template-columns: repeat(2,1fr); }
+    .tg-stat { border-bottom: 1px solid #f0f0f0; }
+    .tg-stat:nth-child(2n) { border-right: none; }
+    .tg-stat:nth-child(3), .tg-stat:nth-child(4) { border-bottom: none; }
+    .tg-info-grid { grid-template-columns: 1fr; }
+    .tg-field.span2 { grid-column: auto; }
+    .form-row2 { grid-template-columns: 1fr; }
+    .tg-card { padding: 18px; }
+    .tg-modal { padding: 22px 16px; }
 }
-@media (max-width: 420px) {
-    .up-stat-num { font-size: 20px; }
-    .up-avatar-row { flex-direction: column; align-items: flex-start; }
-    .up-header-actions { padding-top: 0; }
-    .photo-card { flex-direction: column; align-items: flex-start; gap: 16px; }
+@media (max-width: 400px) {
+    .tg-photo-btns { flex-direction: column; align-items: center; }
+    .tg-btn-change, .tg-btn-remove { width: 200px; justify-content: center; }
 }
 
-/* ── Dark mode ── */
+/* ─── Dark mode ─── */
 @media (prefers-color-scheme: dark) {
-    .up-page { background: linear-gradient(160deg, #0e1a14 0%, #111318 60%, #0e0e1c 100%); }
-    .up-header-card, .info-card, .photo-card { background: #1a1c22; box-shadow: 0 4px 24px rgba(0,0,0,0.4); }
-    .up-name, .field-value, .modal-hd h3, .photo-info h4, .sec-title, .up-stat-num { color: #f0f0f0; }
-    .up-tabs { background: #0f1115; }
-    .up-tab.active { background: #1a1c22; }
-    .info-field { background: #111318; border-color: #2a2d35; }
-    .order-item { background: #1a1c22; }
-    .up-modal { background: #1a1c22; }
+    .tg-page { background: #0f1115; }
+    .tg-stats-card, .tg-card, .tg-tabs { background: #1a1c22; box-shadow: 0 2px 16px rgba(0,0,0,0.45); }
+    .tg-stat, .tg-sec-item { border-color: #2a2d35; }
+    .tg-stat:hover { background: #1f2229; }
+    .tg-stat-lbl { color: #6b7280; }
+    .tg-tab { color: #6b7280; }
+    .tg-field { background: #111318; border-color: #2a2d35; }
+    .tg-field-val { color: #e5e7eb; }
+    .tg-field:hover { border-color: #1a7a4a66; }
+    .tg-card-title, .tg-sec-title { color: #e5e7eb; }
+    .tg-order { background: #1a1c22; }
+    .tg-order:hover { border-color: #1a7a4a; }
+    .oi-total { color: #e5e7eb; }
+    .tg-modal { background: #1a1c22; }
     .modal-hd { border-color: #2a2d35; }
-    .modal-x { background: #2a2d35; color: #bbb; }
-    .mfg input, .mfg textarea { background: #111318; border-color: #2a2d35; color: #eee; }
+    .modal-hd h3 { color: #e5e7eb; }
+    .modal-x { background: #2a2d35; color: #aaa; }
+    .mfg input, .mfg textarea { background: #111318; border-color: #2a2d35; color: #e5e7eb; }
     .mfg input[readonly] { background: #0f1115; }
-    .btn-cancel { background: #2a2d35; color: #bbb; }
-    .btn-ghost-sm { background: #2a2d35; border-color: #3a3d48; color: #ccc; }
-    .btn-sec { background: #2a2d35; border-color: #3a3d48; color: #ccc; }
-    .security-item { border-color: #2a2d35; }
-    .up-divider { background: linear-gradient(to right, transparent, #2a2d35, transparent); }
-    .up-stat { border-color: #2a2d35; }
-    .modal-actions { border-color: #2a2d35; }
-    .lightbox-bg { background: rgba(0,0,0,0.96); }
+    .btn-cancel { background: #2a2d35; color: #aaa; }
+    .tg-btn-sec { background: #2a2d35; border-color: #3a3d48; color: #ccc; }
+    .tg-btn-sec:hover { background: #333640; }
 }
 </style>
 {% endblock %}
 
 {% block content %}
 
-<!-- Cover Banner -->
-<div class="up-cover">
-    <div class="cover-pattern"></div>
-</div>
+<!-- ══ Hidden file input ══ -->
+<input type="file" id="photoFileInput" accept="image/*" style="display:none" onchange="handlePhotoSelect(this)">
 
-<div class="up-container">
+<!-- ══════════ HERO ══════════ -->
+<div class="tg-hero" id="tgHero">
+    <!-- blurred background -->
+    <div class="tg-hero-bg" id="heroBg"
+         {% if user.profile_photo %}style="background-image:url('/static/{{ user.profile_photo }}')"{% endif %}>
+    </div>
+    <div class="tg-hero-overlay"></div>
 
-    <!-- Profile Header Card -->
-    <div class="up-header-card">
-        <div class="up-avatar-row">
-            <!-- Avatar + camera button -->
-            <div class="up-avatar-wrap">
-                <div class="up-avatar" id="mainAvatar" onclick="openLightbox()" title="View photo">
-                    {% if user.profile_photo %}
-                        <img src="/static/{{ user.profile_photo }}" alt="Profile" id="avatarImg">
-                    {% else %}
-                        <span id="avatarInitial">{{ (user.full_name or user.email or 'U')[0]|upper }}</span>
-                    {% endif %}
-                </div>
-                <div class="up-avatar-cam" onclick="triggerFileInput()" title="Change photo">📷</div>
-                <input type="file" id="photoFileInput" accept="image/*" onchange="handlePhotoSelect(this)">
-            </div>
-
-            <!-- Name / email / badges -->
-            <div class="up-meta">
-                <h1 class="up-name">{{ user.full_name or 'Member' }}</h1>
-                <p class="up-email">{{ user.email }}</p>
-                <div class="up-badges">
-                    <span class="up-badge badge-member">✅ Verified Member</span>
-                    <span class="up-badge badge-discount">🏷️ 10% Discount</span>
-                </div>
-            </div>
-
-            <!-- Action buttons -->
-            <div class="up-header-actions">
-                <button class="btn-primary-sm" onclick="openEditModal()">✏️ Edit Profile</button>
-                <button class="btn-ghost-sm" onclick="openSettings()">⚙️ Settings</button>
-            </div>
-        </div>
-
-        <!-- Stats strip -->
-        <div class="up-divider"></div>
-        <div class="up-stats">
-            <div class="up-stat stat-c1">
-                <div class="up-stat-num">{{ order_stats.total or 0 }}</div>
-                <div class="up-stat-lbl">Total Orders</div>
-            </div>
-            <div class="up-stat stat-c2">
-                <div class="up-stat-num">{{ order_stats.delivered or 0 }}</div>
-                <div class="up-stat-lbl">Delivered</div>
-            </div>
-            <div class="up-stat stat-c3">
-                <div class="up-stat-num">{{ order_stats.pending or 0 }}</div>
-                <div class="up-stat-lbl">Pending</div>
-            </div>
-            <div class="up-stat stat-c4">
-                <div class="up-stat-num">{{ (order_stats.total_spent or 0)|int }}</div>
-                <div class="up-stat-lbl">ETB Spent</div>
-            </div>
+    <!-- Main avatar -->
+    <div class="tg-avatar-wrap">
+        <div class="tg-avatar" id="mainAvatar" onclick="openCurrentPreview()" title="View photo">
+            {% if user.profile_photo %}
+                <img src="/static/{{ user.profile_photo }}" alt="Profile" id="avatarImg">
+            {% else %}
+                <span id="avatarInitial">{{ (user.full_name or user.email or 'U')[0]|upper }}</span>
+            {% endif %}
         </div>
     </div>
 
-    <!-- Flash Messages -->
+    <!-- Upload progress -->
+    <div class="tg-progress-wrap" id="tgProgressWrap">
+        <div class="tg-progress-bar"><div class="tg-progress-fill" id="tgProgressFill"></div></div>
+        <div class="tg-progress-label" id="tgProgressLabel">Uploading…</div>
+    </div>
+
+    <!-- Name + email -->
+    <div class="tg-name" id="heroName">{{ user.full_name or 'Member' }}</div>
+    <div class="tg-email">{{ user.email }}</div>
+    <div class="tg-badges">
+        <span class="tg-badge tg-badge-green">✅ Verified Member</span>
+        <span class="tg-badge tg-badge-amber">🏷️ 10% Discount</span>
+    </div>
+
+    <!-- Change / Remove buttons -->
+    <div class="tg-photo-btns">
+        <button class="tg-btn-change" onclick="triggerFileInput()">📷 Change Photo</button>
+        <button class="tg-btn-remove" id="removeHeroBtn"
+                style="{{ '' if user.profile_photo else 'display:none' }}"
+                onclick="confirmRemovePhoto()">🗑️ Remove</button>
+    </div>
+
+    <!-- ── Photo carousel (history) ── -->
+    <div class="tg-carousel-wrap">
+        <div class="tg-carousel-label" id="carouselLabel"
+             style="{{ '' if photo_history else 'display:none' }}">Previous Photos</div>
+        <div class="tg-carousel" id="tgCarousel">
+            <!-- "+" Add / Change card (always first) -->
+            <div class="tg-thumb-add" onclick="triggerFileInput()" title="Add new photo">＋</div>
+
+            {% for h in photo_history %}
+            <div class="tg-carousel-item" data-hist-id="{{ h.id }}" data-src="/static/{{ h.photo_path }}">
+                <div class="tg-thumb" onclick="openHistoryPreview({{ h.id }}, '/static/{{ h.photo_path }}')">
+                    <img src="/static/{{ h.photo_path }}" alt="Photo {{ loop.index }}" loading="lazy">
+                </div>
+                <div class="tg-del-btn" onclick="deleteHistoryPhoto(event, {{ h.id }})" title="Delete">✕</div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div><!-- /.tg-hero -->
+
+<!-- ══════════ CONTENT ══════════ -->
+<div class="tg-content">
+
+    <!-- Flash messages -->
     {% with messages = get_flashed_messages(with_categories=true) %}
         {% for category, message in messages %}
-            <div class="up-flash {{ 'success' if category not in ('error','danger') else 'error' }}" id="flash-{{ loop.index }}">
+            <div class="tg-flash {{ 'success' if category not in ('error','danger') else 'error' }}" id="fl{{ loop.index }}">
                 {{ '✅' if category not in ('error','danger') else '❌' }} {{ message }}
             </div>
         {% endfor %}
     {% endwith %}
 
-    <!-- Tab Bar -->
-    <div class="up-tabs" role="tablist">
-        <button class="up-tab active" id="tab-info" onclick="switchTab('info')" role="tab">👤 Profile</button>
-        <button class="up-tab" id="tab-orders" onclick="switchTab('orders')" role="tab">
-            📦 Orders
-            {% if orders %}<span class="tab-badge">{{ orders|length }}</span>{% endif %}
+    <!-- Stats -->
+    <div class="tg-stats-card">
+        <div class="tg-stat sc1">
+            <div class="tg-stat-num">{{ order_stats.total or 0 }}</div>
+            <div class="tg-stat-lbl">Orders</div>
+        </div>
+        <div class="tg-stat sc2">
+            <div class="tg-stat-num">{{ order_stats.delivered or 0 }}</div>
+            <div class="tg-stat-lbl">Delivered</div>
+        </div>
+        <div class="tg-stat sc3">
+            <div class="tg-stat-num">{{ order_stats.pending or 0 }}</div>
+            <div class="tg-stat-lbl">Pending</div>
+        </div>
+        <div class="tg-stat sc4">
+            <div class="tg-stat-num">{{ (order_stats.total_spent or 0)|int }}</div>
+            <div class="tg-stat-lbl">ETB Spent</div>
+        </div>
+    </div>
+
+    <!-- Tab bar -->
+    <div class="tg-tabs" role="tablist">
+        <button class="tg-tab active" id="tab-info" onclick="switchTab('info')" role="tab">👤 Profile</button>
+        <button class="tg-tab" id="tab-orders" onclick="switchTab('orders')" role="tab">
+            📦 Orders{% if orders %}<span class="tg-tab-badge">{{ orders|length }}</span>{% endif %}
         </button>
-        <button class="up-tab" id="tab-security" onclick="switchTab('security')" role="tab">🔐 Security</button>
+        <button class="tg-tab" id="tab-security" onclick="switchTab('security')" role="tab">🔐 Security</button>
     </div>
 
-    <!-- ══ Tab: Profile ══ -->
-    <div class="up-panel active" id="panel-info" role="tabpanel">
-
-        <!-- Photo management card -->
-        <div class="photo-card" id="photoDropZone">
-            <div class="photo-large" onclick="openLightbox()" id="photoSquare">
-                {% if user.profile_photo %}
-                    <img src="/static/{{ user.profile_photo }}" alt="Profile photo" id="photoSquareImg">
-                {% else %}
-                    <span id="photoSquareInitial">{{ (user.full_name or user.email or 'U')[0]|upper }}</span>
-                {% endif %}
+    <!-- ══ Panel: Profile ══ -->
+    <div class="tg-panel active" id="panel-info">
+        <div class="tg-card">
+            <div class="tg-card-hd">
+                <div class="tg-card-title">👤 Personal Information</div>
+                <button class="tg-btn-edit" onclick="openEditModal()">✏️ Edit Profile</button>
             </div>
-            <div class="photo-info">
-                <h4>Profile Photo</h4>
-                <p>JPG, PNG, WebP or GIF • Max 5 MB<br>Click your photo to view full size • Drag & drop to update</p>
-                <div class="photo-actions">
-                    <button class="btn-upload" onclick="triggerFileInput()">📷 Change Photo</button>
-                    {% if user.profile_photo %}
-                    <button class="btn-remove-photo" onclick="confirmRemovePhoto()">🗑️ Remove</button>
-                    {% else %}
-                    <button class="btn-remove-photo" id="removePhotoBtn" style="display:none" onclick="confirmRemovePhoto()">🗑️ Remove</button>
-                    {% endif %}
+            <div class="tg-info-grid">
+                <div class="tg-field">
+                    <span class="tg-field-lbl">Full Name</span>
+                    <span class="tg-field-val {% if not user.full_name %}muted{% endif %}">{{ user.full_name or 'Not set' }}</span>
                 </div>
-                <!-- Upload progress bar -->
-                <div class="upload-progress" id="uploadProgress">
-                    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
-                        <span style="font-size:12px;color:#1a7a4a;font-weight:600;" id="uploadStatus">Uploading…</span>
-                    </div>
-                    <div class="progress-bar-wrap">
-                        <div class="progress-bar-fill" id="progressFill"></div>
-                    </div>
+                <div class="tg-field">
+                    <span class="tg-field-lbl">Email Address</span>
+                    <span class="tg-field-val">{{ user.email }}</span>
+                </div>
+                <div class="tg-field">
+                    <span class="tg-field-lbl">Phone</span>
+                    <span class="tg-field-val {% if not user.phone %}muted{% endif %}">{{ user.phone or 'Not set' }}</span>
+                </div>
+                <div class="tg-field">
+                    <span class="tg-field-lbl">City</span>
+                    <span class="tg-field-val {% if not user.city %}muted{% endif %}">{{ user.city or 'Not set' }}</span>
+                </div>
+                <div class="tg-field span2">
+                    <span class="tg-field-lbl">Delivery Address</span>
+                    <span class="tg-field-val {% if not user.address %}muted{% endif %}">{{ user.address or 'Not set' }}</span>
+                </div>
+                <div class="tg-field">
+                    <span class="tg-field-lbl">Member Since</span>
+                    <span class="tg-field-val">{{ user.created_at.strftime('%B %Y') if user.created_at else 'N/A' }}</span>
                 </div>
             </div>
         </div>
-
-        <!-- Personal info card -->
-        <div class="info-card">
-            <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:20px;">
-                <h3 class="card-title" style="margin:0;">👤 Personal Information</h3>
-                <button class="btn-primary-sm" onclick="openEditModal()" style="font-size:13px;">✏️ Edit</button>
-            </div>
-            <div class="info-grid">
-                <div class="info-field">
-                    <span class="field-label">Full Name</span>
-                    <span class="field-value {% if not user.full_name %}muted{% endif %}">{{ user.full_name or 'Not set' }}</span>
-                </div>
-                <div class="info-field">
-                    <span class="field-label">Email Address</span>
-                    <span class="field-value">{{ user.email }}</span>
-                </div>
-                <div class="info-field">
-                    <span class="field-label">Phone Number</span>
-                    <span class="field-value {% if not user.phone %}muted{% endif %}">{{ user.phone or 'Not set' }}</span>
-                </div>
-                <div class="info-field">
-                    <span class="field-label">City</span>
-                    <span class="field-value {% if not user.city %}muted{% endif %}">{{ user.city or 'Not set' }}</span>
-                </div>
-                <div class="info-field span2">
-                    <span class="field-label">Delivery Address</span>
-                    <span class="field-value {% if not user.address %}muted{% endif %}">{{ user.address or 'Not set' }}</span>
-                </div>
-                <div class="info-field">
-                    <span class="field-label">Member Since</span>
-                    <span class="field-value">{{ user.created_at.strftime('%B %Y') if user.created_at else 'N/A' }}</span>
-                </div>
-            </div>
-        </div>
-
     </div>
 
-    <!-- ══ Tab: Orders ══ -->
-    <div class="up-panel" id="panel-orders" role="tabpanel">
+    <!-- ══ Panel: Orders ══ -->
+    <div class="tg-panel" id="panel-orders">
         {% if orders %}
             {% for order in orders %}
-            <a class="order-item" href="{{ url_for('customer.order_detail', order_id=order.id) }}">
+            <a class="tg-order" href="{{ url_for('customer.order_detail', order_id=order.id) }}">
                 <div>
                     <div class="oi-num">Order #{{ order.order_number }}</div>
                     <div class="oi-date">
                         {% if order.created_at %}
-                            {% if order.created_at is string %}{{ order.created_at[:10] }}{% else %}{{ order.created_at.strftime('%b %d, %Y') }}{% endif %}
+                            {% if order.created_at is string %}{{ order.created_at[:10] }}
+                            {% else %}{{ order.created_at.strftime('%b %d, %Y') }}{% endif %}
                         {% else %}N/A{% endif %}
                     </div>
                 </div>
                 <div class="oi-right">
                     <div class="oi-total">{{ order.total|int }} ETB</div>
                     <span class="oi-badge s-{{ order.status }}">
-                        {% if order.status == 'pending' %}⏳ Pending
-                        {% elif order.status == 'confirmed' %}✅ Confirmed
-                        {% elif order.status == 'processing' %}⚙️ Processing
-                        {% elif order.status == 'shipped' %}🚚 Shipped
-                        {% elif order.status == 'delivered' %}🎉 Delivered
-                        {% elif order.status == 'cancelled' %}❌ Cancelled
+                        {% if order.status=='pending'%}⏳ Pending
+                        {% elif order.status=='confirmed'%}✅ Confirmed
+                        {% elif order.status=='processing'%}⚙️ Processing
+                        {% elif order.status=='shipped'%}🚚 Shipped
+                        {% elif order.status=='delivered'%}🎉 Delivered
+                        {% elif order.status=='cancelled'%}❌ Cancelled
                         {% else %}{{ order.status }}{% endif %}
                     </span>
                 </div>
             </a>
             {% endfor %}
         {% else %}
-            <div class="empty-state">
-                <div class="empty-icon">📭</div>
-                <p>You haven't placed any orders yet.</p>
-                <a href="{{ url_for('customer.products') }}" class="btn-save" style="display:inline-block;text-decoration:none;padding:12px 26px;">
-                    Start Shopping →
-                </a>
+            <div class="tg-empty">
+                <div class="tg-empty-icon">📭</div>
+                <p>No orders yet.</p>
+                <a href="{{ url_for('customer.products') }}" class="btn-save" style="display:inline-flex;text-decoration:none;padding:12px 26px;">Start Shopping →</a>
             </div>
         {% endif %}
     </div>
 
-    <!-- ══ Tab: Security ══ -->
-    <div class="up-panel" id="panel-security" role="tabpanel">
-        <div class="info-card">
-            <h3 class="card-title">🔐 Security & Account</h3>
-
-            <div class="security-item">
-                <div class="sec-left">
-                    <div class="sec-icon sec-ic-green">🔒</div>
+    <!-- ══ Panel: Security ══ -->
+    <div class="tg-panel" id="panel-security">
+        <div class="tg-card">
+            <div class="tg-card-title">🔐 Security & Account</div>
+            <div class="tg-sec-item">
+                <div class="tg-sec-left">
+                    <div class="tg-sec-icon si-green">🔒</div>
                     <div>
-                        <div class="sec-title">Password</div>
-                        <div class="sec-desc">Change your login password</div>
+                        <div class="tg-sec-title">Password</div>
+                        <div class="tg-sec-desc">Change your login password</div>
                     </div>
                 </div>
-                <button class="btn-sec" onclick="openPwModal()">Change Password</button>
+                <button class="tg-btn-sec" onclick="openPwModal()">Change Password</button>
             </div>
-
-            <div class="security-item">
-                <div class="sec-left">
-                    <div class="sec-icon sec-ic-amber">🚪</div>
+            <div class="tg-sec-item">
+                <div class="tg-sec-left">
+                    <div class="tg-sec-icon si-amber">🚪</div>
                     <div>
-                        <div class="sec-title">Sign Out</div>
-                        <div class="sec-desc">Log out of your account on this device</div>
+                        <div class="tg-sec-title">Sign Out</div>
+                        <div class="tg-sec-desc">Log out of your account</div>
                     </div>
                 </div>
-                <button class="btn-sec" onclick="doLogout()">Logout</button>
+                <button class="tg-btn-sec" onclick="doLogout()">Logout</button>
             </div>
-
-            <div class="security-item">
-                <div class="sec-left">
-                    <div class="sec-icon sec-ic-red">⚠️</div>
+            <div class="tg-sec-item">
+                <div class="tg-sec-left">
+                    <div class="tg-sec-icon si-red">⚠️</div>
                     <div>
-                        <div class="sec-title">Delete Account</div>
-                        <div class="sec-desc">Permanently remove your account and all data</div>
+                        <div class="tg-sec-title">Delete Account</div>
+                        <div class="tg-sec-desc">Permanently remove account & all data</div>
                     </div>
                 </div>
-                <button class="btn-sec danger" onclick="doDeleteAccount()">Delete Account</button>
+                <button class="tg-btn-sec danger" onclick="doDeleteAccount()">Delete Account</button>
             </div>
         </div>
     </div>
 
-</div><!-- /.up-container -->
+</div><!-- /.tg-content -->
 
-<!-- ══════════════ Lightbox ══════════════ -->
-<div class="lightbox-bg" id="lightboxBg" onclick="closeLightboxBg(event)">
-    <button class="lb-close" onclick="closeLightbox()">✕</button>
+<!-- ══════════════ Current-photo Preview ══════════════ -->
+<div class="tg-preview-bg" id="curPreview" onclick="closePreviewBg(event,'curPreview')">
+    <button class="lb-close" onclick="closePreview('curPreview')">✕</button>
     {% if user.profile_photo %}
-    <img class="lightbox-img" src="/static/{{ user.profile_photo }}" alt="Profile photo" id="lightboxImg">
+    <img class="tg-preview-img" src="/static/{{ user.profile_photo }}" alt="Profile photo" id="curPreviewImg">
     {% else %}
-    <div style="width:260px;height:260px;border-radius:24px;background:linear-gradient(135deg,#1a7a4a,#0a1f52);display:flex;align-items:center;justify-content:center;font-size:90px;font-weight:900;color:#fff;" id="lightboxInitial">{{ (user.full_name or user.email or 'U')[0]|upper }}</div>
+    <div class="tg-preview-initial" id="curPreviewInitial">{{ (user.full_name or user.email or 'U')[0]|upper }}</div>
     {% endif %}
-    <div class="lightbox-name" id="lightboxName">{{ user.full_name or 'Member' }}</div>
-    <div class="lightbox-actions">
-        <button class="lb-btn" onclick="triggerFileInput(); closeLightbox()">📷 Change Photo</button>
-        {% if user.profile_photo %}
-        <button class="lb-btn red" id="lbRemoveBtn" onclick="confirmRemovePhoto(); closeLightbox()">🗑️ Remove</button>
-        {% endif %}
+    <div class="tg-preview-name">{{ user.full_name or 'Member' }}</div>
+    <div class="tg-preview-actions">
+        <button class="lb-btn" onclick="triggerFileInput(); closePreview('curPreview')">📷 Change Photo</button>
+        <button class="lb-btn red" id="curPreviewRemoveBtn"
+                style="{{ '' if user.profile_photo else 'display:none' }}"
+                onclick="confirmRemovePhoto(); closePreview('curPreview')">🗑️ Remove</button>
+    </div>
+</div>
+
+<!-- ══════════════ History-photo Preview ══════════════ -->
+<div class="tg-preview-bg" id="histPreview" onclick="closePreviewBg(event,'histPreview')">
+    <button class="lb-close" onclick="closePreview('histPreview')">✕</button>
+    <img class="tg-preview-img" id="histPreviewImg" src="" alt="Previous photo">
+    <div class="tg-preview-name">Previous Photo</div>
+    <div class="tg-preview-actions">
+        <button class="lb-btn green" id="histSetBtn" onclick="setHistoryPhotoCurrent()">✅ Set as Profile</button>
+        <button class="lb-btn red" id="histDelBtn" onclick="deleteHistoryPhotoFromPreview()">🗑️ Delete</button>
+        <button class="lb-btn" onclick="closePreview('histPreview')">Cancel</button>
     </div>
 </div>
 
 <!-- ══════════════ Edit Profile Modal ══════════════ -->
-<div class="up-modal-bg" id="editModal" onclick="closeModalBg(event,'editModal')">
-    <div class="up-modal">
+<div class="tg-modal-bg" id="editModal" onclick="closeMBg(event,'editModal')">
+    <div class="tg-modal">
         <div class="modal-hd">
             <h3>✏️ Edit Profile</h3>
-            <button class="modal-x" onclick="closeModal('editModal')">✕</button>
+            <button class="modal-x" onclick="closeM('editModal')">✕</button>
         </div>
         <form method="post" action="{{ url_for('customer.update_profile') }}" id="editForm" onsubmit="return submitEdit()">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
@@ -1006,18 +855,18 @@
             </div>
             <div class="modal-actions">
                 <button type="submit" class="btn-save" id="saveBtn">💾 Save Changes</button>
-                <button type="button" class="btn-cancel" onclick="closeModal('editModal')">Cancel</button>
+                <button type="button" class="btn-cancel" onclick="closeM('editModal')">Cancel</button>
             </div>
         </form>
     </div>
 </div>
 
 <!-- ══════════════ Change Password Modal ══════════════ -->
-<div class="up-modal-bg" id="pwModal" onclick="closeModalBg(event,'pwModal')">
-    <div class="up-modal narrow">
+<div class="tg-modal-bg" id="pwModal" onclick="closeMBg(event,'pwModal')">
+    <div class="tg-modal narrow">
         <div class="modal-hd">
             <h3>🔒 Change Password</h3>
-            <button class="modal-x" onclick="closeModal('pwModal')">✕</button>
+            <button class="modal-x" onclick="closeM('pwModal')">✕</button>
         </div>
         <div class="mfg">
             <label>New Password</label>
@@ -1029,235 +878,204 @@
         </div>
         <div class="modal-actions">
             <button class="btn-save" id="pwBtn" onclick="submitPw()">🔒 Update Password</button>
-            <button class="btn-cancel" onclick="closeModal('pwModal')">Cancel</button>
+            <button class="btn-cancel" onclick="closeM('pwModal')">Cancel</button>
         </div>
     </div>
 </div>
 
-<!-- ══════════════ Settings Modal ══════════════ -->
-<div class="up-modal-bg" id="settingsModal" onclick="closeModalBg(event,'settingsModal')">
-    <div class="up-modal narrow">
-        <div class="modal-hd">
-            <h3>⚙️ Settings</h3>
-            <button class="modal-x" onclick="closeModal('settingsModal')">✕</button>
-        </div>
-        <div style="display:flex;flex-direction:column;gap:4px;">
-            <button class="btn-sec" style="width:100%;justify-content:flex-start;padding:14px 18px;border-radius:14px;font-size:14px;" onclick="closeModal('settingsModal');openPwModal()">🔒 Change Password</button>
-            <button class="btn-sec" style="width:100%;justify-content:flex-start;padding:14px 18px;border-radius:14px;font-size:14px;" onclick="doLogout()">🚪 Sign Out</button>
-            <button class="btn-sec danger" style="width:100%;justify-content:flex-start;padding:14px 18px;border-radius:14px;font-size:14px;" onclick="doDeleteAccount()">⚠️ Delete Account</button>
-        </div>
-    </div>
-</div>
+<!-- Toast -->
+<div class="tg-toast" id="tgToast"></div>
 
-<!-- Global toast -->
-<div class="up-toast" id="upToast"></div>
-
+<!-- ══════════════ JS ══════════════ -->
 <script>
-/* ──────────── Helpers ──────────── */
-const $ = id => document.getElementById(id);
-let _hasPhoto = {{ 'true' if user.profile_photo else 'false' }};
+/* ── Core ── */
+const _$ = id => document.getElementById(id);
 const _csrf = '{{ csrf_token() }}';
+let _hasPhoto = {{ 'true' if user.profile_photo else 'false' }};
+let _activeHistId = null;    // history photo currently in preview
 
-function showToast(msg, type = 'success') {
-    const t = $('upToast');
-    t.textContent = (type === 'success' ? '✅ ' : '❌ ') + msg;
-    t.className = 'up-toast ' + type + ' show';
-    clearTimeout(t._timer);
-    t._timer = setTimeout(() => { t.classList.remove('show'); }, 3200);
+/* ── Toast ── */
+function toast(msg, type = 'ok') {
+    const t = _$('tgToast');
+    t.textContent = (type === 'ok' ? '✅ ' : '❌ ') + msg;
+    t.className = 'tg-toast ' + type + ' show';
+    clearTimeout(t._t);
+    t._t = setTimeout(() => t.classList.remove('show'), 3300);
 }
 
-/* ──────────── Tab switching ──────────── */
+/* ── Tabs ── */
 function switchTab(name) {
-    document.querySelectorAll('.up-panel').forEach(p => p.classList.remove('active'));
-    document.querySelectorAll('.up-tab').forEach(b => b.classList.remove('active'));
-    $('panel-' + name).classList.add('active');
-    $('tab-' + name).classList.add('active');
+    document.querySelectorAll('.tg-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tg-tab').forEach(b => b.classList.remove('active'));
+    _$('panel-' + name).classList.add('active');
+    _$('tab-' + name).classList.add('active');
 }
 
-/* ──────────── Modal helpers ──────────── */
-function openModal(id) {
-    $(id).classList.add('open');
-    document.body.style.overflow = 'hidden';
-}
-function closeModal(id) {
-    $(id).classList.remove('open');
-    document.body.style.overflow = '';
-}
-function closeModalBg(e, id) {
-    if (e.target === $(id)) closeModal(id);
-}
+/* ── Modals ── */
+function openM(id)  { _$(id).classList.add('open'); document.body.style.overflow = 'hidden'; }
+function closeM(id) { _$(id).classList.remove('open'); document.body.style.overflow = ''; }
+function closeMBg(e, id) { if (e.target === _$(id)) closeM(id); }
+function openEditModal() { openM('editModal'); setTimeout(() => { const f=_$('fn'); if(f) f.focus(); }, 140); }
+function openPwModal() { openM('pwModal'); }
 
-function openEditModal() {
-    openModal('editModal');
-    setTimeout(() => { const f = $('fn'); if (f) f.focus(); }, 150);
-}
-function openPwModal()     { openModal('pwModal'); }
-function openSettings()    { openModal('settingsModal'); }
+function openPreview(id) { openM(id); }
+function closePreview(id) { closeM(id); }
+function closePreviewBg(e, id) { if (e.target === _$(id)) closePreview(id); }
 
-/* ──────────── Edit form submit ──────────── */
+/* ── Edit form ── */
 function submitEdit() {
-    const fn = $('fn').value.trim();
-    if (!fn) { showToast('Full name is required.', 'error'); return false; }
-    const btn = $('saveBtn');
+    const fn = _$('fn').value.trim();
+    if (!fn) { toast('Full name is required.', 'err'); return false; }
+    const btn = _$('saveBtn');
     btn.disabled = true;
     btn.innerHTML = '<span class="spinner"></span> Saving…';
     return true;
 }
 window.addEventListener('load', () => {
-    const btn = $('saveBtn');
-    if (btn && btn.disabled) { btn.disabled = false; btn.innerHTML = '💾 Save Changes'; }
+    const b = _$('saveBtn'); if (b && b.disabled) { b.disabled=false; b.innerHTML='💾 Save Changes'; }
 });
 
-/* ──────────── Password change ──────────── */
+/* ── Change password ── */
 function submitPw() {
-    const pw  = $('newPw').value;
-    const pw2 = $('confirmPw').value;
-    if (!pw || pw.length < 6) { showToast('Password must be at least 6 characters.', 'error'); return; }
-    if (pw !== pw2) { showToast('Passwords do not match.', 'error'); return; }
-    const btn = $('pwBtn');
-    btn.disabled = true;
-    btn.innerHTML = '<span class="spinner"></span> Updating…';
-    fetch('{{ url_for('customer.change_password') }}', {
+    const pw  = _$('newPw').value;
+    const pw2 = _$('confirmPw').value;
+    if (!pw || pw.length < 6) { toast('Password must be at least 6 characters.', 'err'); return; }
+    if (pw !== pw2)            { toast('Passwords do not match.', 'err'); return; }
+    const btn = _$('pwBtn');
+    btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> Updating…';
+    fetch('{{ url_for("customer.change_password") }}', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest', 'X-CSRFToken': _csrf },
         body: JSON.stringify({ password: pw })
     })
     .then(r => r.json())
     .then(d => {
-        if (d.success) {
-            closeModal('pwModal');
-            showToast('Password updated successfully!', 'success');
-            $('newPw').value = '';
-            $('confirmPw').value = '';
-        } else {
-            showToast(d.error || 'Failed to change password.', 'error');
-        }
+        if (d.success) { closeM('pwModal'); toast('Password updated!'); _$('newPw').value=''; _$('confirmPw').value=''; }
+        else toast(d.error || 'Failed to change password.', 'err');
     })
-    .catch(() => showToast('Network error. Please try again.', 'error'))
-    .finally(() => {
-        btn.disabled = false;
-        btn.innerHTML = '🔒 Update Password';
-    });
+    .catch(() => toast('Network error.', 'err'))
+    .finally(() => { btn.disabled=false; btn.innerHTML='🔒 Update Password'; });
 }
 
-/* ──────────── Logout / delete ──────────── */
+/* ── Logout / delete ── */
 function doLogout() {
-    if (confirm('Are you sure you want to sign out?'))
-        window.location.href = '{{ url_for('customer.user_logout') }}';
+    if (confirm('Sign out of your account?'))
+        window.location.href = '{{ url_for("customer.user_logout") }}';
 }
 function doDeleteAccount() {
-    closeModal('settingsModal');
-    const ok = confirm('⚠️ Delete your account?\n\nThis action cannot be undone. All your data will be permanently removed.');
+    const ok = confirm('⚠️ Delete your account permanently?\n\nAll data will be removed and cannot be recovered.');
     if (!ok) return;
-    const pw = prompt('Enter your password to confirm deletion:');
+    const pw = prompt('Enter your password to confirm:');
     if (!pw) return;
-    fetch('{{ url_for('customer.delete_account') }}', {
+    fetch('{{ url_for("customer.delete_account") }}', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest', 'X-CSRFToken': _csrf },
         body: JSON.stringify({ password: pw })
     })
     .then(r => r.json())
     .then(d => {
-        if (d.success) { window.location.href = '{{ url_for('customer.index') }}'; }
-        else showToast(d.error || 'Incorrect password.', 'error');
+        if (d.success) window.location.href = '{{ url_for("customer.index") }}';
+        else toast(d.error || 'Incorrect password.', 'err');
     })
-    .catch(() => showToast('Network error. Please try again.', 'error'));
+    .catch(() => toast('Network error.', 'err'));
 }
 
-/* ──────────── Photo upload ──────────── */
-function triggerFileInput() { $('photoFileInput').click(); }
+/* ─────────────────────────────────────
+   PHOTO MANAGEMENT
+───────────────────────────────────── */
+function triggerFileInput() { _$('photoFileInput').click(); }
 
 function handlePhotoSelect(input) {
     if (!input.files || !input.files[0]) return;
     const file = input.files[0];
-    if (file.size > 5 * 1024 * 1024) { showToast('File too large (max 5 MB).', 'error'); return; }
+    if (file.size > 5 * 1024 * 1024) { toast('File too large (max 5 MB).', 'err'); return; }
     uploadPhoto(file);
+    input.value = '';
 }
 
 function uploadPhoto(file) {
-    const progress = $('uploadProgress');
-    const fill     = $('progressFill');
-    const status   = $('uploadStatus');
-    progress.classList.add('show');
-    fill.style.width = '0%';
-    status.textContent = 'Uploading…';
+    const wrap  = _$('tgProgressWrap');
+    const fill  = _$('tgProgressFill');
+    const label = _$('tgProgressLabel');
+    const av    = _$('mainAvatar');
 
-    // animate progress
+    wrap.classList.add('show');
+    av.classList.add('uploading');
+    fill.style.width = '0%';
+    label.textContent = 'Uploading…';
+
     let pct = 0;
-    const interval = setInterval(() => {
+    const iv = setInterval(() => {
         pct = Math.min(pct + Math.random() * 18, 88);
         fill.style.width = pct + '%';
     }, 120);
 
-    const formData = new FormData();
-    formData.append('photo', file);
-    formData.append('csrf_token', _csrf);
+    const fd = new FormData();
+    fd.append('photo', file);
+    fd.append('csrf_token', _csrf);
 
-    fetch('{{ url_for('customer.upload_profile_photo') }}', {
-        method: 'POST',
-        body: formData,
+    fetch('{{ url_for("customer.upload_profile_photo") }}', {
+        method: 'POST', body: fd,
         headers: { 'X-Requested-With': 'XMLHttpRequest', 'X-CSRFToken': _csrf }
     })
     .then(r => r.json())
     .then(d => {
-        clearInterval(interval);
+        clearInterval(iv);
+        av.classList.remove('uploading');
         if (d.success) {
             fill.style.width = '100%';
-            status.textContent = 'Done ✅';
-            // Update all avatar elements
-            const src = d.photo_src;
-            updateAvatarUI(src);
-            showToast('Profile photo updated!', 'success');
-            setTimeout(() => {
-                progress.classList.remove('show');
-                fill.style.width = '0%';
-            }, 1600);
+            label.textContent = 'Done ✅';
+            setTimeout(() => { wrap.classList.remove('show'); fill.style.width='0%'; }, 1400);
+            applyCurrentPhoto(d.photo_src);
+            toast('Profile photo updated!');
         } else {
-            clearInterval(interval);
-            progress.classList.remove('show');
-            showToast(d.error || 'Upload failed.', 'error');
+            wrap.classList.remove('show');
+            toast(d.error || 'Upload failed.', 'err');
         }
     })
     .catch(() => {
-        clearInterval(interval);
-        progress.classList.remove('show');
-        showToast('Network error. Please try again.', 'error');
+        clearInterval(iv);
+        av.classList.remove('uploading');
+        wrap.classList.remove('show');
+        toast('Network error. Try again.', 'err');
     });
 }
 
-function updateAvatarUI(src) {
+/* Update all hero elements to show a new current photo src */
+function applyCurrentPhoto(src) {
     _hasPhoto = true;
-    // Circle avatar in header
-    const avatar = $('mainAvatar');
-    avatar.innerHTML = `<img src="${src}" alt="Profile" id="avatarImg">`;
 
-    // Square avatar in photo card
-    const sq = $('photoSquare');
-    sq.innerHTML = `<img src="${src}" alt="Profile photo" id="photoSquareImg">`;
+    // Hero avatar
+    _$('mainAvatar').innerHTML = `<img src="${src}" alt="Profile" id="avatarImg">`;
 
-    // Lightbox
-    const lb = $('lightboxBg');
-    if (lb) {
-        const lbImg = lb.querySelector('.lightbox-img') || lb.querySelector('#lightboxInitial');
-        if (lbImg) {
-            const img = document.createElement('img');
-            img.className = 'lightbox-img';
-            img.src = src;
-            img.alt = 'Profile photo';
-            lbImg.replaceWith(img);
-        }
+    // Blurred hero background
+    _$('heroBg').style.backgroundImage = `url('${src}')`;
+
+    // Show remove button
+    const rb = _$('removeHeroBtn');
+    if (rb) rb.style.display = '';
+
+    // Update current preview modal
+    const cp = _$('curPreview');
+    const cimg = cp.querySelector('.tg-preview-img') || cp.querySelector('#curPreviewInitial');
+    if (cimg) {
+        const ni = document.createElement('img');
+        ni.className = 'tg-preview-img'; ni.id = 'curPreviewImg'; ni.src = src; ni.alt = 'Profile photo';
+        cimg.replaceWith(ni);
     }
+    const rb2 = _$('curPreviewRemoveBtn');
+    if (rb2) rb2.style.display = '';
 
-    // Show remove buttons
-    const rmBtn = $('removePhotoBtn');
-    if (rmBtn) rmBtn.style.display = 'flex';
+    // Carousel — reload page label visibility
+    const lbl = _$('carouselLabel');
+    if (lbl) lbl.style.display = '';
 }
 
-/* ──────────── Remove photo ──────────── */
+/* Remove current photo — moves it to history */
 function confirmRemovePhoto() {
-    if (!_hasPhoto) { showToast('No photo to remove.', 'error'); return; }
+    if (!_hasPhoto) { toast('No photo to remove.', 'err'); return; }
     if (!confirm('Remove your profile photo?')) return;
-    fetch('{{ url_for('customer.remove_profile_photo') }}', {
+    fetch('{{ url_for("customer.remove_profile_photo") }}', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest', 'X-CSRFToken': _csrf }
     })
@@ -1265,65 +1083,123 @@ function confirmRemovePhoto() {
     .then(d => {
         if (d.success) {
             _hasPhoto = false;
-            const initial = '{{ (user.full_name or user.email or 'U')[0]|upper }}';
-            // Reset avatar
-            $('mainAvatar').innerHTML = `<span id="avatarInitial">${initial}</span>`;
-            // Reset square
-            $('photoSquare').innerHTML = `<span id="photoSquareInitial">${initial}</span>`;
-            // Hide remove btn
-            const rmBtn = $('removePhotoBtn');
-            if (rmBtn) rmBtn.style.display = 'none';
-            showToast('Profile photo removed.', 'success');
+            const init = '{{ (user.full_name or user.email or "U")[0]|upper }}';
+            _$('mainAvatar').innerHTML = `<span id="avatarInitial">${init}</span>`;
+            _$('heroBg').style.backgroundImage = '';
+
+            const rb = _$('removeHeroBtn'); if (rb) rb.style.display = 'none';
+            const rb2 = _$('curPreviewRemoveBtn'); if (rb2) rb2.style.display = 'none';
+
+            // The old photo is now in history — reload page to see carousel update
+            toast('Photo removed — refreshing…');
+            setTimeout(() => location.reload(), 1200);
         } else {
-            showToast(d.error || 'Failed to remove photo.', 'error');
+            toast(d.error || 'Failed to remove photo.', 'err');
         }
     })
-    .catch(() => showToast('Network error. Please try again.', 'error'));
+    .catch(() => toast('Network error.', 'err'));
 }
 
-/* ──────────── Lightbox ──────────── */
-function openLightbox() {
-    openModal('lightboxBg');
-}
-function closeLightbox()  { closeModal('lightboxBg'); }
-function closeLightboxBg(e) {
-    if (e.target === $('lightboxBg')) closeLightbox();
+/* Open full-size preview of current photo */
+function openCurrentPreview() {
+    openPreview('curPreview');
 }
 
-/* ──────────── Drag & Drop on photo card ──────────── */
-const dropZone = $('photoDropZone');
-if (dropZone) {
-    dropZone.addEventListener('dragover', e => {
-        e.preventDefault();
-        dropZone.classList.add('drag-over');
-    });
-    dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
-    dropZone.addEventListener('drop', e => {
-        e.preventDefault();
-        dropZone.classList.remove('drag-over');
-        const file = e.dataTransfer.files[0];
-        if (file && file.type.startsWith('image/')) uploadPhoto(file);
-        else showToast('Please drop an image file.', 'error');
-    });
+/* ─────────────────────────────────────
+   HISTORY CAROUSEL
+───────────────────────────────────── */
+function openHistoryPreview(histId, src) {
+    _activeHistId = histId;
+    _$('histPreviewImg').src = src;
+    openPreview('histPreview');
 }
 
-/* ──────────── Auto-dismiss flash messages ──────────── */
-setTimeout(() => {
-    document.querySelectorAll('[id^="flash-"]').forEach(el => {
-        el.style.transition = 'opacity 0.5s';
-        el.style.opacity = '0';
-        setTimeout(() => el.remove(), 500);
-    });
-}, 4000);
+function setHistoryPhotoCurrent() {
+    if (!_activeHistId) return;
+    const btn = _$('histSetBtn');
+    btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> Setting…';
+    fetch('{{ url_for("customer.set_history_photo") }}', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest', 'X-CSRFToken': _csrf },
+        body: JSON.stringify({ history_id: _activeHistId })
+    })
+    .then(r => r.json())
+    .then(d => {
+        if (d.success) {
+            closePreview('histPreview');
+            applyCurrentPhoto(d.photo_src);
+            // Remove the carousel item
+            const item = document.querySelector(`.tg-carousel-item[data-hist-id="${_activeHistId}"]`);
+            if (item) {
+                item.style.transition = 'opacity .3s, transform .3s';
+                item.style.opacity = '0'; item.style.transform = 'scale(0.7)';
+                setTimeout(() => item.remove(), 320);
+            }
+            toast('Profile photo updated!');
+        } else {
+            toast(d.error || 'Failed to set photo.', 'err');
+        }
+    })
+    .catch(() => toast('Network error.', 'err'))
+    .finally(() => { btn.disabled=false; btn.innerHTML='✅ Set as Profile'; });
+}
 
-/* ──────────── Keyboard: Esc closes modals ──────────── */
+function deleteHistoryPhotoFromPreview() {
+    if (!_activeHistId) return;
+    if (!confirm('Permanently delete this photo?')) return;
+    deleteHistoryPhoto(null, _activeHistId, () => closePreview('histPreview'));
+}
+
+function deleteHistoryPhoto(e, histId, cb) {
+    if (e) { e.stopPropagation(); e.preventDefault(); }
+    if (!confirm('Delete this photo permanently?')) return;
+    fetch('{{ url_for("customer.delete_history_photo") }}', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest', 'X-CSRFToken': _csrf },
+        body: JSON.stringify({ history_id: histId })
+    })
+    .then(r => r.json())
+    .then(d => {
+        if (d.success) {
+            const item = document.querySelector(`.tg-carousel-item[data-hist-id="${histId}"]`);
+            if (item) {
+                item.style.transition = 'opacity .28s, transform .28s';
+                item.style.opacity = '0'; item.style.transform = 'scale(0.65)';
+                setTimeout(() => { item.remove(); checkCarouselEmpty(); }, 300);
+            }
+            toast('Photo deleted.');
+            if (cb) cb();
+        } else {
+            toast(d.error || 'Failed to delete.', 'err');
+        }
+    })
+    .catch(() => toast('Network error.', 'err'));
+}
+
+function checkCarouselEmpty() {
+    const items = document.querySelectorAll('.tg-carousel-item');
+    const lbl = _$('carouselLabel');
+    if (!items.length && lbl) lbl.style.display = 'none';
+}
+
+/* ─────────────────────────────────────
+   MISC
+───────────────────────────────────── */
+/* Keyboard: Esc closes open modals/previews */
 document.addEventListener('keydown', e => {
     if (e.key === 'Escape') {
-        ['editModal', 'pwModal', 'settingsModal', 'lightboxBg'].forEach(id => {
-            const el = $(id);
-            if (el && el.classList.contains('open')) closeModal(id);
+        ['editModal','pwModal','curPreview','histPreview'].forEach(id => {
+            const el = _$(id); if (el && el.classList.contains('open')) closeM(id);
         });
     }
 });
+
+/* Auto-dismiss flash messages */
+setTimeout(() => {
+    document.querySelectorAll('[id^="fl"]').forEach(el => {
+        el.style.transition = 'opacity .5s'; el.style.opacity = '0';
+        setTimeout(() => el.remove(), 520);
+    });
+}, 4200);
 </script>
 {% endblock %}

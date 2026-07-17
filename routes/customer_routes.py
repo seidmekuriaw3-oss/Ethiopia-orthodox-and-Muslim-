@@ -845,8 +845,22 @@ def user_profile():
         orders_raw = cursor.fetchall()
         orders = [dict(o) for o in orders_raw] if orders_raw else []
 
+        # Load photo history
+        try:
+            cursor.execute("""
+                SELECT id, photo_path, created_at
+                FROM user_photo_history
+                WHERE user_id = %s
+                ORDER BY created_at DESC
+                LIMIT 30
+            """, (session['user_id'],))
+            photo_history = [dict(r) for r in cursor.fetchall()]
+        except Exception:
+            photo_history = []
+
         return render_template('auth/user_profile.html',
-                               user=user, order_stats=order_stats, orders=orders)
+                               user=user, order_stats=order_stats, orders=orders,
+                               photo_history=photo_history)
     except Exception as e:
         current_app.logger.error(f"Profile error: {e}")
         flash('Error loading profile.', 'error')
@@ -881,19 +895,57 @@ def upload_profile_photo():
     except Exception:
         return jsonify({'success': False, 'error': 'Invalid image file'}), 400
 
-    # Delete any existing photo files for this user (all extensions)
+    import time as _time
     save_dir = os.path.join(current_app.root_path, 'static', 'uploads', 'users')
+    hist_dir = os.path.join(save_dir, 'history')
     os.makedirs(save_dir, exist_ok=True)
+    os.makedirs(hist_dir, exist_ok=True)
+
+    uid = session['user_id']
+
+    # Move existing current photo to history before replacing it
+    try:
+        conn = get_db()
+        cursor = conn.cursor()
+        cursor.execute("SELECT profile_photo FROM users WHERE id = %s", (uid,))
+        row = cursor.fetchone()
+        old_rel = row['profile_photo'] if row else None
+        if old_rel:
+            old_abs = os.path.join(current_app.root_path, 'static', old_rel)
+            if os.path.exists(old_abs):
+                old_ext2 = old_rel.rsplit('.', 1)[-1]
+                hist_name = f"{uid}_{int(_time.time()*1000)}.{old_ext2}"
+                hist_abs = os.path.join(hist_dir, hist_name)
+                hist_rel = f"uploads/users/history/{hist_name}"
+                import shutil
+                shutil.copy2(old_abs, hist_abs)
+                cursor.execute(
+                    "INSERT INTO user_photo_history (user_id, photo_path) VALUES (%s, %s)",
+                    (uid, hist_rel)
+                )
+                conn.commit()
+                # Trim history to 20 items
+                cursor.execute("""
+                    DELETE FROM user_photo_history WHERE id IN (
+                        SELECT id FROM user_photo_history
+                        WHERE user_id = %s ORDER BY created_at DESC OFFSET 20
+                    )
+                """, (uid,))
+                conn.commit()
+    except Exception as he:
+        current_app.logger.warning(f"Photo history save warning: {he}")
+
+    # Delete old current-photo files (all ext variants)
     for old_ext in ALLOWED_EXT:
-        old_path = os.path.join(save_dir, f"{session['user_id']}.{old_ext}")
-        if os.path.exists(old_path):
+        p = os.path.join(save_dir, f"{uid}.{old_ext}")
+        if os.path.exists(p):
             try:
-                os.remove(old_path)
+                os.remove(p)
             except OSError:
                 pass
 
-    # Save file then update DB — roll back file on DB failure
-    filename = f"{session['user_id']}.{ext}"
+    # Save new file then update DB — roll back file on DB failure
+    filename = f"{uid}.{ext}"
     filepath = os.path.join(save_dir, filename)
     rel_path = f"uploads/users/{filename}"
 
@@ -909,14 +961,13 @@ def upload_profile_photo():
         cursor = conn.cursor()
         cursor.execute(
             "UPDATE users SET profile_photo = %s, updated_at = CURRENT_TIMESTAMP WHERE id = %s",
-            (rel_path, session['user_id'])
+            (rel_path, uid)
         )
         conn.commit()
         session['user_photo'] = rel_path
         return jsonify({'success': True, 'photo_url': rel_path,
                         'photo_src': f"/static/{rel_path}"})
     except Exception as e:
-        # DB failed — remove the file we just wrote to stay consistent
         try:
             os.remove(filepath)
         except OSError:
@@ -928,35 +979,156 @@ def upload_profile_photo():
 @customer_bp.route('/profile/remove-photo', methods=['POST'])
 @user_login_required
 def remove_profile_photo():
-    """Remove user profile photo."""
+    """Remove user profile photo (moves it to history)."""
+    import time as _time
+    uid = session['user_id']
     try:
         conn = get_db()
         cursor = conn.cursor()
-        # Fetch current photo path from DB (don't rely on session alone)
-        cursor.execute("SELECT profile_photo FROM users WHERE id = %s", (session['user_id'],))
+        cursor.execute("SELECT profile_photo FROM users WHERE id = %s", (uid,))
         row = cursor.fetchone()
         photo_path = (row['profile_photo'] if row else None) or session.get('user_photo', '')
 
+        # Move current photo to history instead of deleting
+        if photo_path:
+            old_abs = os.path.join(current_app.root_path, 'static', photo_path)
+            if os.path.exists(old_abs):
+                try:
+                    hist_dir = os.path.join(current_app.root_path, 'static', 'uploads', 'users', 'history')
+                    os.makedirs(hist_dir, exist_ok=True)
+                    old_ext2 = photo_path.rsplit('.', 1)[-1]
+                    hist_name = f"{uid}_{int(_time.time()*1000)}.{old_ext2}"
+                    hist_rel = f"uploads/users/history/{hist_name}"
+                    import shutil
+                    shutil.copy2(old_abs, os.path.join(hist_dir, hist_name))
+                    cursor.execute(
+                        "INSERT INTO user_photo_history (user_id, photo_path) VALUES (%s, %s)",
+                        (uid, hist_rel)
+                    )
+                    os.remove(old_abs)
+                except Exception as he:
+                    current_app.logger.warning(f"Photo history on remove: {he}")
+
         cursor.execute(
             "UPDATE users SET profile_photo = NULL, updated_at = CURRENT_TIMESTAMP WHERE id = %s",
-            (session['user_id'],)
+            (uid,)
         )
         conn.commit()
         session['user_photo'] = ''
-
-        # Delete file after successful DB update
-        if photo_path:
-            old_path = os.path.join(current_app.root_path, 'static', photo_path)
-            if os.path.exists(old_path):
-                try:
-                    os.remove(old_path)
-                except OSError:
-                    pass
-
         return jsonify({'success': True})
     except Exception as e:
         current_app.logger.error(f"Remove photo error: {e}")
         return jsonify({'success': False, 'error': 'Error removing photo'}), 500
+
+
+@customer_bp.route('/profile/set-history-photo', methods=['POST'])
+@user_login_required
+def set_history_photo():
+    """Swap a history photo back as the current profile photo."""
+    import time as _time
+    uid = session['user_id']
+    data = request.get_json(silent=True) or {}
+    hist_id = data.get('history_id')
+    if not hist_id:
+        return jsonify({'success': False, 'error': 'Missing history_id'}), 400
+    try:
+        conn = get_db()
+        cursor = conn.cursor()
+        # Verify ownership
+        cursor.execute(
+            "SELECT photo_path FROM user_photo_history WHERE id = %s AND user_id = %s",
+            (hist_id, uid)
+        )
+        hrow = cursor.fetchone()
+        if not hrow:
+            return jsonify({'success': False, 'error': 'Not found'}), 404
+        hist_rel = hrow['photo_path']
+        hist_abs = os.path.join(current_app.root_path, 'static', hist_rel)
+
+        # Move current photo → history
+        cursor.execute("SELECT profile_photo FROM users WHERE id = %s", (uid,))
+        urow = cursor.fetchone()
+        cur_rel = urow['profile_photo'] if urow else None
+        if cur_rel:
+            cur_abs = os.path.join(current_app.root_path, 'static', cur_rel)
+            if os.path.exists(cur_abs):
+                try:
+                    hist_dir = os.path.join(current_app.root_path, 'static', 'uploads', 'users', 'history')
+                    os.makedirs(hist_dir, exist_ok=True)
+                    cur_ext = cur_rel.rsplit('.', 1)[-1]
+                    new_hist_name = f"{uid}_{int(_time.time()*1000)}.{cur_ext}"
+                    new_hist_rel = f"uploads/users/history/{new_hist_name}"
+                    import shutil
+                    shutil.copy2(cur_abs, os.path.join(hist_dir, new_hist_name))
+                    cursor.execute(
+                        "INSERT INTO user_photo_history (user_id, photo_path) VALUES (%s, %s)",
+                        (uid, new_hist_rel)
+                    )
+                    ALLOWED_EXT = {'jpg', 'jpeg', 'png', 'gif', 'webp'}
+                    for oe in ALLOWED_EXT:
+                        p = os.path.join(current_app.root_path, 'static', 'uploads', 'users', f"{uid}.{oe}")
+                        if os.path.exists(p):
+                            try: os.remove(p)
+                            except OSError: pass
+                except Exception as he:
+                    current_app.logger.warning(f"set_history_photo current→hist: {he}")
+
+        # Move history photo → current
+        ext = hist_rel.rsplit('.', 1)[-1]
+        new_cur_filename = f"{uid}.{ext}"
+        new_cur_abs = os.path.join(current_app.root_path, 'static', 'uploads', 'users', new_cur_filename)
+        new_cur_rel = f"uploads/users/{new_cur_filename}"
+        import shutil
+        shutil.copy2(hist_abs, new_cur_abs)
+
+        # Remove from history table and delete history file
+        cursor.execute("DELETE FROM user_photo_history WHERE id = %s", (hist_id,))
+        try: os.remove(hist_abs)
+        except OSError: pass
+
+        cursor.execute(
+            "UPDATE users SET profile_photo = %s, updated_at = CURRENT_TIMESTAMP WHERE id = %s",
+            (new_cur_rel, uid)
+        )
+        conn.commit()
+        session['user_photo'] = new_cur_rel
+        return jsonify({'success': True, 'photo_src': f"/static/{new_cur_rel}", 'photo_url': new_cur_rel})
+    except Exception as e:
+        current_app.logger.error(f"set_history_photo error: {e}")
+        return jsonify({'success': False, 'error': 'Error setting photo'}), 500
+
+
+@customer_bp.route('/profile/delete-history-photo', methods=['POST'])
+@user_login_required
+def delete_history_photo():
+    """Permanently delete a photo from history."""
+    uid = session['user_id']
+    data = request.get_json(silent=True) or {}
+    hist_id = data.get('history_id')
+    if not hist_id:
+        return jsonify({'success': False, 'error': 'Missing history_id'}), 400
+    try:
+        conn = get_db()
+        cursor = conn.cursor()
+        cursor.execute(
+            "SELECT photo_path FROM user_photo_history WHERE id = %s AND user_id = %s",
+            (hist_id, uid)
+        )
+        hrow = cursor.fetchone()
+        if not hrow:
+            return jsonify({'success': False, 'error': 'Not found'}), 404
+        cursor.execute("DELETE FROM user_photo_history WHERE id = %s", (hist_id,))
+        conn.commit()
+        try:
+            abs_path = os.path.join(current_app.root_path, 'static', hrow['photo_path'])
+            if os.path.exists(abs_path):
+                os.remove(abs_path)
+        except OSError:
+            pass
+        return jsonify({'success': True})
+    except Exception as e:
+        current_app.logger.error(f"delete_history_photo error: {e}")
+        return jsonify({'success': False, 'error': 'Error deleting photo'}), 500
 
 
 @customer_bp.route('/profile/update', methods=['POST'])
