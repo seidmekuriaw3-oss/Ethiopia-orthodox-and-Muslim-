@@ -902,6 +902,8 @@ def upload_profile_photo():
     os.makedirs(hist_dir, exist_ok=True)
 
     uid = session['user_id']
+    saved_hist_id  = None
+    saved_hist_rel = None
 
     # Move existing current photo to history before replacing it
     try:
@@ -920,9 +922,12 @@ def upload_profile_photo():
                 import shutil
                 shutil.copy2(old_abs, hist_abs)
                 cursor.execute(
-                    "INSERT INTO user_photo_history (user_id, photo_path) VALUES (%s, %s)",
+                    "INSERT INTO user_photo_history (user_id, photo_path) VALUES (%s, %s) RETURNING id",
                     (uid, hist_rel)
                 )
+                inserted = cursor.fetchone()
+                saved_hist_id   = inserted['id'] if inserted else None
+                saved_hist_rel  = hist_rel
                 conn.commit()
                 # Trim history to 20 items
                 cursor.execute("""
@@ -965,8 +970,12 @@ def upload_profile_photo():
         )
         conn.commit()
         session['user_photo'] = rel_path
-        return jsonify({'success': True, 'photo_url': rel_path,
-                        'photo_src': f"/static/{rel_path}"})
+        resp = {'success': True, 'photo_url': rel_path,
+                'photo_src': f"/static/{rel_path}"}
+        if saved_hist_id:
+            resp['hist_id']  = saved_hist_id
+            resp['hist_src'] = f"/static/{saved_hist_rel}"
+        return jsonify(resp)
     except Exception as e:
         try:
             os.remove(filepath)

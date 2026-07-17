@@ -1937,6 +1937,10 @@ async function uploadProfilePhoto(input) {
             setTimeout(() => { prog.classList.remove('show'); fill.style.width='0%'; }, 1400);
 
             const src = data.photo_src + '?t=' + Date.now();
+            // Prepend old photo to carousel if backend returned history info
+            if (data.hist_id && data.hist_src) {
+                dbPrependHistoryItem(data.hist_id, data.hist_src);
+            }
             dbApplyCurrentPhoto(src);
             showToast('ፎቶ ተቀይሯል! ✅', 'success');
         } else {
@@ -2021,11 +2025,57 @@ async function dbRemovePhoto() {
 /* ═══════════════════════════════════════════════
    HISTORY CAROUSEL
 ═══════════════════════════════════════════════ */
-function dbOpenCurPreview() { /* just a visual click on avatar — do nothing for now */ }
+function dbOpenCurPreview() {
+    const img = document.getElementById('dbTgAvatarImg');
+    if (!img) return; // no photo set — nothing to preview
+    document.getElementById('dbHistImg').src = img.src;
+    // Hide "Set as Profile" button for the current photo preview
+    const setBtn = document.getElementById('dbHistSetBtn');
+    if (setBtn) setBtn.style.display = 'none';
+    _dbActiveHistId = null; // current photo, not history
+    document.getElementById('dbHistModal').classList.add('open');
+    document.body.style.overflow = 'hidden';
+}
+
+function dbPrependHistoryItem(histId, histSrc) {
+    const car = document.getElementById('dbTgCar');
+    if (!car) return;
+    const addCard = car.querySelector('.db-tg-add');
+
+    const item = document.createElement('div');
+    item.className = 'db-tg-car-item';
+    item.dataset.histId = histId;
+    item.dataset.src = histSrc;
+    item.style.opacity = '0';
+    item.style.transform = 'scale(.7)';
+    item.innerHTML = `
+        <div class="db-tg-thumb" onclick="dbOpenHistPreview(${histId}, '${histSrc}')">
+            <img src="${histSrc}" alt="Previous photo" loading="lazy">
+        </div>
+        <div class="db-tg-del" onclick="dbDeleteHistPhoto(event, ${histId})" title="Delete">✕</div>`;
+
+    // Insert right after the + card
+    if (addCard && addCard.nextSibling) {
+        car.insertBefore(item, addCard.nextSibling);
+    } else {
+        car.appendChild(item);
+    }
+    // Animate in
+    requestAnimationFrame(() => {
+        item.style.transition = 'opacity .3s, transform .3s';
+        item.style.opacity = '1';
+        item.style.transform = 'scale(1)';
+    });
+    // Show label
+    const lbl = document.getElementById('dbCarLbl');
+    if (lbl) lbl.style.display = '';
+}
 
 function dbOpenHistPreview(histId, src) {
     _dbActiveHistId = histId;
     document.getElementById('dbHistImg').src = src;
+    const setBtn = document.getElementById('dbHistSetBtn');
+    if (setBtn) setBtn.style.display = ''; // restore for history items
     document.getElementById('dbHistModal').classList.add('open');
     document.body.style.overflow = 'hidden';
 }
