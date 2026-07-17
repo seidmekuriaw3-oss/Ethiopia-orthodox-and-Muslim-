@@ -662,6 +662,7 @@ def user_login():
                 session['user_name'] = user['full_name']
                 session['user_email'] = user['email']
                 session['user_phone'] = user['phone']
+                session['user_photo'] = user.get('profile_photo') or ''
                 if guest_cart:
                     try:
                         for pid_str, qty in guest_cart.items():
@@ -759,6 +760,7 @@ def user_register():
             session['user_name'] = full_name
             session['user_email'] = email
             session['user_phone'] = phone
+            session['user_photo'] = ''
 
             # Merge any guest session cart into DB cart
             guest_cart = session.get('cart', {})
@@ -849,6 +851,81 @@ def user_profile():
         current_app.logger.error(f"Profile error: {e}")
         flash('Error loading profile.', 'error')
         return redirect(url_for('customer.index'))
+
+
+@customer_bp.route('/profile/upload-photo', methods=['POST'])
+@user_login_required
+def upload_profile_photo():
+    """Upload or change user profile photo."""
+    import imghdr, uuid
+    ALLOWED = {'jpg', 'jpeg', 'png', 'gif', 'webp'}
+    MAX_BYTES = 5 * 1024 * 1024  # 5 MB
+
+    file = request.files.get('photo')
+    if not file or not file.filename:
+        return jsonify({'success': False, 'error': 'No file selected'}), 400
+
+    ext = file.filename.rsplit('.', 1)[-1].lower() if '.' in file.filename else ''
+    if ext not in ALLOWED:
+        return jsonify({'success': False, 'error': 'Allowed: jpg, png, gif, webp'}), 400
+
+    data = file.read()
+    if len(data) > MAX_BYTES:
+        return jsonify({'success': False, 'error': 'File too large (max 5 MB)'}), 400
+
+    # Double-check actual image type
+    img_type = imghdr.what(None, h=data)
+    if img_type not in ('jpeg', 'png', 'gif', 'webp'):
+        return jsonify({'success': False, 'error': 'Invalid image file'}), 400
+
+    # Save as uploads/users/{user_id}.{ext}
+    save_dir = os.path.join(current_app.root_path, 'static', 'uploads', 'users')
+    os.makedirs(save_dir, exist_ok=True)
+    filename = f"{session['user_id']}.{ext}"
+    filepath = os.path.join(save_dir, filename)
+    with open(filepath, 'wb') as f:
+        f.write(data)
+
+    rel_path = f"uploads/users/{filename}"
+    try:
+        conn = get_db()
+        cursor = conn.cursor()
+        cursor.execute(
+            "UPDATE users SET profile_photo = %s, updated_at = CURRENT_TIMESTAMP WHERE id = %s",
+            (rel_path, session['user_id'])
+        )
+        conn.commit()
+        session['user_photo'] = rel_path
+        return jsonify({'success': True, 'photo_url': rel_path,
+                        'photo_src': f"/static/{rel_path}"})
+    except Exception as e:
+        current_app.logger.error(f"Profile photo upload error: {e}")
+        return jsonify({'success': False, 'error': 'Database error'}), 500
+
+
+@customer_bp.route('/profile/remove-photo', methods=['POST'])
+@user_login_required
+def remove_profile_photo():
+    """Remove user profile photo."""
+    try:
+        conn = get_db()
+        cursor = conn.cursor()
+        # Delete old file if exists
+        old = session.get('user_photo', '')
+        if old:
+            old_path = os.path.join(current_app.root_path, 'static', old)
+            if os.path.exists(old_path):
+                os.remove(old_path)
+        cursor.execute(
+            "UPDATE users SET profile_photo = NULL, updated_at = CURRENT_TIMESTAMP WHERE id = %s",
+            (session['user_id'],)
+        )
+        conn.commit()
+        session['user_photo'] = ''
+        return jsonify({'success': True})
+    except Exception as e:
+        current_app.logger.error(f"Remove photo error: {e}")
+        return jsonify({'success': False, 'error': 'Error removing photo'}), 500
 
 
 @customer_bp.route('/profile/update', methods=['POST'])

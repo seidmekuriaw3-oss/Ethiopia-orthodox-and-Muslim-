@@ -596,7 +596,22 @@
     <div class="db-sidebar-inner">
         <!-- User Card -->
         <div class="db-user-card">
-            <div class="db-avatar">{{ (user.full_name or 'U')[0]|upper }}</div>
+            <!-- Profile photo: click to change -->
+            <label for="sidebarPhotoInput" title="Change photo" style="cursor:pointer;display:inline-block;margin-bottom:12px;position:relative;z-index:1;">
+                <div class="db-avatar" id="sidebarAvatar" style="overflow:hidden;cursor:pointer;position:relative;">
+                    {% if user.profile_photo %}
+                    <img id="sidebarAvatarImg" src="{{ url_for('static', filename=user.profile_photo) }}"
+                         alt="Profile" style="width:100%;height:100%;object-fit:cover;border-radius:50%;"
+                         onerror="this.style.display='none';document.getElementById('sidebarAvatarInitial').style.display='flex';">
+                    <span id="sidebarAvatarInitial" style="display:none;width:100%;height:100%;align-items:center;justify-content:center;font-size:24px;font-weight:800;">{{ (user.full_name or 'U')[0]|upper }}</span>
+                    {% else %}
+                    <span id="sidebarAvatarInitial" style="display:flex;width:100%;height:100%;align-items:center;justify-content:center;font-size:24px;font-weight:800;">{{ (user.full_name or 'U')[0]|upper }}</span>
+                    <img id="sidebarAvatarImg" style="display:none;width:100%;height:100%;object-fit:cover;border-radius:50%;">
+                    {% endif %}
+                    <div style="position:absolute;bottom:0;left:0;right:0;background:rgba(0,0,0,0.45);font-size:9px;color:#fff;text-align:center;padding:2px 0;border-radius:0 0 50% 50%;">📷</div>
+                </div>
+            </label>
+            <input type="file" id="sidebarPhotoInput" accept="image/*" style="display:none;" onchange="uploadProfilePhoto(this)">
             <p class="db-user-name">{{ user.full_name or 'Member' }}</p>
             <p class="db-user-email">{{ user.email }}</p>
             <span class="db-discount-badge">🎉 10% Member Discount</span>
@@ -1000,15 +1015,30 @@
         <!-- Profile Info Display -->
         <div class="profile-card">
             <div style="display:flex;align-items:center;gap:18px;margin-bottom:24px;flex-wrap:wrap;">
-                <div style="width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,#1a7a4a,#0f5232);
-                    color:#fff;font-size:28px;font-weight:800;display:flex;align-items:center;justify-content:center;
-                    box-shadow:0 6px 20px rgba(26,122,74,0.3);flex-shrink:0;">
-                    {{ (user.full_name or 'U')[0]|upper }}
-                </div>
+                <!-- Clickable profile photo -->
+                <label for="profilePhotoInput" style="cursor:pointer;flex-shrink:0;position:relative;" title="Change profile photo">
+                    <div id="profileAvatarWrap" style="width:80px;height:80px;border-radius:50%;overflow:hidden;
+                        box-shadow:0 6px 20px rgba(26,122,74,0.3);border:3px solid #e8f5e9;position:relative;">
+                        {% if user.profile_photo %}
+                        <img id="profileAvatarImg" src="{{ url_for('static', filename=user.profile_photo) }}"
+                             alt="Profile" style="width:100%;height:100%;object-fit:cover;"
+                             onerror="this.style.display='none';document.getElementById('profileAvatarInitial').style.display='flex';">
+                        <span id="profileAvatarInitial" style="display:none;width:100%;height:100%;background:linear-gradient(135deg,#1a7a4a,#0f5232);color:#fff;font-size:28px;font-weight:800;align-items:center;justify-content:center;">{{ (user.full_name or 'U')[0]|upper }}</span>
+                        {% else %}
+                        <span id="profileAvatarInitial" style="display:flex;width:100%;height:100%;background:linear-gradient(135deg,#1a7a4a,#0f5232);color:#fff;font-size:28px;font-weight:800;align-items:center;justify-content:center;">{{ (user.full_name or 'U')[0]|upper }}</span>
+                        <img id="profileAvatarImg" style="display:none;width:100%;height:100%;object-fit:cover;">
+                        {% endif %}
+                        <div style="position:absolute;bottom:0;left:0;right:0;background:rgba(0,0,0,0.5);color:#fff;font-size:10px;text-align:center;padding:3px;">📷 Change</div>
+                    </div>
+                </label>
+                <input type="file" id="profilePhotoInput" accept="image/*" style="display:none;" onchange="uploadProfilePhoto(this)">
                 <div>
                     <h3 style="margin:0 0 4px;font-size:20px;font-weight:800;color:#1a1a2e;">{{ user.full_name or 'Member' }}</h3>
                     <p style="margin:0 0 8px;color:#888;font-size:13px;">{{ user.email }}</p>
                     <span style="background:#e8f5e9;color:#2e7d32;font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px;">🎉 10% Member Discount</span>
+                    {% if user.profile_photo %}
+                    <button onclick="removeProfilePhoto()" style="display:block;margin-top:8px;background:none;border:1px solid #ffcdd2;color:#e53935;font-size:11px;padding:3px 10px;border-radius:8px;cursor:pointer;">🗑️ Remove Photo</button>
+                    {% endif %}
                 </div>
             </div>
             <div class="prof-grid">
@@ -1696,6 +1726,71 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 });
+
+/* ═══════════════════════════════════════════════
+   PROFILE PHOTO UPLOAD
+═══════════════════════════════════════════════ */
+async function uploadProfilePhoto(input) {
+    const file = input.files[0];
+    if (!file) return;
+    const MAX = 5 * 1024 * 1024;
+    if (file.size > MAX) { showToast('ፎቶ ከ5MB ማለፍ የለበትም', 'error'); input.value=''; return; }
+
+    const fd = new FormData();
+    fd.append('photo', file);
+
+    showToast('ፎቶ እየተጫነ ነው…', 'info');
+    try {
+        const r = await fetch('/profile/upload-photo', { method:'POST', body:fd });
+        const data = await r.json();
+        if (data.success) {
+            const src = data.photo_src + '?t=' + Date.now();
+            // Update all avatar elements on the page
+            ['sidebarAvatarImg','profileAvatarImg'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) { el.src = src; el.style.display = 'block'; }
+            });
+            ['sidebarAvatarInitial','profileAvatarInitial'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.style.display = 'none';
+            });
+            // Update nav bar avatar without reload
+            document.querySelectorAll('.nav-avatar-img').forEach(el => { el.src = src; el.style.display = 'block'; });
+            document.querySelectorAll('.nav-avatar-initials').forEach(el => el.style.display = 'none');
+            showToast('ፎቶ ተቀይሯል! ✅', 'success');
+        } else {
+            showToast(data.error || 'ስህተት ተፈጥሯል', 'error');
+        }
+    } catch(e) {
+        showToast('ፎቶ ለመጫን አልተቻለም', 'error');
+    }
+    input.value = '';
+}
+
+async function removeProfilePhoto() {
+    if (!confirm('ፎቶ ለማስወገድ ይፈልጋሉ?')) return;
+    try {
+        const r = await fetch('/profile/remove-photo', { method:'POST' });
+        const data = await r.json();
+        if (data.success) {
+            ['sidebarAvatarImg','profileAvatarImg'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.style.display = 'none';
+            });
+            ['sidebarAvatarInitial','profileAvatarInitial'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.style.display = 'flex';
+            });
+            document.querySelectorAll('.nav-avatar-img').forEach(el => el.style.display = 'none');
+            document.querySelectorAll('.nav-avatar-initials').forEach(el => el.style.display = 'flex');
+            showToast('ፎቶ ተወግዷል', 'success');
+        } else {
+            showToast(data.error || 'ስህተት ተፈጥሯል', 'error');
+        }
+    } catch(e) {
+        showToast('ስህተት ተፈጥሯል', 'error');
+    }
+}
 
 /* ═══════════════════════════════════════════════
    TOAST

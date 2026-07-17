@@ -117,10 +117,15 @@
                 </svg>
                 <span id="desktopBellBadge" style="display:none;position:absolute;top:4px;right:4px;background:#ef4444;color:#fff;border-radius:50%;font-size:9px;font-weight:700;width:16px;height:16px;align-items:center;justify-content:center;line-height:1;">0</span>
             </a>
-            <a href="{{ url_for('customer.dashboard') }}" class="nav-icon-btn" title="{% if lang == 'am' %}መለያዬ{% else %}My Account{% endif %}">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
-                </svg>
+            <a href="{{ url_for('customer.dashboard') }}" class="nav-icon-btn nav-avatar-btn" title="{% if lang == 'am' %}መለያዬ{% else %}My Account{% endif %}" style="padding:3px;">
+                {% if session.get('user_photo') %}
+                <img src="{{ url_for('static', filename=session['user_photo']) }}"
+                     alt="Profile" class="nav-avatar-img"
+                     onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+                <span class="nav-avatar-initials" style="display:none;">{{ (session.get('user_name','U')[0])|upper }}</span>
+                {% else %}
+                <span class="nav-avatar-initials">{{ (session.get('user_name','U')[0])|upper }}</span>
+                {% endif %}
             </a>
             {% else %}
             <a href="#" onclick="openUserModal(); return false;" class="nav-icon-btn" title="{% if lang == 'am' %}ግባ / ተመዝገብ{% else %}Login / Register{% endif %}" style="position:relative;">
@@ -148,10 +153,15 @@
                 </svg>
                 <span id="mobileBellBadge" style="display:none;position:absolute;top:4px;right:4px;background:#ef4444;color:#fff;border-radius:50%;font-size:9px;font-weight:700;width:16px;height:16px;align-items:center;justify-content:center;line-height:1;">0</span>
             </a>
-            <a href="{{ url_for('customer.dashboard') }}" id="mobileAccountLink" class="nav-icon-btn mobile-account" title="{% if lang == 'am' %}መለያዬ{% else %}My Account{% endif %}">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
-                </svg>
+            <a href="{{ url_for('customer.dashboard') }}" id="mobileAccountLink" class="nav-icon-btn mobile-account nav-avatar-btn" title="{% if lang == 'am' %}መለያዬ{% else %}My Account{% endif %}" style="padding:3px;">
+                {% if session.get('user_photo') %}
+                <img src="{{ url_for('static', filename=session['user_photo']) }}"
+                     alt="Profile" class="nav-avatar-img"
+                     onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+                <span class="nav-avatar-initials" style="display:none;">{{ (session.get('user_name','U')[0])|upper }}</span>
+                {% else %}
+                <span class="nav-avatar-initials">{{ (session.get('user_name','U')[0])|upper }}</span>
+                {% endif %}
             </a>
             {% else %}
             <a href="#" onclick="openUserModal(); return false;" id="mobileAccountLink" class="nav-icon-btn mobile-account" title="{% if lang == 'am' %}ግባ{% else %}Login{% endif %}" style="position:relative;">
@@ -179,8 +189,16 @@
     <div class="menu-header">
         <button class="close-menu" onclick="closeHamburgerMenu()">✕</button>
         <div class="user-avatar">
-            {% if session.get('user_id') or session.get('admin') %}
-                👤
+            {% if session.get('user_id') and session.get('user_photo') %}
+                <img src="{{ url_for('static', filename=session['user_photo']) }}"
+                     alt="Profile"
+                     style="width:52px;height:52px;border-radius:50%;object-fit:cover;border:2px solid rgba(255,255,255,0.5);"
+                     onerror="this.style.display='none';this.nextElementSibling.style.display='block';">
+                <span style="display:none;font-size:26px;">👤</span>
+            {% elif session.get('user_id') %}
+                <span style="display:flex;align-items:center;justify-content:center;width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,#1a7a4a,#0f5232);color:#fff;font-size:22px;font-weight:800;border:2px solid rgba(255,255,255,0.4);">{{ (session.get('user_name','U')[0])|upper }}</span>
+            {% elif session.get('admin') %}
+                👑
             {% else %}
                 🛋️
             {% endif %}
