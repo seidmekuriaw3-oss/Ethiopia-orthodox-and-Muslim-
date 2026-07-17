@@ -1704,6 +1704,17 @@ def dashboard():
         except Exception:
             pass
 
+        try:
+            cursor.execute("""
+                SELECT id, photo_path, created_at
+                FROM user_photo_history
+                WHERE user_id = %s
+                ORDER BY created_at DESC LIMIT 30
+            """, (session['user_id'],))
+            db_photo_history = [dict(r) for r in cursor.fetchall()]
+        except Exception:
+            db_photo_history = []
+
         return render_template('auth/dashboard.html',
                                user=user,
                                order_stats=order_stats,
@@ -1711,6 +1722,7 @@ def dashboard():
                                wishlist_items=wishlist_items,
                                loyalty_points=loyalty_points,
                                loyalty_transactions=loyalty_transactions,
+                               photo_history=db_photo_history,
                                active_tab=tab,
                                lang=lang)
     except Exception as e:

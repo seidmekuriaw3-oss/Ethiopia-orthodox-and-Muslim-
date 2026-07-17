@@ -330,28 +330,155 @@
 .wl-remove-abs:hover { background: #fff; transform: scale(1.1); }
 
 /* ════════════════════════════════════════════
-   PROFILE TAB
+   PROFILE TAB — Telegram style
 ════════════════════════════════════════════ */
-.profile-card {
-    background: #fff;
-    border-radius: 20px;
-    padding: 28px;
-    box-shadow: 0 2px 16px rgba(0,0,0,0.06);
-    margin-bottom: 16px;
+/* mini-hero */
+.db-tg-hero {
+    position: relative; overflow: hidden;
+    border-radius: 22px; margin-bottom: 16px;
+    min-height: 300px;
+    background: #1c2733;
+    display: flex; flex-direction: column; align-items: center;
+    padding: 28px 20px 24px;
 }
+.db-tg-bg {
+    position: absolute; inset: 0;
+    background-size: cover; background-position: center;
+    filter: blur(26px) brightness(0.42) saturate(1.3);
+    transform: scale(1.14); transition: background-image 0.5s;
+}
+.db-tg-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(180deg,rgba(10,20,35,.48) 0%,rgba(10,20,35,.2) 45%,rgba(10,20,35,.82) 100%);
+}
+.db-tg-hero > *:not(.db-tg-bg):not(.db-tg-overlay) { position: relative; z-index: 2; }
+
+/* avatar */
+.db-tg-avatar {
+    width: 120px; height: 120px; border-radius: 50%;
+    border: 4px solid rgba(255,255,255,0.88);
+    box-shadow: 0 8px 36px rgba(0,0,0,0.55);
+    background: linear-gradient(135deg,#1a7a4a,#0a1f52);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 46px; font-weight: 900; color: #fff;
+    overflow: hidden; cursor: pointer;
+    transition: transform .22s, box-shadow .22s;
+    margin-bottom: 0;
+}
+.db-tg-avatar:hover { transform: scale(1.05); box-shadow: 0 14px 50px rgba(0,0,0,.65); }
+.db-tg-avatar img { width:100%; height:100%; object-fit:cover; border-radius:50%; display:block; }
+.db-tg-avatar.uploading::after {
+    content:''; position:absolute; inset:-6px; border-radius:50%;
+    border:4px solid transparent; border-top-color:#22c55e;
+    animation:spin .7s linear infinite;
+}
+
+/* progress */
+.db-tg-prog { width:120px; margin-top:8px; display:none; }
+.db-tg-prog.show { display:block; }
+.db-tg-prog-bar { height:4px; background:rgba(255,255,255,.2); border-radius:20px; overflow:hidden; }
+.db-tg-prog-fill { height:100%; background:linear-gradient(to right,#22c55e,#86efac); border-radius:20px; width:0%; transition:width .25s; }
+.db-tg-prog-lbl { font-size:10px; color:rgba(255,255,255,.7); text-align:center; margin-top:4px; }
+
+/* name/email */
+.db-tg-name { margin-top:14px; font-size:20px; font-weight:800; color:#fff; text-align:center; text-shadow:0 2px 12px rgba(0,0,0,.5); }
+.db-tg-email { font-size:12px; color:rgba(255,255,255,.72); text-align:center; margin-top:3px; }
+.db-tg-badges { display:flex; gap:8px; margin-top:8px; flex-wrap:wrap; justify-content:center; }
+.db-tg-badge { font-size:10px; font-weight:700; padding:3px 10px; border-radius:20px; backdrop-filter:blur(8px); }
+.db-tg-b-green { background:rgba(26,122,74,.5); border:1px solid rgba(26,122,74,.7); color:#86efac; }
+.db-tg-b-amber { background:rgba(245,158,11,.3); border:1px solid rgba(245,158,11,.55); color:#fde68a; }
+
+/* change/remove buttons */
+.db-tg-btns { display:flex; gap:9px; margin-top:16px; flex-wrap:wrap; justify-content:center; }
+.db-tg-btn-chg {
+    background:rgba(255,255,255,.18); backdrop-filter:blur(10px);
+    border:1.5px solid rgba(255,255,255,.35); color:#fff;
+    padding:9px 20px; border-radius:40px; font-size:12px; font-weight:700;
+    cursor:pointer; display:flex; align-items:center; gap:6px;
+    transition:background .2s, transform .18s; white-space:nowrap;
+}
+.db-tg-btn-chg:hover { background:rgba(255,255,255,.28); transform:translateY(-2px); }
+.db-tg-btn-rm {
+    background:rgba(220,38,38,.22); backdrop-filter:blur(10px);
+    border:1.5px solid rgba(220,38,38,.45); color:#fca5a5;
+    padding:9px 18px; border-radius:40px; font-size:12px; font-weight:700;
+    cursor:pointer; display:flex; align-items:center; gap:6px;
+    transition:background .2s, transform .18s; white-space:nowrap;
+}
+.db-tg-btn-rm:hover { background:rgba(220,38,38,.36); transform:translateY(-2px); }
+
+/* carousel */
+.db-tg-car-wrap { width:100%; margin-top:18px; }
+.db-tg-car-lbl { font-size:9px; font-weight:700; color:rgba(255,255,255,.42); text-transform:uppercase; letter-spacing:1px; margin-bottom:8px; text-align:center; }
+.db-tg-car {
+    display:flex; gap:10px; overflow-x:auto; padding-bottom:4px;
+    justify-content:center; scrollbar-width:none; flex-wrap:nowrap;
+}
+.db-tg-car::-webkit-scrollbar { display:none; }
+.db-tg-car-item { flex-shrink:0; position:relative; cursor:pointer; }
+.db-tg-thumb {
+    width:56px; height:56px; border-radius:50%;
+    border:2px solid rgba(255,255,255,.38); overflow:hidden;
+    background:rgba(255,255,255,.1);
+    display:flex; align-items:center; justify-content:center;
+    transition:border-color .18s, transform .18s;
+}
+.db-tg-thumb img { width:100%; height:100%; object-fit:cover; display:block; }
+.db-tg-thumb:hover { border-color:rgba(255,255,255,.85); transform:scale(1.08); }
+.db-tg-add {
+    width:56px; height:56px; border-radius:50%;
+    border:2px dashed rgba(255,255,255,.38);
+    background:rgba(255,255,255,.08);
+    display:flex; align-items:center; justify-content:center;
+    cursor:pointer; font-size:22px; color:rgba(255,255,255,.65);
+    flex-shrink:0; transition:all .18s;
+}
+.db-tg-add:hover { border-color:rgba(255,255,255,.75); background:rgba(255,255,255,.16); color:#fff; transform:scale(1.08); }
+.db-tg-car-item .db-tg-del {
+    display:none; position:absolute; top:-2px; right:-2px;
+    width:18px; height:18px; border-radius:50%;
+    background:rgba(220,38,38,.85); border:1.5px solid #fff;
+    color:#fff; font-size:9px; font-weight:900;
+    align-items:center; justify-content:center; cursor:pointer; z-index:4;
+}
+.db-tg-car-item:hover .db-tg-del { display:flex; }
+.db-tg-del:hover { background:rgba(220,38,38,1); }
+
+/* info grid */
 .prof-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
 .prof-field {
-    background: #f8f9fc;
-    border-radius: 13px;
-    padding: 14px 16px;
-    border-left: 3px solid #1a7a4a;
+    background: #f8f9fc; border-radius: 13px; padding: 14px 16px;
+    border: 1.5px solid #eef0f3; transition:border-color .18s;
 }
+.prof-field:hover { border-color: #a7f3d0; }
 .prof-field.span2 { grid-column: 1 / -1; }
 .pf-label { font-size: 10px; font-weight: 700; color: #9ba3b8; text-transform: uppercase;
     letter-spacing: 0.6px; margin-bottom: 5px; }
 .pf-value { font-size: 15px; font-weight: 600; color: #222; }
 .pf-value.muted { color: #bbb; font-style: italic; font-weight: 400; }
 .pf-value.discount { color: #43a047; }
+
+/* history preview modal */
+.db-hist-modal-bg {
+    display:none; position:fixed; inset:0;
+    background:rgba(0,0,0,.92); z-index:9000;
+    align-items:center; justify-content:center;
+    flex-direction:column; gap:16px; padding:20px;
+}
+.db-hist-modal-bg.open { display:flex; animation:dbLbIn .2s ease; }
+@keyframes dbLbIn { from{opacity:0} to{opacity:1} }
+.db-hist-img { max-width:min(380px,88vw); max-height:min(380px,65vh); border-radius:20px; object-fit:cover; box-shadow:0 24px 70px rgba(0,0,0,.7); animation:dbLbSc .26s cubic-bezier(.34,1.4,.64,1); }
+@keyframes dbLbSc { from{transform:scale(.78);opacity:0} to{transform:scale(1);opacity:1} }
+.db-hist-name { color:#fff; font-size:16px; font-weight:700; text-align:center; }
+.db-hist-actions { display:flex; gap:9px; flex-wrap:wrap; justify-content:center; }
+.db-lb-btn { background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.28); color:#fff; padding:9px 18px; border-radius:11px; font-size:13px; font-weight:600; cursor:pointer; display:flex; align-items:center; gap:6px; transition:background .2s; }
+.db-lb-btn:hover { background:rgba(255,255,255,.24); }
+.db-lb-btn.green { background:rgba(26,122,74,.3); border-color:rgba(26,122,74,.55); }
+.db-lb-btn.green:hover { background:rgba(26,122,74,.5); }
+.db-lb-btn.red { background:rgba(220,38,38,.18); border-color:rgba(220,38,38,.45); }
+.db-lb-btn.red:hover { background:rgba(220,38,38,.34); }
+.db-hist-close { position:fixed; top:18px; right:18px; background:rgba(255,255,255,.1); border:1px solid rgba(255,255,255,.2); color:#fff; width:38px; height:38px; border-radius:50%; font-size:18px; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:background .2s; }
+.db-hist-close:hover { background:rgba(255,255,255,.22); }
 
 /* ════════════════════════════════════════════
    TRACK ORDER
@@ -1004,42 +1131,72 @@
     </div>
 
     <!-- ══════════════════════════════════════
-         PANEL 5: PROFILE
+         PANEL 5: PROFILE  (Telegram style)
     ══════════════════════════════════════ -->
+    <input type="file" id="profilePhotoInput" accept="image/*" style="display:none;" onchange="uploadProfilePhoto(this)">
+
     <div class="db-panel" id="panel-profile">
-        <div class="section-head">
-            <h2 class="section-title">👤 My Profile</h2>
-            <button class="btn-save" onclick="switchPanel('settings')" style="font-size:13px;padding:9px 18px;">✏️ Edit Profile</button>
+
+        <!-- ── Telegram-style hero card ── -->
+        <div class="db-tg-hero" id="dbTgHero">
+            <div class="db-tg-bg" id="dbTgBg"
+                 {% if user.profile_photo %}style="background-image:url('/static/{{ user.profile_photo }}')"{% endif %}></div>
+            <div class="db-tg-overlay"></div>
+
+            <!-- Avatar -->
+            <div class="db-tg-avatar" id="dbTgAvatar" onclick="dbOpenCurPreview()" title="View photo">
+                {% if user.profile_photo %}
+                    <img src="/static/{{ user.profile_photo }}" alt="Profile" id="dbTgAvatarImg">
+                {% else %}
+                    <span id="dbTgAvatarInit">{{ (user.full_name or user.email or 'U')[0]|upper }}</span>
+                {% endif %}
+            </div>
+
+            <!-- Upload progress -->
+            <div class="db-tg-prog" id="dbTgProg">
+                <div class="db-tg-prog-bar"><div class="db-tg-prog-fill" id="dbTgProgFill"></div></div>
+                <div class="db-tg-prog-lbl" id="dbTgProgLbl">Uploading…</div>
+            </div>
+
+            <!-- Name / email / badges -->
+            <div class="db-tg-name">{{ user.full_name or 'Member' }}</div>
+            <div class="db-tg-email">{{ user.email }}</div>
+            <div class="db-tg-badges">
+                <span class="db-tg-badge db-tg-b-green">✅ Verified Member</span>
+                <span class="db-tg-badge db-tg-b-amber">🏷️ 10% Discount</span>
+            </div>
+
+            <!-- Change / Remove buttons -->
+            <div class="db-tg-btns">
+                <button class="db-tg-btn-chg" onclick="document.getElementById('profilePhotoInput').click()">📷 Change Photo</button>
+                <button class="db-tg-btn-rm" id="dbTgRmBtn"
+                        style="{{ '' if user.profile_photo else 'display:none' }}"
+                        onclick="dbRemovePhoto()">🗑️ Remove</button>
+            </div>
+
+            <!-- Photo carousel (history) -->
+            <div class="db-tg-car-wrap">
+                <div class="db-tg-car-lbl" id="dbCarLbl"
+                     style="{{ '' if photo_history else 'display:none' }}">Previous Photos</div>
+                <div class="db-tg-car" id="dbTgCar">
+                    <div class="db-tg-add" onclick="document.getElementById('profilePhotoInput').click()" title="Add photo">＋</div>
+                    {% for h in photo_history %}
+                    <div class="db-tg-car-item" data-hist-id="{{ h.id }}" data-src="/static/{{ h.photo_path }}">
+                        <div class="db-tg-thumb" onclick="dbOpenHistPreview({{ h.id }}, '/static/{{ h.photo_path }}')">
+                            <img src="/static/{{ h.photo_path }}" alt="Photo {{ loop.index }}" loading="lazy">
+                        </div>
+                        <div class="db-tg-del" onclick="dbDeleteHistPhoto(event, {{ h.id }})" title="Delete">✕</div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
         </div>
 
-        <!-- Profile Info Display -->
-        <div class="profile-card">
-            <div style="display:flex;align-items:center;gap:18px;margin-bottom:24px;flex-wrap:wrap;">
-                <!-- Clickable profile photo -->
-                <label for="profilePhotoInput" style="cursor:pointer;flex-shrink:0;position:relative;" title="Change profile photo">
-                    <div id="profileAvatarWrap" style="width:80px;height:80px;border-radius:50%;overflow:hidden;
-                        box-shadow:0 6px 20px rgba(26,122,74,0.3);border:3px solid #e8f5e9;position:relative;">
-                        {% if user.profile_photo %}
-                        <img id="profileAvatarImg" src="{{ url_for('static', filename=user.profile_photo) }}"
-                             alt="Profile" style="width:100%;height:100%;object-fit:cover;"
-                             onerror="this.style.display='none';document.getElementById('profileAvatarInitial').style.display='flex';">
-                        <span id="profileAvatarInitial" style="display:none;width:100%;height:100%;background:linear-gradient(135deg,#1a7a4a,#0f5232);color:#fff;font-size:28px;font-weight:800;align-items:center;justify-content:center;">{{ (user.full_name or 'U')[0]|upper }}</span>
-                        {% else %}
-                        <span id="profileAvatarInitial" style="display:flex;width:100%;height:100%;background:linear-gradient(135deg,#1a7a4a,#0f5232);color:#fff;font-size:28px;font-weight:800;align-items:center;justify-content:center;">{{ (user.full_name or 'U')[0]|upper }}</span>
-                        <img id="profileAvatarImg" style="display:none;width:100%;height:100%;object-fit:cover;">
-                        {% endif %}
-                        <div style="position:absolute;bottom:0;left:0;right:0;background:rgba(0,0,0,0.5);color:#fff;font-size:10px;text-align:center;padding:3px;">📷 Change</div>
-                    </div>
-                </label>
-                <input type="file" id="profilePhotoInput" accept="image/*" style="display:none;" onchange="uploadProfilePhoto(this)">
-                <div>
-                    <h3 style="margin:0 0 4px;font-size:20px;font-weight:800;color:#1a1a2e;">{{ user.full_name or 'Member' }}</h3>
-                    <p style="margin:0 0 8px;color:#888;font-size:13px;">{{ user.email }}</p>
-                    <span style="background:#e8f5e9;color:#2e7d32;font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px;">🎉 10% Member Discount</span>
-                    {% if user.profile_photo %}
-                    <button onclick="removeProfilePhoto()" style="display:block;margin-top:8px;background:none;border:1px solid #ffcdd2;color:#e53935;font-size:11px;padding:3px 10px;border-radius:8px;cursor:pointer;">🗑️ Remove Photo</button>
-                    {% endif %}
-                </div>
+        <!-- ── Info grid card ── -->
+        <div class="settings-section">
+            <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:18px;">
+                <div style="font-size:15px;font-weight:800;color:#111;display:flex;align-items:center;gap:8px;">👤 Personal Information</div>
+                <button class="btn-save" onclick="switchPanel('settings')" style="font-size:13px;padding:9px 18px;">✏️ Edit Profile</button>
             </div>
             <div class="prof-grid">
                 <div class="prof-field">
@@ -1051,7 +1208,7 @@
                     <div class="pf-value">{{ user.email }}</div>
                 </div>
                 <div class="prof-field">
-                    <div class="pf-label">Phone Number</div>
+                    <div class="pf-label">Phone</div>
                     <div class="pf-value {% if not user.phone %}muted{% endif %}">{{ user.phone or 'Not set' }}</div>
                 </div>
                 <div class="prof-field">
@@ -1062,7 +1219,7 @@
                     <div class="pf-label">Delivery Address</div>
                     <div class="pf-value {% if not user.address %}muted{% endif %}">{{ user.address or 'Not set' }}</div>
                 </div>
-                <div class="prof-field" style="border-left-color:#aaa;">
+                <div class="prof-field">
                     <div class="pf-label">Member Since</div>
                     <div class="pf-value">
                         {% if user.created_at %}
@@ -1071,28 +1228,34 @@
                         {% else %}N/A{% endif %}
                     </div>
                 </div>
-                <div class="prof-field" style="border-left-color:#43a047;">
+                <div class="prof-field">
                     <div class="pf-label">Member Discount</div>
-                    <div class="pf-value discount">10% on all orders</div>
+                    <div class="pf-value discount">🏷️ 10% on all orders</div>
                 </div>
             </div>
         </div>
 
-        <!-- Contact Shortcuts -->
-        <div class="recent-section">
-            <div class="section-head">
-                <h2 class="section-title" style="font-size:15px;">💬 Quick Support</h2>
-            </div>
+        <!-- ── Quick Support ── -->
+        <div class="settings-section" style="padding:20px 24px;">
+            <div style="font-size:14px;font-weight:800;color:#111;margin-bottom:14px;">💬 Quick Support</div>
             <div style="display:flex;gap:10px;flex-wrap:wrap;">
                 <a href="https://wa.me/{{ user.phone or '251987957957' }}?text=Hello+SEMIRA+FASHION"
-                   target="_blank" class="whatsapp-btn">
-                    💬 WhatsApp Support
-                </a>
+                   target="_blank" class="whatsapp-btn">💬 WhatsApp</a>
                 <a href="{{ url_for('customer.contact') }}" class="btn-secondary"
-                   style="display:inline-flex;align-items:center;gap:7px;padding:12px 20px;border-radius:11px;text-decoration:none;font-weight:700;font-size:14px;">
-                    📞 Contact Us
-                </a>
+                   style="display:inline-flex;align-items:center;gap:7px;padding:12px 20px;border-radius:11px;text-decoration:none;font-weight:700;font-size:14px;">📞 Contact Us</a>
             </div>
+        </div>
+    </div>
+
+    <!-- History photo preview modal -->
+    <div class="db-hist-modal-bg" id="dbHistModal" onclick="if(event.target===this)dbCloseHist()">
+        <button class="db-hist-close" onclick="dbCloseHist()">✕</button>
+        <img class="db-hist-img" id="dbHistImg" src="" alt="Previous photo">
+        <div class="db-hist-name">Previous Photo</div>
+        <div class="db-hist-actions">
+            <button class="db-lb-btn green" id="dbHistSetBtn" onclick="dbSetHistAsCurrent()">✅ Set as Profile</button>
+            <button class="db-lb-btn red" onclick="dbDeleteHistFromPreview()">🗑️ Delete</button>
+            <button class="db-lb-btn" onclick="dbCloseHist()">Cancel</button>
         </div>
     </div>
 
@@ -1728,6 +1891,13 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 /* ═══════════════════════════════════════════════
+   CSRF TOKEN
+═══════════════════════════════════════════════ */
+const _dbCsrf = '{{ csrf_token() }}';
+let _dbHasPhoto = {{ 'true' if user.profile_photo else 'false' }};
+let _dbActiveHistId = null;
+
+/* ═══════════════════════════════════════════════
    PROFILE PHOTO UPLOAD
 ═══════════════════════════════════════════════ */
 async function uploadProfilePhoto(input) {
@@ -1736,54 +1906,110 @@ async function uploadProfilePhoto(input) {
     const MAX = 5 * 1024 * 1024;
     if (file.size > MAX) { showToast('ፎቶ ከ5MB ማለፍ የለበትም', 'error'); input.value=''; return; }
 
+    const prog = document.getElementById('dbTgProg');
+    const fill = document.getElementById('dbTgProgFill');
+    const lbl  = document.getElementById('dbTgProgLbl');
+    const av   = document.getElementById('dbTgAvatar');
+    prog.classList.add('show');
+    fill.style.width = '0%';
+    lbl.textContent = 'Uploading…';
+    if (av) av.classList.add('uploading');
+
+    let pct = 0;
+    const iv = setInterval(() => { pct = Math.min(pct + Math.random()*18, 88); fill.style.width = pct+'%'; }, 120);
+
     const fd = new FormData();
     fd.append('photo', file);
+    fd.append('csrf_token', _dbCsrf);
 
-    showToast('ፎቶ እየተጫነ ነው…', 'info');
     try {
-        const r = await fetch('/profile/upload-photo', { method:'POST', body:fd });
+        const r = await fetch('/profile/upload-photo', {
+            method: 'POST', body: fd,
+            headers: { 'X-Requested-With': 'XMLHttpRequest', 'X-CSRFToken': _dbCsrf }
+        });
         const data = await r.json();
+        clearInterval(iv);
+        if (av) av.classList.remove('uploading');
+
         if (data.success) {
+            fill.style.width = '100%';
+            lbl.textContent = 'Done ✅';
+            setTimeout(() => { prog.classList.remove('show'); fill.style.width='0%'; }, 1400);
+
             const src = data.photo_src + '?t=' + Date.now();
-            // Update all avatar elements on the page
-            ['sidebarAvatarImg','profileAvatarImg'].forEach(id => {
-                const el = document.getElementById(id);
-                if (el) { el.src = src; el.style.display = 'block'; }
-            });
-            ['sidebarAvatarInitial','profileAvatarInitial'].forEach(id => {
-                const el = document.getElementById(id);
-                if (el) el.style.display = 'none';
-            });
-            // Update nav bar avatar without reload
-            document.querySelectorAll('.nav-avatar-img').forEach(el => { el.src = src; el.style.display = 'block'; });
-            document.querySelectorAll('.nav-avatar-initials').forEach(el => el.style.display = 'none');
+            dbApplyCurrentPhoto(src);
             showToast('ፎቶ ተቀይሯል! ✅', 'success');
         } else {
+            prog.classList.remove('show');
             showToast(data.error || 'ስህተት ተፈጥሯል', 'error');
         }
     } catch(e) {
+        clearInterval(iv);
+        if (av) av.classList.remove('uploading');
+        prog.classList.remove('show');
         showToast('ፎቶ ለመጫን አልተቻለም', 'error');
     }
     input.value = '';
 }
 
-async function removeProfilePhoto() {
+function dbApplyCurrentPhoto(src) {
+    _dbHasPhoto = true;
+
+    // Hero avatar
+    const av = document.getElementById('dbTgAvatar');
+    if (av) av.innerHTML = `<img src="${src}" alt="Profile" id="dbTgAvatarImg">`;
+
+    // Blurred hero background
+    const bg = document.getElementById('dbTgBg');
+    if (bg) bg.style.backgroundImage = `url('${src}')`;
+
+    // Sidebar avatar
+    ['sidebarAvatarImg'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) { el.src = src; el.style.display = 'block'; }
+    });
+    ['sidebarAvatarInitial'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.style.display = 'none';
+    });
+
+    // Show remove button
+    const rb = document.getElementById('dbTgRmBtn');
+    if (rb) rb.style.display = '';
+
+    // Nav bar avatar
+    document.querySelectorAll('.nav-avatar-img').forEach(el => { el.src = src; el.style.display = 'block'; });
+    document.querySelectorAll('.nav-avatar-initials').forEach(el => el.style.display = 'none');
+
+    // Show carousel label
+    const lbl = document.getElementById('dbCarLbl');
+    if (lbl) lbl.style.display = '';
+}
+
+async function dbRemovePhoto() {
+    if (!_dbHasPhoto) { showToast('ፎቶ የለም', 'error'); return; }
     if (!confirm('ፎቶ ለማስወገድ ይፈልጋሉ?')) return;
     try {
-        const r = await fetch('/profile/remove-photo', { method:'POST' });
+        const r = await fetch('/profile/remove-photo', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest', 'X-CSRFToken': _dbCsrf }
+        });
         const data = await r.json();
         if (data.success) {
-            ['sidebarAvatarImg','profileAvatarImg'].forEach(id => {
-                const el = document.getElementById(id);
-                if (el) el.style.display = 'none';
-            });
-            ['sidebarAvatarInitial','profileAvatarInitial'].forEach(id => {
-                const el = document.getElementById(id);
-                if (el) el.style.display = 'flex';
-            });
-            document.querySelectorAll('.nav-avatar-img').forEach(el => el.style.display = 'none');
-            document.querySelectorAll('.nav-avatar-initials').forEach(el => el.style.display = 'flex');
-            showToast('ፎቶ ተወግዷል', 'success');
+            _dbHasPhoto = false;
+            const init = '{{ (user.full_name or user.email or "U")[0]|upper }}';
+            const av = document.getElementById('dbTgAvatar');
+            if (av) av.innerHTML = `<span id="dbTgAvatarInit">${init}</span>`;
+            const bg = document.getElementById('dbTgBg');
+            if (bg) bg.style.backgroundImage = '';
+            const rb = document.getElementById('dbTgRmBtn');
+            if (rb) rb.style.display = 'none';
+            ['sidebarAvatarImg'].forEach(id => { const el=document.getElementById(id); if(el) el.style.display='none'; });
+            ['sidebarAvatarInitial'].forEach(id => { const el=document.getElementById(id); if(el) el.style.display='flex'; });
+            document.querySelectorAll('.nav-avatar-img').forEach(el => el.style.display='none');
+            document.querySelectorAll('.nav-avatar-initials').forEach(el => el.style.display='flex');
+            showToast('ፎቶ ተወግዷል — እየዘጋሁ ነው…', 'success');
+            setTimeout(() => location.reload(), 1300);
         } else {
             showToast(data.error || 'ስህተት ተፈጥሯል', 'error');
         }
@@ -1791,6 +2017,74 @@ async function removeProfilePhoto() {
         showToast('ስህተት ተፈጥሯል', 'error');
     }
 }
+
+/* ═══════════════════════════════════════════════
+   HISTORY CAROUSEL
+═══════════════════════════════════════════════ */
+function dbOpenCurPreview() { /* just a visual click on avatar — do nothing for now */ }
+
+function dbOpenHistPreview(histId, src) {
+    _dbActiveHistId = histId;
+    document.getElementById('dbHistImg').src = src;
+    document.getElementById('dbHistModal').classList.add('open');
+    document.body.style.overflow = 'hidden';
+}
+function dbCloseHist() {
+    document.getElementById('dbHistModal').classList.remove('open');
+    document.body.style.overflow = '';
+}
+
+async function dbSetHistAsCurrent() {
+    if (!_dbActiveHistId) return;
+    const btn = document.getElementById('dbHistSetBtn');
+    btn.disabled = true; btn.innerHTML = '<span class="spinner"></span>';
+    try {
+        const r = await fetch('/profile/set-history-photo', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest', 'X-CSRFToken': _dbCsrf },
+            body: JSON.stringify({ history_id: _dbActiveHistId })
+        });
+        const d = await r.json();
+        if (d.success) {
+            dbCloseHist();
+            dbApplyCurrentPhoto(d.photo_src + '?t=' + Date.now());
+            const item = document.querySelector(`.db-tg-car-item[data-hist-id="${_dbActiveHistId}"]`);
+            if (item) { item.style.transition='opacity .3s,transform .3s'; item.style.opacity='0'; item.style.transform='scale(.7)'; setTimeout(()=>item.remove(),320); }
+            showToast('ፎቶ ተቀይሯል! ✅', 'success');
+        } else {
+            showToast(d.error || 'ስህተት ተፈጥሯል', 'error');
+        }
+    } catch(e) { showToast('Network error', 'error'); }
+    finally { btn.disabled=false; btn.innerHTML='✅ Set as Profile'; }
+}
+
+function dbDeleteHistFromPreview() {
+    if (!_dbActiveHistId) return;
+    if (!confirm('ይህን ፎቶ ሙሉ በሙሉ ለመሰረዝ ይፈልጋሉ?')) return;
+    dbDeleteHistPhoto(null, _dbActiveHistId, () => dbCloseHist());
+}
+
+async function dbDeleteHistPhoto(e, histId, cb) {
+    if (e) { e.stopPropagation(); e.preventDefault(); }
+    if (!confirm('ፎቶ ሙሉ በሙሉ ይሰረዝ?')) return;
+    try {
+        const r = await fetch('/profile/delete-history-photo', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest', 'X-CSRFToken': _dbCsrf },
+            body: JSON.stringify({ history_id: histId })
+        });
+        const d = await r.json();
+        if (d.success) {
+            const item = document.querySelector(`.db-tg-car-item[data-hist-id="${histId}"]`);
+            if (item) { item.style.transition='opacity .28s,transform .28s'; item.style.opacity='0'; item.style.transform='scale(.65)'; setTimeout(()=>{ item.remove(); const rem=document.querySelectorAll('.db-tg-car-item'); const lbl=document.getElementById('dbCarLbl'); if(!rem.length && lbl) lbl.style.display='none'; },300); }
+            showToast('ፎቶ ተሰርዟል', 'success');
+            if (cb) cb();
+        } else { showToast(d.error || 'ስህተት', 'error'); }
+    } catch(e2) { showToast('Network error', 'error'); }
+}
+
+/* Keep legacy removeProfilePhoto alias so old calls still work */
+async function removeProfilePhoto() { await dbRemovePhoto(); }
 
 /* ═══════════════════════════════════════════════
    TOAST
