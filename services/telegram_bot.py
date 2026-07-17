@@ -37,7 +37,8 @@ PRODUCTS_PER_PAGE = 6
 # ───────────────────────── conversation states ─────────────────────────
 (AWAIT_SEARCH, AWAIT_NAME, AWAIT_PHONE, AWAIT_ADDRESS, AWAIT_TRACK,
  AWAIT_ORDERS_PHONE, AWAIT_REG_NAME, AWAIT_REG_PHONE,
- AWAIT_REG_EMAIL, AWAIT_REG_PASS) = range(10)
+ AWAIT_REG_EMAIL, AWAIT_REG_PASS,
+ AWAIT_EDIT_NAME, AWAIT_EDIT_PHONE) = range(12)
 
 # ───────────────────────── in-memory user state ─────────────────────────
 # { telegram_user_id: { 'lang': 'am', 'cart': {}, 'order': {}, 'wishlist': [] } }
@@ -158,6 +159,35 @@ T = {
                       'en': '⚠️ This phone/email is already registered. Log in on the website.'},
     'reg_err':       {'am': '❌ ምዝገባ አልተሳካም። እባክዎ ዳግም ሞክሩ።', 'en': '❌ Registration failed. Please try again.'},
     'reg_start_btn': {'am': '📝 ምዝገባ ጀምር', 'en': '📝 Start Registration'},
+    # ── profile view / edit ──
+    'prof_title':    {'am': '👤 *መለያዬ*',             'en': '👤 *My Account*'},
+    'prof_name':     {'am': '📝 ስም',                  'en': '📝 Name'},
+    'prof_phone':    {'am': '📱 ስልክ',                 'en': '📱 Phone'},
+    'prof_email':    {'am': '📧 ኢሜል',                 'en': '📧 Email'},
+    'prof_points':   {'am': '🌟 ነጥቦች',               'en': '🌟 Loyalty Points'},
+    'prof_orders':   {'am': '📦 ትዕዛዞች',              'en': '📦 Orders'},
+    'prof_discount': {'am': '🏷️ ቅናሽ',               'en': '🏷️ Discount'},
+    'prof_since':    {'am': '📅 ተመዝግቦ',              'en': '📅 Member since'},
+    'prof_edit_name':  {'am': '✏️ ስም አስተካክል',       'en': '✏️ Edit Name'},
+    'prof_edit_phone': {'am': '📱 ስልክ አስተካክል',      'en': '📱 Edit Phone'},
+    'prof_my_orders':  {'am': '📦 ትዕዛዞቼ ተመልከት',    'en': '📦 View My Orders'},
+    'edit_name_prompt':  {'am': '✏️ አዲስ ስምዎን ያስገቡ:',  'en': '✏️ Enter your new full name:'},
+    'edit_phone_prompt': {'am': '📱 አዲስ ስልክ ቁጥርዎን ያስገቡ:', 'en': '📱 Enter your new phone number:'},
+    'edit_saved':    {'am': '✅ ተቀምጧል!', 'en': '✅ Saved!'},
+    'edit_err':      {'am': '❌ ለውጥ አልተሳካም።', 'en': '❌ Update failed. Please try again.'},
+    'not_registered':{'am': ('👤 *መለያ አልተገኘም*\n\n'
+                             'ምዝገባ ሲፈጽሙ:\n'
+                             '• 10% ቅናሽ በሁሉም ትዕዛዞች\n'
+                             '• የትዕዛዝ ታሪክ\n'
+                             '• Loyalty ነጥቦች'),
+                      'en': ('👤 *No Account Found*\n\n'
+                             'Register to enjoy:\n'
+                             '• 10% discount on every order\n'
+                             '• Full order history\n'
+                             '• Loyalty reward points')},
+    'link_account':  {'am': '🔗 ስልክ ቁጥር ይስጡ (መለያ ለማገናኘት):',
+                      'en': '🔗 Enter your phone number to link your account:'},
+    'link_btn':      {'am': '🔗 ካለ መለያ አገናኝ', 'en': '🔗 Link Existing Account'},
 }
 
 def _(uid: int, key: str, **kwargs) -> str:
@@ -227,6 +257,12 @@ def _main_menu_keyboard(uid: int) -> InlineKeyboardMarkup:
     ]
     return InlineKeyboardMarkup(rows)
 
+
+def _back_account(uid: int) -> InlineKeyboardMarkup:
+    return InlineKeyboardMarkup([
+        [InlineKeyboardButton(_(uid, 'account'), callback_data='menu:account')],
+        [InlineKeyboardButton(_(uid, 'main_menu'), callback_data='menu:home')],
+    ])
 
 def _back_home(uid: int) -> InlineKeyboardMarkup:
     return InlineKeyboardMarkup([[
@@ -371,6 +407,51 @@ def _db_user_exists_by_phone(phone: str) -> bool:
         "SELECT id FROM users WHERE phone=%s AND is_admin=0", (phone.strip(),)
     ).fetchone()
     return row is not None
+
+def _db_get_user_profile(phone: str) -> dict | None:
+    """Return full profile dict for a customer by phone, including order stats."""
+    from database.db import get_db
+    db = get_db()
+    phone = phone.strip()
+    row = db.execute(
+        "SELECT id, full_name, phone, email, loyalty_points, created_at "
+        "FROM users WHERE (phone=%s OR phone=%s) AND is_admin=0 LIMIT 1",
+        (phone, phone.lstrip('+'))
+    ).fetchone()
+    if not row:
+        return None
+    profile = dict(row)
+    # order count
+    try:
+        cnt = db.execute(
+            "SELECT COUNT(*) FROM orders WHERE user_id=%s", (profile['id'],)
+        ).fetchone()
+        profile['order_count'] = int(cnt[0]) if cnt else 0
+    except Exception:
+        profile['order_count'] = 0
+    return profile
+
+def _db_update_user_field(phone: str, field: str, value: str) -> bool:
+    """Update a single safe field on the users table by phone. Returns True on success."""
+    allowed = {'full_name', 'phone'}
+    if field not in allowed:
+        return False
+    from database.db import get_db, commit_or_rollback
+    db = get_db()
+    try:
+        db.execute(
+            f"UPDATE users SET {field}=%s, updated_at=NOW() WHERE phone=%s AND is_admin=0",
+            (value.strip(), phone.strip())
+        )
+        commit_or_rollback(db)
+        return True
+    except Exception as e:
+        log.error(f"[UpdateUser] {e}")
+        return False
+
+def _db_get_user_by_phone_link(phone: str) -> dict | None:
+    """Look up a user by phone for linking (same as get_profile but lighter)."""
+    return _db_get_user_profile(phone)
 
 def _db_place_order(cart: dict, user_data: dict) -> str | None:
     """Place an order, return order number or None on failure."""
@@ -738,18 +819,46 @@ async def on_callback(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
         await _show_branches(query, uid)
 
     elif data == 'menu:account':
+        await _show_account(query, uid)
+
+    elif data == 'account:edit_name':
+        await _safe_edit_text(query, _(uid, 'edit_name_prompt'), reply_markup=_back_home(uid))
+        return AWAIT_EDIT_NAME
+
+    elif data == 'account:edit_phone':
+        await _safe_edit_text(query, _(uid, 'edit_phone_prompt'), reply_markup=_back_home(uid))
+        return AWAIT_EDIT_PHONE
+
+    elif data == 'account:orders':
         state = _get_state(uid)
-        phone = state.get('order', {}).get('phone') or state.get('reg_phone', '')
-        if phone and _db_user_exists_by_phone(phone):
-            await _safe_edit_text(query, _(uid, 'already_reg'),
-                                  reply_markup=_main_menu_keyboard(uid))
+        phone = state.get('reg_phone', '') or state.get('order', {}).get('phone', '')
+        if phone:
+            orders = _db_get_orders_by_phone(phone)
+            lang = state.get('lang', 'am')
+            if not orders:
+                await _safe_edit_text(query, _(uid, 'no_orders'), reply_markup=_back_account(uid))
+            else:
+                lines = [f"📦 *{'ትዕዛዞቼ' if lang=='am' else 'My Orders'}* ({len(orders)})\n"]
+                for o in orders:
+                    num    = o.get('order_number', '')
+                    status = o.get('status', '')
+                    total  = _fmt_price(o.get('total', 0))
+                    date   = o.get('created_at', '')
+                    if date and hasattr(date, 'strftime'):
+                        date = date.strftime('%Y-%m-%d')
+                    status_lbl = T['status_labels'][lang].get(status, status)
+                    lines.append(f"🔢 `{num}` — {status_lbl}")
+                    lines.append(f"   💰 {total}  |  🕐 {date}\n")
+                await _safe_edit_text(query, '\n'.join(lines),
+                                      parse_mode=ParseMode.MARKDOWN,
+                                      reply_markup=_back_account(uid))
         else:
-            kb = InlineKeyboardMarkup([
-                [InlineKeyboardButton(_(uid, 'reg_start_btn'), callback_data='reg:start')],
-                [InlineKeyboardButton(_(uid, 'main_menu'), callback_data='menu:home')],
-            ])
-            await _safe_edit_text(query, _(uid, 'reg_intro'),
-                                  parse_mode=ParseMode.MARKDOWN, reply_markup=kb)
+            await _safe_edit_text(query, _(uid, 'orders_prompt'), reply_markup=_back_home(uid))
+            return AWAIT_ORDERS_PHONE
+
+    elif data == 'account:link':
+        await _safe_edit_text(query, _(uid, 'link_account'), reply_markup=_back_home(uid))
+        return AWAIT_ORDERS_PHONE   # re-use phone-input state; handler checks & links
 
     elif data == 'reg:start':
         await _safe_edit_text(query, _(uid, 'reg_name'), reply_markup=_back_home(uid))
@@ -1210,6 +1319,58 @@ async def _notify_admin_new_order(query, uid: int, order_number, order_data: dic
 
 
 # ── wishlist display ──
+async def _show_account(query, uid: int):
+    """Show full profile if registered, registration/link prompt if not."""
+    state = _get_state(uid)
+    lang  = state.get('lang', 'am')
+    phone = state.get('reg_phone', '') or state.get('order', {}).get('phone', '')
+
+    profile = _db_get_user_profile(phone) if phone else None
+
+    if profile:
+        # ── Registered: show full profile ──
+        name   = profile.get('full_name') or '—'
+        ph     = profile.get('phone') or '—'
+        email  = profile.get('email') or '—'
+        points = int(profile.get('loyalty_points') or 0)
+        orders = profile.get('order_count', 0)
+        since  = profile.get('created_at', '')
+        if since and hasattr(since, 'strftime'):
+            since = since.strftime('%Y-%m-%d')
+
+        am = lang == 'am'
+        lines = [
+            f"👤 *{'መለያዬ' if am else 'My Account'}*\n",
+            f"📝 {'ስም' if am else 'Name'}:  {name}",
+            f"📱 {'ስልክ' if am else 'Phone'}:  `{ph}`",
+            f"📧 {'ኢሜል' if am else 'Email'}:  {email}",
+            f"",
+            f"📦 {'ትዕዛዞች' if am else 'Orders'}:  {orders}",
+            f"🌟 {'ነጥቦች' if am else 'Loyalty pts'}:  {points}",
+            f"🏷️ {'ቅናሽ' if am else 'Discount'}:  10% ✅",
+        ]
+        if since:
+            lines.append(f"📅 {'ተመዝግቦ' if am else 'Since'}:  {since}")
+
+        kb = InlineKeyboardMarkup([
+            [InlineKeyboardButton(_(uid, 'prof_edit_name'),  callback_data='account:edit_name'),
+             InlineKeyboardButton(_(uid, 'prof_edit_phone'), callback_data='account:edit_phone')],
+            [InlineKeyboardButton(_(uid, 'prof_my_orders'),  callback_data='account:orders')],
+            [InlineKeyboardButton(_(uid, 'main_menu'),       callback_data='menu:home')],
+        ])
+        await _safe_edit_text(query, '\n'.join(lines),
+                              parse_mode=ParseMode.MARKDOWN, reply_markup=kb)
+    else:
+        # ── Not registered ──
+        kb = InlineKeyboardMarkup([
+            [InlineKeyboardButton(_(uid, 'reg_start_btn'), callback_data='reg:start')],
+            [InlineKeyboardButton(_(uid, 'link_btn'),      callback_data='account:link')],
+            [InlineKeyboardButton(_(uid, 'main_menu'),     callback_data='menu:home')],
+        ])
+        await _safe_edit_text(query, _(uid, 'not_registered'),
+                              parse_mode=ParseMode.MARKDOWN, reply_markup=kb)
+
+
 async def _show_wishlist(query, uid: int):
     wl = _get_state(uid).get('wishlist', [])
     lang = _get_state(uid).get('lang', 'am')
@@ -1259,9 +1420,20 @@ async def _show_branches(query, uid: int):
 
 # ── new conversation handlers ──
 async def on_orders_phone_input(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
-    uid = update.effective_user.id
+    uid   = update.effective_user.id
     phone = update.message.text.strip()
-    lang = _get_state(uid).get('lang', 'am')
+    lang  = _get_state(uid).get('lang', 'am')
+
+    # If called from account:link — try to link the account first
+    profile = _db_get_user_profile(phone)
+    if profile:
+        _get_state(uid)['reg_phone'] = phone
+        await update.message.reply_text(
+            f"✅ {'መለያ ተገናኝቷል! 10% ቅናሽ ይሰጥዎታል።' if lang=='am' else 'Account linked! 10% discount applied.'}",
+            reply_markup=_main_menu_keyboard(uid)
+        )
+        return ConversationHandler.END
+
     orders = _db_get_orders_by_phone(phone)
     if not orders:
         await update.message.reply_text(_(uid, 'no_orders'), reply_markup=_main_menu_keyboard(uid))
@@ -1279,6 +1451,32 @@ async def on_orders_phone_input(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
         lines.append(f"   💰 {total}  |  🕐 {date}\n")
     await update.message.reply_text('\n'.join(lines), parse_mode=ParseMode.MARKDOWN,
                                     reply_markup=_main_menu_keyboard(uid))
+    return ConversationHandler.END
+
+
+async def on_edit_name_input(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
+    uid  = update.effective_user.id
+    name = update.message.text.strip()
+    if len(name) < 2:
+        await update.message.reply_text(_(uid, 'edit_name_prompt'))
+        return AWAIT_EDIT_NAME
+    phone = _get_state(uid).get('reg_phone', '') or _get_state(uid).get('order', {}).get('phone', '')
+    if phone and _db_update_user_field(phone, 'full_name', name):
+        await update.message.reply_text(_(uid, 'edit_saved'), reply_markup=_main_menu_keyboard(uid))
+    else:
+        await update.message.reply_text(_(uid, 'edit_err'), reply_markup=_main_menu_keyboard(uid))
+    return ConversationHandler.END
+
+
+async def on_edit_phone_input(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
+    uid      = update.effective_user.id
+    new_ph   = update.message.text.strip()
+    old_ph   = _get_state(uid).get('reg_phone', '') or _get_state(uid).get('order', {}).get('phone', '')
+    if old_ph and _db_update_user_field(old_ph, 'phone', new_ph):
+        _get_state(uid)['reg_phone'] = new_ph   # update local state too
+        await update.message.reply_text(_(uid, 'edit_saved'), reply_markup=_main_menu_keyboard(uid))
+    else:
+        await update.message.reply_text(_(uid, 'edit_err'), reply_markup=_main_menu_keyboard(uid))
     return ConversationHandler.END
 
 
@@ -1397,6 +1595,14 @@ def build_application() -> Application:
             AWAIT_REG_PASS: [
                 CallbackQueryHandler(on_callback),
                 MessageHandler(filters.TEXT & ~filters.COMMAND, on_reg_pass_input),
+            ],
+            AWAIT_EDIT_NAME: [
+                CallbackQueryHandler(on_callback),
+                MessageHandler(filters.TEXT & ~filters.COMMAND, on_edit_name_input),
+            ],
+            AWAIT_EDIT_PHONE: [
+                CallbackQueryHandler(on_callback),
+                MessageHandler(filters.TEXT & ~filters.COMMAND, on_edit_phone_input),
             ],
         },
         fallbacks=[
