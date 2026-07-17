@@ -857,8 +857,9 @@ def user_profile():
 @user_login_required
 def upload_profile_photo():
     """Upload or change user profile photo."""
-    import imghdr, uuid
-    ALLOWED = {'jpg', 'jpeg', 'png', 'gif', 'webp'}
+    from PIL import Image
+    import io
+    ALLOWED_EXT = {'jpg', 'jpeg', 'png', 'gif', 'webp'}
     MAX_BYTES = 5 * 1024 * 1024  # 5 MB
 
     file = request.files.get('photo')
@@ -866,27 +867,43 @@ def upload_profile_photo():
         return jsonify({'success': False, 'error': 'No file selected'}), 400
 
     ext = file.filename.rsplit('.', 1)[-1].lower() if '.' in file.filename else ''
-    if ext not in ALLOWED:
-        return jsonify({'success': False, 'error': 'Allowed: jpg, png, gif, webp'}), 400
+    if ext not in ALLOWED_EXT:
+        return jsonify({'success': False, 'error': 'Allowed formats: jpg, png, gif, webp'}), 400
 
     data = file.read()
     if len(data) > MAX_BYTES:
         return jsonify({'success': False, 'error': 'File too large (max 5 MB)'}), 400
 
-    # Double-check actual image type
-    img_type = imghdr.what(None, h=data)
-    if img_type not in ('jpeg', 'png', 'gif', 'webp'):
+    # Validate it is actually an image using Pillow (replaces deprecated imghdr)
+    try:
+        img = Image.open(io.BytesIO(data))
+        img.verify()
+    except Exception:
         return jsonify({'success': False, 'error': 'Invalid image file'}), 400
 
-    # Save as uploads/users/{user_id}.{ext}
+    # Delete any existing photo files for this user (all extensions)
     save_dir = os.path.join(current_app.root_path, 'static', 'uploads', 'users')
     os.makedirs(save_dir, exist_ok=True)
+    for old_ext in ALLOWED_EXT:
+        old_path = os.path.join(save_dir, f"{session['user_id']}.{old_ext}")
+        if os.path.exists(old_path):
+            try:
+                os.remove(old_path)
+            except OSError:
+                pass
+
+    # Save file then update DB — roll back file on DB failure
     filename = f"{session['user_id']}.{ext}"
     filepath = os.path.join(save_dir, filename)
-    with open(filepath, 'wb') as f:
-        f.write(data)
-
     rel_path = f"uploads/users/{filename}"
+
+    try:
+        with open(filepath, 'wb') as f:
+            f.write(data)
+    except OSError as e:
+        current_app.logger.error(f"Profile photo save error: {e}")
+        return jsonify({'success': False, 'error': 'Could not save file'}), 500
+
     try:
         conn = get_db()
         cursor = conn.cursor()
@@ -899,8 +916,13 @@ def upload_profile_photo():
         return jsonify({'success': True, 'photo_url': rel_path,
                         'photo_src': f"/static/{rel_path}"})
     except Exception as e:
-        current_app.logger.error(f"Profile photo upload error: {e}")
-        return jsonify({'success': False, 'error': 'Database error'}), 500
+        # DB failed — remove the file we just wrote to stay consistent
+        try:
+            os.remove(filepath)
+        except OSError:
+            pass
+        current_app.logger.error(f"Profile photo upload DB error: {e}")
+        return jsonify({'success': False, 'error': 'Database error saving photo'}), 500
 
 
 @customer_bp.route('/profile/remove-photo', methods=['POST'])
@@ -910,18 +932,27 @@ def remove_profile_photo():
     try:
         conn = get_db()
         cursor = conn.cursor()
-        # Delete old file if exists
-        old = session.get('user_photo', '')
-        if old:
-            old_path = os.path.join(current_app.root_path, 'static', old)
-            if os.path.exists(old_path):
-                os.remove(old_path)
+        # Fetch current photo path from DB (don't rely on session alone)
+        cursor.execute("SELECT profile_photo FROM users WHERE id = %s", (session['user_id'],))
+        row = cursor.fetchone()
+        photo_path = (row['profile_photo'] if row else None) or session.get('user_photo', '')
+
         cursor.execute(
             "UPDATE users SET profile_photo = NULL, updated_at = CURRENT_TIMESTAMP WHERE id = %s",
             (session['user_id'],)
         )
         conn.commit()
         session['user_photo'] = ''
+
+        # Delete file after successful DB update
+        if photo_path:
+            old_path = os.path.join(current_app.root_path, 'static', photo_path)
+            if os.path.exists(old_path):
+                try:
+                    os.remove(old_path)
+                except OSError:
+                    pass
+
         return jsonify({'success': True})
     except Exception as e:
         current_app.logger.error(f"Remove photo error: {e}")

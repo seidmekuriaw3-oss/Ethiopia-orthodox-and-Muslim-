@@ -1056,6 +1056,7 @@
 /* ──────────── Helpers ──────────── */
 const $ = id => document.getElementById(id);
 let _hasPhoto = {{ 'true' if user.profile_photo else 'false' }};
+const _csrf = '{{ csrf_token() }}';
 
 function showToast(msg, type = 'success') {
     const t = $('upToast');
@@ -1118,7 +1119,7 @@ function submitPw() {
     btn.innerHTML = '<span class="spinner"></span> Updating…';
     fetch('{{ url_for('customer.change_password') }}', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
+        headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest', 'X-CSRFToken': _csrf },
         body: JSON.stringify({ password: pw })
     })
     .then(r => r.json())
@@ -1152,7 +1153,7 @@ function doDeleteAccount() {
     if (!pw) return;
     fetch('{{ url_for('customer.delete_account') }}', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
+        headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest', 'X-CSRFToken': _csrf },
         body: JSON.stringify({ password: pw })
     })
     .then(r => r.json())
@@ -1190,11 +1191,12 @@ function uploadPhoto(file) {
 
     const formData = new FormData();
     formData.append('photo', file);
+    formData.append('csrf_token', _csrf);
 
     fetch('{{ url_for('customer.upload_profile_photo') }}', {
         method: 'POST',
         body: formData,
-        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        headers: { 'X-Requested-With': 'XMLHttpRequest', 'X-CSRFToken': _csrf }
     })
     .then(r => r.json())
     .then(d => {
@@ -1257,7 +1259,7 @@ function confirmRemovePhoto() {
     if (!confirm('Remove your profile photo?')) return;
     fetch('{{ url_for('customer.remove_profile_photo') }}', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest' }
+        headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest', 'X-CSRFToken': _csrf }
     })
     .then(r => r.json())
     .then(d => {

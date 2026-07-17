@@ -375,6 +375,7 @@ def init_db():
     cur.execute("ALTER TABLE orders ADD COLUMN IF NOT EXISTS customer_name TEXT")
     cur.execute("ALTER TABLE orders ADD COLUMN IF NOT EXISTS customer_email TEXT")
     cur.execute("ALTER TABLE users ADD COLUMN IF NOT EXISTS loyalty_points INTEGER DEFAULT 0")
+    cur.execute("ALTER TABLE users ADD COLUMN IF NOT EXISTS profile_photo TEXT")
     cur.execute("ALTER TABLE contact_messages ADD COLUMN IF NOT EXISTS admin_notes TEXT")
     # contacts table was accidentally created by api_contact; migrate any data then drop it
     cur.execute("""
