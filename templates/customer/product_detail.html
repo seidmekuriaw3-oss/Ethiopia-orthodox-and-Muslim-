@@ -211,12 +211,18 @@
         font-weight: 700;
         color: #2d3748;
     }
-    /* Dark mode support */
+    /* Dark mode support — cards keep white bg, so keep text dark */
     @media (prefers-color-scheme: dark) {
-        .features-list li { color: #ccc; }
-        .product-description p { color: #ccc; }
-        .product-name-en { color: #bbb; }
-        .spec-info-wrap strong { color: #ddd; }
+        .product-gallery,
+        .product-info {
+            background: #1e2030 !important;
+        }
+        .product-name-en  { color: #d8d8d8 !important; }
+        .product-description p { color: #d0d0d0 !important; }
+        .features-list li { color: #d0d0d0 !important; }
+        .spec-info-wrap strong { color: #f0f0f0 !important; }
+        .product-title { color: #f0f0f0 !important; }
+        .spec-label { color: #c0c0c0 !important; }
     }
     
     @media (max-width: 768px) {
