@@ -722,8 +722,8 @@ def user_register():
             errors.append('Full name is required')
         if not email or not re.match(r'^[^@]+@[^@]+\.[^@]+$', email):
             errors.append('Valid email is required')
-        if not password or len(password) < 6:
-            errors.append('Password must be at least 6 characters')
+        if not password or len(password) < 8:
+            errors.append('Password must be at least 8 characters')
         if password != confirm_password:
             errors.append('Passwords do not match')
 
@@ -1196,16 +1196,23 @@ def update_profile():
 @customer_bp.route('/change-password', methods=['POST'])
 @user_login_required
 def change_password():
-    """Change user password (AJAX)."""
+    """Change user password (AJAX). Requires current password verification."""
     data = request.get_json(silent=True) or {}
+    current_password = data.get('current_password', '')
     new_password = data.get('password', '')
 
-    if not new_password or len(new_password) < 6:
-        return jsonify({'success': False, 'error': 'Password must be at least 6 characters'}), 400
+    if not current_password:
+        return jsonify({'success': False, 'error': 'Current password is required'}), 400
+    if not new_password or len(new_password) < 8:
+        return jsonify({'success': False, 'error': 'New password must be at least 8 characters'}), 400
 
     try:
         conn = get_db()
         cursor = conn.cursor()
+        cursor.execute("SELECT password_hash FROM users WHERE id = %s", (session['user_id'],))
+        user = cursor.fetchone()
+        if not user or not check_password_hash(user['password_hash'], current_password):
+            return jsonify({'success': False, 'error': 'Current password is incorrect'}), 401
         password_hash = generate_password_hash(new_password, method='pbkdf2:sha256')
         cursor.execute("UPDATE users SET password_hash = %s WHERE id = %s",
                        (password_hash, session['user_id']))
@@ -1485,8 +1492,8 @@ def reset_password(token):
         password = request.form.get('password', '')
         confirm_password = request.form.get('confirm_password', '')
 
-        if not password or len(password) < 6:
-            flash('Password must be at least 6 characters', 'error')
+        if not password or len(password) < 8:
+            flash('Password must be at least 8 characters', 'error')
             return render_template('auth/reset_password.html', token=token, lang=lang)
 
         if password != confirm_password:

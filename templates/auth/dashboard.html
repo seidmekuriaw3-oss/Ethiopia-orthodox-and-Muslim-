@@ -1312,12 +1312,16 @@
             <div class="settings-title">🔒 Change Password</div>
             <div style="max-width:400px;">
                 <div class="form-group">
+                    <label>Current Password</label>
+                    <input type="password" id="pw-current" placeholder="Enter your current password" autocomplete="current-password">
+                </div>
+                <div class="form-group">
                     <label>New Password</label>
-                    <input type="password" id="pw-new" placeholder="Min. 6 characters" autocomplete="new-password">
+                    <input type="password" id="pw-new" placeholder="Min. 8 characters" autocomplete="new-password">
                 </div>
                 <div class="form-group">
                     <label>Confirm New Password</label>
-                    <input type="password" id="pw-confirm" placeholder="Repeat password" autocomplete="new-password">
+                    <input type="password" id="pw-confirm" placeholder="Repeat new password" autocomplete="new-password">
                 </div>
                 <div class="btn-row">
                     <button class="btn-save" id="pwSaveBtn" onclick="submitPassword()">🔒 Update Password</button>
@@ -1697,11 +1701,13 @@ function submitProfile(e) {
    PASSWORD CHANGE
 ═══════════════════════════════════════════════ */
 function submitPassword() {
+    const cur = document.getElementById('pw-current').value;
     const pw  = document.getElementById('pw-new').value;
     const pw2 = document.getElementById('pw-confirm').value;
     const btn = document.getElementById('pwSaveBtn');
 
-    if (!pw || pw.length < 6) { showToast('Password must be at least 6 characters', 'error'); return; }
+    if (!cur) { showToast('Please enter your current password', 'error'); return; }
+    if (!pw || pw.length < 8) { showToast('New password must be at least 8 characters', 'error'); return; }
     if (pw !== pw2) { showToast('Passwords do not match', 'error'); return; }
 
     btn.disabled = true;
@@ -1710,11 +1716,12 @@ function submitPassword() {
     fetch('{{ url_for("customer.change_password") }}', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
-        body: JSON.stringify({ password: pw })
+        body: JSON.stringify({ current_password: cur, password: pw })
     })
     .then(r => r.json())
     .then(d => {
         if (d.success) {
+            document.getElementById('pw-current').value = '';
             document.getElementById('pw-new').value = '';
             document.getElementById('pw-confirm').value = '';
             showToast('Password updated successfully!', 'success');
