@@ -38,7 +38,7 @@ PRODUCTS_PER_PAGE = 6
 (AWAIT_SEARCH, AWAIT_NAME, AWAIT_PHONE, AWAIT_ADDRESS, AWAIT_TRACK,
  AWAIT_ORDERS_PHONE, AWAIT_REG_NAME, AWAIT_REG_PHONE,
  AWAIT_REG_EMAIL, AWAIT_REG_PASS,
- AWAIT_EDIT_NAME, AWAIT_EDIT_PHONE) = range(12)
+ AWAIT_EDIT_NAME, AWAIT_EDIT_PHONE, AWAIT_COUPON) = range(13)
 
 # ───────────────────────── in-memory user state ─────────────────────────
 # { telegram_user_id: { 'lang': 'am', 'cart': {}, 'order': {}, 'wishlist': [] } }
@@ -152,7 +152,15 @@ T = {
     'reg_name':      {'am': '📝 ሙሉ ስምዎን ያስገቡ:',        'en': '📝 Enter your full name:'},
     'reg_phone':     {'am': '📱 ስልክ ቁጥርዎን ያስገቡ (+251...):', 'en': '📱 Enter your phone number (+251...):'},
     'reg_email':     {'am': '📧 ኢሜልዎን ያስገቡ (ወይም "skip" ይጻፉ):', 'en': '📧 Enter your email (or type "skip"):'},
-    'reg_pass':      {'am': '🔐 ይለፍ ቃልዎን ያስገቡ (ቢያንስ 6 ፊደላት):', 'en': '🔐 Enter a password (min 6 chars):'},
+    'reg_pass':      {'am': '🔐 ይለፍ ቃልዎን ያስገቡ (ቢያንስ 8 ፊደላት):', 'en': '🔐 Enter a password (min 8 chars):'},
+    'coupon_prompt': {'am': '🏷️ ኩፖን ካለዎት ያስገቡ (ወይም "skip" ይጻፉ):',
+                      'en': '🏷️ Enter a coupon code (or type "skip"):'},
+    'coupon_ok':     {'am': '✅ ኩፖን ተቀባይነት አለው! {pct}% ቅናሽ ተወስዷል።',
+                      'en': '✅ Coupon applied! {pct}% discount.'},
+    'coupon_bad':    {'am': '❌ ኩፖን ልክ አይደለም ወይም ጊዜው አልፏል።',
+                      'en': '❌ Invalid or expired coupon code.'},
+    'share':         {'am': '📤 አጋራ', 'en': '📤 Share'},
+    'cmd_branches':  {'am': '🏪 ቅርንጫፎቻችን', 'en': '🏪 Our Branches'},
     'reg_ok':        {'am': '✅ ምዝገባ ተሳክቷል! ከአሁን በኋላ 10% ቅናሽ ያገኛሉ።',
                       'en': '✅ Registered! You now get 10% off every order.'},
     'reg_dup':       {'am': '⚠️ ይህ ስልክ ቁጥር ወይም ኢሜል ቀደም ሲል ተመዝግቧል።\nወደ ድህረ-ገጽ ያስገቡ።',
@@ -414,7 +422,7 @@ def _db_get_user_profile(phone: str) -> dict | None:
     db = get_db()
     phone = phone.strip()
     row = db.execute(
-        "SELECT id, full_name, phone, email, loyalty_points, created_at "
+        "SELECT id, full_name, phone, email, loyalty_points, created_at, profile_photo "
         "FROM users WHERE (phone=%s OR phone=%s) AND is_admin=0 LIMIT 1",
         (phone, phone.lstrip('+'))
     ).fetchone()
@@ -449,6 +457,25 @@ def _db_update_user_field(phone: str, field: str, value: str) -> bool:
         log.error(f"[UpdateUser] {e}")
         return False
 
+def _db_check_coupon(code: str) -> dict | None:
+    """Validate a coupon code. Returns {'discount_percent': N, 'id': id} or None."""
+    from database.db import get_db
+    db = get_db()
+    try:
+        row = db.execute(
+            """SELECT id, discount_percent FROM coupons
+               WHERE code = %s AND is_active = 1
+                 AND (expires_at IS NULL OR expires_at > NOW())
+                 AND (max_uses IS NULL OR used_count < max_uses)
+               LIMIT 1""",
+            (code.strip().upper(),)
+        ).fetchone()
+        return dict(row) if row else None
+    except Exception as e:
+        log.warning(f"[Coupon] {e}")
+        return None
+
+
 def _db_get_user_by_phone_link(phone: str) -> dict | None:
     """Look up a user by phone for linking (same as get_profile but lighter)."""
     return _db_get_user_profile(phone)
@@ -474,8 +501,17 @@ def _db_place_order(cart: dict, user_data: dict) -> str | None:
         if not items_data:
             return None
 
-        shipping = 0 if subtotal >= FREE_SHIPPING else SHIPPING_COST
-        total = subtotal + shipping
+        # Apply coupon discount if present
+        coupon_pct   = int(user_data.get('coupon_discount', 0))
+        discount_amt = round(subtotal * coupon_pct / 100, 2) if coupon_pct else 0.0
+        discounted   = subtotal - discount_amt
+
+        shipping = 0 if discounted >= FREE_SHIPPING else SHIPPING_COST
+        total    = discounted + shipping
+
+        coupon_note = ''
+        if user_data.get('coupon_code'):
+            coupon_note = f" | Coupon: {user_data['coupon_code']} (−{coupon_pct}%)"
 
         order_data = {
             'user_id': None,
@@ -483,7 +519,7 @@ def _db_place_order(cart: dict, user_data: dict) -> str | None:
             'customer_phone': user_data.get('phone', ''),
             'customer_email': user_data.get('email', ''),
             'shipping_address': user_data.get('address', ''),
-            'notes': f"Telegram Bot Order | @{user_data.get('username', 'N/A')}",
+            'notes': f"Telegram Bot Order | @{user_data.get('username', 'N/A')}{coupon_note}",
             'items': items_data,
             'subtotal': subtotal,
             'shipping_cost': shipping,
@@ -559,10 +595,15 @@ def _product_keyboard(uid: int, pid: int, in_cart: bool = False,
         InlineKeyboardButton(wish_lbl, callback_data=f'wish:toggle:{pid}'),
     ])
 
-    # ── View on website ─────────────────────────────────────────────────────
+    # ── View on website + Share ──────────────────────────────────────────────
     if site:
-        view_lbl = '🌐 ድህረ-ገጽ ላይ እይ' if lang == 'am' else '🌐 View on Website'
-        rows.append([InlineKeyboardButton(view_lbl, url=f'https://{site}/product/{pid}')])
+        product_url = f'https://{site}/product/{pid}'
+        view_lbl  = '🌐 ድህረ-ገጽ ላይ እይ' if lang == 'am' else '🌐 View on Website'
+        share_lbl = '📤 አጋራ' if lang == 'am' else '📤 Share'
+        rows.append([
+            InlineKeyboardButton(view_lbl,  url=product_url),
+            InlineKeyboardButton(share_lbl, url=f'https://t.me/share/url?url={product_url}'),
+        ])
 
     # ── Back to list + Cart ─────────────────────────────────────────────────
     back_lbl = '◀️ ዝርዝር ተመለስ' if lang == 'am' else '◀️ Back to List'
@@ -625,9 +666,10 @@ def _cart_keyboard(uid: int) -> InlineKeyboardMarkup:
 def _order_summary_text(uid: int) -> str:
     state = _get_state(uid)
     order = state.get('order', {})
-    cart = state.get('cart', {})
-    
-    lang = state.get('lang', 'am')
+    cart  = state.get('cart', {})
+    lang  = state.get('lang', 'am')
+    am    = lang == 'am'
+
     items_lines = []
     subtotal = 0.0
     for pid_str, qty in cart.items():
@@ -636,22 +678,33 @@ def _order_summary_text(uid: int) -> str:
             price = float(p['price'])
             subtotal += price * qty
             items_lines.append(f"  • {p['name']} × {qty} — {_fmt_price(price * qty)}")
-    
-    shipping = 0 if subtotal >= FREE_SHIPPING else SHIPPING_COST
-    total = subtotal + shipping
-    ship_label = _(uid, 'free') if shipping == 0 else _fmt_price(shipping)
-    
+
+    # Coupon discount
+    coupon_pct  = int(order.get('coupon_discount', 0))
+    discount_amt = round(subtotal * coupon_pct / 100, 2) if coupon_pct else 0.0
+    discounted   = subtotal - discount_amt
+
+    shipping    = 0 if discounted >= FREE_SHIPPING else SHIPPING_COST
+    total       = discounted + shipping
+    ship_label  = _(uid, 'free') if shipping == 0 else _fmt_price(shipping)
+
     lines = [
-        f"📋 *{'የትዕዛዝ ማጠቃለያ' if lang=='am' else 'Order Summary'}*\n",
-        f"👤 {'ስም' if lang=='am' else 'Name'}: {order.get('name','')}",
-        f"📱 {'ስልክ' if lang=='am' else 'Phone'}: {order.get('phone','')}",
-        f"🏠 {'አድራሻ' if lang=='am' else 'Address'}: {order.get('address','')}",
-        f"\n{'ምርቶች' if lang=='am' else 'Items'}:",
+        f"📋 *{'የትዕዛዝ ማጠቃለያ' if am else 'Order Summary'}*\n",
+        f"👤 {'ስም' if am else 'Name'}: {order.get('name','')}",
+        f"📱 {'ስልክ' if am else 'Phone'}: {order.get('phone','')}",
+        f"🏠 {'አድራሻ' if am else 'Address'}: {order.get('address','')}",
+        f"\n{'ምርቶች' if am else 'Items'}:",
         *items_lines,
         f"\n{_(uid,'subtotal')}: {_fmt_price(subtotal)}",
+    ]
+    if coupon_pct:
+        lines.append(f"🏷️ {'ቅናሽ' if am else 'Discount'} ({coupon_pct}%): −{_fmt_price(discount_amt)}")
+    lines += [
         f"{_(uid,'shipping')}: {ship_label}",
         f"*{_(uid,'total')}: {_fmt_price(total)}*",
     ]
+    if order.get('coupon_code'):
+        lines.append(f"🎟️ {'ኩፖን' if am else 'Coupon'}: `{order['coupon_code']}`")
     return '\n'.join(lines)
 
 
@@ -686,12 +739,54 @@ async def _safe_edit_text(query, text: str, parse_mode=None, reply_markup=None):
 
 
 # ───────────────────────── handlers ─────────────────────────
+def _user_profile_photo_url(profile: dict) -> str | None:
+    """Convert a stored profile_photo path to a full HTTPS URL."""
+    site = os.environ.get('REPLIT_DEV_DOMAIN', '') or SITE_URL
+    if not site:
+        return None
+    photo = (profile.get('profile_photo') or '').strip()
+    if not photo:
+        return None
+    if photo.startswith(('http://', 'https://')):
+        return photo
+    if photo.startswith('uploads/') or photo.startswith('images/'):
+        return f"https://{site}/static/{photo}"
+    return f"https://{site}/static/uploads/users/{photo}"
+
+
 async def cmd_start(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
     uid = update.effective_user.id
     state = _get_state(uid)
-    # Store username for order notes
     state['username'] = update.effective_user.username or str(uid)
-    text = _(uid, 'welcome')
+
+    # Personalized greeting if the user already linked an account
+    phone   = state.get('reg_phone', '')
+    profile = _db_get_user_profile(phone) if phone else None
+    lang    = state.get('lang', 'am')
+
+    if profile:
+        first_name = (profile.get('full_name') or '').split()[0]
+        if lang == 'am':
+            text = (f"👗 *እንኳን ደህና መጡ, {first_name}!*\n\n"
+                    "ሰሚራ ፋሽን ላይ ምርቶቻችንን ይፈልጉ፣ ይዘዙ፣ ይከታተሉ።")
+        else:
+            text = (f"👗 *Welcome back, {first_name}!*\n\n"
+                    "Browse, order and track your purchases with ease.")
+    else:
+        text = _(uid, 'welcome')
+
+    # Try to show shop logo/banner with the greeting
+    site = os.environ.get('REPLIT_DEV_DOMAIN', '') or SITE_URL
+    logo_url = f"https://{site}/static/images/mylogo.png" if site else None
+    if logo_url:
+        try:
+            await update.message.reply_photo(photo=logo_url, caption=text,
+                                             parse_mode=ParseMode.MARKDOWN,
+                                             reply_markup=_main_menu_keyboard(uid))
+            return ConversationHandler.END
+        except TelegramError:
+            pass
+
     await update.message.reply_text(text, parse_mode=ParseMode.MARKDOWN,
                                     reply_markup=_main_menu_keyboard(uid))
     return ConversationHandler.END
@@ -701,21 +796,35 @@ async def cmd_help(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
     uid = update.effective_user.id
     lang = _get_state(uid).get('lang', 'am')
     if lang == 'am':
-        text = ('*ሰሚራ ፋሽን ቦት ምናሌ*\n\n'
-                '/start — ዋና ምናሌ\n'
-                '/products — ምርቶችን ይፈልጉ\n'
-                '/cart — ቅርጫቴን ይመልከቱ\n'
-                '/track — ትዕዛዝ ይከታተሉ\n'
-                '/language — ቋንቋ ይቀይሩ\n'
-                '/cancel — ወቅታዊ ምርጫ ሰርዝ')
+        text = ('*🤖 ሰሚራ ፋሽን ቦት — ትዕዛዞች*\n\n'
+                '🛍️ *ምርቶች*\n'
+                '/products — ሁሉም ምርቶች\n'
+                '/cart — ቅርጫቴ\n'
+                '/track — ትዕዛዝ ክትትል\n\n'
+                '👤 *መለያ*\n'
+                '/account — የመለያ ዝርዝር\n'
+                '/orders — ትዕዛዞቼ\n'
+                '/wishlist — ምኞቴ\n\n'
+                '📍 *ሌሎች*\n'
+                '/branches — ቅርንጫፎቻችን\n'
+                '/language — ቋንቋ ቀይር\n'
+                '/cancel — ወቅታዊ ምርጫ ሰርዝ\n'
+                '/start — ዋና ምናሌ')
     else:
-        text = ('*Semira Fashion Bot Help*\n\n'
-                '/start — Main menu\n'
+        text = ('*🤖 Semira Fashion Bot — Commands*\n\n'
+                '🛍️ *Shopping*\n'
                 '/products — Browse products\n'
                 '/cart — View my cart\n'
-                '/track — Track an order\n'
+                '/track — Track an order\n\n'
+                '👤 *Account*\n'
+                '/account — My profile\n'
+                '/orders — My orders\n'
+                '/wishlist — My wishlist\n\n'
+                '📍 *More*\n'
+                '/branches — Our branches\n'
                 '/language — Change language\n'
-                '/cancel — Cancel current action')
+                '/cancel — Cancel current action\n'
+                '/start — Main menu')
     await update.message.reply_text(text, parse_mode=ParseMode.MARKDOWN,
                                     reply_markup=_back_home(uid))
     return ConversationHandler.END
@@ -941,7 +1050,7 @@ async def on_callback(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
         return AWAIT_NAME
 
     elif data == 'order:confirm':
-        return await _confirm_order(query, uid)
+        return await _confirm_order(query, uid, ctx)
 
     elif data == 'order:cancel':
         await _safe_edit_text(query, _(uid, 'cancelled'),
@@ -1230,7 +1339,27 @@ async def on_address_input(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
     state = _get_state(uid)
     state.setdefault('order', {})['address'] = address
     state['order']['username'] = state.get('username', str(uid))
-    # Show summary
+    # Ask for coupon code before showing summary
+    await update.message.reply_text(_(uid, 'coupon_prompt'), reply_markup=_back_home(uid))
+    return AWAIT_COUPON
+
+
+async def on_coupon_input(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
+    uid  = update.effective_user.id
+    text = update.message.text.strip()
+    state = _get_state(uid)
+
+    if text.lower() != 'skip' and text:
+        coupon = _db_check_coupon(text)
+        if coupon:
+            pct = coupon.get('discount_percent', 0)
+            state['order']['coupon_code']     = text.upper()
+            state['order']['coupon_discount'] = pct
+            await update.message.reply_text(_(uid, 'coupon_ok', pct=pct))
+        else:
+            await update.message.reply_text(_(uid, 'coupon_bad'))
+            # Let them try again or skip — show summary anyway after bad coupon
+    # Show order summary
     summary = _order_summary_text(uid)
     await update.message.reply_text(summary, parse_mode=ParseMode.MARKDOWN,
                                     reply_markup=_order_summary_keyboard(uid))
@@ -1261,7 +1390,7 @@ async def on_track_input(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
         f"📦 *{'ትዕዛዝ ዝርዝር' if lang=='am' else 'Order Details'}*\n",
         f"🔢 {'ቁጥር' if lang=='am' else 'Number'}: `{order.get('order_number','')}`",
         f"📊 {'ሁኔታ' if lang=='am' else 'Status'}: {status_label}",
-        f"💰 {'ጠቅላላ' if lang=='am' else 'Total'}: {_fmt_price(order.get('total_amount',0))}",
+        f"💰 {'ጠቅላላ' if lang=='am' else 'Total'}: {_fmt_price(order.get('total', order.get('total_amount', 0)))}",
         f"🕐 {'ቀን' if lang=='am' else 'Date'}: {created}",
     ]
     if items_lines:
@@ -1273,7 +1402,7 @@ async def on_track_input(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
     return ConversationHandler.END
 
 
-async def _confirm_order(query, uid: int):
+async def _confirm_order(query, uid: int, ctx):
     state = _get_state(uid)
     cart = state.get('cart', {})
     order_data = state.get('order', {})
@@ -1288,26 +1417,30 @@ async def _confirm_order(query, uid: int):
         await _safe_edit_text(query, text, parse_mode=ParseMode.MARKDOWN,
                               reply_markup=_main_menu_keyboard(uid))
         # Notify admin
-        await _notify_admin_new_order(query, uid, order_number, order_data, cart)
+        await _notify_admin_new_order(ctx, uid, order_number, order_data, cart)
     else:
         await _safe_edit_text(query, _(uid, 'order_err'),
                               reply_markup=_main_menu_keyboard(uid))
     return ConversationHandler.END
 
 
-async def _notify_admin_new_order(query, uid: int, order_number, order_data: dict, cart: dict):
+async def _notify_admin_new_order(ctx, uid: int, order_number, order_data: dict, cart: dict):
     if not ADMIN_CHAT_ID:
         return
     try:
-        bot = query.get_bot()
+        bot = ctx.bot
+        coupon = order_data.get('coupon_code', '')
+        discount = order_data.get('coupon_discount', 0)
         lines = [
             f"🛍️ *New Telegram Order!*",
             f"📦 Order: `{order_number}`",
             f"👤 {order_data.get('name','')}",
             f"📱 {order_data.get('phone','')}",
             f"🏠 {order_data.get('address','')}",
-            f"📲 @{order_data.get('username',uid)}",
+            f"📲 @{order_data.get('username', uid)}",
         ]
+        if coupon:
+            lines.append(f"🏷️ Coupon: `{coupon}` (−{discount}%)")
         for pid_str, qty in cart.items():
             p = _db_get_product(int(pid_str))
             if p:
@@ -1318,57 +1451,99 @@ async def _notify_admin_new_order(query, uid: int, order_number, order_data: dic
         log.warning(f"[TelegramBot] admin notify failed: {e}")
 
 
+def _build_profile_text_kb(uid: int, profile: dict) -> tuple:
+    """Build (text, keyboard) for a registered user's profile view."""
+    lang   = _get_state(uid).get('lang', 'am')
+    am     = lang == 'am'
+    name   = profile.get('full_name') or '—'
+    ph     = profile.get('phone') or '—'
+    email  = profile.get('email') or '—'
+    points = int(profile.get('loyalty_points') or 0)
+    orders = profile.get('order_count', 0)
+    since  = profile.get('created_at', '')
+    if since and hasattr(since, 'strftime'):
+        since = since.strftime('%Y-%m-%d')
+
+    lines = [
+        f"👤 *{'መለያዬ' if am else 'My Account'}*\n",
+        f"📝 {'ስም' if am else 'Name'}:  {name}",
+        f"📱 {'ስልክ' if am else 'Phone'}:  `{ph}`",
+        f"📧 {'ኢሜል' if am else 'Email'}:  {email}",
+        f"",
+        f"📦 {'ትዕዛዞች' if am else 'Orders'}:  {orders}",
+        f"🌟 {'ነጥቦች' if am else 'Loyalty pts'}:  {points}",
+        f"🏷️ {'ቅናሽ' if am else 'Discount'}:  10% ✅",
+    ]
+    if since:
+        lines.append(f"📅 {'ተመዝግቦ' if am else 'Since'}:  {since}")
+
+    kb = InlineKeyboardMarkup([
+        [InlineKeyboardButton(_(uid, 'prof_edit_name'),  callback_data='account:edit_name'),
+         InlineKeyboardButton(_(uid, 'prof_edit_phone'), callback_data='account:edit_phone')],
+        [InlineKeyboardButton(_(uid, 'prof_my_orders'),  callback_data='account:orders')],
+        [InlineKeyboardButton(_(uid, 'main_menu'),       callback_data='menu:home')],
+    ])
+    return '\n'.join(lines), kb
+
+
+def _not_registered_kb(uid: int) -> tuple:
+    """Build (text, keyboard) for an unregistered user's account view."""
+    kb = InlineKeyboardMarkup([
+        [InlineKeyboardButton(_(uid, 'reg_start_btn'), callback_data='reg:start')],
+        [InlineKeyboardButton(_(uid, 'link_btn'),      callback_data='account:link')],
+        [InlineKeyboardButton(_(uid, 'main_menu'),     callback_data='menu:home')],
+    ])
+    return _(uid, 'not_registered'), kb
+
+
 # ── wishlist display ──
 async def _show_account(query, uid: int):
     """Show full profile if registered, registration/link prompt if not."""
     state = _get_state(uid)
-    lang  = state.get('lang', 'am')
     phone = state.get('reg_phone', '') or state.get('order', {}).get('phone', '')
-
     profile = _db_get_user_profile(phone) if phone else None
 
     if profile:
-        # ── Registered: show full profile ──
-        name   = profile.get('full_name') or '—'
-        ph     = profile.get('phone') or '—'
-        email  = profile.get('email') or '—'
-        points = int(profile.get('loyalty_points') or 0)
-        orders = profile.get('order_count', 0)
-        since  = profile.get('created_at', '')
-        if since and hasattr(since, 'strftime'):
-            since = since.strftime('%Y-%m-%d')
-
-        am = lang == 'am'
-        lines = [
-            f"👤 *{'መለያዬ' if am else 'My Account'}*\n",
-            f"📝 {'ስም' if am else 'Name'}:  {name}",
-            f"📱 {'ስልክ' if am else 'Phone'}:  `{ph}`",
-            f"📧 {'ኢሜል' if am else 'Email'}:  {email}",
-            f"",
-            f"📦 {'ትዕዛዞች' if am else 'Orders'}:  {orders}",
-            f"🌟 {'ነጥቦች' if am else 'Loyalty pts'}:  {points}",
-            f"🏷️ {'ቅናሽ' if am else 'Discount'}:  10% ✅",
-        ]
-        if since:
-            lines.append(f"📅 {'ተመዝግቦ' if am else 'Since'}:  {since}")
-
-        kb = InlineKeyboardMarkup([
-            [InlineKeyboardButton(_(uid, 'prof_edit_name'),  callback_data='account:edit_name'),
-             InlineKeyboardButton(_(uid, 'prof_edit_phone'), callback_data='account:edit_phone')],
-            [InlineKeyboardButton(_(uid, 'prof_my_orders'),  callback_data='account:orders')],
-            [InlineKeyboardButton(_(uid, 'main_menu'),       callback_data='menu:home')],
-        ])
-        await _safe_edit_text(query, '\n'.join(lines),
-                              parse_mode=ParseMode.MARKDOWN, reply_markup=kb)
+        text, kb = _build_profile_text_kb(uid, profile)
+        # Try to show profile photo
+        photo_url = _user_profile_photo_url(profile)
+        if photo_url:
+            try:
+                await query.message.reply_photo(photo=photo_url, caption=text,
+                                                parse_mode=ParseMode.MARKDOWN, reply_markup=kb)
+                try:
+                    await query.message.delete()
+                except Exception:
+                    pass
+                return
+            except TelegramError:
+                pass
+        await _safe_edit_text(query, text, parse_mode=ParseMode.MARKDOWN, reply_markup=kb)
     else:
-        # ── Not registered ──
-        kb = InlineKeyboardMarkup([
-            [InlineKeyboardButton(_(uid, 'reg_start_btn'), callback_data='reg:start')],
-            [InlineKeyboardButton(_(uid, 'link_btn'),      callback_data='account:link')],
-            [InlineKeyboardButton(_(uid, 'main_menu'),     callback_data='menu:home')],
-        ])
-        await _safe_edit_text(query, _(uid, 'not_registered'),
-                              parse_mode=ParseMode.MARKDOWN, reply_markup=kb)
+        text, kb = _not_registered_kb(uid)
+        await _safe_edit_text(query, text, parse_mode=ParseMode.MARKDOWN, reply_markup=kb)
+
+
+async def _show_account_from_msg(msg, uid: int):
+    """Same as _show_account but responds to a plain command message."""
+    state = _get_state(uid)
+    phone = state.get('reg_phone', '') or state.get('order', {}).get('phone', '')
+    profile = _db_get_user_profile(phone) if phone else None
+
+    if profile:
+        text, kb = _build_profile_text_kb(uid, profile)
+        photo_url = _user_profile_photo_url(profile)
+        if photo_url:
+            try:
+                await msg.reply_photo(photo=photo_url, caption=text,
+                                      parse_mode=ParseMode.MARKDOWN, reply_markup=kb)
+                return
+            except TelegramError:
+                pass
+        await msg.reply_text(text, parse_mode=ParseMode.MARKDOWN, reply_markup=kb)
+    else:
+        text, kb = _not_registered_kb(uid)
+        await msg.reply_text(text, parse_mode=ParseMode.MARKDOWN, reply_markup=kb)
 
 
 async def _show_wishlist(query, uid: int):
@@ -1511,7 +1686,7 @@ async def on_reg_email_input(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
 async def on_reg_pass_input(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
     uid = update.effective_user.id
     password = update.message.text.strip()
-    if len(password) < 6:
+    if len(password) < 8:
         await update.message.reply_text(_(uid, 'reg_pass'))
         return AWAIT_REG_PASS
     reg = ctx.user_data.get('reg', {})
@@ -1531,6 +1706,91 @@ async def on_reg_pass_input(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
     return ConversationHandler.END
 
 
+# ───────────────────────── new shortcut command handlers ─────────────────────────
+async def cmd_account(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
+    uid = update.effective_user.id
+    await _show_account_from_msg(update.message, uid)
+    return ConversationHandler.END
+
+
+async def cmd_orders(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
+    uid   = update.effective_user.id
+    state = _get_state(uid)
+    phone = state.get('reg_phone', '') or state.get('order', {}).get('phone', '')
+    lang  = state.get('lang', 'am')
+    if phone:
+        orders = _db_get_orders_by_phone(phone)
+        if not orders:
+            await update.message.reply_text(_(uid, 'no_orders'), reply_markup=_main_menu_keyboard(uid))
+        else:
+            lines = [f"📦 *{'ትዕዛዞቼ' if lang=='am' else 'My Orders'}* ({len(orders)})\n"]
+            for o in orders:
+                num    = o.get('order_number', '')
+                status = o.get('status', '')
+                total  = _fmt_price(o.get('total', 0))
+                date   = o.get('created_at', '')
+                if date and hasattr(date, 'strftime'):
+                    date = date.strftime('%Y-%m-%d')
+                status_lbl = T['status_labels'][lang].get(status, status)
+                lines.append(f"🔢 `{num}` — {status_lbl}")
+                lines.append(f"   💰 {total}  |  🕐 {date}\n")
+            await update.message.reply_text('\n'.join(lines), parse_mode=ParseMode.MARKDOWN,
+                                            reply_markup=_main_menu_keyboard(uid))
+    else:
+        await update.message.reply_text(_(uid, 'orders_prompt'), reply_markup=_back_home(uid))
+        return AWAIT_ORDERS_PHONE
+    return ConversationHandler.END
+
+
+async def cmd_wishlist(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
+    uid  = update.effective_user.id
+    wl   = _get_state(uid).get('wishlist', [])
+    lang = _get_state(uid).get('lang', 'am')
+    if not wl:
+        await update.message.reply_text(_(uid, 'empty_wish'), reply_markup=_back_home(uid))
+        return ConversationHandler.END
+    rows = []
+    for pid in wl:
+        p = _db_get_product(pid)
+        if not p:
+            continue
+        name  = (p['name'][:24] + '…') if len(p['name']) > 24 else p['name']
+        price = _fmt_price(p['price'])
+        rows.append([
+            InlineKeyboardButton(f"{name} — {price}", callback_data=_prod_cb(pid, 'all', 0, -1, 0)),
+            InlineKeyboardButton('💔', callback_data=f'wish:toggle:{pid}'),
+        ])
+    rows.append([InlineKeyboardButton(_(uid, 'main_menu'), callback_data='menu:home')])
+    title = '💝 *ምኞቴ ዝርዝር*' if lang == 'am' else '💝 *My Wishlist*'
+    hint  = '_ምርቱን ለማየት ስሙን ይጫኑ | 💔 ለማስወጣት_' if lang == 'am' else '_Tap name to view | 💔 to remove_'
+    await update.message.reply_text(f"{title}\n{hint}", parse_mode=ParseMode.MARKDOWN,
+                                    reply_markup=InlineKeyboardMarkup(rows))
+    return ConversationHandler.END
+
+
+async def cmd_branches(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
+    uid      = update.effective_user.id
+    branches = _db_get_branches()
+    lang     = _get_state(uid).get('lang', 'am')
+    if not branches:
+        await update.message.reply_text(_(uid, 'no_branches'), reply_markup=_back_home(uid))
+        return ConversationHandler.END
+    lines = [f"🏪 *{'ቅርንጫፎቻችን' if lang=='am' else 'Our Branches'}*\n"]
+    for b in branches:
+        name    = b.get('name_am') or b.get('name') or ''
+        address = b.get('address_am') or b.get('address') or ''
+        phone   = b.get('phone') or ''
+        hours   = b.get('working_hours') or ''
+        lines.append(f"📍 *{name}*")
+        if address: lines.append(f"🗺 {address}")
+        if phone:   lines.append(f"📞 {phone}")
+        if hours:   lines.append(f"🕐 {hours}")
+        lines.append('')
+    await update.message.reply_text('\n'.join(lines), parse_mode=ParseMode.MARKDOWN,
+                                    reply_markup=_back_home(uid))
+    return ConversationHandler.END
+
+
 # ── fallback for unexpected text ──
 async def on_unknown_text(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
     uid = update.effective_user.id
@@ -1546,13 +1806,17 @@ def build_application() -> Application:
 
     conv = ConversationHandler(
         entry_points=[
-            CommandHandler('start', cmd_start),
-            CommandHandler('help',  cmd_help),
+            CommandHandler('start',    cmd_start),
+            CommandHandler('help',     cmd_help),
             CommandHandler('products', cmd_products),
-            CommandHandler('cart',  cmd_cart),
-            CommandHandler('track', cmd_track),
+            CommandHandler('cart',     cmd_cart),
+            CommandHandler('track',    cmd_track),
             CommandHandler('language', cmd_language),
-            CommandHandler('cancel', cmd_cancel),
+            CommandHandler('cancel',   cmd_cancel),
+            CommandHandler('account',  cmd_account),
+            CommandHandler('orders',   cmd_orders),
+            CommandHandler('wishlist', cmd_wishlist),
+            CommandHandler('branches', cmd_branches),
             CallbackQueryHandler(on_callback),
         ],
         states={
@@ -1571,6 +1835,10 @@ def build_application() -> Application:
             AWAIT_ADDRESS: [
                 CallbackQueryHandler(on_callback),
                 MessageHandler(filters.TEXT & ~filters.COMMAND, on_address_input),
+            ],
+            AWAIT_COUPON: [
+                CallbackQueryHandler(on_callback),
+                MessageHandler(filters.TEXT & ~filters.COMMAND, on_coupon_input),
             ],
             AWAIT_TRACK: [
                 CallbackQueryHandler(on_callback),
@@ -1606,8 +1874,8 @@ def build_application() -> Application:
             ],
         },
         fallbacks=[
-            CommandHandler('cancel', cmd_cancel),
-            CommandHandler('start',  cmd_start),
+            CommandHandler('cancel',   cmd_cancel),
+            CommandHandler('start',    cmd_start),
             MessageHandler(filters.TEXT & ~filters.COMMAND, on_unknown_text),
         ],
         allow_reentry=True,

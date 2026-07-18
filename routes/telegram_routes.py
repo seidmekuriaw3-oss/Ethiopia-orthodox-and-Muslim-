@@ -46,7 +46,7 @@ def webhook(token: str):
 def telegram_setup():
     """Admin page: register or delete the Telegram webhook."""
     from flask import session
-    if not session.get('admin_logged_in'):
+    if not session.get('admin'):
         abort(403)
 
     tok  = _token()
@@ -153,6 +153,10 @@ help - ማስፈቻ / Help
 products - ምርቶች / Products
 cart - ቅርጫቴ / My cart
 track - ትዕዛዝ ክትትል / Track order
+account - መለያዬ / My account
+orders - ትዕዛዞቼ / My orders
+wishlist - ምኞቴ / My wishlist
+branches - ቅርንጫፎቻችን / Our branches
 language - ቋንቋ / Language
 cancel - ሰርዝ / Cancel</pre>
 </div>
