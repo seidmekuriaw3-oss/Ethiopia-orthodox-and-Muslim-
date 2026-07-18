@@ -5,7 +5,7 @@
 {% block extra_css %}
 <style>
     .ws-hero {
-        background: linear-gradient(135deg, #8b1a6b 0%, #c2185b 40%, #e91e8c 70%, #ff6b9d 100%);
+        background: linear-gradient(135deg, #0a3320 0%, #1a5c2a 55%, #7a5c0a 100%);
         color: white;
         padding: 56px 32px 48px;
         border-radius: 24px;
@@ -36,13 +36,31 @@
         font-weight: 900;
         margin: 0 0 12px 0;
         line-height: 1.2;
+        color: #ffffff;
     }
     .ws-hero p {
         font-size: 15px;
-        opacity: 0.92;
-        margin: 0 auto 24px;
+        color: #e8d5a3;
+        margin: 0 auto 28px;
         max-width: 480px;
         line-height: 1.6;
+    }
+    .ws-hero-cta {
+        display: inline-block;
+        background: linear-gradient(135deg, #e91e8c, #ff6b9d);
+        color: #fff;
+        font-weight: 800;
+        font-size: 15px;
+        padding: 13px 32px;
+        border-radius: 30px;
+        text-decoration: none;
+        box-shadow: 0 4px 18px rgba(233,30,140,0.45);
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .ws-hero-cta:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 28px rgba(233,30,140,0.55);
+        color: #fff;
     }
 
     /* Category pill bar */
@@ -227,6 +245,9 @@
             {% elif lang == 'am' %}ዘመናዊ እና ጥራት ያለው ልብስ — ወሎ ደሴ ኩታበር
             {% else %}Modern quality clothing — Wello Dessie Kutaber{% endif %}
         </p>
+        <a href="{{ url_for('customer.products') }}" class="ws-hero-cta">
+            {% if lang == 'am' %}🛍️ አሁን ይግዙ →{% elif lang == 'ar' %}🛍️ تسوقي الآن →{% else %}🛍️ Shop Now →{% endif %}
+        </a>
     </div>
 
     <!-- Category pill bar -->
