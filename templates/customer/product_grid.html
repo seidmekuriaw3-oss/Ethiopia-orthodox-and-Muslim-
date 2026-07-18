@@ -17,7 +17,7 @@
         color: var(--text-color, #333);
     }
     .page-header p {
-        color: var(--text-muted, #666);
+        color: var(--text-muted, #444444);
         margin: 0;
     }
     .filter-sidebar {
@@ -104,7 +104,7 @@
         color: var(--text-color, #333);
     }
     .products-count {
-        color: var(--text-muted, #666);
+        color: var(--text-muted, #444444);
         font-size: 14px;
     }
     /* ── Compact product grid (matches home page) ── */
@@ -341,7 +341,7 @@
             
             <!-- Products Grid -->
             <div class="products-grid" id="productsGrid">
-                <div style="text-align: center; padding: 40px; width: 100%; color: var(--text-muted, #666);">Loading products...</div>
+                <div style="text-align: center; padding: 40px; width: 100%; color: var(--text-muted, #444444);">Loading products...</div>
             </div>
             
             <!-- Pagination -->
@@ -421,7 +421,7 @@
         const grid = document.getElementById('productsGrid');
         
         if (pageProducts.length === 0) {
-            grid.innerHTML = '<div style="text-align: center; padding: 40px; width: 100%; color: var(--text-muted, #666);">No products found matching your criteria</div>';
+            grid.innerHTML = '<div style="text-align: center; padding: 40px; width: 100%; color: var(--text-muted, #444444);">No products found matching your criteria</div>';
             const paginationDiv = document.getElementById('pagination');
             if (paginationDiv) paginationDiv.innerHTML = '';
             return;

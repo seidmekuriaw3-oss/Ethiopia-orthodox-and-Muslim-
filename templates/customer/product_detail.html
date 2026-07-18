@@ -63,7 +63,7 @@
     }
     .old-price {
         text-decoration: line-through;
-        color: var(--text-muted, #999);
+        color: var(--text-muted, #555555);
         font-size: 18px;
         margin-left: 12px;
     }
@@ -668,7 +668,7 @@
                 <span id="avgRatingDisplay" style="font-size:28px;font-weight:900;color:#1a7a4a;">0</span>
                 <div>
                     <div id="avgStarsDisplay" style="font-size:16px;color:#ff9800;letter-spacing:2px;">☆☆☆☆☆</div>
-                    <div id="totalReviewsDisplay" style="font-size:11px;color:#666;">0 reviews</div>
+                    <div id="totalReviewsDisplay" style="font-size:11px;color:#444444;">0 reviews</div>
                 </div>
             </div>
         </div>
@@ -682,7 +682,7 @@
                 <div style="flex:1;background:#f0f0f0;border-radius:20px;height:8px;overflow:hidden;">
                     <div id="dist{{ star }}" style="height:100%;background:linear-gradient(90deg,#ff9800,#ffc107);border-radius:20px;width:0%;transition:width 0.5s ease;"></div>
                 </div>
-                <span id="distCount{{ star }}" style="font-size:11px;color:#666;width:20px;text-align:right;">0</span>
+                <span id="distCount{{ star }}" style="font-size:11px;color:#444444;width:20px;text-align:right;">0</span>
             </div>
             {% endfor %}
         </div>
@@ -692,13 +692,13 @@
             <h4 style="margin:0 0 16px;font-size:15px;color:#1a1a2e;">{{ t.write_review }}</h4>
             <div id="reviewFormInner">
                 <!-- filled by JS -->
-                <div style="text-align:center;padding:20px;color:#666;">⏳ Loading…</div>
+                <div style="text-align:center;padding:20px;color:#444444;">⏳ Loading…</div>
             </div>
         </div>
 
         <!-- Reviews List -->
         <div id="reviewsList">
-            <div style="text-align:center;padding:30px;color:#666;">⏳ Loading reviews…</div>
+            <div style="text-align:center;padding:30px;color:#444444;">⏳ Loading reviews…</div>
         </div>
     </div>
 
@@ -748,7 +748,7 @@
                 <div class="related-price">
                     {{ format_price(rv.price) }}
                     {% if rv.compare_price and rv.compare_price > rv.price %}
-                    <span style="text-decoration:line-through; color:#aaa; font-size:12px; margin-left:4px;">{{ format_price(rv.compare_price) }}</span>
+                    <span style="text-decoration:line-through; color:#666666; font-size:12px; margin-left:4px;">{{ format_price(rv.compare_price) }}</span>
                     {% endif %}
                 </div>
             </div>
@@ -903,7 +903,7 @@
                         onmouseenter="hoverStars(${i})" onmouseleave="resetStars()"
                         onclick="pickStar(${i})">★</span>`).join('')}
                 </div>
-                <div id="ratingLabel" style="font-size:12px;color:#666;margin-top:4px;">Click a star to rate</div>
+                <div id="ratingLabel" style="font-size:12px;color:#444444;margin-top:4px;">Click a star to rate</div>
             </div>
             <!-- Comment -->
             <div style="margin-bottom:14px;">
@@ -919,7 +919,7 @@
                     id="submitReviewBtn">
                     📝 Submit Review
                 </button>
-                <span style="font-size:11px;color:#666;">⏳ Reviews appear after admin approval</span>
+                <span style="font-size:11px;color:#444444;">⏳ Reviews appear after admin approval</span>
             </div>`;
     }
 
@@ -948,7 +948,7 @@
                         <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:4px;">
                             <span style="font-weight:700;font-size:14px;color:#1a1a2e;">${esc(r.user_name||'Customer')}</span>
                             ${r.verified_purchase ? `<span style="background:#e8f5e9;color:#2e7d32;border-radius:20px;padding:2px 8px;font-size:10px;font-weight:700;">✅ Verified Purchase</span>` : ''}
-                            <span style="font-size:11px;color:#666;">${r.created_at||''}</span>
+                            <span style="font-size:11px;color:#444444;">${r.created_at||''}</span>
                         </div>
                         <div style="margin-bottom:6px;">${stars(r.rating,5,13)}</div>
                         <p style="margin:0;font-size:13px;color:#555;line-height:1.6;">${esc(r.comment||'')}</p>

@@ -16,7 +16,7 @@
         margin: 0 0 8px 0;
     }
     .checkout-header p {
-        color: var(--text-muted, #666);
+        color: var(--text-muted, #444444);
         margin: 0;
     }
     .form-group {
@@ -196,7 +196,7 @@
     <!-- Header -->
     <div class="checkout-header">
         <h1 style="color: var(--text-color, #333);">📝 Checkout</h1>
-        <p style="color: var(--text-muted, #666);">Complete your order information below</p>
+        <p style="color: var(--text-muted, #444444);">Complete your order information below</p>
     </div>
 
     {% if cart_items and cart_items|length > 0 %}
@@ -233,7 +233,7 @@
                     <input type="tel" name="shipping_phone" id="shippingPhone" class="form-control" 
                            placeholder="09xxxxxxxx" required value="{{ user.phone if user else '' }}">
                     <div class="error-message" id="phoneError"></div>
-                    <small style="color: var(--text-muted, #666); display: block; margin-top: 5px;">Format: 09xxxxxxxx, 07xxxxxxxx, or 2519xxxxxxxx</small>
+                    <small style="color: var(--text-muted, #444444); display: block; margin-top: 5px;">Format: 09xxxxxxxx, 07xxxxxxxx, or 2519xxxxxxxx</small>
                 </div>
                 
                 <div class="form-group">
@@ -278,7 +278,7 @@
             <div class="order-items">
                 {% for item in cart_items %}
                 <div class="order-item">
-                    <span class="order-item-name">{{ item.name_am or item.name }} <span style="color: #999;">x{{ item.quantity }}</span></span>
+                    <span class="order-item-name">{{ item.name_am or item.name }} <span style="color: #555555;">x{{ item.quantity }}</span></span>
                     <span class="order-item-price">{{ format_price(item.subtotal) }}</span>
                 </div>
                 {% endfor %}
@@ -317,7 +317,7 @@
             {% endif %}
             
             <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border-color, #eee); text-align: center;">
-                <small style="color: var(--text-muted, #666);">We'll contact you via WhatsApp to confirm your order</small>
+                <small style="color: var(--text-muted, #444444);">We'll contact you via WhatsApp to confirm your order</small>
             </div>
         </div>
     </div>
@@ -328,7 +328,7 @@
     <div style="text-align: center; padding: 60px; background: var(--bg-white, white); border-radius: 20px;">
         <div style="font-size: 64px; margin-bottom: 20px;">🛒</div>
         <h2 style="color: var(--text-color, #333);">Your cart is empty</h2>
-        <p style="color: var(--text-muted, #666); margin-bottom: 24px;">Add some products to your cart before checking out.</p>
+        <p style="color: var(--text-muted, #444444); margin-bottom: 24px;">Add some products to your cart before checking out.</p>
         <a href="{{ url_for('customer.products') }}" class="btn btn-primary" style="text-decoration: none;">Continue Shopping →</a>
     </div>
     
@@ -336,16 +336,16 @@
     
     <!-- Trust Badges -->
     <div style="display: flex; justify-content: center; gap: 30px; margin-top: 30px; flex-wrap: wrap;">
-        <div style="display: flex; align-items: center; gap: 8px; color: var(--text-muted, #666); font-size: 13px;">
+        <div style="display: flex; align-items: center; gap: 8px; color: var(--text-muted, #444444); font-size: 13px;">
             <span>🔒</span> Secure Checkout
         </div>
-        <div style="display: flex; align-items: center; gap: 8px; color: var(--text-muted, #666); font-size: 13px;">
+        <div style="display: flex; align-items: center; gap: 8px; color: var(--text-muted, #444444); font-size: 13px;">
             <span>🚚</span> Fast Delivery
         </div>
-        <div style="display: flex; align-items: center; gap: 8px; color: var(--text-muted, #666); font-size: 13px;">
+        <div style="display: flex; align-items: center; gap: 8px; color: var(--text-muted, #444444); font-size: 13px;">
             <span>💳</span> Cash on Delivery
         </div>
-        <div style="display: flex; align-items: center; gap: 8px; color: var(--text-muted, #666); font-size: 13px;">
+        <div style="display: flex; align-items: center; gap: 8px; color: var(--text-muted, #444444); font-size: 13px;">
             <span>✅</span> 100% Secure
         </div>
     </div>

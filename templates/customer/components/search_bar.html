@@ -18,7 +18,7 @@
             
             <!-- Search Icon -->
             <div style="padding: 0 12px;">
-                <span style="font-size: 18px; color: var(--text-muted, #999);">🔍</span>
+                <span style="font-size: 18px; color: var(--text-muted, #555555);">🔍</span>
             </div>
             
             <!-- Search Input -->
@@ -52,7 +52,7 @@
                         cursor: pointer;
                         display: none;
                         font-size: 16px;
-                        color: var(--text-muted, #999);
+                        color: var(--text-muted, #555555);
                     ">
                 ✕
             </button>
@@ -97,7 +97,7 @@
             background: var(--bg-hover, #f8f9fa);
             border-bottom: 1px solid var(--border-color, #eee);
             font-size: 12px;
-            color: var(--text-muted, #666);
+            color: var(--text-muted, #444444);
             display: flex;
             justify-content: space-between;
         ">
@@ -106,7 +106,7 @@
         </div>
         <div id="suggestions-list" class="suggestions-list">
             <!-- Suggestions will be populated here -->
-            <div class="suggestion-loading" style="padding: 20px; text-align: center; color: var(--text-muted, #999);">
+            <div class="suggestion-loading" style="padding: 20px; text-align: center; color: var(--text-muted, #555555);">
                 <span>⏳</span> {% if lang == 'am' %}በመጫን ላይ...{% else %}Loading...{% endif %}
             </div>
         </div>
@@ -176,7 +176,7 @@
     }
     .suggestion-category {
         font-size: 11px;
-        color: var(--text-muted, #999);
+        color: var(--text-muted, #555555);
         margin-top: 2px;
     }
     .suggestion-price {
@@ -221,7 +221,7 @@
         color: var(--text-color, #333);
     }
     .remove-recent {
-        color: var(--text-muted, #999);
+        color: var(--text-muted, #555555);
         cursor: pointer;
         padding: 4px;
     }
@@ -304,7 +304,7 @@
         if (!container) return;
         
         if (recent.length === 0) {
-            container.innerHTML = '<div style="padding: 20px; text-align: center; color: var(--text-muted, #999);">No recent searches</div>';
+            container.innerHTML = '<div style="padding: 20px; text-align: center; color: var(--text-muted, #555555);">No recent searches</div>';
             return;
         }
         
@@ -406,7 +406,7 @@
         
         if (products.length === 0) {
             container.innerHTML = `
-                <div style="padding: 20px; text-align: center; color: var(--text-muted, #999);">
+                <div style="padding: 20px; text-align: center; color: var(--text-muted, #555555);">
                     <span>🔍</span> No products found
                 </div>
             `;

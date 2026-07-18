@@ -78,7 +78,7 @@
                 animation: spin 0.8s linear infinite;
                 margin-bottom: 20px;
             "></div>
-            <p style="color: var(--text-muted, #999);">{% if lang == 'am' %}በመጫን ላይ...{% else %}Loading product...{% endif %}</p>
+            <p style="color: var(--text-muted, #555555);">{% if lang == 'am' %}በመጫን ላይ...{% else %}Loading product...{% endif %}</p>
         </div>
         
         <!-- Product Content -->
@@ -136,7 +136,7 @@
                     <!-- Price -->
                     <div class="product-price" style="margin-bottom: 20px;">
                         <span id="modalPrice" style="font-size: 28px; font-weight: bold; color: #1a7a4a;"></span>
-                        <span id="modalOldPrice" style="text-decoration: line-through; color: var(--text-muted, #999); margin-left: 12px;"></span>
+                        <span id="modalOldPrice" style="text-decoration: line-through; color: var(--text-muted, #555555); margin-left: 12px;"></span>
                         <span id="modalDiscount" class="discount-badge" style="
                             background: #f44336;
                             color: white;
@@ -154,7 +154,7 @@
                     <!-- Description -->
                     <div class="product-description" style="margin-bottom: 24px;">
                         <h4 style="margin: 0 0 8px 0; color: var(--text-color, #333);">{% if lang == 'am' %}መግለጫ{% else %}Description{% endif %}</h4>
-                        <p id="modalDescription" style="color: var(--text-muted, #666); line-height: 1.6;"></p>
+                        <p id="modalDescription" style="color: var(--text-muted, #444444); line-height: 1.6;"></p>
                     </div>
                     
                     <!-- Quantity Selector -->
@@ -207,7 +207,7 @@
                     
                     <!-- Share Links -->
                     <div style="margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--border-color, #eee);">
-                        <span style="font-size: 12px; color: var(--text-muted, #999);">{% if lang == 'am' %}አጋራ{% else %}Share{% endif %}:</span>
+                        <span style="font-size: 12px; color: var(--text-muted, #555555);">{% if lang == 'am' %}አጋራ{% else %}Share{% endif %}:</span>
                         <div style="display: flex; gap: 12px; margin-top: 8px;">
                             <a href="#" onclick="shareProduct('facebook')" style="color: #1877f2; text-decoration: none;">📘 Facebook</a>
                             <a href="#" onclick="shareProduct('whatsapp')" style="color: #25D366; text-decoration: none;">💬 WhatsApp</a>
@@ -462,10 +462,10 @@
                 const stars = renderStars(product.rating);
                 ratingEl.innerHTML = `
                     <div style="display: flex; align-items: center; gap: 4px; color: #ff9800;">${stars}</div>
-                    <span style="color: var(--text-muted, #999);">(${product.reviews || 0} reviews)</span>
+                    <span style="color: var(--text-muted, #555555);">(${product.reviews || 0} reviews)</span>
                 `;
             } else {
-                ratingEl.innerHTML = '<span style="color: var(--text-muted, #999);">No reviews yet</span>';
+                ratingEl.innerHTML = '<span style="color: var(--text-muted, #555555);">No reviews yet</span>';
             }
         }
         

@@ -38,7 +38,7 @@
         color: var(--text-color, #333);
     }
     .products-count {
-        color: var(--text-muted, #666);
+        color: var(--text-muted, #444444);
         font-size: 14px;
     }
     /* ── Compact product grid (matches home page) ── */
@@ -213,7 +213,7 @@
     <div class="empty-state">
         <div class="empty-icon">📭</div>
         <h2>No products found in {{ page_title }}</h2>
-        <p style="color: var(--text-muted, #666); margin-bottom: 24px;">Check back later for new arrivals!</p>
+        <p style="color: var(--text-muted, #444444); margin-bottom: 24px;">Check back later for new arrivals!</p>
         <a href="{{ url_for('customer.index') }}" class="btn btn-primary">Continue Shopping →</a>
     </div>
     
@@ -279,7 +279,7 @@
         if (productsCountSpan) productsCountSpan.textContent = currentProducts.length;
         
         if (pageProducts.length === 0) {
-            if (grid) grid.innerHTML = '<div style="text-align: center; padding: 40px; grid-column: 1/-1; color: var(--text-muted, #666);">No products found</div>';
+            if (grid) grid.innerHTML = '<div style="text-align: center; padding: 40px; grid-column: 1/-1; color: var(--text-muted, #444444);">No products found</div>';
             const paginationDiv = document.getElementById('pagination');
             if (paginationDiv) paginationDiv.innerHTML = '';
             return;

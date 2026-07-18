@@ -79,7 +79,7 @@
                 animation: spin 0.8s linear infinite;
                 margin-bottom: 15px;
             "></div>
-            <p style="color: var(--text-muted, #999);">{% if lang == 'am' %}በመጫን ላይ...{% else %}Loading cart...{% endif %}</p>
+            <p style="color: var(--text-muted, #555555);">{% if lang == 'am' %}በመጫን ላይ...{% else %}Loading cart...{% endif %}</p>
         </div>
         
         <!-- Empty Cart State -->
@@ -95,7 +95,7 @@
             <h3 style="color: var(--text-color, #333); margin-bottom: 8px;">
                 {% if lang == 'am' %}ጋሪዎ ባዶ ነው{% else %}Your cart is empty{% endif %}
             </h3>
-            <p style="color: var(--text-muted, #999); margin-bottom: 20px;">
+            <p style="color: var(--text-muted, #555555); margin-bottom: 20px;">
                 {% if lang == 'am' %}ምርቶችን ይጨምሩ እና ወደ ጋሪ ይመልሱ{% else %}Add items to get started{% endif %}
             </p>
             <button onclick="closeCartModal()" class="btn btn-primary">
@@ -118,19 +118,19 @@
     ">
         <!-- Subtotal -->
         <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
-            <span style="color: var(--text-muted, #666);">{% if lang == 'am' %}ንዑስ ድምር{% else %}Subtotal{% endif %}:</span>
+            <span style="color: var(--text-muted, #444444);">{% if lang == 'am' %}ንዑስ ድምር{% else %}Subtotal{% endif %}:</span>
             <span id="cartSubtotal" style="font-weight: 600; color: var(--text-color, #333);">0 ETB</span>
         </div>
         
         <!-- Discount (for logged in users) -->
         <div id="cartDiscountRow" style="display: flex; justify-content: space-between; margin-bottom: 12px; display: none;">
-            <span style="color: var(--text-muted, #666);">{% if lang == 'am' %}ቅናሽ (10%){% else %}Discount (10%){% endif %}:</span>
+            <span style="color: var(--text-muted, #444444);">{% if lang == 'am' %}ቅናሽ (10%){% else %}Discount (10%){% endif %}:</span>
             <span id="cartDiscount" style="color: #4caf50;">0 ETB</span>
         </div>
         
         <!-- Shipping -->
         <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
-            <span style="color: var(--text-muted, #666);">{% if lang == 'am' %}ማጓጓዝ{% else %}Shipping{% endif %}:</span>
+            <span style="color: var(--text-muted, #444444);">{% if lang == 'am' %}ማጓጓዝ{% else %}Shipping{% endif %}:</span>
             <span id="cartShipping" style="color: #4caf50;">
                 {% if lang == 'am' %}ነጻ{% else %}Free{% endif %}
             </span>
@@ -144,7 +144,7 @@
         
         <!-- Free Shipping Progress Bar -->
         <div id="freeShippingProgress" style="margin-top: 15px; display: none;">
-            <div style="font-size: 12px; color: var(--text-muted, #666); margin-bottom: 5px;">
+            <div style="font-size: 12px; color: var(--text-muted, #444444); margin-bottom: 5px;">
                 <span>🚚</span>
                 <span id="shippingMessage"></span>
             </div>
@@ -276,7 +276,7 @@
     .cart-item-remove {
         background: none;
         border: none;
-        color: var(--text-muted, #999);
+        color: var(--text-muted, #555555);
         cursor: pointer;
         font-size: 18px;
         padding: 0 8px;
@@ -409,7 +409,7 @@
             emptyDiv.innerHTML = `
                 <div style="font-size: 48px; margin-bottom: 16px;">⚠️</div>
                 <h3 style="color: var(--text-color, #333);">Error Loading Cart</h3>
-                <p style="color: var(--text-muted, #999);">Please try again later</p>
+                <p style="color: var(--text-muted, #555555);">Please try again later</p>
                 <button onclick="closeCartModal()" class="btn btn-primary">Close</button>
             `;
         }

@@ -160,7 +160,7 @@
     <!-- Header -->
     <div style="margin-bottom: 24px;">
         <h1 style="margin: 0 0 8px 0;">🛒 Your Shopping Cart</h1>
-        <p style="color: var(--text-muted, #666); margin: 0;">Review and manage items in your cart before checkout</p>
+        <p style="color: var(--text-muted, #444444); margin: 0;">Review and manage items in your cart before checkout</p>
     </div>
 
     {% if cart_items %}
@@ -204,7 +204,7 @@
                     <div class="product-price" style="margin-bottom: 12px;">
                         <span style="font-size: 20px; font-weight: bold; color: #1a7a4a;">{{ format_price(item.discounted_price or item.price) }}</span>
                         {% if item.price != item.discounted_price %}
-                        <span style="text-decoration: line-through; color: var(--text-muted, #999); font-size: 14px; margin-left: 8px;">{{ format_price(item.price) }}</span>
+                        <span style="text-decoration: line-through; color: var(--text-muted, #555555); font-size: 14px; margin-left: 8px;">{{ format_price(item.price) }}</span>
                         {% endif %}
                     </div>
                     
@@ -251,22 +251,22 @@
             
             <!-- Subtotal -->
             <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
-                <span style="color: var(--text-muted, #666);">Subtotal:</span>
+                <span style="color: var(--text-muted, #444444);">Subtotal:</span>
                 <span id="summarySubtotal" style="font-weight: 600; color: var(--text-color, #333);">{{ format_price(subtotal) }}</span>
             </div>
             
             <!-- Discount (for logged in users) -->
             {% if discount > 0 %}
             <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
-                <span style="color: var(--text-muted, #666);">Discount (10%):</span>
+                <span style="color: var(--text-muted, #444444);">Discount (10%):</span>
                 <span id="summaryDiscount" style="font-weight: 600; color: #4caf50;">- {{ format_price(discount) }}</span>
             </div>
             {% endif %}
             
             <!-- Shipping -->
             <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
-                <span style="color: var(--text-muted, #666);">Shipping:</span>
-                <span id="summaryShipping" style="font-weight: 600; color: {% if shipping_cost == 0 %}#4caf50{% else %}#666{% endif %};">
+                <span style="color: var(--text-muted, #444444);">Shipping:</span>
+                <span id="summaryShipping" style="font-weight: 600; color: {% if shipping_cost == 0 %}#4caf50{% else %}#444{% endif %};">
                     {% if shipping_cost == 0 %}Free{% else %}{{ format_price(shipping_cost) }}{% endif %}
                 </span>
             </div>
@@ -274,7 +274,7 @@
             <!-- Coupon Section -->
             <div class="coupon-section">
                 <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <span style="font-size: 14px; color: var(--text-muted, #666);">🎟️ Coupon Code</span>
+                    <span style="font-size: 14px; color: var(--text-muted, #444444);">🎟️ Coupon Code</span>
                     <a href="#" onclick="toggleCouponInput(); return false;" style="font-size: 12px; color: #1a7a4a;">Apply</a>
                 </div>
                 <div id="couponInput" style="display: none;" class="coupon-input-group">
@@ -324,7 +324,7 @@
     <div class="empty-cart">
         <div class="empty-cart-icon">🛒</div>
         <h2 style="color: var(--text-color, #333);">Your cart is empty</h2>
-        <p style="color: var(--text-muted, #666); margin-bottom: 24px;">
+        <p style="color: var(--text-muted, #444444); margin-bottom: 24px;">
             Looks like you haven't added any items to your cart yet.
         </p>
         <p style="margin-bottom: 16px;">✨ Start exploring our products and add your favorites!</p>
