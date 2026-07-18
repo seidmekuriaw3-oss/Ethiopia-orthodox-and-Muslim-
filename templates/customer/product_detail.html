@@ -46,8 +46,9 @@
         color: var(--text-color, #333);
     }
     .product-name-en {
-        color: var(--text-muted, #666);
+        color: #444444;
         font-size: 14px;
+        font-weight: 600;
         margin-bottom: 16px;
         padding-bottom: 16px;
         border-bottom: 1px solid var(--border-color, #eee);
@@ -147,7 +148,7 @@
         color: #1a7a4a;
     }
     .product-description p {
-        color: var(--text-muted, #555);
+        color: #444444;
         line-height: 1.8;
     }
     .features-list {
@@ -157,7 +158,7 @@
     }
     .features-list li {
         padding: 6px 0;
-        color: var(--text-muted, #555);
+        color: #444444;
     }
     .related-products {
         margin-top: 40px;
@@ -205,14 +206,17 @@
         font-weight: bold;
     }
     
+    /* Material / Color / Quantity labels */
+    .spec-info-wrap strong {
+        font-weight: 700;
+        color: #2d3748;
+    }
     /* Dark mode support */
     @media (prefers-color-scheme: dark) {
-        .features-list li {
-            color: #aaa;
-        }
-        .product-description p {
-            color: #aaa;
-        }
+        .features-list li { color: #ccc; }
+        .product-description p { color: #ccc; }
+        .product-name-en { color: #bbb; }
+        .spec-info-wrap strong { color: #ddd; }
     }
     
     @media (max-width: 768px) {
@@ -567,18 +571,18 @@
             </div>
             
             <!-- Material & Color Info -->
-            <div style="margin: 16px 0; display: flex; gap: 20px; flex-wrap: wrap;">
+            <div class="spec-info-wrap" style="margin: 16px 0; display: flex; gap: 20px; flex-wrap: wrap; font-size:14px; color:#444444;">
                 {% if product.material %}
-                <div><strong>{{ t.material }}</strong> {{ product.material }}</div>
+                <div><strong style="font-weight:700;color:#2d3748;">{{ t.material }}</strong> {{ product.material }}</div>
                 {% endif %}
                 {% if product.color %}
-                <div><strong>{{ t.color_label }}</strong> {{ product.color }}</div>
+                <div><strong style="font-weight:700;color:#2d3748;">{{ t.color_label }}</strong> {{ product.color }}</div>
                 {% endif %}
             </div>
             
             <!-- Quantity Selector -->
             <div class="quantity-selector">
-                <span style="font-weight: 500;">{{ t.quantity }}</span>
+                <span style="font-weight: 700; color: #2d3748;">{{ t.quantity }}</span>
                 <button class="quantity-btn" onclick="decrementQuantity()">-</button>
                 <input type="number" id="quantityInput" class="quantity-input" value="1" min="1" {% if stock == 0 %}disabled{% endif %}>
                 <button class="quantity-btn" onclick="incrementQuantity()">+</button>
@@ -658,7 +662,7 @@
                 <span id="avgRatingDisplay" style="font-size:28px;font-weight:900;color:#1a7a4a;">0</span>
                 <div>
                     <div id="avgStarsDisplay" style="font-size:16px;color:#ff9800;letter-spacing:2px;">☆☆☆☆☆</div>
-                    <div id="totalReviewsDisplay" style="font-size:11px;color:#aaa;">0 reviews</div>
+                    <div id="totalReviewsDisplay" style="font-size:11px;color:#666;">0 reviews</div>
                 </div>
             </div>
         </div>
@@ -672,7 +676,7 @@
                 <div style="flex:1;background:#f0f0f0;border-radius:20px;height:8px;overflow:hidden;">
                     <div id="dist{{ star }}" style="height:100%;background:linear-gradient(90deg,#ff9800,#ffc107);border-radius:20px;width:0%;transition:width 0.5s ease;"></div>
                 </div>
-                <span id="distCount{{ star }}" style="font-size:11px;color:#aaa;width:20px;text-align:right;">0</span>
+                <span id="distCount{{ star }}" style="font-size:11px;color:#666;width:20px;text-align:right;">0</span>
             </div>
             {% endfor %}
         </div>
@@ -682,13 +686,13 @@
             <h4 style="margin:0 0 16px;font-size:15px;color:#1a1a2e;">{{ t.write_review }}</h4>
             <div id="reviewFormInner">
                 <!-- filled by JS -->
-                <div style="text-align:center;padding:20px;color:#aaa;">⏳ Loading…</div>
+                <div style="text-align:center;padding:20px;color:#666;">⏳ Loading…</div>
             </div>
         </div>
 
         <!-- Reviews List -->
         <div id="reviewsList">
-            <div style="text-align:center;padding:30px;color:#aaa;">⏳ Loading reviews…</div>
+            <div style="text-align:center;padding:30px;color:#666;">⏳ Loading reviews…</div>
         </div>
     </div>
 
@@ -862,7 +866,7 @@
                     <span style="font-size:24px;">✅</span>
                     <div>
                         <div style="font-weight:700;font-size:14px;">You already reviewed this product</div>
-                        <div style="margin-top:4px;">${stars(data.user_review.rating)} <span style="font-size:12px;color:#888;">${data.user_review.comment}</span></div>
+                        <div style="margin-top:4px;">${stars(data.user_review.rating)} <span style="font-size:12px;color:#555;">${data.user_review.comment}</span></div>
                     </div>
                 </div>`;
             return;
@@ -870,7 +874,7 @@
 
         if (!data.is_logged_in) {
             el.innerHTML = `
-                <div style="text-align:center;padding:12px 0;color:#888;">
+                <div style="text-align:center;padding:12px 0;color:#555;">
                     <a href="/login" style="color:#1a7a4a;font-weight:700;">Login</a> to leave a review.
                 </div>`;
             return;
@@ -893,7 +897,7 @@
                         onmouseenter="hoverStars(${i})" onmouseleave="resetStars()"
                         onclick="pickStar(${i})">★</span>`).join('')}
                 </div>
-                <div id="ratingLabel" style="font-size:12px;color:#aaa;margin-top:4px;">Click a star to rate</div>
+                <div id="ratingLabel" style="font-size:12px;color:#666;margin-top:4px;">Click a star to rate</div>
             </div>
             <!-- Comment -->
             <div style="margin-bottom:14px;">
@@ -909,7 +913,7 @@
                     id="submitReviewBtn">
                     📝 Submit Review
                 </button>
-                <span style="font-size:11px;color:#aaa;">⏳ Reviews appear after admin approval</span>
+                <span style="font-size:11px;color:#666;">⏳ Reviews appear after admin approval</span>
             </div>`;
     }
 
@@ -918,9 +922,9 @@
         if (!el) return;
         if (!reviews || reviews.length === 0) {
             el.innerHTML = `
-                <div style="text-align:center;padding:40px 20px;color:#aaa;">
+                <div style="text-align:center;padding:40px 20px;color:#555;">
                     <div style="font-size:44px;margin-bottom:12px;">💬</div>
-                    <div style="font-weight:700;color:#666;font-size:15px;margin-bottom:6px;">No reviews yet</div>
+                    <div style="font-weight:700;color:#444;font-size:15px;margin-bottom:6px;">No reviews yet</div>
                     <div style="font-size:13px;">Be the first to review this product!</div>
                 </div>`;
             return;
@@ -938,7 +942,7 @@
                         <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:4px;">
                             <span style="font-weight:700;font-size:14px;color:#1a1a2e;">${esc(r.user_name||'Customer')}</span>
                             ${r.verified_purchase ? `<span style="background:#e8f5e9;color:#2e7d32;border-radius:20px;padding:2px 8px;font-size:10px;font-weight:700;">✅ Verified Purchase</span>` : ''}
-                            <span style="font-size:11px;color:#aaa;">${r.created_at||''}</span>
+                            <span style="font-size:11px;color:#666;">${r.created_at||''}</span>
                         </div>
                         <div style="margin-bottom:6px;">${stars(r.rating,5,13)}</div>
                         <p style="margin:0;font-size:13px;color:#555;line-height:1.6;">${esc(r.comment||'')}</p>
