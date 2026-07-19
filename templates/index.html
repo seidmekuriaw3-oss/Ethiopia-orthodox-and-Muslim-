@@ -578,7 +578,7 @@
     <div class="product-card" onclick="location.href='{{ url_for(&quot;product_detail&quot;, product_id=product.id) }}'">
         <div class="product-image">
             {% if product.thumbnail and product.thumbnail|trim != '' %}
-                <img src="{{ url_for('static', filename=product.thumbnail) }}" 
+                <img src="{{ product.thumbnail if product.thumbnail[:4] == 'http' else url_for('static', filename=product.thumbnail) }}" 
                      alt="{{ product.name_am }}"
                      loading="lazy"
                      onerror="this.onerror=null; this.parentElement.innerHTML='<div style=\'font-size:48px;\'>👗</div>'">

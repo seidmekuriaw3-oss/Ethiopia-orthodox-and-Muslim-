@@ -38,7 +38,8 @@ PRODUCTS_PER_PAGE = 6
 (AWAIT_SEARCH, AWAIT_NAME, AWAIT_PHONE, AWAIT_ADDRESS, AWAIT_TRACK,
  AWAIT_ORDERS_PHONE, AWAIT_REG_NAME, AWAIT_REG_PHONE,
  AWAIT_REG_EMAIL, AWAIT_REG_PASS,
- AWAIT_EDIT_NAME, AWAIT_EDIT_PHONE, AWAIT_COUPON) = range(13)
+ AWAIT_EDIT_NAME, AWAIT_EDIT_PHONE, AWAIT_COUPON,
+ AWAIT_PAYMENT_METHOD, AWAIT_RECEIPT) = range(15)
 
 # ───────────────────────── in-memory user state ─────────────────────────
 # { telegram_user_id: { 'lang': 'am', 'cart': {}, 'order': {}, 'wishlist': [] } }
@@ -278,6 +279,37 @@ T = {
     'unknown_cmd':    {'am': '❓ ያልታወቀ ትዕዛዝ። /start ይጠቀሙ።',
                        'en': '❓ Unknown command. Use /start.',
                        'ar': '❓ أمر غير معروف. استخدم /start.'},
+    # ── payment ──
+    'pay_method_title': {'am': '💳 *የክፍያ ዘዴ ይምረጡ*',
+                         'en': '💳 *Choose Payment Method*',
+                         'ar': '💳 *اختر طريقة الدفع*'},
+    'pay_cod':          {'am': '💵 ሲደርስ ይከፍሉ (COD)',
+                         'en': '💵 Cash on Delivery',
+                         'ar': '💵 الدفع عند الاستلام'},
+    'pay_bank':         {'am': '🏦 በባንክ / Telebirr ቅድሚያ ክፍያ',
+                         'en': '🏦 Bank / Telebirr Transfer',
+                         'ar': '🏦 تحويل بنكي / تيليبير'},
+    'pay_bank_info':    {'am': ('🏦 *የቅድሚያ ክፍያ መረጃ*\n\n'
+                                '📱 Telebirr: *0987 957 957*\n'
+                                '🏦 CBE: *1000xxxxxxxxxx*\n'
+                                '👤 ስም: *Semira Fashion*\n\n'
+                                '✅ ክፍያ ከፈጸሙ በኋላ ደረሰኝዎን ፎቶ ይላኩ:'),
+                         'en': ('🏦 *Bank Transfer Details*\n\n'
+                                '📱 Telebirr: *0987 957 957*\n'
+                                '🏦 CBE: *1000xxxxxxxxxx*\n'
+                                '👤 Name: *Semira Fashion*\n\n'
+                                '✅ After paying, send a photo of your receipt:'),
+                         'ar': ('🏦 *تفاصيل التحويل البنكي*\n\n'
+                                '📱 تيليبير: *0987 957 957*\n'
+                                '🏦 CBE: *1000xxxxxxxxxx*\n'
+                                '👤 الاسم: *Semira Fashion*\n\n'
+                                '✅ بعد الدفع، أرسل صورة الإيصال:')},
+    'receipt_received': {'am': '📸 ደረሰኝዎ ተቀብሏል! ትዕዛዝዎ ይረጋገጣል።',
+                         'en': '📸 Receipt received! Your order will be confirmed shortly.',
+                         'ar': '📸 تم استلام الإيصال! سيتم تأكيد طلبك قريباً.'},
+    'open_webapp':      {'am': '🌐 ሴሚራ ፋሽን ድህረ-ገጽ ክፈት',
+                         'en': '🌐 Open Semira Fashion Website',
+                         'ar': '🌐 فتح موقع سميرا فاشن'},
 }
 
 def _(uid: int, key: str, **kwargs) -> str:
@@ -345,7 +377,14 @@ def _fmt_price(price) -> str:
 def _main_menu_keyboard(uid: int) -> InlineKeyboardMarkup:
     lang = _get_state(uid).get('lang', 'am')
     def t(k): return _(uid, k)
-    rows = [
+    site = os.environ.get('REPLIT_DEV_DOMAIN', '') or SITE_URL
+    rows = []
+    # Website button — prominent at the very top
+    if site:
+        rows.append([InlineKeyboardButton(
+            '🌐 ' + t('open_webapp'), url=f'https://{site}'
+        )])
+    rows += [
         [InlineKeyboardButton(t('products'),   callback_data='menu:products'),
          InlineKeyboardButton(t('categories'), callback_data='menu:categories')],
         [InlineKeyboardButton(t('new'),        callback_data='menu:new'),
@@ -360,10 +399,6 @@ def _main_menu_keyboard(uid: int) -> InlineKeyboardMarkup:
          InlineKeyboardButton(t('contact'),    callback_data='menu:contact')],
         [InlineKeyboardButton(t('language'),   callback_data='menu:language')],
     ]
-    # Add website button if URL is available
-    site = os.environ.get('REPLIT_DEV_DOMAIN', '') or SITE_URL
-    if site:
-        rows.append([InlineKeyboardButton(t('open_website'), url=f'https://{site}')])
     return InlineKeyboardMarkup(rows)
 
 
@@ -564,14 +599,22 @@ def _db_check_coupon(code: str) -> dict | None:
     db = get_db()
     try:
         row = db.execute(
-            """SELECT id, discount_percent FROM coupons
+            """SELECT id, discount_type, discount_value FROM coupons
                WHERE code = %s AND is_active = 1
-                 AND (expires_at IS NULL OR expires_at > NOW())
-                 AND (max_uses IS NULL OR used_count < max_uses)
+                 AND (valid_to IS NULL OR valid_to > NOW())
+                 AND (usage_limit IS NULL OR used_count < usage_limit)
                LIMIT 1""",
             (code.strip().upper(),)
         ).fetchone()
-        return dict(row) if row else None
+        if not row:
+            return None
+        r = dict(row)
+        # Normalise: always return discount_percent for backward-compat
+        if r.get('discount_type') == 'percentage':
+            r['discount_percent'] = int(float(r.get('discount_value', 0)))
+        else:
+            r['discount_percent'] = 0  # fixed-amount coupons not shown as % in bot
+        return r
     except Exception as e:
         log.warning(f"[Coupon] {e}")
         return None
@@ -1176,6 +1219,21 @@ async def on_callback(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
                               reply_markup=_cart_keyboard(uid))
         return ConversationHandler.END
 
+    # ── payment method selection ──
+    elif data == 'pay:cod':
+        await _finalize_and_place_order(query, uid, ctx,
+                                        payment_method='Cash on Delivery',
+                                        is_query=True)
+
+    elif data == 'pay:bank':
+        info = _(uid, 'pay_bank_info')
+        kb = InlineKeyboardMarkup([
+            [InlineKeyboardButton(_(uid, 'order_cancel_btn'), callback_data='order:cancel')],
+            [InlineKeyboardButton(_(uid, 'main_menu'), callback_data='menu:home')],
+        ])
+        await _safe_edit_text(query, info, parse_mode=ParseMode.MARKDOWN, reply_markup=kb)
+        return AWAIT_RECEIPT
+
     # ── cart actions ──
     elif data.startswith('cart:'):
         await _handle_cart_action(query, uid, data, ctx)
@@ -1450,9 +1508,713 @@ def _is_valid_phone(phone: str) -> bool:
     """Accept Ethiopian-style phone numbers: 09xxxxxxxx, +251xxxxxxxxx, 251xxxxxxxxx."""
     import re
     cleaned = re.sub(r'[\s\-\(\)]', '', phone)
-    return bool(re.match(r'^(?:(?:\+251|251)[7-9]\d{8}|0[7-9]\d{8})
+    return bool(re.match(r'^(?:(?:\+251|251)[7-9]\d{8}|0[7-9]\d{8})$', cleaned))
+
+
+async def on_track_input(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
+    uid = update.effective_user.id
+    order_number = update.message.text.strip()
+    order = _db_track_order(order_number)
+    if not order:
+        await update.message.reply_text(_(uid, 'track_not_found'),
+                                        reply_markup=_main_menu_keyboard(uid))
+        return ConversationHandler.END
+
+    lang = _get_state(uid).get('lang', 'am')
+    status_raw = order.get('status', 'Pending')
+    status_lbl = _status_label(lang, status_raw)
+    items = _db_get_order_items(order['id'])
+    items_lines = [f"  • {it.get('product_name', it.get('name','?'))} × {it.get('quantity',1)}"
+                   for it in (items or [])]
+
+    created = order.get('created_at', '')
+    if created and hasattr(created, 'strftime'):
+        created = created.strftime('%Y-%m-%d %H:%M')
+
+    lines = [
+        f"📦 *{_(uid, 'order_detail_title')}*\n",
+        f"🔢 {_(uid, 'order_number_label')}: `{order.get('order_number','')}`",
+        f"📊 {_(uid, 'order_status')}: {status_lbl}",
+        f"💰 {_(uid, 'order_total')}: {_fmt_price(order.get('total', order.get('total_amount', 0)))}",
+        f"🕐 {_(uid, 'order_date')}: {created}",
+    ]
+    if items_lines:
+        lines.append(f"\n{_(uid, 'order_items')}:")
+        lines.extend(items_lines)
+
+    await update.message.reply_text('\n'.join(lines), parse_mode=ParseMode.MARKDOWN,
+                                    reply_markup=_main_menu_keyboard(uid))
+    return ConversationHandler.END
+
+
+async def _confirm_order(query, uid: int, ctx):
+    """Show payment method selection after user confirms order summary."""
+    state = _get_state(uid)
+    cart = state.get('cart', {})
+    if not cart:
+        await _safe_edit_text(query, _(uid, 'empty_cart'),
+                              reply_markup=_main_menu_keyboard(uid))
+        return ConversationHandler.END
+    state.setdefault('order', {})['username'] = state.get('username', str(uid))
+    text = _(uid, 'pay_method_title')
+    kb = InlineKeyboardMarkup([
+        [InlineKeyboardButton(_(uid, 'pay_cod'),  callback_data='pay:cod')],
+        [InlineKeyboardButton(_(uid, 'pay_bank'), callback_data='pay:bank')],
+        [InlineKeyboardButton(_(uid, 'order_cancel_btn'), callback_data='order:cancel')],
+    ])
+    await _safe_edit_text(query, text, parse_mode=ParseMode.MARKDOWN, reply_markup=kb)
+    return ConversationHandler.END
+
+
+async def _finalize_and_place_order(obj, uid: int, ctx,
+                                    payment_method: str, is_query: bool = True):
+    """Place order in DB with chosen payment method, clear cart, notify admin."""
+    state = _get_state(uid)
+    cart  = state.get('cart', {})
+    if not cart:
+        return
+    order_data = state.get('order', {})
+    order_data['payment_method'] = payment_method
+    order_number = _db_place_order(cart, order_data)
+    if order_number:
+        state['cart']  = {}
+        state['order'] = {}
+        text = (_(uid, 'order_ok') +
+                f"\n\n🔢 {_(uid, 'order_number_title')}: `{order_number}`\n\n"
+                f"_{_(uid, 'track_prompt')}_")
+        kb = InlineKeyboardMarkup([
+            [InlineKeyboardButton(_(uid, 'track_my_order'), callback_data='menu:track')],
+            [InlineKeyboardButton(_(uid, 'main_menu'), callback_data='menu:home')],
+        ])
+        if is_query:
+            await _safe_edit_text(obj, text, parse_mode=ParseMode.MARKDOWN, reply_markup=kb)
+        else:
+            await obj.reply_text(text, parse_mode=ParseMode.MARKDOWN, reply_markup=kb)
+        await _notify_admin_new_order(ctx, uid, order_number, order_data, cart)
+    else:
+        err = _(uid, 'order_err')
+        if is_query:
+            await _safe_edit_text(obj, err, reply_markup=_main_menu_keyboard(uid))
+        else:
+            await obj.reply_text(err, reply_markup=_main_menu_keyboard(uid))
+
+
+async def _notify_admin_new_order(ctx, uid: int, order_number, order_data: dict, cart: dict):
+    if not ADMIN_CHAT_ID:
+        return
+    try:
+        bot = ctx.bot
+        coupon   = order_data.get('coupon_code', '')
+        discount = order_data.get('coupon_discount', 0)
+        payment  = order_data.get('payment_method', 'COD')
+        lines = [
+            f"🛍️ *New Telegram Order!*",
+            f"📦 Order: `{order_number}`",
+            f"👤 {order_data.get('name','')}",
+            f"📱 {order_data.get('phone','')}",
+            f"🏠 {order_data.get('address','')}",
+            f"📲 @{order_data.get('username', uid)}",
+            f"💳 Payment: {payment}",
+        ]
+        if coupon:
+            lines.append(f"🏷️ Coupon: `{coupon}` (−{discount}%)")
+        for pid_str, qty in cart.items():
+            p = _db_get_product(int(pid_str))
+            if p:
+                lines.append(f"  • {p['name']} × {qty}")
+        await bot.send_message(chat_id=ADMIN_CHAT_ID, text='\n'.join(lines),
+                               parse_mode=ParseMode.MARKDOWN)
+    except Exception as e:
+        log.warning(f"[TelegramBot] admin notify failed: {e}")
+
+
+async def on_receipt_input(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
+    """Handle payment receipt photo sent by user (bank/Telebirr transfer)."""
+    uid = update.effective_user.id
+    await update.message.reply_text(_(uid, 'receipt_received'),
+                                    reply_markup=_main_menu_keyboard(uid))
+    # Forward receipt photo to admin
+    if ADMIN_CHAT_ID:
+        try:
+            state = _get_state(uid)
+            od = state.get('order', {})
+            caption = (f"📸 *Payment Receipt*\n"
+                       f"👤 {od.get('name','')}\n"
+                       f"📱 {od.get('phone','')}\n"
+                       f"🏠 {od.get('address','')}\n"
+                       f"📲 @{state.get('username', uid)}")
+            await update.message.forward(chat_id=ADMIN_CHAT_ID)
+            await ctx.bot.send_message(chat_id=ADMIN_CHAT_ID, text=caption,
+                                       parse_mode=ParseMode.MARKDOWN)
+        except Exception as e:
+            log.warning(f"[Receipt] forward failed: {e}")
+    await _finalize_and_place_order(update.message, uid, ctx,
+                                    payment_method='Bank/Telebirr Transfer',
+                                    is_query=False)
+    return ConversationHandler.END
+
+
+def _build_profile_text_kb(uid: int, profile: dict) -> tuple:
+    """Build (text, keyboard) for a registered user's profile view."""
+    name   = profile.get('full_name') or '—'
+    ph     = profile.get('phone') or '—'
+    email  = profile.get('email') or '—'
+    points = int(profile.get('loyalty_points') or 0)
+    orders = profile.get('order_count', 0)
+    since  = profile.get('created_at', '')
+    if since and hasattr(since, 'strftime'):
+        since = since.strftime('%Y-%m-%d')
+
+    lines = [
+        f"{_(uid, 'prof_title')}\n",
+        f"{_(uid, 'prof_name')}:  {name}",
+        f"{_(uid, 'prof_phone')}:  `{ph}`",
+        f"{_(uid, 'prof_email')}:  {email}",
+        f"",
+        f"{_(uid, 'prof_orders')}:  {orders}",
+        f"{_(uid, 'prof_points')}:  {points}",
+        f"{_(uid, 'prof_discount')}:  10% ✅",
+    ]
+    if since:
+        lines.append(f"{_(uid, 'prof_since')}:  {since}")
+
+    kb = InlineKeyboardMarkup([
+        [InlineKeyboardButton(_(uid, 'prof_edit_name'),  callback_data='account:edit_name'),
+         InlineKeyboardButton(_(uid, 'prof_edit_phone'), callback_data='account:edit_phone')],
+        [InlineKeyboardButton(_(uid, 'prof_my_orders'),  callback_data='account:orders')],
+        [InlineKeyboardButton(_(uid, 'main_menu'),       callback_data='menu:home')],
+    ])
+    return '\n'.join(lines), kb
+
+
+def _not_registered_kb(uid: int) -> tuple:
+    """Build (text, keyboard) for an unregistered user's account view."""
+    kb = InlineKeyboardMarkup([
+        [InlineKeyboardButton(_(uid, 'reg_start_btn'), callback_data='reg:start')],
+        [InlineKeyboardButton(_(uid, 'link_btn'),      callback_data='account:link')],
+        [InlineKeyboardButton(_(uid, 'main_menu'),     callback_data='menu:home')],
+    ])
+    return _(uid, 'not_registered'), kb
+
+
+# ── wishlist display ──
+async def _show_account(query, uid: int):
+    """Show full profile if registered, registration/link prompt if not."""
+    state = _get_state(uid)
+    phone = state.get('reg_phone', '') or state.get('order', {}).get('phone', '')
+    profile = _db_get_user_profile(phone) if phone else None
+
+    if profile:
+        text, kb = _build_profile_text_kb(uid, profile)
+        # Try to show profile photo
+        photo_url = _user_profile_photo_url(profile)
+        if photo_url:
+            try:
+                await query.message.reply_photo(photo=photo_url, caption=text,
+                                                parse_mode=ParseMode.MARKDOWN, reply_markup=kb)
+                try:
+                    await query.message.delete()
+                except Exception:
+                    pass
+                return
+            except TelegramError:
+                pass
+        await _safe_edit_text(query, text, parse_mode=ParseMode.MARKDOWN, reply_markup=kb)
+    else:
+        text, kb = _not_registered_kb(uid)
+        await _safe_edit_text(query, text, parse_mode=ParseMode.MARKDOWN, reply_markup=kb)
+
+
+async def _show_account_from_msg(msg, uid: int):
+    """Same as _show_account but responds to a plain command message."""
+    state = _get_state(uid)
+    phone = state.get('reg_phone', '') or state.get('order', {}).get('phone', '')
+    profile = _db_get_user_profile(phone) if phone else None
+
+    if profile:
+        text, kb = _build_profile_text_kb(uid, profile)
+        photo_url = _user_profile_photo_url(profile)
+        if photo_url:
+            try:
+                await msg.reply_photo(photo=photo_url, caption=text,
+                                      parse_mode=ParseMode.MARKDOWN, reply_markup=kb)
+                return
+            except TelegramError:
+                pass
+        await msg.reply_text(text, parse_mode=ParseMode.MARKDOWN, reply_markup=kb)
+    else:
+        text, kb = _not_registered_kb(uid)
+        await msg.reply_text(text, parse_mode=ParseMode.MARKDOWN, reply_markup=kb)
+
+
+async def _show_wishlist(query, uid: int):
+    wl = _get_state(uid).get('wishlist', [])
+    lang = _get_state(uid).get('lang', 'am')
+    if not wl:
+        await _safe_edit_text(query, _(uid, 'empty_wish'), reply_markup=_back_home(uid))
+        return
+    rows = []
+    for pid in wl:
+        p = _db_get_product(pid)
+        if not p:
+            continue
+        nm = _p_name(p, lang)
+        name = (nm[:24] + '…') if len(nm) > 24 else nm
+        price = _fmt_price(p['price'])
+        rows.append([
+            InlineKeyboardButton(f"{name} — {price}",
+                                 callback_data=_prod_cb(pid, 'all', 0, -1, 0)),
+            InlineKeyboardButton('💔', callback_data=f'wish:toggle:{pid}'),
+        ])
+    rows.append([InlineKeyboardButton(_(uid, 'main_menu'), callback_data='menu:home')])
+    title = f"💝 *{_(uid, 'wishlist_title')}*"
+    hint  = f"_{_(uid, 'wishlist_hint')}_"
+    await _safe_edit_text(query, f"{title}\n{hint}", parse_mode=ParseMode.MARKDOWN,
+                          reply_markup=InlineKeyboardMarkup(rows))
+
+
+# ── branches display ──
+def _branch_display_name(b: dict, lang: str) -> str:
+    if lang == 'am':
+        return b.get('name_am') or b.get('name') or ''
+    return b.get('name') or b.get('name_am') or ''
+
+def _branch_display_address(b: dict, lang: str) -> str:
+    if lang == 'am':
+        return b.get('address_am') or b.get('address') or ''
+    return b.get('address') or b.get('address_am') or ''
+
+async def _show_branches(query, uid: int):
+    branches = _db_get_branches()
+    lang = _get_state(uid).get('lang', 'am')
+    if not branches:
+        await _safe_edit_text(query, _(uid, 'no_branches'), reply_markup=_back_home(uid))
+        return
+    lines = [f"🏪 *{_(uid, 'branches_title')}*\n"]
+    for b in branches:
+        name    = _branch_display_name(b, lang)
+        address = _branch_display_address(b, lang)
+        phone   = b.get('phone') or ''
+        hours   = b.get('working_hours') or ''
+        lines.append(f"📍 *{name}*")
+        if address: lines.append(f"🗺 {address}")
+        if phone:   lines.append(f"📞 {phone}")
+        if hours:   lines.append(f"🕐 {hours}")
+        lines.append('')
+    await _safe_edit_text(query, '\n'.join(lines), parse_mode=ParseMode.MARKDOWN,
+                          reply_markup=_back_home(uid))
+
+
+# ── new conversation handlers ──
+async def on_orders_phone_input(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
+    uid   = update.effective_user.id
+    phone = update.message.text.strip()
+    lang  = _get_state(uid).get('lang', 'am')
+
+    # If called from account:link — try to link the account first
+    profile = _db_get_user_profile(phone)
+    if profile:
+        _get_state(uid)['reg_phone'] = phone
+        await update.message.reply_text(
+            f"✅ {_(uid, 'account_linked')}",
+            reply_markup=_main_menu_keyboard(uid)
+        )
+        return ConversationHandler.END
+
+    orders = _db_get_orders_by_phone(phone)
+    if not orders:
+        await update.message.reply_text(_(uid, 'no_orders'), reply_markup=_main_menu_keyboard(uid))
+        return ConversationHandler.END
+    lines = [f"📦 *{_(uid, 'my_orders_title')}* ({len(orders)})\n"]
+    for o in orders:
+        num    = o.get('order_number', '')
+        status = o.get('status', '')
+        total  = _fmt_price(o.get('total', 0))
+        date   = o.get('created_at', '')
+        if date and hasattr(date, 'strftime'):
+            date = date.strftime('%Y-%m-%d')
+        status_lbl = _status_label(lang, status)
+        lines.append(f"🔢 `{num}` — {status_lbl}")
+        lines.append(f"   💰 {total}  |  🕐 {date}\n")
+    await update.message.reply_text('\n'.join(lines), parse_mode=ParseMode.MARKDOWN,
+                                    reply_markup=_main_menu_keyboard(uid))
+    return ConversationHandler.END
+
+
+async def on_edit_name_input(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
     uid  = update.effective_user.id
-    text = update.message.text.strip()
+    name = update.message.text.strip()
+    if len(name) < 2:
+        await update.message.reply_text(_(uid, 'edit_name_prompt'))
+        return AWAIT_EDIT_NAME
+    phone = _get_state(uid).get('reg_phone', '') or _get_state(uid).get('order', {}).get('phone', '')
+    if phone and _db_update_user_field(phone, 'full_name', name):
+        await update.message.reply_text(_(uid, 'edit_saved'), reply_markup=_main_menu_keyboard(uid))
+    else:
+        await update.message.reply_text(_(uid, 'edit_err'), reply_markup=_main_menu_keyboard(uid))
+    return ConversationHandler.END
+
+
+async def on_edit_phone_input(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
+    uid      = update.effective_user.id
+    new_ph   = update.message.text.strip()
+    old_ph   = _get_state(uid).get('reg_phone', '') or _get_state(uid).get('order', {}).get('phone', '')
+    if old_ph and _db_update_user_field(old_ph, 'phone', new_ph):
+        _get_state(uid)['reg_phone'] = new_ph   # update local state too
+        await update.message.reply_text(_(uid, 'edit_saved'), reply_markup=_main_menu_keyboard(uid))
+    else:
+        await update.message.reply_text(_(uid, 'edit_err'), reply_markup=_main_menu_keyboard(uid))
+    return ConversationHandler.END
+
+
+async def on_reg_name_input(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
+    uid = update.effective_user.id
+    name = update.message.text.strip()
+    if len(name) < 2:
+        await update.message.reply_text(_(uid, 'reg_name'))
+        return AWAIT_REG_NAME
+    ctx.user_data['reg'] = {'name': name}
+    await update.message.reply_text(_(uid, 'reg_phone'))
+    return AWAIT_REG_PHONE
+
+
+async def on_reg_phone_input(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
+    uid  = update.effective_user.id
+    phone = update.message.text.strip()
+    ctx.user_data.setdefault('reg', {})['phone'] = phone
+    _get_state(uid)['reg_phone'] = phone
+    await update.message.reply_text(_(uid, 'reg_email'))
+    return AWAIT_REG_EMAIL
+
+
+async def on_reg_email_input(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
+    uid = update.effective_user.id
+    email = update.message.text.strip()
+    ctx.user_data.setdefault('reg', {})['email'] = email
+    await update.message.reply_text(_(uid, 'reg_pass'))
+    return AWAIT_REG_PASS
+
+
+async def on_reg_pass_input(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
+    uid = update.effective_user.id
+    password = update.message.text.strip()
+    if len(password) < 8:
+        await update.message.reply_text(_(uid, 'reg_pass'))
+        return AWAIT_REG_PASS
+    reg = ctx.user_data.get('reg', {})
+    result = _db_register_user(
+        name=reg.get('name', ''),
+        phone=reg.get('phone', ''),
+        email=reg.get('email', ''),
+        password=password,
+    )
+    if result == 'ok':
+        await update.message.reply_text(_(uid, 'reg_ok'), reply_markup=_main_menu_keyboard(uid))
+    elif result == 'dup':
+        await update.message.reply_text(_(uid, 'reg_dup'), reply_markup=_main_menu_keyboard(uid))
+    else:
+        await update.message.reply_text(_(uid, 'reg_err'), reply_markup=_main_menu_keyboard(uid))
+    ctx.user_data.pop('reg', None)
+    return ConversationHandler.END
+
+
+# ───────────────────────── new shortcut command handlers ─────────────────────────
+async def cmd_account(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
+    uid = update.effective_user.id
+    await _show_account_from_msg(update.message, uid)
+    return ConversationHandler.END
+
+
+async def cmd_orders(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
+    uid   = update.effective_user.id
+    state = _get_state(uid)
+    phone = state.get('reg_phone', '') or state.get('order', {}).get('phone', '')
+    lang  = state.get('lang', 'am')
+    if phone:
+        orders = _db_get_orders_by_phone(phone)
+        if not orders:
+            await update.message.reply_text(_(uid, 'no_orders'), reply_markup=_main_menu_keyboard(uid))
+        else:
+            lines = [f"📦 *{_(uid, 'my_orders_title')}* ({len(orders)})\n"]
+            for o in orders:
+                num    = o.get('order_number', '')
+                status = o.get('status', '')
+                total  = _fmt_price(o.get('total', 0))
+                date   = o.get('created_at', '')
+                if date and hasattr(date, 'strftime'):
+                    date = date.strftime('%Y-%m-%d')
+                status_lbl = _status_label(lang, status)
+                lines.append(f"🔢 `{num}` — {status_lbl}")
+                lines.append(f"   💰 {total}  |  🕐 {date}\n")
+            await update.message.reply_text('\n'.join(lines), parse_mode=ParseMode.MARKDOWN,
+                                            reply_markup=_main_menu_keyboard(uid))
+    else:
+        await update.message.reply_text(_(uid, 'orders_prompt'), reply_markup=_back_home(uid))
+        return AWAIT_ORDERS_PHONE
+    return ConversationHandler.END
+
+
+async def cmd_wishlist(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
+    uid  = update.effective_user.id
+    lang = _get_state(uid).get('lang', 'am')
+    wl   = _get_state(uid).get('wishlist', [])
+    if not wl:
+        await update.message.reply_text(_(uid, 'empty_wish'), reply_markup=_back_home(uid))
+        return ConversationHandler.END
+    rows = []
+    for pid in wl:
+        p = _db_get_product(pid)
+        if not p:
+            continue
+        nm    = _p_name(p, lang)
+        name  = (nm[:24] + '…') if len(nm) > 24 else nm
+        price = _fmt_price(p['price'])
+        rows.append([
+            InlineKeyboardButton(f"{name} — {price}", callback_data=_prod_cb(pid, 'all', 0, -1, 0)),
+            InlineKeyboardButton('💔', callback_data=f'wish:toggle:{pid}'),
+        ])
+    rows.append([InlineKeyboardButton(_(uid, 'main_menu'), callback_data='menu:home')])
+    title = f"💝 *{_(uid, 'wishlist_title')}*"
+    hint  = f"_{_(uid, 'wishlist_hint')}_"
+    await update.message.reply_text(f"{title}\n{hint}", parse_mode=ParseMode.MARKDOWN,
+                                    reply_markup=InlineKeyboardMarkup(rows))
+    return ConversationHandler.END
+
+
+async def cmd_branches(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
+    uid      = update.effective_user.id
+    branches = _db_get_branches()
+    lang     = _get_state(uid).get('lang', 'am')
+    if not branches:
+        await update.message.reply_text(_(uid, 'no_branches'), reply_markup=_back_home(uid))
+        return ConversationHandler.END
+    lines = [f"🏪 *{_(uid, 'branches_title')}*\n"]
+    for b in branches:
+        name    = _branch_display_name(b, lang)
+        address = _branch_display_address(b, lang)
+        phone   = b.get('phone') or ''
+        hours   = b.get('working_hours') or ''
+        lines.append(f"📍 *{name}*")
+        if address: lines.append(f"🗺 {address}")
+        if phone:   lines.append(f"📞 {phone}")
+        if hours:   lines.append(f"🕐 {hours}")
+        lines.append('')
+    await update.message.reply_text('\n'.join(lines), parse_mode=ParseMode.MARKDOWN,
+                                    reply_markup=_back_home(uid))
+    return ConversationHandler.END
+
+
+# ── fallback for unexpected text ──
+async def on_unknown_text(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
+    uid = update.effective_user.id
+    await update.message.reply_text(_(uid, 'unknown_cmd'), reply_markup=_main_menu_keyboard(uid))
+    return ConversationHandler.END
+
+
+# ───────────────────────── Application builder ─────────────────────────
+def build_application() -> Application:
+    app = Application.builder().token(TOKEN).build()
+
+    conv = ConversationHandler(
+        entry_points=[
+            CommandHandler('start',    cmd_start),
+            CommandHandler('help',     cmd_help),
+            CommandHandler('products', cmd_products),
+            CommandHandler('cart',     cmd_cart),
+            CommandHandler('track',    cmd_track),
+            CommandHandler('language', cmd_language),
+            CommandHandler('cancel',   cmd_cancel),
+            CommandHandler('account',  cmd_account),
+            CommandHandler('orders',   cmd_orders),
+            CommandHandler('wishlist', cmd_wishlist),
+            CommandHandler('branches', cmd_branches),
+            CallbackQueryHandler(on_callback),
+        ],
+        states={
+            AWAIT_SEARCH: [
+                CallbackQueryHandler(on_callback),
+                MessageHandler(filters.TEXT & ~filters.COMMAND, on_search_input),
+            ],
+            AWAIT_NAME: [
+                CallbackQueryHandler(on_callback),
+                MessageHandler(filters.TEXT & ~filters.COMMAND, on_name_input),
+            ],
+            AWAIT_PHONE: [
+                CallbackQueryHandler(on_callback),
+                MessageHandler(filters.TEXT & ~filters.COMMAND, on_phone_input),
+            ],
+            AWAIT_ADDRESS: [
+                CallbackQueryHandler(on_callback),
+                MessageHandler(filters.TEXT & ~filters.COMMAND, on_address_input),
+            ],
+            AWAIT_COUPON: [
+                CallbackQueryHandler(on_callback),
+                MessageHandler(filters.TEXT & ~filters.COMMAND, on_coupon_input),
+            ],
+            AWAIT_TRACK: [
+                CallbackQueryHandler(on_callback),
+                MessageHandler(filters.TEXT & ~filters.COMMAND, on_track_input),
+            ],
+            AWAIT_ORDERS_PHONE: [
+                CallbackQueryHandler(on_callback),
+                MessageHandler(filters.TEXT & ~filters.COMMAND, on_orders_phone_input),
+            ],
+            AWAIT_REG_NAME: [
+                CallbackQueryHandler(on_callback),
+                MessageHandler(filters.TEXT & ~filters.COMMAND, on_reg_name_input),
+            ],
+            AWAIT_REG_PHONE: [
+                CallbackQueryHandler(on_callback),
+                MessageHandler(filters.TEXT & ~filters.COMMAND, on_reg_phone_input),
+            ],
+            AWAIT_REG_EMAIL: [
+                CallbackQueryHandler(on_callback),
+                MessageHandler(filters.TEXT & ~filters.COMMAND, on_reg_email_input),
+            ],
+            AWAIT_REG_PASS: [
+                CallbackQueryHandler(on_callback),
+                MessageHandler(filters.TEXT & ~filters.COMMAND, on_reg_pass_input),
+            ],
+            AWAIT_EDIT_NAME: [
+                CallbackQueryHandler(on_callback),
+                MessageHandler(filters.TEXT & ~filters.COMMAND, on_edit_name_input),
+            ],
+            AWAIT_EDIT_PHONE: [
+                CallbackQueryHandler(on_callback),
+                MessageHandler(filters.TEXT & ~filters.COMMAND, on_edit_phone_input),
+            ],
+            AWAIT_RECEIPT: [
+                CallbackQueryHandler(on_callback),
+                MessageHandler(filters.PHOTO, on_receipt_input),
+                MessageHandler(filters.TEXT & ~filters.COMMAND, on_unknown_text),
+            ],
+        },
+        fallbacks=[
+            CommandHandler('cancel',   cmd_cancel),
+            CommandHandler('start',    cmd_start),
+            MessageHandler(filters.TEXT & ~filters.COMMAND, on_unknown_text),
+        ],
+        allow_reentry=True,
+        per_chat=True,
+        per_user=True,
+    )
+
+    app.add_handler(conv)
+    return app
+
+
+# ───────────────────────── background event loop ─────────────────────────
+_loop: asyncio.AbstractEventLoop | None = None
+_application: Application | None = None
+_lock = threading.Lock()
+
+
+def _start_loop(loop: asyncio.AbstractEventLoop):
+    asyncio.set_event_loop(loop)
+    loop.run_forever()
+
+
+def _get_or_create_app() -> tuple[Application, asyncio.AbstractEventLoop]:
+    global _loop, _application
+    with _lock:
+        if _loop is None or not _loop.is_running():
+            _loop = asyncio.new_event_loop()
+            t = threading.Thread(target=_start_loop, args=(_loop,), daemon=True)
+            t.start()
+        if _application is None:
+            _application = build_application()
+            future = asyncio.run_coroutine_threadsafe(_application.initialize(), _loop)
+            future.result(timeout=30)
+    return _application, _loop
+
+
+def process_update_sync(update_data: dict):
+    """Called from the Flask webhook route — processes one Telegram update."""
+    if not TOKEN:
+        return
+    try:
+        app, loop = _get_or_create_app()
+        update = Update.de_json(update_data, app.bot)
+        future = asyncio.run_coroutine_threadsafe(app.process_update(update), loop)
+        future.result(timeout=25)
+    except Exception as e:
+        log.error(f"[TelegramBot] process_update error: {e}")
+
+
+async def _set_webhook_async(webhook_url: str) -> dict:
+    if not TOKEN:
+        return {'ok': False, 'description': 'TELEGRAM_BOT_TOKEN not set'}
+    bot = Bot(token=TOKEN)
+    async with bot:
+        result = await bot.set_webhook(
+            url=webhook_url,
+            allowed_updates=Update.ALL_TYPES,
+            drop_pending_updates=True,
+        )
+        info = await bot.get_webhook_info()
+        return {
+            'ok': result,
+            'webhook_url': info.url,
+            'pending_updates': info.pending_update_count,
+        }
+
+
+def set_webhook_sync(webhook_url: str) -> dict:
+    return asyncio.run(_set_webhook_async(webhook_url))
+
+
+async def _delete_webhook_async():
+    if not TOKEN:
+        return False
+    bot = Bot(token=TOKEN)
+    async with bot:
+        return await bot.delete_webhook(drop_pending_updates=True)
+
+
+def delete_webhook_sync() -> bool:
+    return asyncio.run(_delete_webhook_async())
+
+
+async def _get_me_async():
+    if not TOKEN:
+        return None
+    bot = Bot(token=TOKEN)
+    async with bot:
+        return await bot.get_me()
+
+
+def get_bot_info():
+    try:
+        return asyncio.run(_get_me_async())
+    except Exception:
+        return None
+
+
+async def on_phone_input(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
+    uid  = update.effective_user.id
+    phone = update.message.text.strip()
+    if not _is_valid_phone(phone):
+        await update.message.reply_text(_(uid, 'phone_invalid'))
+        return AWAIT_PHONE
+    _get_state(uid).setdefault('order', {})['phone'] = phone
+    await update.message.reply_text(_(uid, 'addr_prompt'))
+    return AWAIT_ADDRESS
+
+
+async def on_address_input(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
+    uid  = update.effective_user.id
+    addr = update.message.text.strip()
+    if len(addr) < 5:
+        await update.message.reply_text(_(uid, 'addr_too_short'))
+        return AWAIT_ADDRESS
+    _get_state(uid).setdefault('order', {})['address'] = addr
+    await update.message.reply_text(_(uid, 'coupon_prompt'))
+    return AWAIT_COUPON
+
+
+async def on_coupon_input(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
+    uid   = update.effective_user.id
+    text  = update.message.text.strip()
     state = _get_state(uid)
 
     if text.lower() != 'skip' and text:
@@ -1464,8 +2226,7 @@ def _is_valid_phone(phone: str) -> bool:
             await update.message.reply_text(_(uid, 'coupon_ok', pct=pct))
         else:
             await update.message.reply_text(_(uid, 'coupon_bad'))
-            # Let them try again or skip — show summary anyway after bad coupon
-    # Show order summary
+    # Show order summary with confirm button
     summary = _order_summary_text(uid)
     await update.message.reply_text(summary, parse_mode=ParseMode.MARKDOWN,
                                     reply_markup=_order_summary_keyboard(uid))
@@ -1506,63 +2267,6 @@ async def on_track_input(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text('\n'.join(lines), parse_mode=ParseMode.MARKDOWN,
                                     reply_markup=_main_menu_keyboard(uid))
     return ConversationHandler.END
-
-
-async def _confirm_order(query, uid: int, ctx):
-    state = _get_state(uid)
-    cart = state.get('cart', {})
-    if not cart:
-        await _safe_edit_text(query, _(uid, 'empty_cart'),
-                              reply_markup=_main_menu_keyboard(uid))
-        return ConversationHandler.END
-    order_data = state.get('order', {})
-    order_data['username'] = state.get('username', str(uid))
-
-    order_number = _db_place_order(cart, order_data)
-    if order_number:
-        state['cart'] = {}   # clear cart
-        state['order'] = {}  # clear order draft
-        text = (_(uid, 'order_ok') +
-                f"\n\n🔢 {_(uid, 'order_number_title')}: `{order_number}`\n\n"
-                f"_{_(uid, 'track_prompt')}_")
-        kb = InlineKeyboardMarkup([
-            [InlineKeyboardButton(_(uid, 'track_my_order'), callback_data='menu:track')],
-            [InlineKeyboardButton(_(uid, 'main_menu'), callback_data='menu:home')],
-        ])
-        await _safe_edit_text(query, text, parse_mode=ParseMode.MARKDOWN, reply_markup=kb)
-        # Notify admin
-        await _notify_admin_new_order(ctx, uid, order_number, order_data, cart)
-    else:
-        await _safe_edit_text(query, _(uid, 'order_err'),
-                              reply_markup=_main_menu_keyboard(uid))
-    return ConversationHandler.END
-
-
-async def _notify_admin_new_order(ctx, uid: int, order_number, order_data: dict, cart: dict):
-    if not ADMIN_CHAT_ID:
-        return
-    try:
-        bot = ctx.bot
-        coupon = order_data.get('coupon_code', '')
-        discount = order_data.get('coupon_discount', 0)
-        lines = [
-            f"🛍️ *New Telegram Order!*",
-            f"📦 Order: `{order_number}`",
-            f"👤 {order_data.get('name','')}",
-            f"📱 {order_data.get('phone','')}",
-            f"🏠 {order_data.get('address','')}",
-            f"📲 @{order_data.get('username', uid)}",
-        ]
-        if coupon:
-            lines.append(f"🏷️ Coupon: `{coupon}` (−{discount}%)")
-        for pid_str, qty in cart.items():
-            p = _db_get_product(int(pid_str))
-            if p:
-                lines.append(f"  • {p['name']} × {qty}")
-        await bot.send_message(chat_id=ADMIN_CHAT_ID, text='\n'.join(lines),
-                               parse_mode=ParseMode.MARKDOWN)
-    except Exception as e:
-        log.warning(f"[TelegramBot] admin notify failed: {e}")
 
 
 def _build_profile_text_kb(uid: int, profile: dict) -> tuple:

@@ -432,7 +432,7 @@
             <!-- Current main image -->
             {% if product.thumbnail and product.thumbnail != '' %}
             <div class="current-img-box">
-                <img src="{{ url_for('static', filename=(product.thumbnail if product.thumbnail[:8] == 'uploads/' else 'uploads/products/' ~ product.thumbnail)) }}"
+                <img src="{{ product.thumbnail if product.thumbnail[:4] == 'http' else url_for('static', filename=(product.thumbnail if product.thumbnail[:8] == 'uploads/' else 'uploads/products/' ~ product.thumbnail)) }}"
                      alt="Current image"
                      onerror="this.onerror=null; this.src='{{ url_for('static', filename='images/placeholder.png') }}'">
                 <div>

@@ -431,7 +431,10 @@
         const DISC_MULT = {{ member_discount_multiplier }};
         grid.innerHTML = pageProducts.map(product => {
             const hasImage = product.thumbnail && product.thumbnail != 'None' && product.thumbnail.trim() != '';
-            const imageUrl = hasImage ? `{{ url_for('static', filename='') }}${product.thumbnail}` : '';
+            const _staticRoot = '{{ url_for('static', filename='') }}';
+            const imageUrl = hasImage
+                ? (product.thumbnail.startsWith('http') ? product.thumbnail : `${_staticRoot}${product.thumbnail}`)
+                : '';
             const baseP = parseFloat(product.price);
             const displayP = IS_MEMBER ? Math.round(baseP * DISC_MULT * 100) / 100 : baseP;
             const compP = parseFloat(product.compare_price) || 0;

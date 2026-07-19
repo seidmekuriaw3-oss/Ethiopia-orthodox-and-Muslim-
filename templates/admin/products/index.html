@@ -246,7 +246,7 @@
                     <td style="padding: 12px;">{{ product.id }}</td>
                     <td style="padding: 12px;">
                         {% if product.thumbnail and product.thumbnail != '' %}
-                            <img src="{{ url_for('static', filename=(product.thumbnail if product.thumbnail[:8] == 'uploads/' else 'uploads/products/' ~ product.thumbnail)) }}" 
+                            <img src="{{ product.thumbnail if product.thumbnail[:4] == 'http' else url_for('static', filename=(product.thumbnail if product.thumbnail[:8] == 'uploads/' else 'uploads/products/' ~ product.thumbnail)) }}" 
                                  style="width: 50px; height: 50px; object-fit: cover; border-radius: 8px;" 
                                  loading="lazy"
                                  onerror="this.onerror=null; this.src='{{ url_for('static', filename='images/placeholder.png') }}'">

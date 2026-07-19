@@ -1358,9 +1358,10 @@
         <div class="ads-crsl-track" id="adsCrslTrack">
         {% for ad in ads %}
             {% set is_video = (ad.image and ad.image|trim != '' and ad.image.lower().endswith(vid_exts)) or (ad.media_url and ad.media_url|trim != '' and ad.media_url.lower().endswith(vid_exts)) %}
-            {% set video_src = (url_for('static', filename=ad.image) if (ad.image and ad.image|trim != '' and ad.image.lower().endswith(vid_exts)) else ad.media_url) if is_video else '' %}
+            {% set video_src = (resolved_img if (ad.image and ad.image|trim != '' and ad.image.lower().endswith(vid_exts)) else ad.media_url) if is_video else '' %}
             {% set poster_src = url_for('static', filename=ad.image.replace('.mp4','_poster.jpg').replace('.webm','_poster.jpg').replace('.mov','_poster.jpg')) if (is_video and ad.image) else '' %}
             {% set is_image = ad.image and ad.image|trim != '' and not is_video %}
+            {% set resolved_img = ad.image if (ad.image and ad.image[:4] == 'http') else (resolved_img if ad.image and ad.image|trim != '' else '') %}
             {% set ad_title = localized_ad_title(ad) or ('🎉 ' ~ t.promo) %}
             {% set ad_desc  = localized_ad_description(ad) %}
             {% set ad_link  = ad.link if ad.link else url_for('customer.products') %}
@@ -1393,14 +1394,14 @@
             <div class="ads-crsl-slide"
                  onclick="adsStoriesOpen({{ loop.index0 }})"
                  data-type="image"
-                 data-src="{{ url_for('static', filename=ad.image) }}"
+                 data-src="{{ resolved_img }}"
                  data-poster=""
                  data-title="{{ ad_title | e }}"
                  data-desc="{{ ad_desc | e if ad_desc else '' }}"
                  data-link="{{ ad_link }}"
                  data-gradient=""
                  data-icon="">
-                <img src="{{ url_for('static', filename=ad.image) }}" alt="{{ ad_title }}" loading="lazy">
+                <img src="{{ resolved_img }}" alt="{{ ad_title }}" loading="lazy">
                 <div class="ads-crsl-overlay"></div>
                 <div class="ads-crsl-caption">
                     <h3>{{ ad_title }}</h3>
@@ -1498,7 +1499,7 @@
         <a href="{{ url_for('customer.product_detail', product_id=product.id) }}" class="hsc" data-product-id="{{ product.id }}">
             <div class="hsc-img">
                 {% if product.thumbnail and product.thumbnail != '' %}
-                    <img src="{{ url_for('static', filename=product.thumbnail) }}" alt="{{ product_name(product) }}" loading="lazy"
+                    <img src="{{ product.thumbnail if product.thumbnail[:4] == 'http' else url_for('static', filename=product.thumbnail) }}" alt="{{ product_name(product) }}" loading="lazy"
                          onerror="this.onerror=null;this.style.display='none';this.nextElementSibling.style.display='flex';">
                     <div class="hsc-fallback" style="display:none;">👗</div>
                 {% else %}
@@ -1562,7 +1563,7 @@
         <a href="{{ url_for('customer.product_detail', product_id=product.id) }}" class="hsc" data-product-id="{{ product.id }}">
             <div class="hsc-img">
                 {% if product.thumbnail and product.thumbnail != '' %}
-                    <img src="{{ url_for('static', filename=product.thumbnail) }}" alt="{{ product_name(product) }}" loading="lazy"
+                    <img src="{{ product.thumbnail if product.thumbnail[:4] == 'http' else url_for('static', filename=product.thumbnail) }}" alt="{{ product_name(product) }}" loading="lazy"
                          onerror="this.onerror=null;this.style.display='none';this.nextElementSibling.style.display='flex';">
                     <div class="hsc-fallback" style="display:none;">👗</div>
                 {% else %}
@@ -1991,7 +1992,7 @@
         <a href="{{ url_for('customer.product_detail', product_id=product.id) }}" class="product-card" data-product-id="{{ product.id }}">
             <div class="pc-img">
                 {% if product.thumbnail and product.thumbnail != '' %}
-                    <img src="{{ url_for('static', filename=product.thumbnail) }}" alt="{{ product_name(product) }}" loading="lazy"
+                    <img src="{{ product.thumbnail if product.thumbnail[:4] == 'http' else url_for('static', filename=product.thumbnail) }}" alt="{{ product_name(product) }}" loading="lazy"
                          onerror="this.onerror=null;this.style.display='none';this.parentElement.querySelector('.pc-fallback').style.display='flex';">
                     <div class="pc-fallback" style="display:none;position:absolute;inset:0;align-items:center;justify-content:center;font-size:36px;">👗</div>
                 {% else %}

@@ -180,7 +180,7 @@
         {% for item in items %}
         <div class="item-row">
             {% if item.thumbnail %}
-            <img src="{{ url_for('static', filename=item.thumbnail) }}" alt="{{ item.name }}" class="item-thumb"
+            <img src="{{ item.thumbnail if item.thumbnail and item.thumbnail[:4] == 'http' else url_for('static', filename=item.thumbnail) }}" alt="{{ item.name }}" class="item-thumb"
                  onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
             <div class="item-thumb-ph" style="display:none;">👗</div>
             {% else %}

@@ -1049,7 +1049,7 @@
                 <a href="{{ url_for('customer.product_detail', product_id=item.product_id) }}">
                     {% if item.thumbnail %}
                     <img class="wl-img"
-                         src="{{ url_for('static', filename=item.thumbnail) }}"
+                         src="{{ item.thumbnail if item.thumbnail and item.thumbnail[:4] == 'http' else url_for('static', filename=item.thumbnail) }}"
                          alt="{{ item.name }}"
                          onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
                     <div class="wl-img-placeholder" style="display:none;">🛋️</div>

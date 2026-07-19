@@ -276,7 +276,7 @@
             <!-- Main Image Slider -->
             <div class="main-image" id="mainImageWrap" style="position:relative; cursor:zoom-in;">
                 {% if product.thumbnail and product.thumbnail|trim != '' and product.thumbnail != 'None' %}
-                    <img src="{{ url_for('static', filename=product.thumbnail) }}" alt="{{ product.name_am }}" id="mainProductImage"
+                    <img src="{{ product.thumbnail if product.thumbnail[:4] == 'http' else url_for('static', filename=product.thumbnail) }}" alt="{{ product.name_am }}" id="mainProductImage"
                          onerror="this.onerror=null; this.parentElement.innerHTML='<div style=\'font-size:64px;text-align:center;\'>👗</div>'">
                 {% else %}
                     <div style="font-size: 64px;">👗</div>
@@ -711,7 +711,7 @@
             <div class="related-card" onclick="location.href='{{ url_for('customer.product_detail', product_id=related.id) }}'">
                 <div class="related-image">
                     {% if related.thumbnail and related.thumbnail|trim != '' and related.thumbnail != 'None' %}
-                        <img src="{{ url_for('static', filename=(related.thumbnail if (related.thumbnail.startswith('uploads/') or related.thumbnail.startswith('images/')) else 'uploads/products/' + related.thumbnail)) }}" alt="{{ related.name_am }}" loading="lazy"
+                        <img src="{{ related.thumbnail if related.thumbnail[:4] == 'http' else url_for('static', filename=(related.thumbnail if (related.thumbnail.startswith('uploads/') or related.thumbnail.startswith('images/')) else 'uploads/products/' + related.thumbnail)) }}" alt="{{ related.name_am }}" loading="lazy"
                              onerror="this.onerror=null; this.parentElement.innerHTML='<div style=\'font-size:32px;\'>👗</div>'">
                     {% else %}
                         <div style="font-size: 32px;">👗</div>
@@ -737,7 +737,7 @@
             <div class="related-card" onclick="location.href='{{ url_for('customer.product_detail', product_id=rv.id) }}'">
                 <div class="related-image" style="position:relative;">
                     {% if rv.thumbnail and rv.thumbnail|trim != '' and rv.thumbnail != 'None' %}
-                        <img src="{{ url_for('static', filename=(rv.thumbnail if (rv.thumbnail.startswith('uploads/') or rv.thumbnail.startswith('images/')) else 'uploads/products/' + rv.thumbnail)) }}"
+                        <img src="{{ rv.thumbnail if rv.thumbnail[:4] == 'http' else url_for('static', filename=(rv.thumbnail if (rv.thumbnail.startswith('uploads/') or rv.thumbnail.startswith('images/')) else 'uploads/products/' + rv.thumbnail)) }}"
                              alt="{{ rv.name_am or rv.name }}" loading="lazy"
                              onerror="this.onerror=null; this.parentElement.innerHTML='<div style=\'font-size:32px;\'>👗</div>'">
                     {% else %}
