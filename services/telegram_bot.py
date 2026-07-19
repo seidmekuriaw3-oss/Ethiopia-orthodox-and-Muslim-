@@ -60,53 +60,60 @@ T = {
         'en': ('👗 *Welcome to Semira Fashion!*\n\n'
                'Ethiopia\'s premier women & children fashion store.\n'
                'Browse, order and track your purchases with ease.'),
+        'ar': ('👗 *مرحباً بكم في سميرا فاشن!*\n\n'
+               'متجر الأزياء الأول للنساء والأطفال في إثيوبيا.\n'
+               'تصفح، اطلب وتابع مشترياتك بكل سهولة.'),
     },
-    'main_menu': {'am': '🏠 ዋና ምናሌ', 'en': '🏠 Main Menu'},
-    'products':  {'am': '🛍️ ምርቶች',   'en': '🛍️ Products'},
-    'categories':{'am': '🗂️ ምድቦች',   'en': '🗂️ Categories'},
-    'new':       {'am': '🆕 አዲስ ምርቶች','en': '🆕 New Arrivals'},
-    'featured':  {'am': '⭐ ተወዳጅ',    'en': '⭐ Featured'},
-    'search':    {'am': '🔍 ፈልግ',     'en': '🔍 Search'},
-    'cart':      {'am': '🛒 ቅርጫቴ',   'en': '🛒 My Cart'},
-    'checkout':  {'am': '💳 ክፍያ',     'en': '💳 Checkout'},
-    'track':     {'am': '📦 ትዕዛዝ ክትትል','en': '📦 Track Order'},
-    'contact':   {'am': '📞 እውቂያ',    'en': '📞 Contact'},
-    'language':  {'am': '🌐 ቋንቋ',     'en': '🌐 Language'},
-    'back':      {'am': '◀️ ተመለስ',   'en': '◀️ Back'},
-    'price':     {'am': 'ዋጋ',         'en': 'Price'},
-    'stock':     {'am': 'ክምችት',       'en': 'Stock'},
-    'add_cart':  {'am': '🛒 ወደ ቅርጫት ጨምር', 'en': '🛒 Add to Cart'},
-    'remove':    {'am': '❌ አስወግድ',   'en': '❌ Remove'},
-    'empty_cart':{'am': '🛒 ቅርጫቱ ባዶ ነው።', 'en': '🛒 Your cart is empty.'},
-    'added':     {'am': '✅ ወደ ቅርጫት ተጨምሯል!', 'en': '✅ Added to cart!'},
-    'removed':   {'am': '✅ ከቅርጫት ተወግዷል!', 'en': '✅ Removed from cart!'},
-    'prev':      {'am': '◀ ቀዳሚ',     'en': '◀ Prev'},
-    'next':      {'am': 'ቀጣይ ▶',    'en': 'Next ▶'},
-    'no_products':{'am': '😔 ምርቶች አልተገኙም።', 'en': '😔 No products found.'},
-    'no_cats':   {'am': '😔 ምድቦች አልተገኙም።', 'en': '😔 No categories found.'},
-    'search_prompt':{'am': '🔍 የምርቱን ስም ይጻፉ...', 'en': '🔍 Type the product name...'},
-    'name_prompt':  {'am': '📝 ሙሉ ስምዎን ያስገቡ:', 'en': '📝 Enter your full name:'},
-    'phone_prompt': {'am': '📱 ስልክ ቁጥርዎን ያስገቡ:', 'en': '📱 Enter your phone number:'},
-    'addr_prompt':  {'am': '🏠 አድራሻዎን ያስገቡ:', 'en': '🏠 Enter your delivery address:'},
-    'track_prompt': {'am': '🔢 የትዕዛዝ ቁጥርዎን ያስገቡ:', 'en': '🔢 Enter your order number:'},
+    'main_menu': {'am': '🏠 ዋና ምናሌ',    'en': '🏠 Main Menu',      'ar': '🏠 القائمة الرئيسية'},
+    'products':  {'am': '🛍️ ምርቶች',      'en': '🛍️ Products',      'ar': '🛍️ المنتجات'},
+    'categories':{'am': '🗂️ ምድቦች',      'en': '🗂️ Categories',    'ar': '🗂️ الفئات'},
+    'new':       {'am': '🆕 አዲስ ምርቶች',  'en': '🆕 New Arrivals',  'ar': '🆕 وصل حديثاً'},
+    'featured':  {'am': '⭐ ተወዳጅ',       'en': '⭐ Featured',       'ar': '⭐ مميز'},
+    'search':    {'am': '🔍 ፈልግ',        'en': '🔍 Search',         'ar': '🔍 بحث'},
+    'cart':      {'am': '🛒 ቅርጫቴ',      'en': '🛒 My Cart',        'ar': '🛒 سلتي'},
+    'checkout':  {'am': '💳 ክፍያ',        'en': '💳 Checkout',       'ar': '💳 الدفع'},
+    'track':     {'am': '📦 ትዕዛዝ ክትትል', 'en': '📦 Track Order',    'ar': '📦 تتبع الطلب'},
+    'contact':   {'am': '📞 እውቂያ',       'en': '📞 Contact',        'ar': '📞 تواصل معنا'},
+    'language':  {'am': '🌐 ቋንቋ',        'en': '🌐 Language',       'ar': '🌐 اللغة'},
+    'back':      {'am': '◀️ ተመለስ',      'en': '◀️ Back',           'ar': '◀️ رجوع'},
+    'price':     {'am': 'ዋጋ',            'en': 'Price',              'ar': 'السعر'},
+    'stock':     {'am': 'ክምችት',          'en': 'Stock',              'ar': 'المخزون'},
+    'add_cart':  {'am': '🛒 ወደ ቅርጫት ጨምር','en': '🛒 Add to Cart',  'ar': '🛒 أضف للسلة'},
+    'remove':    {'am': '❌ አስወግድ',      'en': '❌ Remove',          'ar': '❌ إزالة'},
+    'empty_cart':{'am': '🛒 ቅርጫቱ ባዶ ነው።','en': '🛒 Your cart is empty.','ar': '🛒 سلتك فارغة.'},
+    'added':     {'am': '✅ ወደ ቅርጫት ተጨምሯል!','en': '✅ Added to cart!','ar': '✅ أضيف إلى السلة!'},
+    'removed':   {'am': '✅ ከቅርጫት ተወግዷል!', 'en': '✅ Removed from cart!','ar': '✅ أزيل من السلة!'},
+    'prev':      {'am': '◀ ቀዳሚ',         'en': '◀ Prev',            'ar': '◀ السابق'},
+    'next':      {'am': 'ቀጣይ ▶',         'en': 'Next ▶',            'ar': 'التالي ▶'},
+    'no_products':{'am': '😔 ምርቶች አልተገኙም።','en': '😔 No products found.','ar': '😔 لا توجد منتجات.'},
+    'no_cats':   {'am': '😔 ምድቦች አልተገኙም።', 'en': '😔 No categories found.','ar': '😔 لا توجد فئات.'},
+    'search_prompt':{'am': '🔍 የምርቱን ስም ይጻፉ...','en': '🔍 Type the product name...','ar': '🔍 اكتب اسم المنتج...'},
+    'name_prompt':  {'am': '📝 ሙሉ ስምዎን ያስገቡ:','en': '📝 Enter your full name:','ar': '📝 أدخل اسمك الكامل:'},
+    'phone_prompt': {'am': '📱 ስልክ ቁጥርዎን ያስገቡ:','en': '📱 Enter your phone number:','ar': '📱 أدخل رقم هاتفك:'},
+    'addr_prompt':  {'am': '🏠 አድራሻዎን ያስገቡ:','en': '🏠 Enter your delivery address:','ar': '🏠 أدخل عنوان التوصيل:'},
+    'track_prompt': {'am': '🔢 የትዕዛዝ ቁጥርዎን ያስገቡ:','en': '🔢 Enter your order number:','ar': '🔢 أدخل رقم طلبك:'},
     'order_ok':     {'am': '✅ ትዕዛዝዎ ተቀብሏል!\n\n📲 ቡድናችን ብዙም ሳይቆይ ያነጋግርዎታል።',
-                     'en': '✅ Order received!\n\n📲 Our team will contact you shortly.'},
+                     'en': '✅ Order received!\n\n📲 Our team will contact you shortly.',
+                     'ar': '✅ تم استلام طلبك!\n\n📲 سيتواصل معك فريقنا قريباً.'},
     'order_err':    {'am': '❌ ትዕዛዝ ሲቀበል ስህተት ተፈጥሯል። እባክዎ ዳግም ሞክሩ።',
-                     'en': '❌ Error placing order. Please try again.'},
+                     'en': '❌ Error placing order. Please try again.',
+                     'ar': '❌ خطأ في تقديم الطلب. حاول مجدداً.'},
     'track_not_found':{'am': '❌ ትዕዛዝ አልተገኘም። ቁጥሩን ያረጋግጡ።',
-                       'en': '❌ Order not found. Check the number.'},
-    'cancel':    {'am': '❌ ተሰርዟል', 'en': '❌ Cancelled'},
+                       'en': '❌ Order not found. Check the number.',
+                       'ar': '❌ الطلب غير موجود. تحقق من الرقم.'},
+    'cancel':    {'am': '❌ ተሰርዟል',    'en': '❌ Cancelled',         'ar': '❌ إلغاء'},
     'cancelled': {'am': '✅ ምርጫ ተሰርዟል። ከዋና ምናሌ ጀምሩ።',
-                  'en': '✅ Cancelled. Start from the main menu.'},
-    'subtotal':  {'am': 'ጠቅላላ', 'en': 'Subtotal'},
-    'shipping':  {'am': 'ማጓጓዣ', 'en': 'Shipping'},
-    'free':      {'am': 'ነጻ',   'en': 'Free'},
-    'total':     {'am': 'ሁሉም ድምር', 'en': 'Grand Total'},
-    'qty':       {'am': 'ቁጥር', 'en': 'Qty'},
-    'out_stock': {'am': '❌ ክምችት አልቋል', 'en': '❌ Out of stock'},
-    'desc':      {'am': 'መግለጫ', 'en': 'Description'},
-    'size':      {'am': 'መጠን',  'en': 'Size'},
-    'color':     {'am': 'ቀለም',  'en': 'Color'},
+                  'en': '✅ Cancelled. Start from the main menu.',
+                  'ar': '✅ تم الإلغاء. ابدأ من القائمة الرئيسية.'},
+    'subtotal':  {'am': 'ጠቅላላ',        'en': 'Subtotal',             'ar': 'المجموع الجزئي'},
+    'shipping':  {'am': 'ማጓጓዣ',        'en': 'Shipping',             'ar': 'الشحن'},
+    'free':      {'am': 'ነጻ',           'en': 'Free',                 'ar': 'مجاني'},
+    'total':     {'am': 'ሁሉም ድምር',    'en': 'Grand Total',           'ar': 'الإجمالي'},
+    'qty':       {'am': 'ቁጥር',         'en': 'Qty',                   'ar': 'الكمية'},
+    'out_stock': {'am': '❌ ክምችት አልቋል','en': '❌ Out of stock',       'ar': '❌ نفد المخزون'},
+    'desc':      {'am': 'መግለጫ',        'en': 'Description',           'ar': 'الوصف'},
+    'size':      {'am': 'መጠን',         'en': 'Size',                  'ar': 'الحجم'},
+    'color':     {'am': 'ቀለም',         'en': 'Color',                 'ar': 'اللون'},
     'contact_msg':{'am': ('📞 *ሰሚራ ፋሽን*\n\n'
                           '📱 WhatsApp: +{wa}\n'
                           '🕐 ሰዓት: ሰኞ–ቅዳሜ 9:00–7:00\n\n'
@@ -114,7 +121,11 @@ T = {
                    'en': ('📞 *Semira Fashion*\n\n'
                           '📱 WhatsApp: +{wa}\n'
                           '🕐 Hours: Mon–Sat 9 AM–7 PM\n\n'
-                          '🌐 Website: https://{site}')},
+                          '🌐 Website: https://{site}'),
+                   'ar': ('📞 *سميرا فاشن*\n\n'
+                          '📱 واتساب: +{wa}\n'
+                          '🕐 المواعيد: الإثنين–السبت 9ص–7م\n\n'
+                          '🌐 الموقع: https://{site}')},
     'status_labels': {
         'am': {'Pending':'⏳ በመጠባበቅ', 'Confirmed':'✅ ተረጋግጧል',
                'Processing':'🔄 በሂደት ላይ', 'Shipped':'🚚 ተልኳል',
@@ -122,67 +133,84 @@ T = {
         'en': {'Pending':'⏳ Pending', 'Confirmed':'✅ Confirmed',
                'Processing':'🔄 Processing', 'Shipped':'🚚 Shipped',
                'Delivered':'📬 Delivered', 'Cancelled':'❌ Cancelled'},
+        'ar': {'Pending':'⏳ قيد الانتظار', 'Confirmed':'✅ مؤكد',
+               'Processing':'🔄 جاري المعالجة', 'Shipped':'🚚 تم الشحن',
+               'Delivered':'📬 تم التسليم', 'Cancelled':'❌ ملغي'},
     },
-    'increase': {'am': '➕', 'en': '➕'},
-    'decrease': {'am': '➖', 'en': '➖'},
+    'increase': {'am': '➕', 'en': '➕', 'ar': '➕'},
+    'decrease': {'am': '➖', 'en': '➖', 'ar': '➖'},
     # ── new features ──
-    'orders':        {'am': '📦 ትዕዛዞቼ',      'en': '📦 My Orders'},
-    'wishlist':      {'am': '💝 ምኞቴ',         'en': '💝 Wishlist'},
-    'branches':      {'am': '🏪 ቅርንጫፎቻችን',   'en': '🏪 Our Branches'},
-    'account':       {'am': '👤 መለያዬ',        'en': '👤 My Account'},
+    'orders':        {'am': '📦 ትዕዛዞቼ',      'en': '📦 My Orders',      'ar': '📦 طلباتي'},
+    'wishlist':      {'am': '💝 ምኞቴ',         'en': '💝 Wishlist',        'ar': '💝 قائمة الأمنيات'},
+    'branches':      {'am': '🏪 ቅርንጫፎቻችን',   'en': '🏪 Our Branches',   'ar': '🏪 فروعنا'},
+    'account':       {'am': '👤 መለያዬ',        'en': '👤 My Account',      'ar': '👤 حسابي'},
     'orders_prompt': {'am': '📱 ትዕዛዞቹን ለማየት ስልክ ቁጥርዎን ያስገቡ:',
-                      'en': '📱 Enter your phone number to view your orders:'},
+                      'en': '📱 Enter your phone number to view your orders:',
+                      'ar': '📱 أدخل رقم هاتفك لعرض طلباتك:'},
     'no_orders':     {'am': '📦 ለዚህ ስልክ ቁጥር ትዕዛዝ አልተገኘም።',
-                      'en': '📦 No orders found for this phone number.'},
-    'no_branches':   {'am': '🏪 ቅርንጫፍ አልተገኘም።', 'en': '🏪 No branches found.'},
-    'wish_add':      {'am': '❤️ ምኞቴ ጨምር',    'en': '❤️ Save to Wishlist'},
-    'wish_remove':   {'am': '💔 ምኞቴ አስወግድ',  'en': '💔 Remove from Wishlist'},
-    'wish_added':    {'am': '❤️ ወደ ምኞቴ ተጨምሯል!', 'en': '❤️ Added to wishlist!'},
-    'wish_removed':  {'am': '💔 ከምኞቴ ተወግዷል!',   'en': '💔 Removed from wishlist!'},
+                      'en': '📦 No orders found for this phone number.',
+                      'ar': '📦 لا توجد طلبات لهذا الرقم.'},
+    'no_branches':   {'am': '🏪 ቅርንጫፍ አልተገኘም።','en': '🏪 No branches found.','ar': '🏪 لا توجد فروع.'},
+    'wish_add':      {'am': '❤️ ምኞቴ ጨምር',    'en': '❤️ Save to Wishlist',  'ar': '❤️ حفظ في الأمنيات'},
+    'wish_remove':   {'am': '💔 ምኞቴ አስወግድ',  'en': '💔 Remove from Wishlist','ar': '💔 إزالة من الأمنيات'},
+    'wish_added':    {'am': '❤️ ወደ ምኞቴ ተጨምሯል!','en': '❤️ Added to wishlist!','ar': '❤️ أضيف إلى الأمنيات!'},
+    'wish_removed':  {'am': '💔 ከምኞቴ ተወግዷል!',  'en': '💔 Removed from wishlist!','ar': '💔 أزيل من الأمنيات!'},
     'empty_wish':    {'am': '💝 ምኞቴ ዝርዝር ባዶ ነው።\nምርቶቹን ሲያዩ ❤️ ይጫኑ።',
-                      'en': '💝 Your wishlist is empty.\nTap ❤️ on any product to save it.'},
+                      'en': '💝 Your wishlist is empty.\nTap ❤️ on any product to save it.',
+                      'ar': '💝 قائمة الأمنيات فارغة.\nاضغط ❤️ على أي منتج لحفظه.'},
     'reg_intro':     {'am': ('👤 *ምዝገባ*\n\n'
                              'ሰሚራ ፋሽን ድረ-ገጽ ላይ ካለዎት መለያ *10% ቅናሽ* ያገኛሉ!\n\n'
                              'ምዝገባ ይፈልጋሉ?'),
                       'en': ('👤 *Register*\n\n'
                              'Get *10% discount* on every order with a Semira Fashion account!\n\n'
-                             'Would you like to register?')},
+                             'Would you like to register?'),
+                      'ar': ('👤 *التسجيل*\n\n'
+                             'احصل على *خصم 10%* على كل طلب مع حساب سميرا فاشن!\n\n'
+                             'هل تريد التسجيل؟')},
     'already_reg':   {'am': '✅ ቀደም ሲል ተመዝግበዋል! 10% ቅናሽ ይሰጥዎታል።',
-                      'en': '✅ You already have an account! 10% discount applied.'},
-    'reg_name':      {'am': '📝 ሙሉ ስምዎን ያስገቡ:',        'en': '📝 Enter your full name:'},
-    'reg_phone':     {'am': '📱 ስልክ ቁጥርዎን ያስገቡ (+251...):', 'en': '📱 Enter your phone number (+251...):'},
-    'reg_email':     {'am': '📧 ኢሜልዎን ያስገቡ (ወይም "skip" ይጻፉ):', 'en': '📧 Enter your email (or type "skip"):'},
-    'reg_pass':      {'am': '🔐 ይለፍ ቃልዎን ያስገቡ (ቢያንስ 8 ፊደላት):', 'en': '🔐 Enter a password (min 8 chars):'},
+                      'en': '✅ You already have an account! 10% discount applied.',
+                      'ar': '✅ أنت مسجل بالفعل! سيتم تطبيق خصم 10%.'},
+    'reg_name':      {'am': '📝 ሙሉ ስምዎን ያስገቡ:',          'en': '📝 Enter your full name:',           'ar': '📝 أدخل اسمك الكامل:'},
+    'reg_phone':     {'am': '📱 ስልክ ቁጥርዎን ያስገቡ (+251...):', 'en': '📱 Enter your phone number (+251...):','ar': '📱 أدخل رقم هاتفك (+251...):'},
+    'reg_email':     {'am': '📧 ኢሜልዎን ያስገቡ (ወይም "skip" ይጻፉ):','en': '📧 Enter your email (or type "skip"):','ar': '📧 أدخل بريدك الإلكتروني (أو اكتب "skip"):'},
+    'reg_pass':      {'am': '🔐 ይለፍ ቃልዎን ያስገቡ (ቢያንስ 8 ፊደላት):','en': '🔐 Enter a password (min 8 chars):','ar': '🔐 أدخل كلمة مرور (8 أحرف على الأقل):'},
     'coupon_prompt': {'am': '🏷️ ኩፖን ካለዎት ያስገቡ (ወይም "skip" ይጻፉ):',
-                      'en': '🏷️ Enter a coupon code (or type "skip"):'},
+                      'en': '🏷️ Enter a coupon code (or type "skip"):',
+                      'ar': '🏷️ أدخل رمز الكوبون (أو اكتب "skip"):'},
     'coupon_ok':     {'am': '✅ ኩፖን ተቀባይነት አለው! {pct}% ቅናሽ ተወስዷል።',
-                      'en': '✅ Coupon applied! {pct}% discount.'},
+                      'en': '✅ Coupon applied! {pct}% discount.',
+                      'ar': '✅ تم تطبيق الكوبون! خصم {pct}%.'},
     'coupon_bad':    {'am': '❌ ኩፖን ልክ አይደለም ወይም ጊዜው አልፏል።',
-                      'en': '❌ Invalid or expired coupon code.'},
-    'share':         {'am': '📤 አጋራ', 'en': '📤 Share'},
-    'cmd_branches':  {'am': '🏪 ቅርንጫፎቻችን', 'en': '🏪 Our Branches'},
+                      'en': '❌ Invalid or expired coupon code.',
+                      'ar': '❌ رمز الكوبون غير صالح أو منتهي.'},
+    'share':         {'am': '📤 አጋራ',          'en': '📤 Share',             'ar': '📤 مشاركة'},
+    'cmd_branches':  {'am': '🏪 ቅርንጫፎቻችን',   'en': '🏪 Our Branches',      'ar': '🏪 فروعنا'},
     'reg_ok':        {'am': '✅ ምዝገባ ተሳክቷል! ከአሁን በኋላ 10% ቅናሽ ያገኛሉ።',
-                      'en': '✅ Registered! You now get 10% off every order.'},
+                      'en': '✅ Registered! You now get 10% off every order.',
+                      'ar': '✅ تم التسجيل! ستحصل على خصم 10% على كل طلب.'},
     'reg_dup':       {'am': '⚠️ ይህ ስልክ ቁጥር ወይም ኢሜል ቀደም ሲል ተመዝግቧል።\nወደ ድህረ-ገጽ ያስገቡ።',
-                      'en': '⚠️ This phone/email is already registered. Log in on the website.'},
-    'reg_err':       {'am': '❌ ምዝገባ አልተሳካም። እባክዎ ዳግም ሞክሩ።', 'en': '❌ Registration failed. Please try again.'},
-    'reg_start_btn': {'am': '📝 ምዝገባ ጀምር', 'en': '📝 Start Registration'},
+                      'en': '⚠️ This phone/email is already registered. Log in on the website.',
+                      'ar': '⚠️ هذا الهاتف أو البريد مسجل بالفعل. سجّل الدخول من الموقع.'},
+    'reg_err':       {'am': '❌ ምዝገባ አልተሳካም። እባክዎ ዳግም ሞክሩ።',
+                      'en': '❌ Registration failed. Please try again.',
+                      'ar': '❌ فشل التسجيل. حاول مجدداً.'},
+    'reg_start_btn': {'am': '📝 ምዝገባ ጀምር',    'en': '📝 Start Registration', 'ar': '📝 بدء التسجيل'},
     # ── profile view / edit ──
-    'prof_title':    {'am': '👤 *መለያዬ*',             'en': '👤 *My Account*'},
-    'prof_name':     {'am': '📝 ስም',                  'en': '📝 Name'},
-    'prof_phone':    {'am': '📱 ስልክ',                 'en': '📱 Phone'},
-    'prof_email':    {'am': '📧 ኢሜል',                 'en': '📧 Email'},
-    'prof_points':   {'am': '🌟 ነጥቦች',               'en': '🌟 Loyalty Points'},
-    'prof_orders':   {'am': '📦 ትዕዛዞች',              'en': '📦 Orders'},
-    'prof_discount': {'am': '🏷️ ቅናሽ',               'en': '🏷️ Discount'},
-    'prof_since':    {'am': '📅 ተመዝግቦ',              'en': '📅 Member since'},
-    'prof_edit_name':  {'am': '✏️ ስም አስተካክል',       'en': '✏️ Edit Name'},
-    'prof_edit_phone': {'am': '📱 ስልክ አስተካክል',      'en': '📱 Edit Phone'},
-    'prof_my_orders':  {'am': '📦 ትዕዛዞቼ ተመልከት',    'en': '📦 View My Orders'},
-    'edit_name_prompt':  {'am': '✏️ አዲስ ስምዎን ያስገቡ:',  'en': '✏️ Enter your new full name:'},
-    'edit_phone_prompt': {'am': '📱 አዲስ ስልክ ቁጥርዎን ያስገቡ:', 'en': '📱 Enter your new phone number:'},
-    'edit_saved':    {'am': '✅ ተቀምጧል!', 'en': '✅ Saved!'},
-    'edit_err':      {'am': '❌ ለውጥ አልተሳካም።', 'en': '❌ Update failed. Please try again.'},
+    'prof_title':    {'am': '👤 *መለያዬ*',          'en': '👤 *My Account*',       'ar': '👤 *حسابي*'},
+    'prof_name':     {'am': '📝 ስም',               'en': '📝 Name',               'ar': '📝 الاسم'},
+    'prof_phone':    {'am': '📱 ስልክ',              'en': '📱 Phone',              'ar': '📱 الهاتف'},
+    'prof_email':    {'am': '📧 ኢሜል',              'en': '📧 Email',              'ar': '📧 البريد الإلكتروني'},
+    'prof_points':   {'am': '🌟 ነጥቦች',            'en': '🌟 Loyalty Points',     'ar': '🌟 نقاط الولاء'},
+    'prof_orders':   {'am': '📦 ትዕዛዞች',           'en': '📦 Orders',             'ar': '📦 الطلبات'},
+    'prof_discount': {'am': '🏷️ ቅናሽ',            'en': '🏷️ Discount',          'ar': '🏷️ الخصم'},
+    'prof_since':    {'am': '📅 ተመዝግቦ',           'en': '📅 Member since',       'ar': '📅 عضو منذ'},
+    'prof_edit_name':  {'am': '✏️ ስም አስተካክል',    'en': '✏️ Edit Name',         'ar': '✏️ تعديل الاسم'},
+    'prof_edit_phone': {'am': '📱 ስልክ አስተካክል',   'en': '📱 Edit Phone',         'ar': '📱 تعديل الهاتف'},
+    'prof_my_orders':  {'am': '📦 ትዕዛዞቼ ተመልከት', 'en': '📦 View My Orders',     'ar': '📦 عرض طلباتي'},
+    'edit_name_prompt':  {'am': '✏️ አዲስ ስምዎን ያስገቡ:',  'en': '✏️ Enter your new full name:','ar': '✏️ أدخل اسمك الجديد:'},
+    'edit_phone_prompt': {'am': '📱 አዲስ ስልክ ቁጥርዎን ያስገቡ:','en': '📱 Enter your new phone number:','ar': '📱 أدخل رقم هاتفك الجديد:'},
+    'edit_saved':    {'am': '✅ ተቀምጧል!',          'en': '✅ Saved!',              'ar': '✅ تم الحفظ!'},
+    'edit_err':      {'am': '❌ ለውጥ አልተሳካም።',   'en': '❌ Update failed. Please try again.','ar': '❌ فشل التحديث.'},
     'not_registered':{'am': ('👤 *መለያ አልተገኘም*\n\n'
                              'ምዝገባ ሲፈጽሙ:\n'
                              '• 10% ቅናሽ በሁሉም ትዕዛዞች\n'
@@ -192,16 +220,73 @@ T = {
                              'Register to enjoy:\n'
                              '• 10% discount on every order\n'
                              '• Full order history\n'
-                             '• Loyalty reward points')},
+                             '• Loyalty reward points'),
+                      'ar': ('👤 *لم يتم العثور على حساب*\n\n'
+                             'سجّل للاستمتاع بـ:\n'
+                             '• خصم 10% على كل طلب\n'
+                             '• سجل طلبات كامل\n'
+                             '• نقاط مكافآت الولاء')},
     'link_account':  {'am': '🔗 ስልክ ቁጥር ይስጡ (መለያ ለማገናኘት):',
-                      'en': '🔗 Enter your phone number to link your account:'},
-    'link_btn':      {'am': '🔗 ካለ መለያ አገናኝ', 'en': '🔗 Link Existing Account'},
+                      'en': '🔗 Enter your phone number to link your account:',
+                      'ar': '🔗 أدخل رقم هاتفك لربط حسابك:'},
+    'link_btn':      {'am': '🔗 ካለ መለያ አገናኝ',   'en': '🔗 Link Existing Account','ar': '🔗 ربط حساب موجود'},
+    # ── extra UI strings ──
+    'order_summary_title': {'am': 'የትዕዛዝ ማጠቃለያ',  'en': 'Order Summary',    'ar': 'ملخص الطلب'},
+    'order_detail_title':  {'am': 'ትዕዛዝ ዝርዝር',    'en': 'Order Details',    'ar': 'تفاصيل الطلب'},
+    'order_name':    {'am': 'ስም',    'en': 'Name',    'ar': 'الاسم'},
+    'order_phone':   {'am': 'ስልክ',  'en': 'Phone',   'ar': 'الهاتف'},
+    'order_address': {'am': 'አድራሻ', 'en': 'Address', 'ar': 'العنوان'},
+    'order_items':   {'am': 'ምርቶች', 'en': 'Items',   'ar': 'المنتجات'},
+    'order_discount':{'am': 'ቅናሽ',  'en': 'Discount','ar': 'الخصم'},
+    'order_coupon':  {'am': 'ኩፖን',  'en': 'Coupon',  'ar': 'الكوبون'},
+    'order_number_label': {'am': 'ቁጥር','en': 'Number','ar': 'الرقم'},
+    'order_number_title': {'am': 'ትዕዛዝ ቁጥር','en': 'Order #','ar': 'رقم الطلب'},
+    'order_status':  {'am': 'ሁኔታ',  'en': 'Status',  'ar': 'الحالة'},
+    'order_total':   {'am': 'ጠቅላላ', 'en': 'Total',   'ar': 'الإجمالي'},
+    'order_date':    {'am': 'ቀን',    'en': 'Date',    'ar': 'التاريخ'},
+    'order_confirm': {'am': '✅ አረጋግጥ','en': '✅ Confirm Order','ar': '✅ تأكيد الطلب'},
+    'order_cancel_btn':{'am': '❌ ሰርዝ','en': '❌ Cancel','ar': '❌ إلغاء'},
+    'my_orders_title':{'am': 'ትዕዛዞቼ', 'en': 'My Orders','ar': 'طلباتي'},
+    'branches_title': {'am': 'ቅርንጫፎቻችን','en': 'Our Branches','ar': 'فروعنا'},
+    'wishlist_title': {'am': 'ምኞቴ ዝርዝር','en': 'My Wishlist','ar': 'قائمة أمنياتي'},
+    'wishlist_hint':  {'am': 'ምርቱን ለማየት ስሙን ይጫኑ | 💔 ለማስወጣት',
+                       'en': 'Tap name to view | 💔 to remove',
+                       'ar': 'اضغط الاسم للعرض | 💔 للإزالة'},
+    'products_hint':  {'am': 'ምርቱን ለማየት ከታች ያለውን አዝራር ይጫኑ 👇',
+                       'en': 'Tap a product button below to view details 👇',
+                       'ar': 'اضغط على زر المنتج أدناه للتفاصيل 👇'},
+    'search_results': {'am': 'ውጤቶች',  'en': 'Results',  'ar': 'النتائج'},
+    'products_count': {'am': 'ምርቶች',  'en': 'products', 'ar': 'منتجات'},
+    'view_website':   {'am': '🌐 ድህረ-ገጽ ላይ እይ','en': '🌐 View on Website','ar': '🌐 عرض على الموقع'},
+    'back_to_list':   {'am': '◀️ ዝርዝር ተመለስ',  'en': '◀️ Back to List',  'ar': '◀️ العودة للقائمة'},
+    'account_linked': {'am': 'መለያ ተገናኝቷል! 10% ቅናሽ ይሰጥዎታል።',
+                       'en': 'Account linked! 10% discount applied.',
+                       'ar': 'تم ربط الحساب! سيتم تطبيق خصم 10%.'},
+    'account_linked_icon': {'am': '✅', 'en': '✅', 'ar': '✅'},
+    'unknown_cmd':    {'am': '❓ ያልታወቀ ትዕዛዝ። /start ይጠቀሙ።',
+                       'en': '❓ Unknown command. Use /start.',
+                       'ar': '❓ أمر غير معروف. استخدم /start.'},
 }
 
 def _(uid: int, key: str, **kwargs) -> str:
     lang = _get_state(uid).get('lang', 'am')
-    text = T.get(key, {}).get(lang, T.get(key, {}).get('am', key))
+    entry = T.get(key, {})
+    # Fallback chain: requested lang → en → am → raw key
+    text = entry.get(lang) or entry.get('en') or entry.get('am') or key
     return text.format(**kwargs) if kwargs else text
+
+
+def _p_name(p: dict, lang: str) -> str:
+    """Return the localised product name for the given language."""
+    if lang == 'am':
+        return p.get('name_am') or p.get('name', '')
+    return p.get('name', '')
+
+
+def _status_label(lang: str, status: str) -> str:
+    """Return a localised order-status label, falling back to en then am."""
+    labels = T['status_labels']
+    return (labels.get(lang) or labels.get('en') or labels.get('am') or {}).get(status, status)
 
 
 # ───────────────────────── helpers ─────────────────────────
@@ -540,7 +625,7 @@ def _db_place_order(cart: dict, user_data: dict) -> str | None:
 # ───────────────────────── message builders ─────────────────────────
 def _product_text(uid: int, p) -> str:
     lang = _get_state(uid).get('lang', 'am')
-    name = p['name']
+    name = _p_name(p, lang)
     price = _fmt_price(p['price'])
     compare = p.get('compare_price')
     stock = p.get('stock_quantity', 0)
@@ -573,13 +658,13 @@ def _product_keyboard(uid: int, pid: int, in_cart: bool = False,
         pp = products[idx - 1]
         prev_page = (idx - 1) // PRODUCTS_PER_PAGE
         nav.append(InlineKeyboardButton(
-            '◀️ ቀዳሚ' if lang == 'am' else '◀️ Prev',
+            _(uid, 'prev'),
             callback_data=_prod_cb(pp['id'], kind, cat_id, idx - 1, prev_page)))
     if 0 <= idx < len(products) - 1:
         np_ = products[idx + 1]
         next_page = (idx + 1) // PRODUCTS_PER_PAGE
         nav.append(InlineKeyboardButton(
-            'ቀጣይ ▶️' if lang == 'am' else 'Next ▶️',
+            _(uid, 'next'),
             callback_data=_prod_cb(np_['id'], kind, cat_id, idx + 1, next_page)))
     if nav:
         rows.append(nav)
@@ -598,17 +683,14 @@ def _product_keyboard(uid: int, pid: int, in_cart: bool = False,
     # ── View on website + Share ──────────────────────────────────────────────
     if site:
         product_url = f'https://{site}/product/{pid}'
-        view_lbl  = '🌐 ድህረ-ገጽ ላይ እይ' if lang == 'am' else '🌐 View on Website'
-        share_lbl = '📤 አጋራ' if lang == 'am' else '📤 Share'
         rows.append([
-            InlineKeyboardButton(view_lbl,  url=product_url),
-            InlineKeyboardButton(share_lbl, url=f'https://t.me/share/url?url={product_url}'),
+            InlineKeyboardButton(_(uid, 'view_website'), url=product_url),
+            InlineKeyboardButton(_(uid, 'share'), url=f'https://t.me/share/url?url={product_url}'),
         ])
 
     # ── Back to list + Cart ─────────────────────────────────────────────────
-    back_lbl = '◀️ ዝርዝር ተመለስ' if lang == 'am' else '◀️ Back to List'
     rows.append([
-        InlineKeyboardButton(back_lbl, callback_data=f'back_list:{kind}:{cat_id}:{page}'),
+        InlineKeyboardButton(_(uid, 'back_to_list'), callback_data=f'back_list:{kind}:{cat_id}:{page}'),
         InlineKeyboardButton('🛒 ' + _(uid, 'cart'), callback_data='menu:cart'),
     ])
     rows.append([InlineKeyboardButton(_(uid, 'main_menu'), callback_data='menu:home')])
@@ -620,7 +702,7 @@ def _cart_text(uid: int) -> str:
     cart = state.get('cart', {})
     if not cart:
         return _(uid, 'empty_cart')
-    
+    lang = state.get('lang', 'am')
     lines = [f"🛒 *{_(uid, 'cart')}*\n"]
     subtotal = 0.0
     for pid_str, qty in cart.items():
@@ -630,7 +712,7 @@ def _cart_text(uid: int) -> str:
         price = float(p['price'])
         line_total = price * qty
         subtotal += line_total
-        lines.append(f"• {p['name']} × {qty} = {_fmt_price(line_total)}")
+        lines.append(f"• {_p_name(p, lang)} × {qty} = {_fmt_price(line_total)}")
     
     shipping = 0 if subtotal >= FREE_SHIPPING else SHIPPING_COST
     lines.append(f"\n{_(uid,'subtotal')}: {_fmt_price(subtotal)}")
@@ -643,12 +725,14 @@ def _cart_text(uid: int) -> str:
 def _cart_keyboard(uid: int) -> InlineKeyboardMarkup:
     state = _get_state(uid)
     cart = state.get('cart', {})
+    lang = state.get('lang', 'am')
     rows = []
     for pid_str, qty in cart.items():
         p = _db_get_product(int(pid_str))
         if not p:
             continue
-        name = (p['name'][:18] + '…') if len(p['name']) > 18 else p['name']
+        nm = _p_name(p, lang)
+        name = (nm[:18] + '…') if len(nm) > 18 else nm
         rows.append([
             InlineKeyboardButton(f"➖", callback_data=f'cart:dec:{pid_str}'),
             InlineKeyboardButton(f"{name} ({qty})", callback_data=f'prod:{pid_str}'),
@@ -668,7 +752,6 @@ def _order_summary_text(uid: int) -> str:
     order = state.get('order', {})
     cart  = state.get('cart', {})
     lang  = state.get('lang', 'am')
-    am    = lang == 'am'
 
     items_lines = []
     subtotal = 0.0
@@ -677,7 +760,7 @@ def _order_summary_text(uid: int) -> str:
         if p:
             price = float(p['price'])
             subtotal += price * qty
-            items_lines.append(f"  • {p['name']} × {qty} — {_fmt_price(price * qty)}")
+            items_lines.append(f"  • {_p_name(p, lang)} × {qty} — {_fmt_price(price * qty)}")
 
     # Coupon discount
     coupon_pct  = int(order.get('coupon_discount', 0))
@@ -689,32 +772,29 @@ def _order_summary_text(uid: int) -> str:
     ship_label  = _(uid, 'free') if shipping == 0 else _fmt_price(shipping)
 
     lines = [
-        f"📋 *{'የትዕዛዝ ማጠቃለያ' if am else 'Order Summary'}*\n",
-        f"👤 {'ስም' if am else 'Name'}: {order.get('name','')}",
-        f"📱 {'ስልክ' if am else 'Phone'}: {order.get('phone','')}",
-        f"🏠 {'አድራሻ' if am else 'Address'}: {order.get('address','')}",
-        f"\n{'ምርቶች' if am else 'Items'}:",
+        f"📋 *{_(uid, 'order_summary_title')}*\n",
+        f"👤 {_(uid, 'order_name')}: {order.get('name','')}",
+        f"📱 {_(uid, 'order_phone')}: {order.get('phone','')}",
+        f"🏠 {_(uid, 'order_address')}: {order.get('address','')}",
+        f"\n{_(uid, 'order_items')}:",
         *items_lines,
         f"\n{_(uid,'subtotal')}: {_fmt_price(subtotal)}",
     ]
     if coupon_pct:
-        lines.append(f"🏷️ {'ቅናሽ' if am else 'Discount'} ({coupon_pct}%): −{_fmt_price(discount_amt)}")
+        lines.append(f"🏷️ {_(uid, 'order_discount')} ({coupon_pct}%): −{_fmt_price(discount_amt)}")
     lines += [
         f"{_(uid,'shipping')}: {ship_label}",
         f"*{_(uid,'total')}: {_fmt_price(total)}*",
     ]
     if order.get('coupon_code'):
-        lines.append(f"🎟️ {'ኩፖን' if am else 'Coupon'}: `{order['coupon_code']}`")
+        lines.append(f"🎟️ {_(uid, 'order_coupon')}: `{order['coupon_code']}`")
     return '\n'.join(lines)
 
 
 def _order_summary_keyboard(uid: int) -> InlineKeyboardMarkup:
-    lang = _get_state(uid).get('lang', 'am')
-    confirm = '✅ አረጋግጥ' if lang == 'am' else '✅ Confirm Order'
-    cancel  = '❌ ሰርዝ'  if lang == 'am' else '❌ Cancel'
     return InlineKeyboardMarkup([
-        [InlineKeyboardButton(confirm, callback_data='order:confirm'),
-         InlineKeyboardButton(cancel,  callback_data='order:cancel')],
+        [InlineKeyboardButton(_(uid, 'order_confirm'), callback_data='order:confirm'),
+         InlineKeyboardButton(_(uid, 'order_cancel_btn'), callback_data='order:cancel')],
     ])
 
 
@@ -769,6 +849,9 @@ async def cmd_start(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
         if lang == 'am':
             text = (f"👗 *እንኳን ደህና መጡ, {first_name}!*\n\n"
                     "ሰሚራ ፋሽን ላይ ምርቶቻችንን ይፈልጉ፣ ይዘዙ፣ ይከታተሉ።")
+        elif lang == 'ar':
+            text = (f"👗 *مرحباً بعودتك، {first_name}!*\n\n"
+                    "تصفح، اطلب وتابع مشترياتك في سميرا فاشن.")
         else:
             text = (f"👗 *Welcome back, {first_name}!*\n\n"
                     "Browse, order and track your purchases with ease.")
@@ -810,6 +893,21 @@ async def cmd_help(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
                 '/language — ቋንቋ ቀይር\n'
                 '/cancel — ወቅታዊ ምርጫ ሰርዝ\n'
                 '/start — ዋና ምናሌ')
+    elif lang == 'ar':
+        text = ('*🤖 بوت سميرا فاشن — الأوامر*\n\n'
+                '🛍️ *التسوق*\n'
+                '/products — تصفح المنتجات\n'
+                '/cart — سلتي\n'
+                '/track — تتبع طلب\n\n'
+                '👤 *الحساب*\n'
+                '/account — ملفي الشخصي\n'
+                '/orders — طلباتي\n'
+                '/wishlist — قائمة الأمنيات\n\n'
+                '📍 *المزيد*\n'
+                '/branches — فروعنا\n'
+                '/language — تغيير اللغة\n'
+                '/cancel — إلغاء الإجراء الحالي\n'
+                '/start — القائمة الرئيسية')
     else:
         text = ('*🤖 Semira Fashion Bot — Commands*\n\n'
                 '🛍️ *Shopping*\n'
@@ -947,7 +1045,7 @@ async def on_callback(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
             if not orders:
                 await _safe_edit_text(query, _(uid, 'no_orders'), reply_markup=_back_account(uid))
             else:
-                lines = [f"📦 *{'ትዕዛዞቼ' if lang=='am' else 'My Orders'}* ({len(orders)})\n"]
+                lines = [f"📦 *{_(uid, 'my_orders_title')}* ({len(orders)})\n"]
                 for o in orders:
                     num    = o.get('order_number', '')
                     status = o.get('status', '')
@@ -955,7 +1053,7 @@ async def on_callback(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
                     date   = o.get('created_at', '')
                     if date and hasattr(date, 'strftime'):
                         date = date.strftime('%Y-%m-%d')
-                    status_lbl = T['status_labels'][lang].get(status, status)
+                    status_lbl = _status_label(lang, status)
                     lines.append(f"🔢 `{num}` — {status_lbl}")
                     lines.append(f"   💰 {total}  |  🕐 {date}\n")
                 await _safe_edit_text(query, '\n'.join(lines),
@@ -1069,13 +1167,11 @@ def _products_page_kb_and_text(uid: int, products: list, page: int,
     lang   = _get_state(uid).get('lang', 'am')
 
     # Build items with full navigation context embedded in callback_data
-    all_items = [
-        (
-            (p['name'][:26] + '…') if len(p['name']) > 26 else p['name'],
-            _prod_cb(p['id'], kind, cid, i, i // PRODUCTS_PER_PAGE)
-        )
-        for i, p in enumerate(products)
-    ]
+    all_items = []
+    for i, p in enumerate(products):
+        nm = _p_name(p, lang)
+        label_btn = (nm[:26] + '…') if len(nm) > 26 else nm
+        all_items.append((label_btn, _prod_cb(p['id'], kind, cid, i, i // PRODUCTS_PER_PAGE)))
 
     title = {'all': '🛍️', 'new': '🆕', 'featured': '⭐', 'cat': '🗂️'}.get(kind, '🛍️')
     label = _(uid, kind if kind in T else 'products')
@@ -1086,23 +1182,18 @@ def _products_page_kb_and_text(uid: int, products: list, page: int,
     # First product on this page — identify it in the caption so the cover photo makes sense
     start = page * PRODUCTS_PER_PAGE
     page_products = products[start:start + PRODUCTS_PER_PAGE]
-    first_p = page_products[0] if page_products else None
     photo_url = None
     cover_name = ''
     for pp in page_products:
         url = _product_image_url(pp)
         if url:
             photo_url = url
-            cover_name = pp.get('name', '')
+            cover_name = _p_name(pp, lang)
             break
 
-    if lang == 'am':
-        hint = 'ምርቱን ለማየት ከታች ያለውን አዝራር ይጫኑ 👇'
-    else:
-        hint = 'Tap a product button below to view details 👇'
-
+    hint = _(uid, 'products_hint')
     cover_line = f'📸 _{cover_name}_\n' if cover_name else ''
-    text = f"{title} *{label}* {pg_info}\n{cover_line}_{total} {'ምርቶች' if lang=='am' else 'products'}_\n{hint}"
+    text = f"{title} *{label}* {pg_info}\n{cover_line}_{total} {_(uid, 'products_count')}_\n{hint}"
 
     kb = _paginated_keyboard(uid, all_items, page, prefix)
 
@@ -1205,7 +1296,9 @@ async def _edit_categories(query, uid: int, page: int = 0):
     if not cats:
         await _safe_edit_text(query, _(uid, 'no_cats'), reply_markup=_back_home(uid))
         return
-    items = [(c['name'], f'cat:{c["id"]}:page:0') for c in cats]
+    lang = _get_state(uid).get('lang', 'am')
+    items = [((c.get('name_am') or c['name']) if lang == 'am' else c['name'],
+              f'cat:{c["id"]}:page:0') for c in cats]
     kb = _paginated_keyboard(uid, items, page, 'catlist')
     await _safe_edit_text(query, _(uid, 'categories'),
                           parse_mode=ParseMode.MARKDOWN, reply_markup=kb)
@@ -1214,19 +1307,21 @@ async def _edit_categories(query, uid: int, page: int = 0):
 async def _show_language_menu(msg, uid: int):
     kb = InlineKeyboardMarkup([
         [InlineKeyboardButton('🇪🇹 አማርኛ', callback_data='lang:am'),
-         InlineKeyboardButton('🇬🇧 English', callback_data='lang:en')],
+         InlineKeyboardButton('🇬🇧 English', callback_data='lang:en'),
+         InlineKeyboardButton('🇸🇦 العربية', callback_data='lang:ar')],
         [InlineKeyboardButton(_(uid, 'main_menu'), callback_data='menu:home')],
     ])
-    await msg.reply_text('🌐 Language / ቋንቋ', reply_markup=kb)
+    await msg.reply_text('🌐 Language / ቋንቋ / اللغة', reply_markup=kb)
 
 
 async def _edit_language_menu(query, uid: int):
     kb = InlineKeyboardMarkup([
         [InlineKeyboardButton('🇪🇹 አማርኛ', callback_data='lang:am'),
-         InlineKeyboardButton('🇬🇧 English', callback_data='lang:en')],
+         InlineKeyboardButton('🇬🇧 English', callback_data='lang:en'),
+         InlineKeyboardButton('🇸🇦 العربية', callback_data='lang:ar')],
         [InlineKeyboardButton(_(uid, 'main_menu'), callback_data='menu:home')],
     ])
-    await _safe_edit_text(query, '🌐 Language / ቋንቋ', reply_markup=kb)
+    await _safe_edit_text(query, '🌐 Language / ቋንቋ / اللغة', reply_markup=kb)
 
 
 async def _handle_cart_action(query, uid: int, data: str, ctx):
@@ -1295,15 +1390,13 @@ async def on_search_input(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
         return ConversationHandler.END
     lang = _get_state(uid).get('lang', 'am')
     # Embed full context in search results so Prev/Next works
-    items = [
-        (
-            (p['name'][:26] + '…') if len(p['name']) > 26 else p['name'],
-            _prod_cb(p['id'], 'all', 0, i, 0)
-        )
-        for i, p in enumerate(results)
-    ]
+    items = []
+    for i, p in enumerate(results):
+        nm = _p_name(p, lang)
+        label_btn = (nm[:26] + '…') if len(nm) > 26 else nm
+        items.append((label_btn, _prod_cb(p['id'], 'all', 0, i, 0)))
     kb = _paginated_keyboard(uid, items, 0, 'search_res')
-    text = f"🔍 {'ውጤቶች' if lang=='am' else 'Results'} ({len(results)})"
+    text = f"🔍 {_(uid, 'search_results')} ({len(results)})"
     # Show first result's photo alongside the list
     photo_url = _product_image_url(results[0]) if results else None
     try:
@@ -1377,24 +1470,24 @@ async def on_track_input(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
 
     lang = _get_state(uid).get('lang', 'am')
     status_raw = order.get('status', 'Pending')
-    status_label = T['status_labels'][lang].get(status_raw, status_raw)
+    status_lbl = _status_label(lang, status_raw)
     items = _db_get_order_items(order['id'])
     items_lines = [f"  • {it.get('product_name', it.get('name','?'))} × {it.get('quantity',1)}"
                    for it in (items or [])]
-    
+
     created = order.get('created_at', '')
     if created and hasattr(created, 'strftime'):
         created = created.strftime('%Y-%m-%d %H:%M')
 
     lines = [
-        f"📦 *{'ትዕዛዝ ዝርዝር' if lang=='am' else 'Order Details'}*\n",
-        f"🔢 {'ቁጥር' if lang=='am' else 'Number'}: `{order.get('order_number','')}`",
-        f"📊 {'ሁኔታ' if lang=='am' else 'Status'}: {status_label}",
-        f"💰 {'ጠቅላላ' if lang=='am' else 'Total'}: {_fmt_price(order.get('total', order.get('total_amount', 0)))}",
-        f"🕐 {'ቀን' if lang=='am' else 'Date'}: {created}",
+        f"📦 *{_(uid, 'order_detail_title')}*\n",
+        f"🔢 {_(uid, 'order_number_label')}: `{order.get('order_number','')}`",
+        f"📊 {_(uid, 'order_status')}: {status_lbl}",
+        f"💰 {_(uid, 'order_total')}: {_fmt_price(order.get('total', order.get('total_amount', 0)))}",
+        f"🕐 {_(uid, 'order_date')}: {created}",
     ]
     if items_lines:
-        lines.append(f"\n{'ምርቶች' if lang=='am' else 'Items'}:")
+        lines.append(f"\n{_(uid, 'order_items')}:")
         lines.extend(items_lines)
 
     await update.message.reply_text('\n'.join(lines), parse_mode=ParseMode.MARKDOWN,
@@ -1411,9 +1504,8 @@ async def _confirm_order(query, uid: int, ctx):
     order_number = _db_place_order(cart, order_data)
     if order_number:
         state['cart'] = {}  # clear cart
-        lang = state.get('lang', 'am')
         text = (_(uid, 'order_ok') +
-                f"\n\n🔢 {'ትዕዛዝ ቁጥር' if lang=='am' else 'Order #'}: `{order_number}`")
+                f"\n\n🔢 {_(uid, 'order_number_title')}: `{order_number}`")
         await _safe_edit_text(query, text, parse_mode=ParseMode.MARKDOWN,
                               reply_markup=_main_menu_keyboard(uid))
         # Notify admin
@@ -1453,8 +1545,6 @@ async def _notify_admin_new_order(ctx, uid: int, order_number, order_data: dict,
 
 def _build_profile_text_kb(uid: int, profile: dict) -> tuple:
     """Build (text, keyboard) for a registered user's profile view."""
-    lang   = _get_state(uid).get('lang', 'am')
-    am     = lang == 'am'
     name   = profile.get('full_name') or '—'
     ph     = profile.get('phone') or '—'
     email  = profile.get('email') or '—'
@@ -1465,17 +1555,17 @@ def _build_profile_text_kb(uid: int, profile: dict) -> tuple:
         since = since.strftime('%Y-%m-%d')
 
     lines = [
-        f"👤 *{'መለያዬ' if am else 'My Account'}*\n",
-        f"📝 {'ስም' if am else 'Name'}:  {name}",
-        f"📱 {'ስልክ' if am else 'Phone'}:  `{ph}`",
-        f"📧 {'ኢሜል' if am else 'Email'}:  {email}",
+        f"{_(uid, 'prof_title')}\n",
+        f"{_(uid, 'prof_name')}:  {name}",
+        f"{_(uid, 'prof_phone')}:  `{ph}`",
+        f"{_(uid, 'prof_email')}:  {email}",
         f"",
-        f"📦 {'ትዕዛዞች' if am else 'Orders'}:  {orders}",
-        f"🌟 {'ነጥቦች' if am else 'Loyalty pts'}:  {points}",
-        f"🏷️ {'ቅናሽ' if am else 'Discount'}:  10% ✅",
+        f"{_(uid, 'prof_orders')}:  {orders}",
+        f"{_(uid, 'prof_points')}:  {points}",
+        f"{_(uid, 'prof_discount')}:  10% ✅",
     ]
     if since:
-        lines.append(f"📅 {'ተመዝግቦ' if am else 'Since'}:  {since}")
+        lines.append(f"{_(uid, 'prof_since')}:  {since}")
 
     kb = InlineKeyboardMarkup([
         [InlineKeyboardButton(_(uid, 'prof_edit_name'),  callback_data='account:edit_name'),
@@ -1557,7 +1647,8 @@ async def _show_wishlist(query, uid: int):
         p = _db_get_product(pid)
         if not p:
             continue
-        name = (p['name'][:24] + '…') if len(p['name']) > 24 else p['name']
+        nm = _p_name(p, lang)
+        name = (nm[:24] + '…') if len(nm) > 24 else nm
         price = _fmt_price(p['price'])
         rows.append([
             InlineKeyboardButton(f"{name} — {price}",
@@ -1565,23 +1656,33 @@ async def _show_wishlist(query, uid: int):
             InlineKeyboardButton('💔', callback_data=f'wish:toggle:{pid}'),
         ])
     rows.append([InlineKeyboardButton(_(uid, 'main_menu'), callback_data='menu:home')])
-    title = '💝 *ምኞቴ ዝርዝር*' if lang == 'am' else '💝 *My Wishlist*'
-    hint  = '_ምርቱን ለማየት ስሙን ይጫኑ | 💔 ለማስወጣት_' if lang == 'am' else '_Tap name to view | 💔 to remove_'
+    title = f"💝 *{_(uid, 'wishlist_title')}*"
+    hint  = f"_{_(uid, 'wishlist_hint')}_"
     await _safe_edit_text(query, f"{title}\n{hint}", parse_mode=ParseMode.MARKDOWN,
                           reply_markup=InlineKeyboardMarkup(rows))
 
 
 # ── branches display ──
+def _branch_display_name(b: dict, lang: str) -> str:
+    if lang == 'am':
+        return b.get('name_am') or b.get('name') or ''
+    return b.get('name') or b.get('name_am') or ''
+
+def _branch_display_address(b: dict, lang: str) -> str:
+    if lang == 'am':
+        return b.get('address_am') or b.get('address') or ''
+    return b.get('address') or b.get('address_am') or ''
+
 async def _show_branches(query, uid: int):
     branches = _db_get_branches()
     lang = _get_state(uid).get('lang', 'am')
     if not branches:
         await _safe_edit_text(query, _(uid, 'no_branches'), reply_markup=_back_home(uid))
         return
-    lines = [f"🏪 *{'ቅርንጫፎቻችን' if lang=='am' else 'Our Branches'}*\n"]
+    lines = [f"🏪 *{_(uid, 'branches_title')}*\n"]
     for b in branches:
-        name    = b.get('name_am') or b.get('name') or ''
-        address = b.get('address_am') or b.get('address') or ''
+        name    = _branch_display_name(b, lang)
+        address = _branch_display_address(b, lang)
         phone   = b.get('phone') or ''
         hours   = b.get('working_hours') or ''
         lines.append(f"📍 *{name}*")
@@ -1604,7 +1705,7 @@ async def on_orders_phone_input(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
     if profile:
         _get_state(uid)['reg_phone'] = phone
         await update.message.reply_text(
-            f"✅ {'መለያ ተገናኝቷል! 10% ቅናሽ ይሰጥዎታል።' if lang=='am' else 'Account linked! 10% discount applied.'}",
+            f"✅ {_(uid, 'account_linked')}",
             reply_markup=_main_menu_keyboard(uid)
         )
         return ConversationHandler.END
@@ -1613,7 +1714,7 @@ async def on_orders_phone_input(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
     if not orders:
         await update.message.reply_text(_(uid, 'no_orders'), reply_markup=_main_menu_keyboard(uid))
         return ConversationHandler.END
-    lines = [f"📦 *{'ትዕዛዞቼ' if lang=='am' else 'My Orders'}* ({len(orders)})\n"]
+    lines = [f"📦 *{_(uid, 'my_orders_title')}* ({len(orders)})\n"]
     for o in orders:
         num    = o.get('order_number', '')
         status = o.get('status', '')
@@ -1621,7 +1722,7 @@ async def on_orders_phone_input(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
         date   = o.get('created_at', '')
         if date and hasattr(date, 'strftime'):
             date = date.strftime('%Y-%m-%d')
-        status_lbl = T['status_labels'][lang].get(status, status)
+        status_lbl = _status_label(lang, status)
         lines.append(f"🔢 `{num}` — {status_lbl}")
         lines.append(f"   💰 {total}  |  🕐 {date}\n")
     await update.message.reply_text('\n'.join(lines), parse_mode=ParseMode.MARKDOWN,
@@ -1723,7 +1824,7 @@ async def cmd_orders(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
         if not orders:
             await update.message.reply_text(_(uid, 'no_orders'), reply_markup=_main_menu_keyboard(uid))
         else:
-            lines = [f"📦 *{'ትዕዛዞቼ' if lang=='am' else 'My Orders'}* ({len(orders)})\n"]
+            lines = [f"📦 *{_(uid, 'my_orders_title')}* ({len(orders)})\n"]
             for o in orders:
                 num    = o.get('order_number', '')
                 status = o.get('status', '')
@@ -1731,7 +1832,7 @@ async def cmd_orders(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
                 date   = o.get('created_at', '')
                 if date and hasattr(date, 'strftime'):
                     date = date.strftime('%Y-%m-%d')
-                status_lbl = T['status_labels'][lang].get(status, status)
+                status_lbl = _status_label(lang, status)
                 lines.append(f"🔢 `{num}` — {status_lbl}")
                 lines.append(f"   💰 {total}  |  🕐 {date}\n")
             await update.message.reply_text('\n'.join(lines), parse_mode=ParseMode.MARKDOWN,
@@ -1744,8 +1845,8 @@ async def cmd_orders(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
 
 async def cmd_wishlist(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
     uid  = update.effective_user.id
-    wl   = _get_state(uid).get('wishlist', [])
     lang = _get_state(uid).get('lang', 'am')
+    wl   = _get_state(uid).get('wishlist', [])
     if not wl:
         await update.message.reply_text(_(uid, 'empty_wish'), reply_markup=_back_home(uid))
         return ConversationHandler.END
@@ -1754,15 +1855,16 @@ async def cmd_wishlist(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
         p = _db_get_product(pid)
         if not p:
             continue
-        name  = (p['name'][:24] + '…') if len(p['name']) > 24 else p['name']
+        nm    = _p_name(p, lang)
+        name  = (nm[:24] + '…') if len(nm) > 24 else nm
         price = _fmt_price(p['price'])
         rows.append([
             InlineKeyboardButton(f"{name} — {price}", callback_data=_prod_cb(pid, 'all', 0, -1, 0)),
             InlineKeyboardButton('💔', callback_data=f'wish:toggle:{pid}'),
         ])
     rows.append([InlineKeyboardButton(_(uid, 'main_menu'), callback_data='menu:home')])
-    title = '💝 *ምኞቴ ዝርዝር*' if lang == 'am' else '💝 *My Wishlist*'
-    hint  = '_ምርቱን ለማየት ስሙን ይጫኑ | 💔 ለማስወጣት_' if lang == 'am' else '_Tap name to view | 💔 to remove_'
+    title = f"💝 *{_(uid, 'wishlist_title')}*"
+    hint  = f"_{_(uid, 'wishlist_hint')}_"
     await update.message.reply_text(f"{title}\n{hint}", parse_mode=ParseMode.MARKDOWN,
                                     reply_markup=InlineKeyboardMarkup(rows))
     return ConversationHandler.END
@@ -1775,10 +1877,10 @@ async def cmd_branches(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
     if not branches:
         await update.message.reply_text(_(uid, 'no_branches'), reply_markup=_back_home(uid))
         return ConversationHandler.END
-    lines = [f"🏪 *{'ቅርንጫፎቻችን' if lang=='am' else 'Our Branches'}*\n"]
+    lines = [f"🏪 *{_(uid, 'branches_title')}*\n"]
     for b in branches:
-        name    = b.get('name_am') or b.get('name') or ''
-        address = b.get('address_am') or b.get('address') or ''
+        name    = _branch_display_name(b, lang)
+        address = _branch_display_address(b, lang)
         phone   = b.get('phone') or ''
         hours   = b.get('working_hours') or ''
         lines.append(f"📍 *{name}*")
@@ -1794,9 +1896,7 @@ async def cmd_branches(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
 # ── fallback for unexpected text ──
 async def on_unknown_text(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
     uid = update.effective_user.id
-    lang = _get_state(uid).get('lang', 'am')
-    hint = '❓ ያልታወቀ ትዕዛዝ። /start ይጠቀሙ።' if lang == 'am' else '❓ Unknown command. Use /start.'
-    await update.message.reply_text(hint, reply_markup=_main_menu_keyboard(uid))
+    await update.message.reply_text(_(uid, 'unknown_cmd'), reply_markup=_main_menu_keyboard(uid))
     return ConversationHandler.END
 
 
