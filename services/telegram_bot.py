@@ -246,6 +246,18 @@ T = {
     'order_date':    {'am': 'ቀን',    'en': 'Date',    'ar': 'التاريخ'},
     'order_confirm': {'am': '✅ አረጋግጥ','en': '✅ Confirm Order','ar': '✅ تأكيد الطلب'},
     'order_cancel_btn':{'am': '❌ ሰርዝ','en': '❌ Cancel','ar': '❌ إلغاء'},
+    'order_edit_btn':  {'am': '✏️ ቅርጫት አስተካክል','en': '✏️ Edit Cart','ar': '✏️ تعديل السلة'},
+    'track_my_order':  {'am': '📦 ትዕዛዜን ክትትል','en': '📦 Track My Order','ar': '📦 تتبع طلبي'},
+    'phone_invalid':   {'am': '❌ ልክ ያልሆነ ስልክ ቁጥር። ዳግም ይሞክሩ (ምሳሌ: 0911234567 ወይም +251911234567):',
+                        'en': '❌ Invalid phone number. Try again (e.g. 0911234567 or +251911234567):',
+                        'ar': '❌ رقم هاتف غير صحيح. حاول مجدداً (مثال: 0911234567 أو +251911234567):'},
+    'name_too_short':  {'am': '❌ ስምዎ ቢያንስ 2 ፊደላት ሊኖሩት ይገባል። ዳግም ይሞክሩ:',
+                        'en': '❌ Name must be at least 2 characters. Try again:',
+                        'ar': '❌ يجب أن يحتوي الاسم على حرفين على الأقل. حاول مجدداً:'},
+    'addr_too_short':  {'am': '❌ አድራሻ ቢያንስ 5 ፊደላት ሊኖሩት ይገባል። ዳግም ይሞክሩ:',
+                        'en': '❌ Address must be at least 5 characters. Try again:',
+                        'ar': '❌ يجب أن يحتوي العنوان على 5 أحرف على الأقل. حاول مجدداً:'},
+    'open_website':    {'am': '🌐 ድህረ-ገጽ ክፈት','en': '🌐 Open Website','ar': '🌐 فتح الموقع'},
     'my_orders_title':{'am': 'ትዕዛዞቼ', 'en': 'My Orders','ar': 'طلباتي'},
     'branches_title': {'am': 'ቅርንጫፎቻችን','en': 'Our Branches','ar': 'فروعنا'},
     'wishlist_title': {'am': 'ምኞቴ ዝርዝር','en': 'My Wishlist','ar': 'قائمة أمنياتي'},
@@ -348,6 +360,10 @@ def _main_menu_keyboard(uid: int) -> InlineKeyboardMarkup:
          InlineKeyboardButton(t('contact'),    callback_data='menu:contact')],
         [InlineKeyboardButton(t('language'),   callback_data='menu:language')],
     ]
+    # Add website button if URL is available
+    site = os.environ.get('REPLIT_DEV_DOMAIN', '') or SITE_URL
+    if site:
+        rows.append([InlineKeyboardButton(t('open_website'), url=f'https://{site}')])
     return InlineKeyboardMarkup(rows)
 
 
@@ -793,7 +809,8 @@ def _order_summary_text(uid: int) -> str:
 
 def _order_summary_keyboard(uid: int) -> InlineKeyboardMarkup:
     return InlineKeyboardMarkup([
-        [InlineKeyboardButton(_(uid, 'order_confirm'), callback_data='order:confirm'),
+        [InlineKeyboardButton(_(uid, 'order_confirm'), callback_data='order:confirm')],
+        [InlineKeyboardButton(_(uid, 'order_edit_btn'), callback_data='order:edit'),
          InlineKeyboardButton(_(uid, 'order_cancel_btn'), callback_data='order:cancel')],
     ])
 
@@ -1132,17 +1149,15 @@ async def on_callback(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
         await _edit_products_page(query, uid, page, kind,
                                   cat_id=cat_id if cat_id else None)
 
-    # ── cart actions ──
-    elif data.startswith('cart:'):
-        await _handle_cart_action(query, uid, data, ctx)
-
-    # ── order flow ──
+    # ── order flow (must come BEFORE the generic cart: catch-all) ──
     elif data == 'cart:checkout':
         cart = _get_state(uid).get('cart', {})
         if not cart:
             await _safe_edit_text(query, _(uid, 'empty_cart'),
                                   reply_markup=_back_home(uid))
             return ConversationHandler.END
+        # Clear any stale order data before starting fresh
+        _get_state(uid)['order'] = {}
         await _safe_edit_text(query, _(uid, 'name_prompt'),
                               reply_markup=_back_home(uid))
         return AWAIT_NAME
@@ -1154,6 +1169,16 @@ async def on_callback(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
         await _safe_edit_text(query, _(uid, 'cancelled'),
                               reply_markup=_main_menu_keyboard(uid))
         return ConversationHandler.END
+
+    elif data == 'order:edit':
+        # Let user go back to cart to edit before re-checking out
+        await _safe_edit_text(query, _cart_text(uid), parse_mode=ParseMode.MARKDOWN,
+                              reply_markup=_cart_keyboard(uid))
+        return ConversationHandler.END
+
+    # ── cart actions ──
+    elif data.startswith('cart:'):
+        await _handle_cart_action(query, uid, data, ctx)
 
     return ConversationHandler.END
 
@@ -1413,31 +1438,19 @@ async def on_search_input(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
 async def on_name_input(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
     uid = update.effective_user.id
     name = update.message.text.strip()
+    if len(name) < 2:
+        await update.message.reply_text(_(uid, 'name_too_short'))
+        return AWAIT_NAME
     _get_state(uid).setdefault('order', {})['name'] = name
     await update.message.reply_text(_(uid, 'phone_prompt'))
     return AWAIT_PHONE
 
 
-async def on_phone_input(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
-    uid = update.effective_user.id
-    phone = update.message.text.strip()
-    _get_state(uid).setdefault('order', {})['phone'] = phone
-    await update.message.reply_text(_(uid, 'addr_prompt'))
-    return AWAIT_ADDRESS
-
-
-async def on_address_input(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
-    uid = update.effective_user.id
-    address = update.message.text.strip()
-    state = _get_state(uid)
-    state.setdefault('order', {})['address'] = address
-    state['order']['username'] = state.get('username', str(uid))
-    # Ask for coupon code before showing summary
-    await update.message.reply_text(_(uid, 'coupon_prompt'), reply_markup=_back_home(uid))
-    return AWAIT_COUPON
-
-
-async def on_coupon_input(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
+def _is_valid_phone(phone: str) -> bool:
+    """Accept Ethiopian-style phone numbers: 09xxxxxxxx, +251xxxxxxxxx, 251xxxxxxxxx."""
+    import re
+    cleaned = re.sub(r'[\s\-\(\)]', '', phone)
+    return bool(re.match(r'^(?:(?:\+251|251)[7-9]\d{8}|0[7-9]\d{8})
     uid  = update.effective_user.id
     text = update.message.text.strip()
     state = _get_state(uid)
@@ -1498,16 +1511,25 @@ async def on_track_input(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
 async def _confirm_order(query, uid: int, ctx):
     state = _get_state(uid)
     cart = state.get('cart', {})
+    if not cart:
+        await _safe_edit_text(query, _(uid, 'empty_cart'),
+                              reply_markup=_main_menu_keyboard(uid))
+        return ConversationHandler.END
     order_data = state.get('order', {})
     order_data['username'] = state.get('username', str(uid))
 
     order_number = _db_place_order(cart, order_data)
     if order_number:
-        state['cart'] = {}  # clear cart
+        state['cart'] = {}   # clear cart
+        state['order'] = {}  # clear order draft
         text = (_(uid, 'order_ok') +
-                f"\n\n🔢 {_(uid, 'order_number_title')}: `{order_number}`")
-        await _safe_edit_text(query, text, parse_mode=ParseMode.MARKDOWN,
-                              reply_markup=_main_menu_keyboard(uid))
+                f"\n\n🔢 {_(uid, 'order_number_title')}: `{order_number}`\n\n"
+                f"_{_(uid, 'track_prompt')}_")
+        kb = InlineKeyboardMarkup([
+            [InlineKeyboardButton(_(uid, 'track_my_order'), callback_data='menu:track')],
+            [InlineKeyboardButton(_(uid, 'main_menu'), callback_data='menu:home')],
+        ])
+        await _safe_edit_text(query, text, parse_mode=ParseMode.MARKDOWN, reply_markup=kb)
         # Notify admin
         await _notify_admin_new_order(ctx, uid, order_number, order_data, cart)
     else:
