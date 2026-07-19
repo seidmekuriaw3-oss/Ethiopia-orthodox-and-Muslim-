@@ -379,10 +379,15 @@ def _main_menu_keyboard(uid: int) -> InlineKeyboardMarkup:
     def t(k): return _(uid, k)
     site = os.environ.get('REPLIT_DEV_DOMAIN', '') or SITE_URL
     rows = []
-    # Website button — prominent at the very top
+    # Website button — prominent at the very top with SSO magic link
     if site:
+        magic_token = _db_generate_magic_token(uid)
+        if magic_token:
+            webapp_url = f'https://{site}/auth/telegram?tg_id={uid}&token={magic_token}'
+        else:
+            webapp_url = f'https://{site}'
         rows.append([InlineKeyboardButton(
-            '🌐 ' + t('open_webapp'), url=f'https://{site}'
+            '🌐 ' + t('open_webapp'), url=webapp_url
         )])
     rows += [
         [InlineKeyboardButton(t('products'),   callback_data='menu:products'),
@@ -623,6 +628,105 @@ def _db_check_coupon(code: str) -> dict | None:
 def _db_get_user_by_phone_link(phone: str) -> dict | None:
     """Look up a user by phone for linking (same as get_profile but lighter)."""
     return _db_get_user_profile(phone)
+
+
+# ── Telegram SSO helpers ──────────────────────────────────────────────────
+
+def _db_upsert_telegram_user(tg_id: int, tg_username: str | None,
+                              full_name: str | None) -> int | None:
+    """
+    Ensure a users row exists for this Telegram account.
+    - If a row with this telegram_id already exists → update name/username, return id.
+    - Otherwise create a minimal row (Telegram-only account) → return new id.
+    Returns the users.id on success, None on error.
+    """
+    from database.db import get_db, commit_or_rollback
+    from werkzeug.security import generate_password_hash
+    import secrets as _secrets
+    db = get_db()
+    tg_id_str = str(tg_id)
+    try:
+        # 1. Check existing by telegram_id
+        row = db.execute(
+            "SELECT id FROM users WHERE telegram_id = %s LIMIT 1", (tg_id_str,)
+        ).fetchone()
+        if row:
+            user_id = row['id']
+            db.execute(
+                "UPDATE users SET updated_at = NOW() WHERE id = %s",
+                (user_id,)
+            )
+            commit_or_rollback(db)
+            return user_id
+
+        # 2. Create new Telegram-only user
+        fake_email    = f"tg_{tg_id}@telegram.semira.fashion"
+        fake_username = tg_username or f"tg_{tg_id}"
+        display_name  = full_name or tg_username or f"Telegram {tg_id}"
+        # Random strong password — not used for login (SSO only)
+        pw_hash = generate_password_hash(_secrets.token_hex(24))
+
+        cur = db.execute(
+            """INSERT INTO users
+               (username, email, password_hash, full_name, telegram_id,
+                is_admin, is_active, created_at, updated_at)
+               VALUES (%s, %s, %s, %s, %s, 0, 1, NOW(), NOW())
+               ON CONFLICT (telegram_id) DO UPDATE
+                 SET updated_at = NOW()
+               RETURNING id""",
+            (fake_username, fake_email, pw_hash, display_name, tg_id_str)
+        )
+        result = cur.fetchone()
+        commit_or_rollback(db)
+        return result['id'] if result else None
+    except Exception as e:
+        log.error("[TgSSO] _db_upsert_telegram_user error: %s", e)
+        return None
+
+
+def _db_link_phone_to_telegram(tg_id: int, phone: str) -> None:
+    """Once the user provides their phone in the bot, save it to their users row."""
+    from database.db import get_db, commit_or_rollback
+    db = get_db()
+    tg_id_str = str(tg_id)
+    try:
+        db.execute(
+            "UPDATE users SET phone = %s, updated_at = NOW() WHERE telegram_id = %s AND is_admin = 0",
+            (phone.strip(), tg_id_str)
+        )
+        commit_or_rollback(db)
+    except Exception as e:
+        log.warning("[TgSSO] _db_link_phone_to_telegram error: %s", e)
+
+
+def _db_generate_magic_token(tg_id: int) -> str | None:
+    """
+    Generate a cryptographically-secure one-time token for this Telegram user,
+    store it with a 15-minute expiry, and return the raw token string.
+    Returns None if the user row does not exist yet.
+    """
+    from database.db import get_db, commit_or_rollback
+    from datetime import timedelta
+    import secrets as _secrets
+    db = get_db()
+    tg_id_str = str(tg_id)
+    try:
+        token = _secrets.token_urlsafe(32)
+        expires = datetime.utcnow() + timedelta(minutes=15)
+        rows = db.execute(
+            """UPDATE users
+               SET telegram_token = %s, telegram_token_expires = %s
+               WHERE telegram_id = %s AND is_active = 1
+               RETURNING id""",
+            (token, expires, tg_id_str)
+        ).fetchone()
+        if not rows:
+            return None
+        commit_or_rollback(db)
+        return token
+    except Exception as e:
+        log.warning("[TgSSO] _db_generate_magic_token error: %s", e)
+        return None
 
 def _db_place_order(cart: dict, user_data: dict) -> str | None:
     """Place an order, return order number or None on failure."""
@@ -898,6 +1002,14 @@ async def cmd_start(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
     uid = update.effective_user.id
     state = _get_state(uid)
     state['username'] = update.effective_user.username or str(uid)
+
+    # ── Ensure a users row exists for this Telegram account (SSO) ──
+    tg_user = update.effective_user
+    _db_upsert_telegram_user(
+        tg_id=uid,
+        tg_username=tg_user.username,
+        full_name=tg_user.full_name or tg_user.first_name,
+    )
 
     # Personalized greeting if the user already linked an account
     phone   = state.get('reg_phone', '')
@@ -2197,6 +2309,8 @@ async def on_phone_input(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_text(_(uid, 'phone_invalid'))
         return AWAIT_PHONE
     _get_state(uid).setdefault('order', {})['phone'] = phone
+    # Link phone to Telegram user row so SSO profile is complete
+    _db_link_phone_to_telegram(uid, phone)
     await update.message.reply_text(_(uid, 'addr_prompt'))
     return AWAIT_ADDRESS
 

@@ -157,6 +157,17 @@ def close_db(e=None):
             pass
 
 
+def _safe_add_columns(cur, table: str, columns: list):
+    """Add columns to an existing table if they do not already exist (idempotent)."""
+    for col_name, col_def in columns:
+        try:
+            cur.execute(
+                f"ALTER TABLE {table} ADD COLUMN IF NOT EXISTS {col_name} {col_def}"
+            )
+        except Exception:
+            pass  # Column already exists or other non-fatal error
+
+
 def init_db():
     """Create all tables and seed default data (PostgreSQL DDL)."""
     conn = _raw_connect()
@@ -178,6 +189,21 @@ def init_db():
             updated_at TIMESTAMP DEFAULT NOW(),
             last_login TIMESTAMP
         )
+    """)
+
+    # ── Idempotent column additions (safe to run on every startup) ──
+    _safe_add_columns(cur, 'users', [
+        ('loyalty_points',          'INTEGER DEFAULT 0'),
+        ('profile_photo',           'TEXT'),
+        ('telegram_id',             'TEXT'),
+        ('telegram_token',          'TEXT'),
+        ('telegram_token_expires',  'TIMESTAMP'),
+    ])
+    # Unique index for telegram_id (CREATE INDEX IF NOT EXISTS is idempotent)
+    cur.execute("""
+        CREATE UNIQUE INDEX IF NOT EXISTS users_telegram_id_uq
+        ON users (telegram_id)
+        WHERE telegram_id IS NOT NULL
     """)
 
     cur.execute("""
