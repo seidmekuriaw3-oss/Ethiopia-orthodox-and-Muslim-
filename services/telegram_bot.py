@@ -589,67 +589,109 @@ def _db_register_user(name: str, phone: str, email: str | None, password: str,
         conn.close()
 
 def _db_user_exists_by_phone(phone: str) -> bool:
-    from database.db import get_db
-    db = get_db()
-    row = db.execute(
-        "SELECT id FROM users WHERE phone=%s AND is_admin=0", (phone.strip(),)
-    ).fetchone()
-    return row is not None
+    """Check whether a customer row with this phone exists.
+    Uses _sso_conn() (owns + closes its connection) so it works safely
+    from both Flask request threads and the bot's asyncio thread.
+    """
+    import psycopg2.extras
+    conn = _sso_conn()
+    try:
+        with conn.cursor(cursor_factory=psycopg2.extras.DictCursor) as cur:
+            cur.execute(
+                "SELECT id FROM users WHERE phone=%s AND is_admin=0 LIMIT 1",
+                (phone.strip(),)
+            )
+            return cur.fetchone() is not None
+    except Exception as e:
+        log.warning("[DB] _db_user_exists_by_phone error: %s", e)
+        return False
+    finally:
+        conn.close()
+
 
 def _db_get_user_profile(phone: str) -> dict | None:
-    """Return full profile dict for a customer by phone, including order stats."""
-    from database.db import get_db
-    db = get_db()
+    """Return full profile dict for a customer by phone, including order count.
+    Uses _sso_conn() so it is safe on the bot's asyncio thread (no Flask g).
+    """
+    import psycopg2.extras
     phone = phone.strip()
-    row = db.execute(
-        "SELECT id, full_name, phone, email, loyalty_points, created_at, profile_photo "
-        "FROM users WHERE (phone=%s OR phone=%s) AND is_admin=0 LIMIT 1",
-        (phone, phone.lstrip('+'))
-    ).fetchone()
-    if not row:
-        return None
-    profile = dict(row)
-    # order count
+    conn = _sso_conn()
     try:
-        cnt = db.execute(
-            "SELECT COUNT(*) FROM orders WHERE user_id=%s", (profile['id'],)
-        ).fetchone()
-        profile['order_count'] = int(cnt[0]) if cnt else 0
-    except Exception:
-        profile['order_count'] = 0
-    return profile
+        with conn.cursor(cursor_factory=psycopg2.extras.DictCursor) as cur:
+            cur.execute(
+                "SELECT id, full_name, phone, email, loyalty_points, "
+                "       created_at, profile_photo "
+                "FROM users "
+                "WHERE (phone=%s OR phone=%s) AND is_admin=0 LIMIT 1",
+                (phone, phone.lstrip('+'))
+            )
+            row = cur.fetchone()
+        if not row:
+            return None
+        profile = dict(row)
+        # attach order count using same open connection
+        try:
+            with conn.cursor() as cur2:
+                cur2.execute(
+                    "SELECT COUNT(*) FROM orders WHERE user_id=%s",
+                    (profile['id'],)
+                )
+                cnt = cur2.fetchone()
+                profile['order_count'] = int(cnt[0]) if cnt else 0
+        except Exception:
+            profile['order_count'] = 0
+        return profile
+    except Exception as e:
+        log.warning("[DB] _db_get_user_profile error: %s", e)
+        return None
+    finally:
+        conn.close()
+
 
 def _db_update_user_field(phone: str, field: str, value: str) -> bool:
-    """Update a single safe field on the users table by phone. Returns True on success."""
+    """Update a single safe field on the users table by phone.
+    Uses _sso_conn() so it is safe on the bot's asyncio thread (no Flask g).
+    Returns True on success.
+    """
     allowed = {'full_name', 'phone'}
     if field not in allowed:
         return False
-    from database.db import get_db, commit_or_rollback
-    db = get_db()
+    conn = _sso_conn()
     try:
-        db.execute(
-            f"UPDATE users SET {field}=%s, updated_at=NOW() WHERE phone=%s AND is_admin=0",
-            (value.strip(), phone.strip())
-        )
-        commit_or_rollback(db)
+        with conn.cursor() as cur:
+            cur.execute(
+                f"UPDATE users SET {field}=%s, updated_at=NOW() "
+                f"WHERE phone=%s AND is_admin=0",
+                (value.strip(), phone.strip())
+            )
+        conn.commit()
+        log.info("[UpdateUser] %s updated for phone=%s", field, phone)
         return True
     except Exception as e:
-        log.error(f"[UpdateUser] {e}")
+        conn.rollback()
+        log.error("[UpdateUser] %s", e)
         return False
+    finally:
+        conn.close()
+
 
 def _db_check_coupon(code: str) -> dict | None:
-    """Validate a coupon code. Returns {'discount_percent': N, 'id': id} or None."""
-    from database.db import get_db
-    db = get_db()
+    """Validate a coupon code. Returns {'discount_percent': N, 'id': id} or None.
+    Uses _sso_conn() so it is safe on the bot's asyncio thread (no Flask g).
+    """
+    import psycopg2.extras
+    conn = _sso_conn()
     try:
-        row = db.execute(
-            """SELECT id, discount_type, discount_value FROM coupons
-               WHERE code = %s AND is_active = 1
-                 AND (valid_to IS NULL OR valid_to > NOW())
-                 AND (usage_limit IS NULL OR used_count < usage_limit)
-               LIMIT 1""",
-            (code.strip().upper(),)
-        ).fetchone()
+        with conn.cursor(cursor_factory=psycopg2.extras.DictCursor) as cur:
+            cur.execute(
+                """SELECT id, discount_type, discount_value FROM coupons
+                   WHERE code = %s AND is_active = 1
+                     AND (valid_to IS NULL OR valid_to > NOW())
+                     AND (usage_limit IS NULL OR used_count < usage_limit)
+                   LIMIT 1""",
+                (code.strip().upper(),)
+            )
+            row = cur.fetchone()
         if not row:
             return None
         r = dict(row)
@@ -660,8 +702,10 @@ def _db_check_coupon(code: str) -> dict | None:
             r['discount_percent'] = 0  # fixed-amount coupons not shown as % in bot
         return r
     except Exception as e:
-        log.warning(f"[Coupon] {e}")
+        log.warning("[Coupon] %s", e)
         return None
+    finally:
+        conn.close()
 
 
 def _db_get_user_by_phone_link(phone: str) -> dict | None:

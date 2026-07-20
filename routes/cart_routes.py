@@ -728,24 +728,57 @@ def place_order():
             pass
 
         # ── Telegram order notification (Web→Bot sync) ───────────────────
+        # Two-step lookup mirrors update_profile() to handle the "split-row"
+        # scenario where the web account row and Telegram-linked row are separate.
         try:
+            # Step 1: does the web user's own row carry telegram_id?
             tg_row = db.execute(
-                "SELECT telegram_id FROM users WHERE id=%s AND is_registered=1 LIMIT 1",
+                "SELECT telegram_id FROM users WHERE id=%s LIMIT 1",
                 (user_id,)
             ).fetchone()
+            tg_id_for_notify = None
+            notify_source = None
+
             if tg_row and tg_row['telegram_id']:
+                tg_id_for_notify = int(tg_row['telegram_id'])
+                notify_source = "direct"
+            else:
+                # Step 2: look for another row sharing this user's phone
+                # that has telegram_id set (split-row case)
+                phones_to_try = list({p for p in [
+                    shipping_phone,
+                    session.get('user_phone', '')
+                ] if p})
+                for _p in phones_to_try:
+                    alt = db.execute(
+                        "SELECT telegram_id FROM users "
+                        "WHERE phone=%s AND telegram_id IS NOT NULL "
+                        "AND is_admin=0 AND id != %s LIMIT 1",
+                        (_p, user_id)
+                    ).fetchone()
+                    if alt and alt['telegram_id']:
+                        tg_id_for_notify = int(alt['telegram_id'])
+                        notify_source = f"phone-fallback({_p})"
+                        break
+
+            current_app.logger.info(
+                "[WebBot] Order notify lookup: user_id=%s tg_id=%s source=%s",
+                user_id, tg_id_for_notify, notify_source
+            )
+
+            if tg_id_for_notify:
                 from services.telegram_bot import send_web_order_notification
                 tg_items = [
                     {
-                        'name':    (itm['name']    if isinstance(itm, dict) else itm['name']),
-                        'name_am': (itm.get('name_am', '') if isinstance(itm, dict) else itm.get('name_am', '')),
-                        'quantity':(itm['quantity'] if isinstance(itm, dict) else itm['quantity']),
-                        'price':   float(itm['price'] if isinstance(itm, dict) else itm['price']),
+                        'name':     itm['name'],
+                        'name_am':  itm.get('name_am', ''),
+                        'quantity': int(itm['quantity']),
+                        'price':    float(itm['price']),
                     }
                     for itm in cart_items_raw
                 ]
                 send_web_order_notification(
-                    tg_id=int(tg_row['telegram_id']),
+                    tg_id=tg_id_for_notify,
                     order_number=order_number,
                     items=tg_items,
                     total=total,
