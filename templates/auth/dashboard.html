@@ -847,6 +847,30 @@
     ══════════════════════════════════════ -->
     <div class="db-panel active" id="panel-overview">
 
+        <!-- Return to Telegram Bot -->
+        <div style="text-align:center; margin-bottom:20px;">
+            <a href="https://t.me/semirafashionBot" target="_blank" rel="noopener"
+               style="display:inline-flex; align-items:center; gap:10px;
+                      background-color:#0088cc;
+                      color:#fff; text-decoration:none; font-weight:700;
+                      font-size:0.97rem; padding:13px 28px; border-radius:50px;
+                      box-shadow:0 4px 18px rgba(0,136,204,0.35);
+                      transition:transform .15s,box-shadow .15s;"
+               onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 7px 24px rgba(0,136,204,0.45)'"
+               onmouseout="this.style.transform='';this.style.boxShadow='0 4px 18px rgba(0,136,204,0.35)'">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="white"
+                     xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0;">
+                    <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373
+                             12-12S18.627 0 12 0zm5.894 8.221-1.97 9.289c-.145.658-.537.818
+                             -1.084.508l-3-2.21-1.447 1.394c-.16.16-.295.295-.605.295l.213
+                             -3.053 5.56-5.023c.242-.213-.054-.333-.373-.12L7.16 13.67l-2.956
+                             -.924c-.642-.204-.654-.642.136-.953l11.57-4.461c.537-.194
+                             1.006.131.984.889z"/>
+                </svg>
+                🌐 ወደ ቴሌግራም ቦት ተመለስ
+            </a>
+        </div>
+
         <!-- Stats -->
         <div class="stats-grid">
             <a class="stat-card blue" href="javascript:void(0)" onclick="switchPanel('orders')">
@@ -1172,6 +1196,27 @@
                 <button class="db-tg-btn-rm" id="dbTgRmBtn"
                         style="{{ '' if user.profile_photo else 'display:none' }}"
                         onclick="dbRemovePhoto()">🗑️ Remove</button>
+            </div>
+
+            <!-- Return to Telegram Bot (always visible) -->
+            <div style="margin-top:16px; text-align:center;">
+                <a href="https://t.me/semirafashionBot" target="_blank" rel="noopener"
+                   style="display:inline-flex; align-items:center; gap:9px;
+                          background-color:#0088cc;
+                          color:#fff; text-decoration:none; font-weight:700;
+                          font-size:0.88rem; padding:10px 22px; border-radius:50px;
+                          box-shadow:0 3px 14px rgba(0,136,204,0.40);">
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="white"
+                         xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0;">
+                        <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373
+                                 12-12S18.627 0 12 0zm5.894 8.221-1.97 9.289c-.145.658-.537.818
+                                 -1.084.508l-3-2.21-1.447 1.394c-.16.16-.295.295-.605.295l.213
+                                 -3.053 5.56-5.023c.242-.213-.054-.333-.373-.12L7.16 13.67l-2.956
+                                 -.924c-.642-.204-.654-.642.136-.953l11.57-4.461c.537-.194
+                                 1.006.131.984.889z"/>
+                    </svg>
+                    🌐 ወደ ቴሌግራም ቦት ተመለስ
+                </a>
             </div>
 
             <!-- Photo carousel (history) -->

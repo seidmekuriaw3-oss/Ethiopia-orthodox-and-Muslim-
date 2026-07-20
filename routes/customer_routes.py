@@ -1837,7 +1837,8 @@ def dashboard():
                                loyalty_transactions=loyalty_transactions,
                                photo_history=db_photo_history,
                                active_tab=tab,
-                               lang=lang)
+                               lang=lang,
+                               telegram_bot_url="https://t.me/semirafashionBot")
     except Exception as e:
         import traceback
         current_app.logger.error(f"Dashboard error: {e}\n{traceback.format_exc()}")
