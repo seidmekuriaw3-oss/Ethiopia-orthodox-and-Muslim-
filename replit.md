@@ -48,6 +48,15 @@ Visit `/admin` and log in with username `admin` and the `ADMIN_PASSWORD` value.
 - Admin notifications: set `TELEGRAM_ADMIN_CHAT_ID` to receive new-order alerts
 - Bot files: `services/telegram_bot.py`, `routes/telegram_routes.py`
 
+## Replit Setup (completed)
+
+The following were configured to get this project running on Replit:
+
+1. **Dependencies** — all packages in `requirements.txt` installed via `pip install -r requirements.txt`. The `scripts/post-merge.sh` runs this automatically after every merge.
+2. **Database** — Replit's managed PostgreSQL is used. `DATABASE_URL` is injected automatically; no manual configuration needed. Schema is initialized by `init_db()` on first startup.
+3. **Secrets** — `SESSION_SECRET` and `ADMIN_PASSWORD` are set in Replit Secrets. `DATABASE_URL` is runtime-managed by Replit.
+4. **Workflow** — the `Start application` workflow runs `python app.py` on port 5000 with auto-restart.
+
 ## User Preferences
 
 - App runs on port 5000 in development
