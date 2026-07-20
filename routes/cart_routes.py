@@ -726,6 +726,33 @@ def place_order():
             )
         except Exception:
             pass
+
+        # ── Telegram order notification (Web→Bot sync) ───────────────────
+        try:
+            tg_row = db.execute(
+                "SELECT telegram_id FROM users WHERE id=%s AND is_registered=1 LIMIT 1",
+                (user_id,)
+            ).fetchone()
+            if tg_row and tg_row['telegram_id']:
+                from services.telegram_bot import send_web_order_notification
+                tg_items = [
+                    {
+                        'name':    (itm['name']    if isinstance(itm, dict) else itm['name']),
+                        'name_am': (itm.get('name_am', '') if isinstance(itm, dict) else itm.get('name_am', '')),
+                        'quantity':(itm['quantity'] if isinstance(itm, dict) else itm['quantity']),
+                        'price':   float(itm['price'] if isinstance(itm, dict) else itm['price']),
+                    }
+                    for itm in cart_items_raw
+                ]
+                send_web_order_notification(
+                    tg_id=int(tg_row['telegram_id']),
+                    order_number=order_number,
+                    items=tg_items,
+                    total=total,
+                    customer_name=customer_name,
+                )
+        except Exception as _tge:
+            current_app.logger.warning(f"Telegram order notification failed: {_tge}")
     else:
         try:
             notify_admin(

@@ -495,6 +495,10 @@ def inject_globals():
         'ads_count': ads_count,
         'user_discount_rate': USER_DISCOUNT_RATE,
         'member_discount_multiplier': round(1 - USER_DISCOUNT_RATE, 4),
+        'telegram_bot_url': (
+            'https://t.me/' + app.config['TELEGRAM_BOT_USERNAME']
+            if app.config.get('TELEGRAM_BOT_USERNAME') else ''
+        ),
     }
 
 
@@ -978,13 +982,21 @@ def _register_telegram_webhook():
         _tg_domain = os.environ.get('REPLIT_DEV_DOMAIN', '')
         if not _tg_token or not _tg_domain:
             return
-        from services.telegram_bot import set_webhook_sync
+        from services.telegram_bot import set_webhook_sync, get_bot_info
         webhook_url = f"https://{_tg_domain}/telegram/webhook/{_tg_token}"
         result = set_webhook_sync(webhook_url)
         if result.get('ok'):
             app.logger.info(f"✅ Telegram webhook registered: {result.get('webhook_url','')[:60]}...")
         else:
             app.logger.warning(f"⚠️  Telegram webhook registration failed: {result}")
+        # Fetch and cache the bot username for the "Return to Bot" button
+        try:
+            bot_info = get_bot_info()
+            if bot_info and bot_info.username:
+                app.config['TELEGRAM_BOT_USERNAME'] = bot_info.username
+                app.logger.info(f"✅ Telegram bot username cached: @{bot_info.username}")
+        except Exception as _bie:
+            app.logger.warning(f"⚠️  Could not fetch bot username: {_bie}")
     except Exception as _e:
         app.logger.warning(f"⚠️  Telegram webhook setup error: {_e}")
 

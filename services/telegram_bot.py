@@ -779,6 +779,81 @@ def _db_save_profile_photo(tg_id: int, photo_filename: str) -> None:
         conn.close()
 
 
+# ─────────────────────────── Web-to-Bot sync helpers ────────────────────────
+
+
+def send_web_order_notification(
+    tg_id: int,
+    order_number: str,
+    items: list,
+    total: float,
+    customer_name: str,
+) -> bool:
+    """
+    Send a rich order-confirmation message to the user's Telegram chat.
+    Called synchronously from the Flask checkout route — uses a direct HTTP
+    call to the Bot API (no asyncio required) so it is safe on any thread.
+    """
+    if not TOKEN or not tg_id:
+        return False
+    try:
+        import httpx as _httpx
+
+        lines = []
+        for itm in items:
+            name = itm.get('name_am') or itm.get('name', '–')
+            qty  = int(itm.get('quantity', 1))
+            price = float(itm.get('price', 0))
+            lines.append(f"  • {name} × {qty} — {price * qty:,.0f} ETB")
+
+        items_text = '\n'.join(lines) if lines else '  —'
+        text = (
+            f"🛍️ *ትዕዛዝዎ በተሳካ ሁኔታ ተመዝግቧል!*\n\n"
+            f"👤 ደንበኛ: {customer_name}\n"
+            f"🔖 የትዕዛዝ ቁጥር: `{order_number}`\n\n"
+            f"📦 *ትዕዛዝ ዝርዝር:*\n{items_text}\n\n"
+            f"💰 *ጠቅላላ ድምር:* {total:,.0f} ETB\n\n"
+            f"✅ ትዕዛዝዎ ደርሷናል፣ በቅርቡ እናስረክባለን።\n"
+            f"_Semira Fashion — ሰሚራ ፋሽን_ 👗"
+        )
+        resp = _httpx.post(
+            f"https://api.telegram.org/bot{TOKEN}/sendMessage",
+            json={'chat_id': tg_id, 'text': text, 'parse_mode': 'Markdown'},
+            timeout=8.0,
+        )
+        ok = resp.status_code == 200 and resp.json().get('ok')
+        if not ok:
+            log.warning("[WebBot] sendMessage failed: %s", resp.text[:200])
+        else:
+            log.info("[WebBot] Order notification sent to tg_id=%s order=%s", tg_id, order_number)
+        return bool(ok)
+    except Exception as exc:
+        log.warning("[WebBot] send_web_order_notification error: %s", exc)
+        return False
+
+
+def update_bot_user_state(tg_id: int, phone: str | None = None,
+                           full_name: str | None = None) -> None:
+    """
+    Refresh the bot's in-memory state for a user whose profile was edited on
+    the website, so commands like "My Orders" use the up-to-date phone number.
+    """
+    if not tg_id:
+        return
+    try:
+        state = _get_state(tg_id)
+        if phone:
+            state['reg_phone'] = phone.strip()
+        if full_name:
+            state['full_name'] = full_name.strip()
+        log.info("[WebBot] In-memory state refreshed for tg_id=%s", tg_id)
+    except Exception as exc:
+        log.warning("[WebBot] update_bot_user_state error: %s", exc)
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+
+
 def _db_link_phone_to_telegram(tg_id: int, phone: str) -> None:
     """Once the user provides their phone in the bot, save it to their users row."""
     import psycopg2.extras

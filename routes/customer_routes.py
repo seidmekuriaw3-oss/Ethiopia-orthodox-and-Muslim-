@@ -1181,6 +1181,23 @@ def update_profile():
         conn.commit()
         session['user_name'] = full_name
         session['user_phone'] = phone
+
+        # ── Web→Bot sync: refresh bot in-memory state ────────────────────
+        try:
+            tg_row = conn.execute(
+                "SELECT telegram_id FROM users WHERE id=%s AND is_registered=1 LIMIT 1",
+                (session['user_id'],)
+            ).fetchone()
+            if tg_row and tg_row['telegram_id']:
+                from services.telegram_bot import update_bot_user_state
+                update_bot_user_state(
+                    tg_id=int(tg_row['telegram_id']),
+                    phone=phone,
+                    full_name=full_name,
+                )
+        except Exception as _tge:
+            current_app.logger.warning(f"Bot state sync after profile update failed: {_tge}")
+
         if is_ajax:
             return jsonify({'success': True, 'message': 'Profile updated successfully!'})
         flash('Profile updated successfully!', 'success')
