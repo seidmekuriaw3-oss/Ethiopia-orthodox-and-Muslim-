@@ -524,59 +524,69 @@ def _db_register_user(name: str, phone: str, email: str | None, password: str,
                        tg_id: int | None = None):
     """
     Create (or promote) a customer account.
-    - If a stub row already exists for this tg_id, promote it to a full account.
+    Uses a raw _sso_conn() so it works from the background asyncio thread
+    (where Flask's g / get_db() is unavailable).
+
+    - If a stub/unregistered row already exists for this tg_id, promote it.
     - Otherwise INSERT a fresh row.
     Sets is_registered=1 and links telegram_id.
     Returns 'ok', 'dup', or 'err'.
     """
-    from database.db import get_db, commit_or_rollback
     from werkzeug.security import generate_password_hash
     import random, string
-    db = get_db()
+    import psycopg2.extras
+
+    conn = _sso_conn()
     try:
         phone     = phone.strip()
         email     = email.strip().lower() if email and email.lower() != 'skip' else None
         tg_id_str = str(tg_id) if tg_id else None
         pw_hash   = generate_password_hash(password)
 
-        # ── If a stub/unregistered row already exists for this telegram_id, promote it ──
-        if tg_id_str:
-            stub = db.execute(
-                "SELECT id FROM users WHERE telegram_id = %s LIMIT 1", (tg_id_str,)
-            ).fetchone()
-            if stub:
-                db.execute(
-                    """UPDATE users
-                       SET full_name=%s, phone=%s, email=%s,
-                           password_hash=%s, is_registered=1, is_active=1,
-                           updated_at=NOW()
-                       WHERE telegram_id=%s""",
-                    (name.strip(), phone, email or '', pw_hash, tg_id_str)
+        with conn.cursor(cursor_factory=psycopg2.extras.DictCursor) as cur:
+            # ── If a row already exists for this telegram_id, promote it ──
+            if tg_id_str:
+                cur.execute(
+                    "SELECT id FROM users WHERE telegram_id = %s LIMIT 1",
+                    (tg_id_str,)
                 )
-                commit_or_rollback(db)
-                return 'ok'
+                stub = cur.fetchone()
+                if stub:
+                    cur.execute(
+                        """UPDATE users
+                           SET full_name=%s, phone=%s, email=%s,
+                               password_hash=%s, is_registered=1, is_active=1,
+                               updated_at=NOW()
+                           WHERE telegram_id=%s""",
+                        (name.strip(), phone, email or '', pw_hash, tg_id_str)
+                    )
+                    conn.commit()
+                    return 'ok'
 
-        # ── Normal path: check for duplicate by phone / email ──
-        dup = db.execute(
-            "SELECT id FROM users WHERE phone=%s" + (" OR email=%s" if email else ""),
-            (phone, email) if email else (phone,)
-        ).fetchone()
-        if dup:
-            return 'dup'
+            # ── Check for duplicate by phone / email ──
+            dup_sql = "SELECT id FROM users WHERE phone=%s" + (" OR email=%s" if email else "")
+            dup_params = (phone, email) if email else (phone,)
+            cur.execute(dup_sql, dup_params)
+            if cur.fetchone():
+                conn.rollback()
+                return 'dup'
 
-        username = 'tg_' + ''.join(random.choices(string.ascii_lowercase + string.digits, k=8))
-        db.execute(
-            "INSERT INTO users "
-            "(username, full_name, phone, email, password_hash, "
-            " telegram_id, is_registered, is_admin, is_active, created_at) "
-            "VALUES (%s, %s, %s, %s, %s, %s, 1, 0, 1, NOW())",
-            (username, name.strip(), phone, email or '', pw_hash, tg_id_str)
-        )
-        commit_or_rollback(db)
+            username = 'tg_' + ''.join(random.choices(string.ascii_lowercase + string.digits, k=8))
+            cur.execute(
+                "INSERT INTO users "
+                "(username, full_name, phone, email, password_hash, "
+                " telegram_id, is_registered, is_admin, is_active, created_at) "
+                "VALUES (%s, %s, %s, %s, %s, %s, 1, 0, 1, NOW())",
+                (username, name.strip(), phone, email or '', pw_hash, tg_id_str)
+            )
+        conn.commit()
         return 'ok'
     except Exception as e:
-        log.error(f"[Register] {e}")
+        conn.rollback()
+        log.error("[Register] %s", e)
         return 'err'
+    finally:
+        conn.close()
 
 def _db_user_exists_by_phone(phone: str) -> bool:
     from database.db import get_db
@@ -745,6 +755,26 @@ def _db_get_profile_by_tg_id(tg_id: int) -> dict | None:
     except Exception as e:
         log.warning("[TgSSO] _db_get_profile_by_tg_id error: %s", e)
         return None
+    finally:
+        conn.close()
+
+
+def _db_save_profile_photo(tg_id: int, photo_filename: str) -> None:
+    """Persist a downloaded profile photo filename into the users row."""
+    import psycopg2.extras
+    tg_id_str = str(tg_id)
+    conn = _sso_conn()
+    try:
+        with conn.cursor() as cur:
+            cur.execute(
+                "UPDATE users SET profile_photo=%s, updated_at=NOW() "
+                "WHERE telegram_id=%s AND is_admin=0",
+                (photo_filename, tg_id_str)
+            )
+        conn.commit()
+    except Exception as e:
+        conn.rollback()
+        log.warning("[TgSSO] _db_save_profile_photo error: %s", e)
     finally:
         conn.close()
 
@@ -2091,6 +2121,23 @@ async def on_reg_pass_input(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
     if result == 'ok':
         if reg.get('phone'):
             _get_state(uid)['reg_phone'] = reg['phone']
+        # ── Sync Telegram profile photo ──────────────────────────────────
+        try:
+            import os as _os
+            photos = await ctx.bot.get_user_profile_photos(uid, limit=1)
+            if photos.total_count > 0:
+                photo_obj = photos.photos[0][-1]          # largest size
+                file_obj  = await ctx.bot.get_file(photo_obj.file_id)
+                filename  = f"tg_{uid}.jpg"
+                save_path = _os.path.join(
+                    _os.path.dirname(__file__), '..', 'static', 'uploads', 'users', filename
+                )
+                _os.makedirs(_os.path.dirname(save_path), exist_ok=True)
+                await file_obj.download_to_drive(custom_path=save_path)
+                _db_save_profile_photo(uid, filename)
+                log.info("[Register] Saved profile photo for tg_id=%s → %s", uid, filename)
+        except Exception as _pe:
+            log.warning("[Register] Profile photo sync failed for tg_id=%s: %s", uid, _pe)
         await update.message.reply_text(_(uid, 'reg_ok'), reply_markup=_main_menu_keyboard(uid))
     elif result == 'dup':
         await update.message.reply_text(_(uid, 'reg_dup'), reply_markup=_main_menu_keyboard(uid))
@@ -2708,6 +2755,23 @@ async def on_reg_pass_input(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
     if result == 'ok':
         if reg.get('phone'):
             _get_state(uid)['reg_phone'] = reg['phone']
+        # ── Sync Telegram profile photo ──────────────────────────────────
+        try:
+            import os as _os
+            photos = await ctx.bot.get_user_profile_photos(uid, limit=1)
+            if photos.total_count > 0:
+                photo_obj = photos.photos[0][-1]          # largest size
+                file_obj  = await ctx.bot.get_file(photo_obj.file_id)
+                filename  = f"tg_{uid}.jpg"
+                save_path = _os.path.join(
+                    _os.path.dirname(__file__), '..', 'static', 'uploads', 'users', filename
+                )
+                _os.makedirs(_os.path.dirname(save_path), exist_ok=True)
+                await file_obj.download_to_drive(custom_path=save_path)
+                _db_save_profile_photo(uid, filename)
+                log.info("[Register] Saved profile photo for tg_id=%s → %s", uid, filename)
+        except Exception as _pe:
+            log.warning("[Register] Profile photo sync failed for tg_id=%s: %s", uid, _pe)
         await update.message.reply_text(_(uid, 'reg_ok'), reply_markup=_main_menu_keyboard(uid))
     elif result == 'dup':
         await update.message.reply_text(_(uid, 'reg_dup'), reply_markup=_main_menu_keyboard(uid))
