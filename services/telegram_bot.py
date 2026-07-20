@@ -631,102 +631,112 @@ def _db_get_user_by_phone_link(phone: str) -> dict | None:
 
 
 # ── Telegram SSO helpers ──────────────────────────────────────────────────
+# These functions manage their own raw DB connections so they work correctly
+# both inside and outside a Flask request context (bot webhooks run outside).
+
+def _sso_conn():
+    """Open a fresh psycopg2 connection for SSO helpers and return it."""
+    from database.db import _raw_connect
+    return _raw_connect()
+
 
 def _db_upsert_telegram_user(tg_id: int, tg_username: str | None,
                               full_name: str | None) -> int | None:
     """
     Ensure a users row exists for this Telegram account.
-    - If a row with this telegram_id already exists → update name/username, return id.
-    - Otherwise create a minimal row (Telegram-only account) → return new id.
     Returns the users.id on success, None on error.
+    Uses INSERT … ON CONFLICT (telegram_id) DO UPDATE so it is race-safe.
     """
-    from database.db import get_db, commit_or_rollback
     from werkzeug.security import generate_password_hash
     import secrets as _secrets
-    db = get_db()
-    tg_id_str = str(tg_id)
+    import psycopg2.extras
+
+    tg_id_str    = str(tg_id)
+    fake_email   = f"tg_{tg_id}@telegram.semira.fashion"
+    fake_username = tg_username or f"tg_{tg_id}"
+    display_name = full_name or tg_username or f"Telegram {tg_id}"
+    pw_hash      = generate_password_hash(_secrets.token_hex(24))
+
+    conn = _sso_conn()
     try:
-        # 1. Check existing by telegram_id
-        row = db.execute(
-            "SELECT id FROM users WHERE telegram_id = %s LIMIT 1", (tg_id_str,)
-        ).fetchone()
-        if row:
-            user_id = row['id']
-            db.execute(
-                "UPDATE users SET updated_at = NOW() WHERE id = %s",
-                (user_id,)
+        with conn.cursor(cursor_factory=psycopg2.extras.DictCursor) as cur:
+            cur.execute(
+                """INSERT INTO users
+                       (username, email, password_hash, full_name, telegram_id,
+                        is_admin, is_active, created_at, updated_at)
+                   VALUES (%s, %s, %s, %s, %s, 0, 1, NOW(), NOW())
+                   ON CONFLICT (telegram_id) DO UPDATE
+                       SET updated_at = NOW()
+                   RETURNING id""",
+                (fake_username, fake_email, pw_hash, display_name, tg_id_str)
             )
-            commit_or_rollback(db)
-            return user_id
-
-        # 2. Create new Telegram-only user
-        fake_email    = f"tg_{tg_id}@telegram.semira.fashion"
-        fake_username = tg_username or f"tg_{tg_id}"
-        display_name  = full_name or tg_username or f"Telegram {tg_id}"
-        # Random strong password — not used for login (SSO only)
-        pw_hash = generate_password_hash(_secrets.token_hex(24))
-
-        cur = db.execute(
-            """INSERT INTO users
-               (username, email, password_hash, full_name, telegram_id,
-                is_admin, is_active, created_at, updated_at)
-               VALUES (%s, %s, %s, %s, %s, 0, 1, NOW(), NOW())
-               ON CONFLICT (telegram_id) DO UPDATE
-                 SET updated_at = NOW()
-               RETURNING id""",
-            (fake_username, fake_email, pw_hash, display_name, tg_id_str)
-        )
-        result = cur.fetchone()
-        commit_or_rollback(db)
-        return result['id'] if result else None
+            row = cur.fetchone()
+        conn.commit()
+        return row['id'] if row else None
     except Exception as e:
+        conn.rollback()
         log.error("[TgSSO] _db_upsert_telegram_user error: %s", e)
         return None
+    finally:
+        conn.close()
 
 
 def _db_link_phone_to_telegram(tg_id: int, phone: str) -> None:
     """Once the user provides their phone in the bot, save it to their users row."""
-    from database.db import get_db, commit_or_rollback
-    db = get_db()
+    import psycopg2.extras
     tg_id_str = str(tg_id)
+    conn = _sso_conn()
     try:
-        db.execute(
-            "UPDATE users SET phone = %s, updated_at = NOW() WHERE telegram_id = %s AND is_admin = 0",
-            (phone.strip(), tg_id_str)
-        )
-        commit_or_rollback(db)
+        with conn.cursor() as cur:
+            cur.execute(
+                "UPDATE users SET phone = %s, updated_at = NOW() "
+                "WHERE telegram_id = %s AND is_admin = 0",
+                (phone.strip(), tg_id_str)
+            )
+        conn.commit()
     except Exception as e:
+        conn.rollback()
         log.warning("[TgSSO] _db_link_phone_to_telegram error: %s", e)
+    finally:
+        conn.close()
 
 
 def _db_generate_magic_token(tg_id: int) -> str | None:
     """
     Generate a cryptographically-secure one-time token for this Telegram user,
     store it with a 15-minute expiry, and return the raw token string.
-    Returns None if the user row does not exist yet.
+    Returns None if no users row exists for this tg_id yet.
     """
-    from database.db import get_db, commit_or_rollback
     from datetime import timedelta
     import secrets as _secrets
-    db = get_db()
+    import psycopg2.extras
+
     tg_id_str = str(tg_id)
+    token   = _secrets.token_urlsafe(32)
+    expires = datetime.utcnow() + timedelta(minutes=15)
+
+    conn = _sso_conn()
     try:
-        token = _secrets.token_urlsafe(32)
-        expires = datetime.utcnow() + timedelta(minutes=15)
-        rows = db.execute(
-            """UPDATE users
-               SET telegram_token = %s, telegram_token_expires = %s
-               WHERE telegram_id = %s AND is_active = 1
-               RETURNING id""",
-            (token, expires, tg_id_str)
-        ).fetchone()
-        if not rows:
+        with conn.cursor(cursor_factory=psycopg2.extras.DictCursor) as cur:
+            cur.execute(
+                """UPDATE users
+                   SET telegram_token = %s, telegram_token_expires = %s
+                   WHERE telegram_id = %s AND is_active = 1
+                   RETURNING id""",
+                (token, expires, tg_id_str)
+            )
+            row = cur.fetchone()
+        if not row:
+            conn.rollback()
             return None
-        commit_or_rollback(db)
+        conn.commit()
         return token
     except Exception as e:
+        conn.rollback()
         log.warning("[TgSSO] _db_generate_magic_token error: %s", e)
         return None
+    finally:
+        conn.close()
 
 def _db_place_order(cart: dict, user_data: dict) -> str | None:
     """Place an order, return order number or None on failure."""
