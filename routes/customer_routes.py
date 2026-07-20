@@ -858,9 +858,14 @@ def user_profile():
         except Exception:
             photo_history = []
 
+        # Build "Return to Bot" URL if the bot username is known
+        _bot_username = current_app.config.get('TELEGRAM_BOT_USERNAME', '')
+        telegram_bot_url = f"https://t.me/{_bot_username}" if _bot_username else None
+
         return render_template('auth/user_profile.html',
                                user=user, order_stats=order_stats, orders=orders,
-                               photo_history=photo_history)
+                               photo_history=photo_history,
+                               telegram_bot_url=telegram_bot_url)
     except Exception as e:
         current_app.logger.error(f"Profile error: {e}")
         flash('Error loading profile.', 'error')
@@ -1415,10 +1420,15 @@ def order_confirmation(order_id):
             order_number=order_dict.get('order_number', '')
         )
 
+        # Build "Return to Bot" URL if the bot username is known
+        _bot_username = current_app.config.get('TELEGRAM_BOT_USERNAME', '')
+        telegram_bot_url = f"https://t.me/{_bot_username}" if _bot_username else None
+
         return render_template('auth/order_confirmation.html',
                                order=order_dict,
                                items=items_list,
-                               whatsapp_url=whatsapp_url)
+                               whatsapp_url=whatsapp_url,
+                               telegram_bot_url=telegram_bot_url)
     except Exception as e:
         current_app.logger.error(f"Order confirmation error: {e}")
         flash('Error loading order.', 'error')

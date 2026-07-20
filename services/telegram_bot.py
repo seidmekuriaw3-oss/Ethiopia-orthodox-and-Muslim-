@@ -788,6 +788,8 @@ def send_web_order_notification(
     items: list,
     total: float,
     customer_name: str,
+    shipping_fee: float = 0.0,
+    discount: float = 0.0,
 ) -> bool:
     """
     Send a rich order-confirmation message to the user's Telegram chat.
@@ -801,17 +803,30 @@ def send_web_order_notification(
 
         lines = []
         for itm in items:
-            name = itm.get('name_am') or itm.get('name', '–')
-            qty  = int(itm.get('quantity', 1))
+            name  = itm.get('name_am') or itm.get('name', '–')
+            qty   = int(itm.get('quantity', 1))
             price = float(itm.get('price', 0))
             lines.append(f"  • {name} × {qty} — {price * qty:,.0f} ETB")
 
         items_text = '\n'.join(lines) if lines else '  —'
+
+        # Build pricing summary lines
+        pricing_lines = []
+        subtotal = total - float(shipping_fee) + float(discount)
+        if float(discount) > 0:
+            pricing_lines.append(f"🏷️ ቅናሽ: -{float(discount):,.0f} ETB")
+        if float(shipping_fee) > 0:
+            pricing_lines.append(f"🚚 ማጓጓዣ: {float(shipping_fee):,.0f} ETB")
+        else:
+            pricing_lines.append("🚚 ማጓጓዣ: ነጻ")
+        pricing_summary = '\n'.join(pricing_lines)
+
         text = (
             f"🛍️ *ትዕዛዝዎ በተሳካ ሁኔታ ተመዝግቧል!*\n\n"
             f"👤 ደንበኛ: {customer_name}\n"
             f"🔖 የትዕዛዝ ቁጥር: `{order_number}`\n\n"
             f"📦 *ትዕዛዝ ዝርዝር:*\n{items_text}\n\n"
+            f"{pricing_summary}\n"
             f"💰 *ጠቅላላ ድምር:* {total:,.0f} ETB\n\n"
             f"✅ ትዕዛዝዎ ደርሷናል፣ በቅርቡ እናስረክባለን።\n"
             f"_Semira Fashion — ሰሚራ ፋሽን_ 👗"

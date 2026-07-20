@@ -750,6 +750,8 @@ def place_order():
                     items=tg_items,
                     total=total,
                     customer_name=customer_name,
+                    shipping_fee=shipping_cost,
+                    discount=discount,
                 )
         except Exception as _tge:
             current_app.logger.warning(f"Telegram order notification failed: {_tge}")
