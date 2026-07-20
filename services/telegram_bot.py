@@ -850,18 +850,66 @@ def send_web_order_notification(
 def update_bot_user_state(tg_id: int, phone: str | None = None,
                            full_name: str | None = None) -> None:
     """
-    Refresh the bot's in-memory state for a user whose profile was edited on
-    the website, so commands like "My Orders" use the up-to-date phone number.
+    Sync a web profile update to the Telegram-linked users row in PostgreSQL,
+    then refresh the bot's in-memory state so order lookups use the new phone.
+
+    This must write to the DB — _show_account() always re-reads from DB and
+    never relies on in-memory state for display values.
     """
     if not tg_id:
         return
     try:
+        # 1. Always refresh in-memory state (used by cart / order lookup paths)
         state = _get_state(tg_id)
         if phone:
             state['reg_phone'] = phone.strip()
         if full_name:
             state['full_name'] = full_name.strip()
-        log.info("[WebBot] In-memory state refreshed for tg_id=%s", tg_id)
+        log.info("[WebBot] In-memory state updated for tg_id=%s  name=%r  phone=%r",
+                 tg_id, full_name, phone)
+
+        # 2. Write the new values directly to the DB row.
+        #    _show_account() queries WHERE telegram_id=tg_id every time, so
+        #    without this DB write the bot always shows stale data.
+        sets, vals = [], []
+        if full_name is not None:
+            sets.append("full_name = %s")
+            vals.append(full_name.strip())
+        if phone is not None:
+            sets.append("phone = %s")
+            vals.append(phone.strip())
+
+        if not sets:
+            log.info("[WebBot] No fields to update in DB for tg_id=%s", tg_id)
+            return
+
+        tg_id_str = str(tg_id)
+        vals.append(tg_id_str)
+
+        conn = _sso_conn()
+        try:
+            with conn.cursor() as cur:
+                sql = (
+                    f"UPDATE users SET {', '.join(sets)}, updated_at = NOW() "
+                    f"WHERE telegram_id = %s AND is_admin = 0"
+                )
+                log.info("[WebBot] Executing DB sync: tg_id=%s  sql=%r  vals=%r",
+                         tg_id, sql, vals)
+                cur.execute(sql, vals)
+                rows_updated = cur.rowcount
+            conn.commit()
+            log.info("[WebBot] DB sync committed for tg_id=%s — rows updated: %d",
+                     tg_id, rows_updated)
+            if rows_updated == 0:
+                log.warning("[WebBot] DB sync wrote 0 rows — no users row with "
+                            "telegram_id=%s exists (is_admin=0). Profile will NOT "
+                            "be updated in the bot.", tg_id)
+        except Exception as db_exc:
+            conn.rollback()
+            log.warning("[WebBot] DB sync rollback for tg_id=%s: %s", tg_id, db_exc)
+        finally:
+            conn.close()
+
     except Exception as exc:
         log.warning("[WebBot] update_bot_user_state error: %s", exc)
 

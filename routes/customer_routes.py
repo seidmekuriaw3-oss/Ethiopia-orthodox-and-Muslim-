@@ -1175,6 +1175,11 @@ def update_profile():
     city = request.form.get('city', '').strip()
 
     is_ajax = request.headers.get('X-Requested-With') == 'XMLHttpRequest'
+
+    # Capture the OLD phone BEFORE the session write so we can locate the
+    # Telegram-linked row by phone even if the user is changing their number.
+    old_phone = session.get('user_phone', '').strip()
+
     try:
         conn = get_db()
         cursor = conn.cursor()
@@ -1184,24 +1189,69 @@ def update_profile():
             WHERE id = %s
         """, (full_name, phone, address, city, session['user_id']))
         conn.commit()
+        current_app.logger.info(
+            "[WebBot] Profile DB commit done for user_id=%s  name=%r  phone=%r",
+            session['user_id'], full_name, phone
+        )
         session['user_name'] = full_name
         session['user_phone'] = phone
 
-        # ── Web→Bot sync: refresh bot in-memory state ────────────────────
+        # ── Web→Bot sync ─────────────────────────────────────────────────
+        # Strategy:
+        #   1. Check if the current web row already has a telegram_id column
+        #      set (happens when the user logged in via Telegram SSO).
+        #   2. If not, look for a SEPARATE row that shares the same phone
+        #      (old or new) AND has telegram_id set — this is the "split row"
+        #      scenario where the web account and the Telegram stub were never
+        #      merged into one row.
+        # update_bot_user_state() writes to the DB row (WHERE telegram_id=X)
+        # so the bot's next _db_get_profile_by_tg_id() call sees fresh data.
         try:
+            from services.telegram_bot import update_bot_user_state
+
+            # Step 1: direct telegram_id on the session user's row
             tg_row = conn.execute(
-                "SELECT telegram_id FROM users WHERE id=%s AND is_registered=1 LIMIT 1",
+                "SELECT telegram_id FROM users WHERE id = %s LIMIT 1",
                 (session['user_id'],)
             ).fetchone()
+
+            tg_id = None
+            source = None
+
             if tg_row and tg_row['telegram_id']:
-                from services.telegram_bot import update_bot_user_state
-                update_bot_user_state(
-                    tg_id=int(tg_row['telegram_id']),
-                    phone=phone,
-                    full_name=full_name,
+                tg_id = int(tg_row['telegram_id'])
+                source = "direct"
+            else:
+                # Step 2: find a Telegram-linked row by phone (old OR new)
+                phones_to_try = list({p for p in [old_phone, phone] if p})
+                for p in phones_to_try:
+                    alt = conn.execute(
+                        "SELECT telegram_id FROM users "
+                        "WHERE phone = %s AND telegram_id IS NOT NULL "
+                        "AND is_admin = 0 AND id != %s LIMIT 1",
+                        (p, session['user_id'])
+                    ).fetchone()
+                    if alt and alt['telegram_id']:
+                        tg_id = int(alt['telegram_id'])
+                        source = f"phone-fallback({p})"
+                        break
+
+            current_app.logger.info(
+                "[WebBot] Telegram sync lookup: user_id=%s  tg_id=%s  source=%s",
+                session['user_id'], tg_id, source
+            )
+
+            if tg_id:
+                update_bot_user_state(tg_id=tg_id, phone=phone, full_name=full_name)
+            else:
+                current_app.logger.info(
+                    "[WebBot] No linked Telegram account found for user_id=%s — "
+                    "bot profile not synced.", session['user_id']
                 )
         except Exception as _tge:
-            current_app.logger.warning(f"Bot state sync after profile update failed: {_tge}")
+            current_app.logger.warning(
+                "[WebBot] Bot sync after profile update failed: %s", _tge
+            )
 
         if is_ajax:
             return jsonify({'success': True, 'message': 'Profile updated successfully!'})
