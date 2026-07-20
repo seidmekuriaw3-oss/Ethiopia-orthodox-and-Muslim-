@@ -520,28 +520,57 @@ def _db_get_orders_by_phone(phone: str):
     ).fetchall()
     return rows
 
-def _db_register_user(name: str, phone: str, email: str | None, password: str):
-    """Create a customer account. Returns 'ok', 'dup', or 'err'."""
+def _db_register_user(name: str, phone: str, email: str | None, password: str,
+                       tg_id: int | None = None):
+    """
+    Create (or promote) a customer account.
+    - If a stub row already exists for this tg_id, promote it to a full account.
+    - Otherwise INSERT a fresh row.
+    Sets is_registered=1 and links telegram_id.
+    Returns 'ok', 'dup', or 'err'.
+    """
     from database.db import get_db, commit_or_rollback
     from werkzeug.security import generate_password_hash
     import random, string
     db = get_db()
     try:
-        # Check duplicate phone or email
-        phone = phone.strip()
-        email = email.strip().lower() if email and email.lower() != 'skip' else None
+        phone     = phone.strip()
+        email     = email.strip().lower() if email and email.lower() != 'skip' else None
+        tg_id_str = str(tg_id) if tg_id else None
+        pw_hash   = generate_password_hash(password)
+
+        # ── If a stub/unregistered row already exists for this telegram_id, promote it ──
+        if tg_id_str:
+            stub = db.execute(
+                "SELECT id FROM users WHERE telegram_id = %s LIMIT 1", (tg_id_str,)
+            ).fetchone()
+            if stub:
+                db.execute(
+                    """UPDATE users
+                       SET full_name=%s, phone=%s, email=%s,
+                           password_hash=%s, is_registered=1, is_active=1,
+                           updated_at=NOW()
+                       WHERE telegram_id=%s""",
+                    (name.strip(), phone, email or '', pw_hash, tg_id_str)
+                )
+                commit_or_rollback(db)
+                return 'ok'
+
+        # ── Normal path: check for duplicate by phone / email ──
         dup = db.execute(
             "SELECT id FROM users WHERE phone=%s" + (" OR email=%s" if email else ""),
             (phone, email) if email else (phone,)
         ).fetchone()
         if dup:
             return 'dup'
+
         username = 'tg_' + ''.join(random.choices(string.ascii_lowercase + string.digits, k=8))
-        pw_hash = generate_password_hash(password)
         db.execute(
-            "INSERT INTO users (username, full_name, phone, email, password_hash, is_admin, is_active, created_at) "
-            "VALUES (%s,%s,%s,%s,%s,0,1,NOW())",
-            (username, name.strip(), phone, email or '', pw_hash)
+            "INSERT INTO users "
+            "(username, full_name, phone, email, password_hash, "
+            " telegram_id, is_registered, is_admin, is_active, created_at) "
+            "VALUES (%s, %s, %s, %s, %s, %s, 1, 0, 1, NOW())",
+            (username, name.strip(), phone, email or '', pw_hash, tg_id_str)
         )
         commit_or_rollback(db)
         return 'ok'
@@ -676,6 +705,45 @@ def _db_upsert_telegram_user(tg_id: int, tg_username: str | None,
     except Exception as e:
         conn.rollback()
         log.error("[TgSSO] _db_upsert_telegram_user error: %s", e)
+        return None
+    finally:
+        conn.close()
+
+
+def _db_get_profile_by_tg_id(tg_id: int) -> dict | None:
+    """
+    Return the users row for a Telegram user by telegram_id.
+    Includes is_registered so callers can gate profile display.
+    Returns None if the user has no row or an error occurs.
+    """
+    import psycopg2.extras
+    tg_id_str = str(tg_id)
+    conn = _sso_conn()
+    try:
+        with conn.cursor(cursor_factory=psycopg2.extras.DictCursor) as cur:
+            cur.execute(
+                """SELECT id, full_name, phone, email,
+                          loyalty_points, profile_photo,
+                          is_registered, created_at
+                   FROM users
+                   WHERE telegram_id = %s AND is_admin = 0
+                   LIMIT 1""",
+                (tg_id_str,)
+            )
+            row = cur.fetchone()
+        if not row:
+            return None
+        profile = dict(row)
+        # attach order count
+        with conn.cursor() as cur2:
+            cur2.execute(
+                "SELECT COUNT(*) FROM orders WHERE user_id = %s", (profile['id'],)
+            )
+            cnt = cur2.fetchone()
+            profile['order_count'] = int(cnt[0]) if cnt else 0
+        return profile
+    except Exception as e:
+        log.warning("[TgSSO] _db_get_profile_by_tg_id error: %s", e)
         return None
     finally:
         conn.close()
@@ -1012,14 +1080,6 @@ async def cmd_start(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
     uid = update.effective_user.id
     state = _get_state(uid)
     state['username'] = update.effective_user.username or str(uid)
-
-    # ── Ensure a users row exists for this Telegram account (SSO) ──
-    tg_user = update.effective_user
-    _db_upsert_telegram_user(
-        tg_id=uid,
-        tg_username=tg_user.username,
-        full_name=tg_user.full_name or tg_user.first_name,
-    )
 
     # Personalized greeting if the user already linked an account
     phone   = state.get('reg_phone', '')
@@ -1819,16 +1879,14 @@ def _not_registered_kb(uid: int) -> tuple:
     return _(uid, 'not_registered'), kb
 
 
-# ── wishlist display ──
+# ── account display ──
 async def _show_account(query, uid: int):
-    """Show full profile if registered, registration/link prompt if not."""
-    state = _get_state(uid)
-    phone = state.get('reg_phone', '') or state.get('order', {}).get('phone', '')
-    profile = _db_get_user_profile(phone) if phone else None
-
-    if profile:
+    """Show profile only if is_registered=1; otherwise show registration prompt."""
+    profile = _db_get_profile_by_tg_id(uid)
+    if profile and profile.get('is_registered'):
+        if profile.get('phone'):
+            _get_state(uid)['reg_phone'] = profile['phone']
         text, kb = _build_profile_text_kb(uid, profile)
-        # Try to show profile photo
         photo_url = _user_profile_photo_url(profile)
         if photo_url:
             try:
@@ -1849,11 +1907,10 @@ async def _show_account(query, uid: int):
 
 async def _show_account_from_msg(msg, uid: int):
     """Same as _show_account but responds to a plain command message."""
-    state = _get_state(uid)
-    phone = state.get('reg_phone', '') or state.get('order', {}).get('phone', '')
-    profile = _db_get_user_profile(phone) if phone else None
-
-    if profile:
+    profile = _db_get_profile_by_tg_id(uid)
+    if profile and profile.get('is_registered'):
+        if profile.get('phone'):
+            _get_state(uid)['reg_phone'] = profile['phone']
         text, kb = _build_profile_text_kb(uid, profile)
         photo_url = _user_profile_photo_url(profile)
         if photo_url:
@@ -2029,8 +2086,11 @@ async def on_reg_pass_input(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
         phone=reg.get('phone', ''),
         email=reg.get('email', ''),
         password=password,
+        tg_id=uid,
     )
     if result == 'ok':
+        if reg.get('phone'):
+            _get_state(uid)['reg_phone'] = reg['phone']
         await update.message.reply_text(_(uid, 'reg_ok'), reply_markup=_main_menu_keyboard(uid))
     elif result == 'dup':
         await update.message.reply_text(_(uid, 'reg_dup'), reply_markup=_main_menu_keyboard(uid))
@@ -2436,16 +2496,14 @@ def _not_registered_kb(uid: int) -> tuple:
     return _(uid, 'not_registered'), kb
 
 
-# ── wishlist display ──
+# ── account display ──
 async def _show_account(query, uid: int):
-    """Show full profile if registered, registration/link prompt if not."""
-    state = _get_state(uid)
-    phone = state.get('reg_phone', '') or state.get('order', {}).get('phone', '')
-    profile = _db_get_user_profile(phone) if phone else None
-
-    if profile:
+    """Show profile only if is_registered=1; otherwise show registration prompt."""
+    profile = _db_get_profile_by_tg_id(uid)
+    if profile and profile.get('is_registered'):
+        if profile.get('phone'):
+            _get_state(uid)['reg_phone'] = profile['phone']
         text, kb = _build_profile_text_kb(uid, profile)
-        # Try to show profile photo
         photo_url = _user_profile_photo_url(profile)
         if photo_url:
             try:
@@ -2466,11 +2524,10 @@ async def _show_account(query, uid: int):
 
 async def _show_account_from_msg(msg, uid: int):
     """Same as _show_account but responds to a plain command message."""
-    state = _get_state(uid)
-    phone = state.get('reg_phone', '') or state.get('order', {}).get('phone', '')
-    profile = _db_get_user_profile(phone) if phone else None
-
-    if profile:
+    profile = _db_get_profile_by_tg_id(uid)
+    if profile and profile.get('is_registered'):
+        if profile.get('phone'):
+            _get_state(uid)['reg_phone'] = profile['phone']
         text, kb = _build_profile_text_kb(uid, profile)
         photo_url = _user_profile_photo_url(profile)
         if photo_url:
@@ -2646,8 +2703,11 @@ async def on_reg_pass_input(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
         phone=reg.get('phone', ''),
         email=reg.get('email', ''),
         password=password,
+        tg_id=uid,
     )
     if result == 'ok':
+        if reg.get('phone'):
+            _get_state(uid)['reg_phone'] = reg['phone']
         await update.message.reply_text(_(uid, 'reg_ok'), reply_markup=_main_menu_keyboard(uid))
     elif result == 'dup':
         await update.message.reply_text(_(uid, 'reg_dup'), reply_markup=_main_menu_keyboard(uid))

@@ -198,6 +198,7 @@ def init_db():
         ('telegram_id',             'TEXT'),
         ('telegram_token',          'TEXT'),
         ('telegram_token_expires',  'TIMESTAMP'),
+        ('is_registered',           'SMALLINT DEFAULT 0'),
     ])
     # Full unique index (no WHERE clause) so ON CONFLICT (telegram_id) works.
     # PostgreSQL allows multiple NULLs even with a full unique index.
