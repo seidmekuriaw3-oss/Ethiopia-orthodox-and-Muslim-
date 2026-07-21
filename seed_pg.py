@@ -1,178 +1,310 @@
-from database.db import get_db
-from datetime import datetime
+"""
+seed_pg.py — Seed products and advertisements into PostgreSQL
+using the image files already present in static/uploads/products/ and static/uploads/ads/
 
-db = get_db()
-cur = db.cursor()
+Usage:
+    python seed_pg.py
+"""
 
-products = [
-    # (name, name_am, name_ar, name_en, desc, desc_am, desc_ar, desc_en, price, compare_price, cost, is_featured, stock_qty, cat_id)
-    ('Evening Gown','የምሽት ቀሚስ','فستان سهرة','Evening Gown',
-     'Elegant floor-length evening gown perfect for weddings and formal events.',
-     'ለሠርግና ዝግጅቶች ተስማሚ የምሽት ቀሚስ','فستان سهرة فاخر للأعراس والمناسبات',
-     'Elegant floor-length evening gown',1890,2500,950,1,30,1),
+import os
+import psycopg2
 
-    ('Floral Maxi Dress','አበባ ማክሲ ቀሚስ','فستان ماكسي بالأزهار','Floral Maxi Dress',
-     'Light and flowy floral maxi dress for casual and semi-formal wear.',
-     'ቀላልና ውብ አበባ ማክሲ ቀሚስ','فستان ماكسي زهري خفيف وأنيق',
-     'Light and flowy floral maxi dress',890,1200,420,0,25,1),
+DATABASE_URL = os.environ.get("DATABASE_URL")
+if not DATABASE_URL:
+    raise RuntimeError("DATABASE_URL env var is not set")
 
-    ('Habesha Kemis','ሐበሻ ቀሚስ','قميص حبشي تقليدي','Habesha Kemis',
-     'Authentic Habesha kemis with traditional embroidery, hand-woven cotton.',
-     'ባህላዊ ጥልፍ ያለው ሐበሻ ቀሚስ','قميص حبشي أصيل بتطريز تقليدي وقطن منسوج يدوياً',
-     'Authentic hand-woven Habesha kemis',1200,1600,600,1,40,8),
+conn = psycopg2.connect(DATABASE_URL)
+cur = conn.cursor()
 
-    ('Mini Party Dress','ሚኒ ፓርቲ ቀሚስ','فستان حفلات قصير','Mini Party Dress',
-     'Stylish mini dress perfect for parties and casual outings.',
-     'ለፓርቲና ወደ ውጭ ለመሄድ ምቹ ሚኒ ቀሚስ','فستان قصير أنيق للحفلات والنزهات',
-     'Stylish mini dress for parties',750,1000,350,0,30,1),
+# ── helpers ──────────────────────────────────────────────────────────────────
 
-    ('Silk Blouse','ሐር ብሎውዝ','بلوزة حريرية','Silk Blouse',
-     'Smooth silk blouse suitable for office and evening wear.',
-     'ለቢሮና ምሽት ምቹ ሐር ብሎውዝ','بلوزة حرير ناعمة مناسبة للمكتب والسهرات',
-     'Smooth silk blouse for office and evening',650,900,300,1,30,2),
+def img(filename):
+    """Return the DB-stored thumbnail path for a product image."""
+    return f"uploads/products/{filename}"
 
-    ('Linen Summer Top','ሊነን ሰመር ቶፕ','توب صيفي كتاني','Linen Summer Top',
-     'Breathable linen top ideal for hot Ethiopian summers.',
-     'ለኢትዮጵያ ሙቀት ተስማሚ ሊነን ቶፕ','توب كتاني مثالي للصيف الإثيوبي الحار',
-     'Breathable linen top for hot summers',480,700,220,0,40,2),
+def ad_img(filename):
+    """Return the DB-stored image path for an ad image."""
+    return f"uploads/ads/{filename}"
 
-    ('Printed Crop Top','ፕሪንትድ ክሮፕ ቶፕ','توب قصير مطبوع','Printed Crop Top',
-     'Trendy printed crop top for casual and street style.',
-     'ፋሽን ፕሪንትድ ክሮፕ ቶፕ','توب قصير مطبوع عصري للأزياء الكاجوال',
-     'Trendy printed crop top',390,580,180,0,35,2),
+# ── categories (already seeded by init_db) ───────────────────────────────────
+# 1 Dresses & Gowns      5 Underwear & Nightwear
+# 2 Tops & Shirts        6 Baby Suits & Rompers
+# 3 Trousers & Shorts    7 Activewear
+# 4 Jackets & Knitwear   8 Traditional Wear
 
-    ('Formal Button Shirt','ፎርማል ሸሚዝ','قميص رسمي بأزرار','Formal Button Shirt',
-     'Classic formal shirt for professional settings, available in multiple colors.',
-     'ለቢሮ ምቹ ክላሲክ ፎርማል ሸሚዝ','قميص رسمي كلاسيكي للبيئات المهنية',
-     'Classic formal shirt for professionals',560,800,260,1,25,2),
+# ── products ─────────────────────────────────────────────────────────────────
+# (name, name_am, description, price, compare_price, cost, stock, cat_id, thumbnail, is_featured, is_new)
 
-    ('High-Waist Jeans','ሃይ ዌስት ጂንስ','جينز عالي الخصر','High-Waist Jeans',
-     'Comfortable high-waist stretch jeans in multiple washes.',
-     'ምቹ ሃይ ዌስት ስትሬች ጂንስ','جينز ممتد عالي الخصر بعدة أساليب',
-     'Comfortable high-waist stretch jeans',720,1000,340,1,20,3),
+PRODUCTS = [
+    # ── Traditional Wear (cat 8) ──────────────────────────────────────────
+    ("Habesha Kemis", "ሀበሻ ቀሚስ",
+     "እጅጉን የሚያምር ባህላዊ ሀበሻ ቀሚስ። ለሠርግ፣ ለፋሲካ እና ለሌሎች ክብረ-በዓላት ተስማሚ።",
+     1850, 2200, 900, 25, 8, img("prod_01_habesha_kemis.jpg"), 1, 1),
 
-    ('Palazzo Trousers','ፓላዞ ሱሪ','بنطال بالازو','Palazzo Trousers',
-     'Wide-leg palazzo trousers for a chic and comfortable look.',
-     'ሰፊ እግር ፓላዞ ሱሪ','بنطال بالازو واسع الأرجل',
-     'Wide-leg palazzo trousers',580,820,270,0,30,3),
+    ("Ankara Dress", "አንካራ ቀሚስ",
+     "ቀለማማ Ankara ጨርቅ ተጠቅሞ የተሰፋ ቀሚስ። ለዕለት ሥራ እና ለሠርግ ሁለቱም ይሆናል።",
+     1450, 1800, 700, 30, 8, img("prod_02_ankara_dress.jpg"), 1, 1),
 
-    ('Denim Shorts','ዴኒም ሾርትስ','شورت جينز','Denim Shorts',
-     'Classic denim shorts perfect for casual warm-weather outings.',
-     'ቀላል ዴኒም ሾርትስ','شورت جينز كلاسيكي مثالي للطقس الدافئ',
-     'Classic denim shorts',420,620,190,0,35,3),
+    ("Habesha Top", "ሀበሻ ቅምጥ",
+     "ባህላዊ ጥልፍ ያለው ሀበሻ ቲሸርት/ቅምጥ። ከጂንስ ወይም ከሌሎች ሱሪዎች ጋር ይሠራል።",
+     850, 1100, 420, 40, 8, img("prod_03_habesha_top.jpg"), 0, 1),
 
-    ('Denim Jacket','ዴኒም ጃኬት','جاكيت جينز','Denim Jacket',
-     'Classic denim jacket that pairs with any outfit.',
-     'ለማንኛውም አልባሳት ተስማሚ ዴኒም ጃኬት','جاكيت جينز كلاسيكي يناسب أي لباس',
-     'Classic denim jacket',950,1400,450,1,20,4),
+    ("Tilf Skirt", "ቲልፍ ቀሚስ",
+     "ባህላዊ ጥልፍ ያለው ቲልፍ ቀሚስ። ለባህላዊ ዝግጅቶች ፍጹም ምርጫ።",
+     1200, 1500, 600, 20, 8, img("product_tilf_skirt.jpg"), 1, 0),
 
-    ('Knit Cardigan','ኒት ካርዲጋን','كارديجان محبوك','Knit Cardigan',
-     'Cozy knit cardigan perfect for cool evenings and air-conditioned spaces.',
-     'ለቀዝቃዛ ምሽቶች ምቹ ኒት ካርዲጋን','كارديجان محبوك مريح للأمسيات الباردة',
-     'Cozy knit cardigan',780,1100,360,0,25,4),
+    ("Tilf Dress", "ቲልፍ ልብስ",
+     "ሙሉ ጥልፍ ያለው ረጅም ቲልፍ ቀሚስ። ለክብረ-በዓልና ሠርግ ተስማሚ።",
+     2100, 2600, 1050, 15, 8, img("prod_08_tilf_dress.jpg"), 1, 0),
 
-    ('Satin Nightgown','ሳቲን ናይትጋውን','قميص نوم ساتان','Satin Nightgown',
-     'Luxuriously soft satin nightgown for comfortable sleep.',
-     'ምቹ ሳቲን ናይትጋውን','قميص نوم من الساتان الناعم الفاخر',
-     'Luxuriously soft satin nightgown',620,900,290,0,30,5),
+    ("Chiffon Kemis", "ሺፎን ቀሚስ",
+     "ቀጭን ሺፎን ጨርቅ ተጠቅሞ የተሰፋ ሀበሻ ቀሚስ። ለበጋ ወቅት ተስማሚ።",
+     1650, 2000, 800, 18, 8, img("prod_10_chiffon_kemis.jpg"), 1, 1),
 
-    ('Cotton Lounge Set','ኮቶን ላውንጅ ሴት','طقم استرخاء قطني','Cotton Lounge Set',
-     'Breathable cotton lounge set for relaxing at home.',
-     'ቤት ውስጥ ለመዝናናት ምቹ ኮቶን ሴት','طقم قطني مريح للاسترخاء في المنزل',
-     'Breathable cotton lounge set',530,780,245,1,40,5),
+    ("Habesha Dress", "ሀበሻ ቀሚስ (ዘመናዊ)",
+     "ዘመናዊ ዲዛይን ያለው ሀበሻ ቀሚስ። ቀላል እና አምሮ ይታያሉ።",
+     1750, 2100, 875, 22, 8, img("habesha_dress.jpg"), 0, 1),
 
-    ('Baby Girl Romper Set','ሕፃን ሮምፐር ሴት','طقم رومبر للبنات','Baby Girl Romper Set',
-     'Adorable cotton romper set for baby girls 0-12 months.',
-     'ከ0-12 ወር ለሕፃናት ሮምፐር ሴት','طقم رومبر قطني رائع للرضيعات 0-12 شهراً',
-     'Adorable cotton romper set 0-12 months',380,550,170,1,50,6),
+    ("Gabi", "ጋቢ",
+     "ባህላዊ ጋቢ — ለቀዝቃዛ ጊዜ እና ለሃይማኖታዊ ሥርዓቶች።",
+     950, 1200, 475, 35, 8, img("product_gabi.jpg"), 0, 0),
 
-    ('Baby Boy Suit','ሕፃን ወንድ ሱት','بدلة الأولاد الصغار','Baby Boy Suit',
-     'Smart 3-piece baby boy suit for special occasions.',
-     'ልዩ ዝግጅቶች ሕፃን ሱት ሶስት ክፍል','بدلة 3 قطع للأطفال الذكور للمناسبات الخاصة',
-     'Smart 3-piece baby boy suit',450,680,210,0,35,6),
+    ("Netela", "ነጠላ",
+     "ቀጭን ነጭ ነጠላ — ለቤተ ክርስቲያን እና ለሞቃት ቀናት ተስማሚ።",
+     650, 850, 320, 50, 8, img("product_netela.jpg"), 0, 0),
 
-    ('Sports Leggings','ስፖርት ሌጊንስ','ليغنز رياضي','Sports Leggings',
-     'High-performance moisture-wicking sports leggings.',
-     'ከፍተኛ አፈጻጸም ስፖርት ሌጊንስ','ليغنز رياضي عالي الأداء يمتص الرطوبة',
-     'High-performance sports leggings',680,950,315,1,30,7),
+    ("Kuta", "ኩታ",
+     "ባህላዊ ኩታ — ለወንዶች ሃይማኖታዊ ሥርዓት ፍጹም ምርጫ።",
+     1100, 1400, 550, 25, 8, img("product_kuta.jpg"), 0, 0),
 
-    ('Zip-Up Hoodie','ዚፕ ሁዲ','هودي بسحاب','Zip-Up Hoodie',
-     'Comfortable zip-up hoodie for gym sessions and casual wear.',
-     'ለጂም እና ቀልጣፋ አለባበስ ምቹ ዚፕ ሁዲ','هودي مريح بسحاب للجيم والارتداء اليومي',
-     'Comfortable zip-up hoodie',820,1150,380,0,25,7),
+    # ── Dresses & Gowns (cat 1) ───────────────────────────────────────────
+    ("Bridal Gown", "የሠርግ ቀሚስ",
+     "ውብ የሠርግ ቀሚስ። ለጋብቻ ቀን ፍጹም ምርጫ። ሙሉ ጌጦሽ ያለው።",
+     8500, 12000, 4250, 5, 1, img("prod_04_bridal_gown.jpg"), 1, 0),
 
-    ('Netela Shawl','ነጠላ','نيتيلا','Netela Shawl',
-     'Traditional Ethiopian netela shawl with hand-woven border, pure cotton.',
-     'ባህላዊ የኢትዮጵያ ነጠላ፣ ፍጹም ጥጥ','شال نيتيلا الإثيوبي التقليدي مع حدود منسوج يدوياً',
-     'Traditional Ethiopian netela shawl',350,520,160,1,60,8),
+    ("Evening Gown", "የምሽት ቀሚስ",
+     "ዘመናዊ የምሽት ቀሚስ። ለፓርቲ እና ለይፋዊ ዝግጅቶች ተስማሚ።",
+     3200, 4000, 1600, 10, 1, img("evening_gown.jpg"), 1, 0),
+
+    ("Evening Gown Premium", "ፕሪሚየም የምሽት ቀሚስ",
+     "ፕሪሚየም የምሽት ቀሚስ። ከፍተኛ ጥራት ያለው ጨርቅ።",
+     3800, 4800, 1900, 8, 1, img("product_evening_gown.jpg"), 1, 1),
+
+    ("Luxury Dress", "ቅንጡ ቀሚስ",
+     "ቅንጡ ሉክሸሪ ቀሚስ። ለፕሪሚየም ፓርቲ እና ኢቨንቶች ተስማሚ።",
+     4500, 5500, 2250, 8, 1, img("luxury_dress.jpg"), 1, 1),
+
+    ("Maxi Dress", "ማክሲ ቀሚስ",
+     "ረዥም ማክሲ ቀሚስ። ምቹ እና አምሮ የሚታይ።",
+     1800, 2200, 900, 20, 1, img("maxi_dress.jpg"), 0, 1),
+
+    ("Floral Maxi Dress", "አበባ ማክሲ ቀሚስ",
+     "አበባ ዲዛይን ያለው ረዥም ቀሚስ። ለበጋ ፍጹም ምርጫ።",
+     1950, 2400, 975, 18, 1, img("product_floral_maxi.jpg"), 1, 1),
+
+    ("Mini Dress", "ሚኒ ቀሚስ",
+     "አጭር ሚኒ ቀሚስ። ዘመናዊ ዲዛይን ያለው።",
+     1350, 1700, 675, 25, 1, img("mini_dress.jpg"), 0, 1),
+
+    ("Girls Dress", "የልጃገረዶች ቀሚስ",
+     "ለልጃገረዶች ቀሚስ — ቆንጆ ዲዛይን ያለው።",
+     950, 1200, 475, 30, 1, img("girls_dress.jpg"), 0, 0),
+
+    ("Prayer Dress", "የሰላት ቀሚስ",
+     "ለሙስሊም ሴቶች የሰላት ቀሚስ — ምቹ እና ሙሉ ሽፋን ያለው።",
+     1100, 1400, 550, 35, 1, img("prayer_dress.jpg"), 0, 0),
+
+    # ── Tops & Shirts (cat 2) ─────────────────────────────────────────────
+    ("Silk Blouse", "ሐር ጨርቅ ብሉዝ",
+     "ሐር ጨርቅ ብሉዝ — ለቢሮ እና ለምሽት ዝግጅቶች ተስማሚ።",
+     1250, 1600, 625, 30, 2, img("product_silk_blouse.jpg"), 1, 1),
+
+    ("Ladies Shirt", "ሴቶች ሸሚዝ",
+     "ክላሲክ ሴቶች ሸሚዝ — ፈሳሽ ቀለም ያለው ጨርቅ።",
+     950, 1200, 475, 40, 2, img("ladies_shirt.jpg"), 0, 0),
+
+    ("Blouse", "ብሉዝ",
+     "ቀላል ብሉዝ — ለዕለት ሥራ ምቹ ምርጫ።",
+     850, 1100, 425, 45, 2, img("blouse.jpg"), 0, 0),
+
+    ("Printed Blouse", "ፕሪንትድ ብሉዝ",
+     "ቀለም ያለው ፕሪንትድ ብሉዝ። ከሱሪ ወይም ቀሚስ ጋር ይሠራል።",
+     950, 1200, 475, 35, 2, img("printed_blouse.jpg"), 0, 1),
+
+    ("White Shirt", "ነጭ ሸሚዝ",
+     "ፍጹም ነጭ ሸሚዝ — ለቢሮ ምርጥ ምርጫ።",
+     850, 1100, 425, 50, 2, img("product_white_shirt.jpg"), 0, 0),
+
+    ("Graphic T-Shirt", "ግራፊክ ቲሸርት",
+     "ግራፊክ ዲዛይን ያለው ቲሸርት — ዘና ብሎ ለሚሄዱ።",
+     650, 850, 325, 60, 2, img("product_graphic_tshirt.jpg"), 0, 1),
+
+    ("T-Shirt", "ቲሸርት",
+     "ቀላል ሊዘና ያለው ቲሸርት — ምቹ ዕለታዊ ምርጫ።",
+     550, 750, 275, 70, 2, img("tshirt.jpg"), 0, 0),
+
+    ("Hijab", "ሕጃብ",
+     "ናሙና ሕጃብ — ለሙስሊም ሴቶች ምቹ ሽፋን።",
+     450, 650, 225, 80, 2, img("hijab.jpg"), 0, 0),
+
+    # ── Trousers & Shorts (cat 3) ─────────────────────────────────────────
+    ("Jeans", "ጂንስ",
+     "ክላሲክ ጂንስ ሱሪ — ለሁሉም ቦታ ምቹ።",
+     1350, 1700, 675, 40, 3, img("jeans.jpg"), 1, 0),
+
+    ("Casual Trousers", "ካዥዋል ሱሪ",
+     "ካዥዋል ሱሪ — ምቹ እና ዘና ያለ ዲዛይን።",
+     1100, 1400, 550, 35, 3, img("casual_trousers.jpg"), 0, 0),
+
+    ("Linen Pants", "ሊነን ሱሪ",
+     "ሊነን ሱሪ — ለሙቅ ወቅት ምቹ ምርጫ።",
+     1200, 1500, 600, 30, 3, img("linen_pants.jpg"), 0, 1),
+
+    ("Wide Leg Pants", "ዊድ-ሌግ ሱሪ",
+     "ሰፊ ዊድ-ሌግ ሱሪ — ዘመናዊ ፋሽን ዲዛይን።",
+     1350, 1700, 675, 25, 3, img("product_wide_leg.jpg"), 1, 1),
+
+    ("Chinos", "ቺኖ ሱሪ",
+     "ቺኖ ሱሪ — ለቢሮ እና ካዥዋል ሁለቱም ይሠራል።",
+     1250, 1600, 625, 30, 3, img("product_chinos.jpg"), 0, 0),
+
+    ("Denim Shorts", "ጂንስ ሾርት",
+     "ጂንስ ሾርት — ለሙቅ ወቅት ምቹ ምርጫ።",
+     850, 1100, 425, 35, 3, img("product_denim_shorts.jpg"), 0, 1),
+
+    ("Leggings", "ሌጊንስ",
+     "ሌጊንስ — ምቹ እና ዘምናዊ ዲዛይን ያለው።",
+     750, 1000, 375, 50, 3, img("prod_07_leggings.jpg"), 0, 0),
+
+    ("Leggings Classic", "ክላሲክ ሌጊንስ",
+     "ክላሲክ ሌጊንስ — ስፖርት እና ዕለታዊ ሁለቱም ይሠራል።",
+     750, 950, 375, 55, 3, img("product_leggings.jpg"), 0, 0),
+
+    # ── Jackets & Knitwear (cat 4) ────────────────────────────────────────
+    ("Blazer", "ብሌዘር",
+     "ፎርማል ብሌዘር — ለቢሮ እና ሁለተኛ ዲዛይን።",
+     2400, 3000, 1200, 15, 4, img("prod_06_blazer.jpg"), 1, 0),
+
+    ("Denim Jacket", "ጂንስ ጃኬት",
+     "ጂንስ ጃኬት — ዘመናዊ ዲዛይን ያለው።",
+     1850, 2300, 925, 20, 4, img("denim_jacket.jpg"), 1, 1),
+
+    ("Cardigan", "ካርዲጋን",
+     "ካርዲጋን — ለቀዝቃዛ ቀናት ምቹ ምርጫ።",
+     1400, 1800, 700, 25, 4, img("cardigan.jpg"), 0, 0),
+
+    ("Cardigan Knit", "ኒት ካርዲጋን",
+     "ክላሲክ ኒት ካርዲጋን — ለቤት እና ለቢሮ።",
+     1350, 1700, 675, 28, 4, img("product_cardigan.jpg"), 0, 0),
+
+    ("Leather Jacket", "የቆዳ ጃኬት",
+     "የቆዳ ጃኬት — ቆዳ የሚመስል ጨርቅ። ዘና ያለ ዲዛይን።",
+     3200, 4000, 1600, 10, 4, img("product_leather_jacket.jpg"), 1, 1),
+
+    ("Hoodie", "ሁዲ",
+     "ሁዲ — ምቹ እና ሙቅ ዲዛይን። ለካዥዋል ቀናት።",
+     1250, 1600, 625, 30, 4, img("product_hoodie.jpg"), 0, 1),
+
+    # ── Underwear & Nightwear (cat 5) ─────────────────────────────────────
+    ("Pajama Set", "ፒጃማ",
+     "ፒጃማ ሙሉ ስብስብ — ምቹ የሌሊት ልብስ።",
+     950, 1250, 475, 40, 5, img("product_pajama.jpg"), 0, 0),
+
+    # ── Baby Suits & Rompers (cat 6) ──────────────────────────────────────
+    ("Baby Romper", "የህፃን ሮምፐር",
+     "ለህፃናት ምቹ ሮምፐር — ለ0–12 ወር ህፃናት ተስማሚ።",
+     650, 850, 325, 50, 6, img("prod_05_baby_romper.jpg"), 1, 1),
+
+    ("Baby Romper Premium", "ፕሪሚየም የህፃን ሮምፐር",
+     "ፕሪሚየም ህፃን ሮምፐር — ለ0–18 ወር ህፃናት።",
+     750, 950, 375, 45, 6, img("product_baby_romper.jpg"), 0, 1),
+
+    ("Baby Dress", "የህፃናት ቀሚስ",
+     "ቆንጆ የህፃናት ቀሚስ — ለ6–24 ወር ህፃናት።",
+     700, 900, 350, 35, 6, img("baby_dress.jpg"), 0, 0),
+
+    ("Baby Winter Set", "የህፃን ክረምት ስብስብ",
+     "የህፃናት ክረምት ስብስብ — ሙቅ እና ምቹ።",
+     900, 1200, 450, 25, 6, img("product_baby_winter.jpg"), 0, 0),
+
+    ("Kids Outfit", "የሕፃናት ልብስ",
+     "ለሕፃናት ሙሉ ልብስ ስብስብ — ምቹ ዲዛይን ያለው።",
+     850, 1100, 425, 30, 6, img("prod_09_kids_outfit.jpg"), 0, 0),
+
+    # ── Activewear (cat 7) ────────────────────────────────────────────────
+    ("Sportswear Set", "ስፖርት ልብስ",
+     "ሙሉ ስፖርት ልብስ — ለጂም እና ለሩጫ ምቹ።",
+     1450, 1800, 725, 30, 7, img("sportswear.jpg"), 1, 1),
+
+    ("Yoga Pants", "ዮጋ ሱሪ",
+     "ዮጋ ሱሪ — ለዮጋ እና ለሌሎች ብዝሃ-እንቅስቃሴ ምቹ።",
+     1100, 1400, 550, 40, 7, img("yoga_pants.jpg"), 0, 1),
 ]
 
-sql = """INSERT INTO products
-  (name, name_am, name_ar, name_en,
-   description, description_am, description_ar, description_en,
-   price, compare_price, cost,
-   is_featured, stock_quantity, low_stock_threshold,
-   is_active, is_new, views, sales_count, created_at, updated_at, category_id)
-VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,5,1,1,0,0,NOW(),NOW(),%s)"""
+# ── advertisements ────────────────────────────────────────────────────────────
+# advertisements schema: id, title, title_am, title_ar, description, description_am,
+#   description_ar, image, media_url, link, sort_order, is_active, start_date, end_date, created_at
+ADS = [
+    # (title, title_am, description_am, image, link, sort_order)
+    ("New Arrivals", "አዳዲስ ምርቶች",
+     "አዳዲስ ምርቶቻችን ደርሰዋል — አሁን ይምረጡ!",
+     ad_img("ad_new_arrivals.jpg"), "/products?filter=new", 1),
 
-for p in products:
-    cur.execute(sql, p)
+    ("Summer Sale", "የበጋ ቅናሽ",
+     "እስከ 30% ቅናሽ — አሁን ይጠቀሙ!",
+     ad_img("ad_summer.jpg"), "/products?filter=sale", 2),
 
-db.commit()
+    ("Traditional Wear", "ባህላዊ ልብሶች",
+     "ሀበሻ ቀሚስ፣ ቲልፍ እና ሌሎች ባህላዊ ልብሶች",
+     ad_img("ad_traditional.jpg"), "/products?category=8", 3),
+
+    ("Holiday Collection", "የበዓል ስብስብ",
+     "ለበዓላት ምርጥ ምርጦቻችን — ሁሉም ምርቶች ይገኛሉ",
+     ad_img("ad_holiday.jpg"), "/products", 4),
+
+    ("Special Sale", "ልዩ ቅናሽ",
+     "ሁሉም ምርቶች ላይ ቅናሽ አለ — አሁን ይጠቀሙ!",
+     ad_img("ad_sale.jpg"), "/products?filter=sale", 5),
+]
+
+# ── insert products ───────────────────────────────────────────────────────────
+
 cur.execute("SELECT COUNT(*) FROM products")
-print(f"Products inserted: {cur.fetchone()[0]}")
+existing = cur.fetchone()[0]
+if existing > 0:
+    print(f"⚠️  {existing} products already in DB — skipping product seed.")
+else:
+    print(f"Inserting {len(PRODUCTS)} products …")
+    for p in PRODUCTS:
+        name, name_am, desc, price, compare_price, cost, stock, cat_id, thumbnail, featured, is_new = p
+        cur.execute("""
+            INSERT INTO products
+              (name, name_am, description, price, compare_price, cost,
+               stock_quantity, category_id, thumbnail, is_active,
+               is_featured, is_new)
+            VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,1,%s,%s)
+        """, (name, name_am, desc, price, compare_price, cost,
+              stock, cat_id, thumbnail, featured, is_new))
+    print(f"✅  {len(PRODUCTS)} products inserted.")
 
-# ── 5 ADS ─────────────────────────────────────────────────────
-ads = [
-    ('Summer Sale — Up to 40% Off',
-     'የበጋ ቅናሽ — እስከ 40% ቅናሽ',
-     'تخفيضات الصيف — خصم يصل إلى 40٪',
-     'Shop our biggest summer sale. All dresses, tops & activewear discounted!',
-     'ትልቁ የበጋ ቅናሽ። ሁሉም ቀሚሶች፣ ቶፖችና አክቲቭዌር ቅናሽ አለ!',
-     'تسوق في أكبر تخفيضات الصيف. خصومات على الفساتين والقمصان والملابس الرياضية!',
-     '/products', 1),
+# ── insert ads ────────────────────────────────────────────────────────────────
 
-    ('New Arrivals — Traditional Collection',
-     'አዲስ ምርቶች — ባህላዊ ስብስብ',
-     'وصل حديثاً — المجموعة التقليدية',
-     'Discover our new Habesha kemis and Netela shawl collection.',
-     'የሐበሻ ቀሚስና ነጠላ አዲስ ስብስብ ያግኙ።',
-     'اكتشف مجموعتنا الجديدة من قمصان الحبشة وأوشحة نيتيلا.',
-     '/products', 2),
-
-    ('Free Shipping Over 5,000 ETB',
-     'ነጻ ማጓጓዝ ከ5,000 ብር በላይ',
-     'شحن مجاني لما يزيد عن 5000 بر',
-     'Order above 5,000 ETB and enjoy free delivery right to your door!',
-     'ከ5,000 ብር በላይ ግዢ ሲያደርጉ ነጻ ዴሊቨሪ ያግኙ!',
-     'اطلب فوق 5000 بر واستمتع بالتوصيل المجاني إلى بابك!',
-     '/cart', 3),
-
-    ('Baby Collection — Soft & Safe',
-     'ሕፃናት ስብስብ — ለስላሳ እና ደህና',
-     'مجموعة الأطفال — ناعمة وآمنة',
-     'Pure cotton rompers and suits for your little ones. Gentle on delicate skin.',
-     'ፍጹም ጥጥ ሮምፐር እና ሱቶች ለህፃናትዎ። ስስ ቆዳ ላይ ለስላሳ።',
-     'رومبرات وبدل قطنية خالصة لأطفالك. لطيفة على البشرة الحساسة.',
-     '/products', 4),
-
-    ('Exclusive Members Discount — 10% Off',
-     'የልዩ አባላት ቅናሽ — 10% ቅናሽ',
-     'خصم الأعضاء الحصري — خصم 10٪',
-     'Register today and get an exclusive 10% discount on your first order!',
-     'ዛሬ ይመዝገቡ እና በመጀመሪያ ግዢዎ 10% ቅናሽ ያግኙ!',
-     'سجل اليوم واحصل على خصم حصري 10٪ على طلبك الأول!',
-     '/register', 5),
-]
-
-ad_sql = """INSERT INTO advertisements
-  (title, title_am, title_ar, description, description_am, description_ar,
-   link, sort_order, is_active, created_at)
-VALUES (%s,%s,%s,%s,%s,%s,%s,%s,1,NOW())"""
-
-for a in ads:
-    cur.execute(ad_sql, a)
-
-db.commit()
 cur.execute("SELECT COUNT(*) FROM advertisements")
-print(f"Ads inserted: {cur.fetchone()[0]}")
+existing_ads = cur.fetchone()[0]
+if existing_ads > 0:
+    print(f"⚠️  {existing_ads} ads already in DB — skipping ad seed.")
+else:
+    print(f"Inserting {len(ADS)} advertisements …")
+    for a in ADS:
+        title, title_am, description_am, image, link, sort_order = a
+        cur.execute("""
+            INSERT INTO advertisements
+              (title, title_am, description_am, image, link, sort_order, is_active)
+            VALUES (%s,%s,%s,%s,%s,%s,1)
+        """, (title, title_am, description_am, image, link, sort_order))
+    print(f"✅  {len(ADS)} advertisements inserted.")
+
+conn.commit()
+cur.close()
+conn.close()
+print("\n🎉 Seed complete — refresh the homepage to see your products!")
