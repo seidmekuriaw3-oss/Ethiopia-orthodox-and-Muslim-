@@ -25,7 +25,15 @@ from telegram.error import TelegramError
 log = logging.getLogger(__name__)
 
 # ───────────────────────── configuration ─────────────────────────
-TOKEN = os.environ.get('TELEGRAM_BOT_TOKEN', '')
+# NOTE: Always call _get_token() at runtime — never read TOKEN at module-level.
+# The admin dashboard saves the token to os.environ AFTER this module loads,
+# so a module-level constant would stay empty forever.
+def _get_token() -> str:
+    return os.environ.get('TELEGRAM_BOT_TOKEN', '')
+
+# Keep a backward-compatible alias used internally
+TOKEN = ''  # ← only used as a sentinel; replaced by _get_token() everywhere below
+
 ADMIN_CHAT_ID = os.environ.get('TELEGRAM_ADMIN_CHAT_ID', '')
 SITE_URL = os.environ.get('REPLIT_DEV_DOMAIN', '')
 WHATSAPP = os.environ.get('WHATSAPP_NUMBER', '251987957957')
@@ -840,7 +848,8 @@ def send_web_order_notification(
     Called synchronously from the Flask checkout route — uses a direct HTTP
     call to the Bot API (no asyncio required) so it is safe on any thread.
     """
-    if not TOKEN or not tg_id:
+    tok = _get_token()
+    if not tok or not tg_id:
         return False
     try:
         import httpx as _httpx
@@ -876,7 +885,7 @@ def send_web_order_notification(
             f"_Semira Fashion — ሰሚራ ፋሽን_ 👗"
         )
         resp = _httpx.post(
-            f"https://api.telegram.org/bot{TOKEN}/sendMessage",
+            f"https://api.telegram.org/bot{tok}/sendMessage",
             json={'chat_id': tg_id, 'text': text, 'parse_mode': 'Markdown'},
             timeout=8.0,
         )
@@ -2494,7 +2503,7 @@ async def on_unknown_text(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
 
 # ───────────────────────── Application builder ─────────────────────────
 def build_application() -> Application:
-    app = Application.builder().token(TOKEN).build()
+    app = Application.builder().token(_get_token()).build()
 
     conv = ConversationHandler(
         entry_points=[
@@ -2611,7 +2620,7 @@ def _get_or_create_app() -> tuple[Application, asyncio.AbstractEventLoop]:
 
 def process_update_sync(update_data: dict):
     """Called from the Flask webhook route — processes one Telegram update."""
-    if not TOKEN:
+    if not _get_token():
         return
     try:
         app, loop = _get_or_create_app()
@@ -2623,9 +2632,10 @@ def process_update_sync(update_data: dict):
 
 
 async def _set_webhook_async(webhook_url: str) -> dict:
-    if not TOKEN:
+    tok = _get_token()
+    if not tok:
         return {'ok': False, 'description': 'TELEGRAM_BOT_TOKEN not set'}
-    bot = Bot(token=TOKEN)
+    bot = Bot(token=tok)
     async with bot:
         result = await bot.set_webhook(
             url=webhook_url,
@@ -2645,9 +2655,10 @@ def set_webhook_sync(webhook_url: str) -> dict:
 
 
 async def _delete_webhook_async():
-    if not TOKEN:
+    tok = _get_token()
+    if not tok:
         return False
-    bot = Bot(token=TOKEN)
+    bot = Bot(token=tok)
     async with bot:
         return await bot.delete_webhook(drop_pending_updates=True)
 
@@ -2657,9 +2668,10 @@ def delete_webhook_sync() -> bool:
 
 
 async def _get_me_async():
-    if not TOKEN:
+    tok = _get_token()
+    if not tok:
         return None
-    bot = Bot(token=TOKEN)
+    bot = Bot(token=tok)
     async with bot:
         return await bot.get_me()
 
@@ -3136,7 +3148,7 @@ async def on_unknown_text(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
 
 # ───────────────────────── Application builder ─────────────────────────
 def build_application() -> Application:
-    app = Application.builder().token(TOKEN).build()
+    app = Application.builder().token(_get_token()).build()
 
     conv = ConversationHandler(
         entry_points=[
@@ -3226,7 +3238,7 @@ def build_application() -> Application:
     return app
 
 
-# ───────────────────────── background event loop ─────────────────────────
+# ───────────────────────── background event loop (active — last definition) ─────
 _loop: asyncio.AbstractEventLoop | None = None
 _application: Application | None = None
 _lock = threading.Lock()
@@ -3236,6 +3248,14 @@ def _start_loop(loop: asyncio.AbstractEventLoop):
     asyncio.set_event_loop(loop)
     loop.run_forever()
 
+
+
+def reset_application():
+    """Force rebuild of the bot Application — call after token changes."""
+    global _application
+    with _lock:
+        _application = None
+    log.info("[TelegramBot] Application reset — will rebuild on next request.")
 
 def _get_or_create_app() -> tuple[Application, asyncio.AbstractEventLoop]:
     global _loop, _application
@@ -3253,7 +3273,7 @@ def _get_or_create_app() -> tuple[Application, asyncio.AbstractEventLoop]:
 
 def process_update_sync(update_data: dict):
     """Called from the Flask webhook route — processes one Telegram update."""
-    if not TOKEN:
+    if not _get_token():
         return
     try:
         app, loop = _get_or_create_app()
@@ -3265,9 +3285,10 @@ def process_update_sync(update_data: dict):
 
 
 async def _set_webhook_async(webhook_url: str) -> dict:
-    if not TOKEN:
+    tok = _get_token()
+    if not tok:
         return {'ok': False, 'description': 'TELEGRAM_BOT_TOKEN not set'}
-    bot = Bot(token=TOKEN)
+    bot = Bot(token=tok)
     async with bot:
         result = await bot.set_webhook(
             url=webhook_url,
@@ -3287,9 +3308,10 @@ def set_webhook_sync(webhook_url: str) -> dict:
 
 
 async def _delete_webhook_async():
-    if not TOKEN:
+    tok = _get_token()
+    if not tok:
         return False
-    bot = Bot(token=TOKEN)
+    bot = Bot(token=tok)
     async with bot:
         return await bot.delete_webhook(drop_pending_updates=True)
 
@@ -3299,9 +3321,10 @@ def delete_webhook_sync() -> bool:
 
 
 async def _get_me_async():
-    if not TOKEN:
+    tok = _get_token()
+    if not tok:
         return None
-    bot = Bot(token=TOKEN)
+    bot = Bot(token=tok)
     async with bot:
         return await bot.get_me()
 

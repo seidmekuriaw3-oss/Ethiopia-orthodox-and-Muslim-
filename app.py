@@ -975,12 +975,32 @@ except Exception as _sched_err:
     app.logger.warning(f"Scheduler could not start: {_sched_err}")
 
 # ==================== TELEGRAM BOT WEBHOOK AUTO-REGISTRATION ====================
+
+def _load_telegram_token_from_db():
+    """Load TELEGRAM_BOT_TOKEN from the settings table into os.environ if not already set."""
+    try:
+        if os.environ.get('TELEGRAM_BOT_TOKEN'):
+            return  # Already set via Replit Secrets — prefer that
+        conn = get_db()
+        cursor = conn.cursor()
+        cursor.execute("SELECT value FROM settings WHERE key = 'telegram_bot_token'")
+        row = cursor.fetchone()
+        if row and row[0]:
+            os.environ['TELEGRAM_BOT_TOKEN'] = row[0]
+            app.logger.info("✅ Telegram token loaded from settings table.")
+    except Exception as _e:
+        app.logger.warning(f"⚠️  Could not load Telegram token from DB: {_e}")
+
+_load_telegram_token_from_db()
+
+
 def _register_telegram_webhook():
     """Register the Telegram webhook after app startup (runs in background thread)."""
     try:
         _tg_token  = os.environ.get('TELEGRAM_BOT_TOKEN', '')
         _tg_domain = os.environ.get('REPLIT_DEV_DOMAIN', '')
         if not _tg_token or not _tg_domain:
+            app.logger.info("ℹ️  Telegram token or domain not set — skipping webhook registration.")
             return
         from services.telegram_bot import set_webhook_sync, get_bot_info
         webhook_url = f"https://{_tg_domain}/telegram/webhook/{_tg_token}"

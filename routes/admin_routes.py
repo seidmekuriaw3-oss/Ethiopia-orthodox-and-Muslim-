@@ -2542,7 +2542,34 @@ def save_telegram_token():
         """, ('telegram_bot_token', token, token))
         conn.commit()
         os.environ['TELEGRAM_BOT_TOKEN'] = token
-        flash('✅ Telegram Bot Token ተቀምጧል! Bot ለመጀመር server ን restart ያድርጉ።', 'success')
+        # Reset the cached bot application so it rebuilds with the new token
+        try:
+            from services.telegram_bot import reset_application
+            reset_application()
+        except Exception as _re:
+            current_app.logger.warning(f"reset_application error: {_re}")
+        # Auto-register webhook in background
+        def _auto_register():
+            try:
+                from services.telegram_bot import set_webhook_sync, get_bot_info
+                import os as _os
+                domain = _os.environ.get('REPLIT_DEV_DOMAIN', '')
+                if domain:
+                    url = f"https://{domain}/telegram/webhook/{token}"
+                    result = set_webhook_sync(url)
+                    current_app.logger.info(f"[TG] Auto-register webhook: {result}")
+                    info = get_bot_info()
+                    if info and info.username:
+                        current_app.config['TELEGRAM_BOT_USERNAME'] = info.username
+            except Exception as _we:
+                current_app.logger.warning(f"[TG] Auto-register webhook error: {_we}")
+        import threading as _thr
+        _app_ref = current_app._get_current_object()
+        def _auto_register_with_ctx():
+            with _app_ref.app_context():
+                _auto_register()
+        _thr.Thread(target=_auto_register_with_ctx, daemon=True).start()
+        flash('✅ Telegram Bot Token ተቀምጧል! Webhook እየተመዘገበ ነው...', 'success')
     except Exception as e:
         current_app.logger.error(f"save_telegram_token error: {e}")
         flash('ቶክን ሲቀምጥ ስህተት ተፈጠረ።', 'error')
