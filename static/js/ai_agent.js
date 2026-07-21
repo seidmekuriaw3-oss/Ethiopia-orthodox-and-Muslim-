@@ -278,8 +278,8 @@
         s = s.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
         s = s.replace(/__(.+?)__/g, '<strong>$1</strong>');
 
-        // 3. Italic: *text* or _text_ (single — avoid false positives)
-        s = s.replace(/\*([^\s*][^*]*?)\*/g, '<em>$1</em>');
+        // 3. Italic: single *text* — avoid colliding with bullet •/- prefixes
+        s = s.replace(/(?<!\*)\*([^\s*\n][^*\n]*?)\*(?!\*)/g, '<em>$1</em>');
 
         // 4. Strikethrough: ~~text~~
         s = s.replace(/~~(.+?)~~/g, '<del>$1</del>');
@@ -287,43 +287,55 @@
         // 5. Inline code: `code`
         s = s.replace(/`([^`]+)`/g, '<code class="ai-code">$1</code>');
 
-        // 6. Bullet list items: lines starting with • · - * (after escape)
-        //    We convert them to <ul><li> blocks
-        s = s.replace(/((?:^|\n)[•·\-\*] .+)+/g, function (block) {
-            var items = block.trim().split(/\n/).map(function (line) {
-                var content = line.replace(/^[•·\-\*]\s+/, '').trim();
-                return content ? '<li>' + content + '</li>' : '';
-            }).filter(Boolean).join('');
-            return '<ul class="ai-list">' + items + '</ul>';
-        });
+        // 6. Process line-by-line: collect bullet/numbered runs into proper
+        //    <ul>/<ol> blocks so the later \n→<br> pass cannot corrupt them.
+        var lines  = s.split('\n');
+        var output = [];
+        var idx    = 0;
+        while (idx < lines.length) {
+            var ln = lines[idx];
+            // Bullet list run (•, ·, -)
+            if (/^[•·\-] /.test(ln)) {
+                var liItems = [];
+                while (idx < lines.length && /^[•·\-] /.test(lines[idx])) {
+                    liItems.push('<li>' + lines[idx].replace(/^[•·\-]\s+/, '') + '</li>');
+                    idx++;
+                }
+                output.push('<ul class="ai-list">' + liItems.join('') + '</ul>');
+                continue;
+            }
+            // Numbered list run (1. 2. …)
+            if (/^\d+\.\s+/.test(ln)) {
+                var liItems = [];
+                while (idx < lines.length && /^\d+\.\s+/.test(lines[idx])) {
+                    liItems.push('<li>' + lines[idx].replace(/^\d+\.\s+/, '') + '</li>');
+                    idx++;
+                }
+                output.push('<ol class="ai-list">' + liItems.join('') + '</ol>');
+                continue;
+            }
+            output.push(ln);
+            idx++;
+        }
 
-        // 7. Numbered lists: lines starting with "1. " "2. " etc.
-        s = s.replace(/((?:^|\n)\d+\.\s+.+)+/g, function (block) {
-            var items = block.trim().split(/\n/).map(function (line) {
-                var content = line.replace(/^\d+\.\s+/, '').trim();
-                return content ? '<li>' + content + '</li>' : '';
-            }).filter(Boolean).join('');
-            return '<ol class="ai-list">' + items + '</ol>';
-        });
+        // 7. Rejoin: blank lines → paragraph breaks, others → <br>
+        s = output.join('\n').replace(/\n{2,}/g, '\n\n').replace(/\n/g, '<br>');
 
-        // 8. Convert newlines to <br> (but not inside list blocks)
-        s = s.replace(/\n/g, '<br>');
-
-        // 9. Convert https:// URLs to safe links
+        // 8. Convert https:// URLs to links (guard against double-wrapping)
         s = s.replace(
-            /(https?:\/\/[^\s<&"']+)/g,
+            /(?<!href=")(https?:\/\/[^\s<&"']+)/g,
             '<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>'
         );
 
-        // 10. WhatsApp shorthand: wa.me/number
+        // 9. WhatsApp shorthand: wa.me/number → clickable badge
         s = s.replace(
             /wa\.me\/(\d+)/g,
             '<a href="https://wa.me/$1" target="_blank" rel="noopener noreferrer" class="ai-wa-link">📱 WhatsApp</a>'
         );
 
-        // 11. Internal links: /products/123 or /orders /cart etc.
+        // 10. Internal site links (/products /orders /cart /login …)
         s = s.replace(
-            /\/(products(?:\/\d+)?|orders|categories|cart|profile|login|register|about|contact|search|wishlist|branches)((?:[\/?][a-zA-Z0-9_=&%-]+)*)/g,
+            /(?<!['"=])\/(products(?:\/\d+)?|orders|categories|cart|profile|login|register|about|contact|search|wishlist|branches|checkout)((?:[?/][a-zA-Z0-9_=&%+\-]*)*)/g,
             '<a href="/$1$2" class="ai-internal-link">/$1$2 →</a>'
         );
 

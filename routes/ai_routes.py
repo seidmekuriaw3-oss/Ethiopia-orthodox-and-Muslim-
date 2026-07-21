@@ -1,13 +1,15 @@
 """
-SEMIRA AI Agent — v3.0  (ጠንካራ፣ ሰራተኛ፣ ጎበዝ)
+SEMIRA AI Agent — v4.0  (ጠንካራ፣ ሰራተኛ፣ ጎበዝ)
 Powered by Groq llama-3.3-70b-versatile with comprehensive smart fallback.
-Improvements: richer persona, cart context, discount badges, better history,
-more Amharic keywords, model fallback, bulletproof error handling.
+v4.0: fixed discount calc bug, Groq client singleton, auto language detection,
+      date context, expanded model list, higher token budget, stricter rules.
 """
 import os
 import re
 import time
 import logging
+from datetime import datetime
+import pytz
 from flask import Blueprint, request, jsonify, session
 from database.db import get_db
 from routes.shared import WHATSAPP_NUMBER, FREE_SHIPPING_THRESHOLD, SHIPPING_COST, USER_DISCOUNT_RATE
@@ -22,6 +24,15 @@ except ImportError:
 
 ai_bp = Blueprint('ai', __name__)
 logger = logging.getLogger(__name__)
+
+# ── Groq client singleton (reuse across requests) ─────────────────────────────
+_groq_client: object = None
+
+def _get_groq_client(api_key: str):
+    global _groq_client
+    if _groq_client is None and _GROQ_AVAILABLE:
+        _groq_client = _GroqClient(api_key=api_key, timeout=20.0)
+    return _groq_client
 
 # ── Cache ────────────────────────────────────────────────────────────────────
 _cache: dict = {}
@@ -146,37 +157,69 @@ PAYMENT_LABELS = {
 }
 
 # ── System prompt ─────────────────────────────────────────────────────────────
-STORE_SYSTEM_PROMPT = """You are **SEMIRA** — the warm, knowledgeable AI shopping assistant for **SEMIRA FASHION**, Ethiopia's premier women's and children's clothing store. You are helpful, friendly, and deeply knowledgeable about Ethiopian fashion.
+STORE_SYSTEM_PROMPT = """You are **SEMIRA** — the warm, knowledgeable, and highly capable AI shopping assistant for **SEMIRA FASHION**, Ethiopia's premier women's and children's clothing store. You are professional, reliable, and deeply knowledgeable about Ethiopian fashion.
 
-**Language Rule:** Always respond in the exact language the customer writes in. Amharic → Amharic, English → English, Arabic → Arabic. Never switch language unless the customer does first.
+**Today's Date & Time:** {today}
+
+**Language Rule (CRITICAL):** Detect and respond in the EXACT language the customer writes in — always.
+- Amharic (Ethiopic script ሀ-ፐ) → respond fully in Amharic
+- English → respond fully in English
+- Arabic (عربي) → respond fully in Arabic
+- Mixed → use the dominant language. Never switch unless the customer does first.
 
 **Store Info:**
+- Name: SEMIRA FASHION (ሰሚራ ፋሽን)
 - Location: ወሎ፣ ደሴ፣ ኩታቤር — Wollo, Dessie, Kutaber, Ethiopia
-- WhatsApp: {whatsapp} (wa.me/{whatsapp})
-- Hours: Monday–Saturday 8AM–8PM EAT
-- Payment: Cash on Delivery (COD) — pay when item arrives. No upfront payment needed.
-- Shipping: FREE on orders ≥ {free_ship} ETB | {ship_cost} ETB flat fee otherwise | 2–5 business days
-- Returns: 7 days, unused items with original tags | Contact WhatsApp for return instructions
-- Discount: Logged-in customers get {discount_pct}% off every order automatically
-- Sizes — Women: XS, S, M, L, XL, XXL, 3XL | Kids: newborn–14 years | Traditional: custom sizing available
+- WhatsApp: {whatsapp} → wa.me/{whatsapp}
+- Hours: Monday–Saturday 8AM–8PM EAT (East Africa Time, UTC+3)
+- Payment: **Cash on Delivery (COD) only** — customer pays when order arrives. Zero upfront payment.
+- Shipping: **FREE** on orders ≥ {free_ship} ETB | {ship_cost} ETB flat fee otherwise | 2–5 business days nationwide
+- Returns: 7-day return/exchange window — unused, original tags intact — initiate via WhatsApp
+- Discount: Logged-in customers automatically get **{discount_pct}% off** every order
+- Sizes — Women: XS · S · M · L · XL · XXL · 3XL | Kids: newborn – 14 years | Traditional: custom sizing
 
-**Products in database ({product_count} shown):**
+**Current Products ({product_count} items):**
 {products}
 
-**Customer Cart:**
+**Customer's Cart:**
 {cart}
 
-**Customer Orders:**
+**Customer's Orders:**
 {orders}
 
-**STRICT RULES — never break these:**
-1. Only quote prices and products from the PRODUCTS list above. Never invent or guess prices.
-2. If Orders shows "⚠️ not logged in" → tell customer to log in at /login. Never guess order status.
-3. If Cart shows "empty" or "not logged in" → say cart is empty or ask them to log in.
-4. If you don't know something → say "WhatsApp ያግኙን: wa.me/{whatsapp}" — never make up answers.
-5. Always include product links (/products/ID) when mentioning specific products.
-6. Keep responses concise and warm. Use at most 3 emojis per message.
-7. For Amharic: use ኢትዮጵያዊ warmth — address customer as "እርስዎ" or "ደንበኛ"."""
+**STRICT NON-NEGOTIABLE RULES:**
+1. **Never invent prices or products.** Only quote items from the PRODUCTS list above. If a product is not listed, say so and direct to /products.
+2. **Never invent order status.** If Orders shows "⚠️ not logged in" → tell customer to log in at /login.
+3. **Never invent cart contents.** If cart shows "empty" or "not logged in" → state that clearly.
+4. **When uncertain**, say "WhatsApp ያግኙን: wa.me/{whatsapp}" — never fabricate information.
+5. **Always link products** using /products/ID format when mentioning specific items.
+6. **Be concise and warm.** Aim for 3–6 sentences max. Use at most 3 emojis per reply.
+7. **Amharic warmth:** address customer as "እርስዎ" or "ደንበኛ", be warm and culturally respectful.
+8. **Arabic courtesy:** use appropriate honorifics, keep tone professional and welcoming.
+9. If the customer wants to place an order, guide them to /products → add to cart → /checkout."""
+
+
+def _detect_lang(message: str, session_lang: str = 'am') -> str:
+    """Auto-detect language from message script — Amharic/Arabic script override session."""
+    if re.search(r'[\u0600-\u06FF\u0750-\u077F]', message):   # Arabic script
+        return 'ar'
+    if re.search(r'[\u1200-\u137F\u1380-\u139F\u2D80-\u2DDF]', message):  # Ethiopic/Amharic
+        return 'am'
+    # Pure Latin with English markers → English
+    if re.search(r'\b(the|is|are|have|show|my|order|cart|product|dress|size|shipping)\b',
+                 message.lower()):
+        return 'en'
+    return session_lang
+
+
+def _today_eat() -> str:
+    """Return current date/time in Addis Ababa timezone."""
+    try:
+        tz  = pytz.timezone('Africa/Addis_Ababa')
+        now = datetime.now(tz)
+        return now.strftime('%A, %B %d, %Y — %I:%M %p EAT')
+    except Exception:
+        return datetime.utcnow().strftime('%Y-%m-%d UTC')
 
 
 def _extract_price_range(msg: str):
@@ -385,14 +428,15 @@ def get_cart_context(user_id, lang: str = 'am') -> str:
             total += item_total
             lines.append(f"  • {name} × {qty} = {item_total:,.0f} ETB")
 
-        discount = total * (1 - USER_DISCOUNT_RATE)
-        final    = total - discount
+        # USER_DISCOUNT_RATE = 0.10 → 10% off → customer pays 90%
+        discount = total * USER_DISCOUNT_RATE       # amount saved (e.g. 10% of total)
+        final    = total - discount                  # what customer pays (e.g. 90% of total)
         shipping = 0 if final >= FREE_SHIPPING_THRESHOLD else SHIPPING_COST
 
         summary = "\n".join(lines)
         summary += f"\n  Subtotal: {total:,.0f} ETB"
         if discount > 0:
-            summary += f" | Discount: -{discount:,.0f} ETB ({int((1-USER_DISCOUNT_RATE)*100)}%)"
+            summary += f" | Discount: -{discount:,.0f} ETB ({int(USER_DISCOUNT_RATE * 100)}% off)"
         summary += f" | Shipping: {'FREE' if shipping == 0 else f'{shipping:,.0f} ETB'}"
         summary += f"\n  → TOTAL: {final + shipping:,.0f} ETB"
         return summary
@@ -752,6 +796,9 @@ def ai_chat():
 
         message = message[:500]  # generous cap
 
+        # Auto-detect language from message script (beats session cookie)
+        lang = _detect_lang(message, session.get('lang', 'am'))
+
         msg_lower = message.lower()
 
         # Detect intents
@@ -778,7 +825,11 @@ def ai_chat():
                     'ar': "⚠️ العميل غير مسجل الدخول. يجب تسجيل الدخول على /login. لا تخترع أي معلومات عن الطلب.",
                 }.get(lang, "⚠️ NOT logged in — direct customer to /login.")
         else:
-            orders_ctx = {'am': "ትዕዛዝ ጥያቄ አልተጠየቀም።", 'en': "No order query.", 'ar': "لم يُطلب معلومات طلب."}.get(lang, "No order query.")
+            orders_ctx = {
+                'am': "ትዕዛዝ ጥያቄ አልተጠየቀም።",
+                'en': "No order query this turn.",
+                'ar': "لم يُطلب معلومات طلب.",
+            }.get(lang, "No order query.")
 
         api_key = _get_groq_api_key()
 
@@ -788,8 +839,9 @@ def ai_chat():
             _log_conversation(message, reply, 'fallback', lang, user_id, user_name, ip)
             return jsonify({'success': True, 'reply': reply, 'source': 'fallback'})
 
-        # Build system prompt
+        # Build system prompt with live context
         system_content = STORE_SYSTEM_PROMPT.format(
+            today=_today_eat(),
             whatsapp=WHATSAPP_NUMBER,
             free_ship=f"{FREE_SHIPPING_THRESHOLD:,}",
             ship_cost=f"{SHIPPING_COST:,}",
@@ -800,45 +852,53 @@ def ai_chat():
             orders=orders_ctx,
         )
 
-        # Build message history (last 8 turns)
+        # Build message history (last 8 turns, capped per message for token safety)
         messages = [{'role': 'system', 'content': system_content}]
         for h in history[-8:]:
             role    = h.get('role', 'user')
             content = h.get('content', '')
             if role in ('user', 'assistant') and content:
-                messages.append({'role': role, 'content': str(content)[:300]})
+                messages.append({'role': role, 'content': str(content)[:400]})
         messages.append({'role': 'user', 'content': message})
 
-        # Try primary model, fallback to smaller model on failure
-        models = ['llama-3.3-70b-versatile', 'llama-3.1-8b-instant']
-        reply = None
+        # Try models in order: flagship → fast → ultra-fast fallback
+        models = [
+            'llama-3.3-70b-versatile',   # best quality
+            'llama-3.1-8b-instant',       # fast
+            'gemma2-9b-it',               # ultra-fast last resort
+        ]
+        reply  = None
+        source = 'fallback'
         for model in models:
             try:
-                client = _GroqClient(api_key=api_key, timeout=18.0)
+                client = _get_groq_client(api_key)
                 completion = client.chat.completions.create(
                     model=model,
                     messages=messages,
-                    max_tokens=600,
-                    temperature=0.3,
+                    max_tokens=800,
+                    temperature=0.25,
                     top_p=0.92,
                 )
-                reply = completion.choices[0].message.content.strip()
+                reply  = completion.choices[0].message.content.strip()
                 source = f'groq:{model.split("-")[1]}'
                 break
             except Exception as model_err:
                 logger.warning(f"AI model {model} failed: {model_err}")
+                # Invalidate cached client so next model creates fresh
+                global _groq_client
+                _groq_client = None
                 continue
 
         if not reply:
-            reply = smart_fallback(message, user_id=user_id, lang=lang,
-                                   products_ctx=products_ctx, cart_ctx=cart_ctx)
+            reply  = smart_fallback(message, user_id=user_id, lang=lang,
+                                    products_ctx=products_ctx, cart_ctx=cart_ctx)
             source = 'fallback'
 
         _log_conversation(message, reply, source, lang, user_id, user_name, ip)
         return jsonify({'success': True, 'reply': reply, 'source': source})
 
     except Exception as e:
-        logger.error(f"AI chat error: {e}")
+        logger.error(f"AI chat error: {e}", exc_info=True)
         _lang    = session.get('lang', 'am')
         _uid     = session.get('user_id')
         _name    = session.get('username') or session.get('full_name')
