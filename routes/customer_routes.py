@@ -214,23 +214,13 @@ def products():
         conn = get_db()
         cursor = conn.cursor()
 
-        cursor.execute(
-            "SELECT COUNT(*) FROM products WHERE is_active = 1"
-        )
-        total = cursor.fetchone()[0] or 0
-
-        import math
-        total_pages = max(1, math.ceil(total / per_page))
-        page = min(page, total_pages)
-        offset = (page - 1) * per_page
-
+        # Fetch ALL products for client-side filtering/pagination in JS
         cursor.execute("""
             SELECT p.*, c.name as category_name, c.name_am as category_name_am,
                    c.id as cat_id
             FROM products p LEFT JOIN categories c ON p.category_id = c.id
             WHERE p.is_active = 1 ORDER BY p.id DESC
-            LIMIT %s OFFSET %s
-        """, (per_page, offset))
+        """)
         products_rows = cursor.fetchall()
 
         cursor.execute("SELECT * FROM categories WHERE is_active = 1 ORDER BY sort_order ASC")
@@ -238,10 +228,15 @@ def products():
 
         products_list = [dict(p) for p in products_rows] if products_rows else []
         categories_list = [dict(cat) for cat in categories] if categories else []
+        total = len(products_list)
+
+        import math
+        per_page = 12
+        total_pages = max(1, math.ceil(total / per_page))
 
         return render_template('customer/product_grid.html',
                                products=products_list, categories=categories_list,
-                               page=page, total_pages=total_pages, total=total, lang=lang)
+                               page=1, total_pages=total_pages, total=total, lang=lang)
     except Exception as e:
         import traceback
         current_app.logger.error(f"Products page error: {e}\n{traceback.format_exc()}")
