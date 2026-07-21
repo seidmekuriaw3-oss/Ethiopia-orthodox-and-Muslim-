@@ -1019,60 +1019,130 @@ def _db_generate_magic_token(tg_id: int) -> str | None:
         conn.close()
 
 def _db_place_order(cart: dict, user_data: dict) -> str | None:
-    """Place an order, return order number or None on failure."""
-    try:
-        from database.models import Order, Product
-        from database.db import commit_or_rollback
-        import random
+    """
+    Place an order via a direct _sso_conn() transaction.
+    Uses %s placeholders (PostgreSQL) and never touches Flask's get_db() so it
+    works safely from the bot's background asyncio thread.
+    Returns the generated order_number on success, or None on failure.
+    """
+    import random, string, psycopg2.extras
+    from datetime import datetime
 
+    conn = _sso_conn()
+    try:
+        # ── Build line items from in-memory cart ──────────────────────────
         items_data = []
         subtotal = 0.0
         for pid_str, qty in cart.items():
-            p = Product.get_by_id(int(pid_str))
+            p = _db_get_product(int(pid_str))
             if not p:
+                log.warning("[TelegramBot] place_order: product %s not found — skipped", pid_str)
                 continue
             price = float(p['price'])
-            items_data.append({'product_id': int(pid_str), 'qty': qty,
-                                'price': price, 'name': p['name']})
+            items_data.append({
+                'product_id': int(pid_str),
+                'qty': int(qty),
+                'price': price,
+                'name': p.get('name', ''),
+            })
             subtotal += price * qty
 
         if not items_data:
+            log.error("[TelegramBot] place_order: no valid products in cart")
+            conn.close()
             return None
 
-        # Apply coupon discount if present
+        # ── Compute totals ────────────────────────────────────────────────
         coupon_pct   = int(user_data.get('coupon_discount', 0))
         discount_amt = round(subtotal * coupon_pct / 100, 2) if coupon_pct else 0.0
         discounted   = subtotal - discount_amt
+        shipping     = 0 if discounted >= FREE_SHIPPING else SHIPPING_COST
+        total        = discounted + shipping
 
-        shipping = 0 if discounted >= FREE_SHIPPING else SHIPPING_COST
-        total    = discounted + shipping
+        coupon_note = (
+            f" | Coupon: {user_data['coupon_code']} (−{coupon_pct}%)"
+            if user_data.get('coupon_code') else ''
+        )
 
-        coupon_note = ''
-        if user_data.get('coupon_code'):
-            coupon_note = f" | Coupon: {user_data['coupon_code']} (−{coupon_pct}%)"
+        # ── Generate unique order number ──────────────────────────────────
+        prefix       = datetime.now().strftime('%Y%m%d')
+        rand_str     = ''.join(random.choices(string.ascii_uppercase + string.digits, k=6))
+        order_number = f"{prefix}-{rand_str}"
 
-        order_data = {
-            'user_id': None,
-            'customer_name': user_data.get('name', ''),
-            'customer_phone': user_data.get('phone', ''),
-            'customer_email': user_data.get('email', ''),
-            'shipping_address': user_data.get('address', ''),
-            'notes': f"Telegram Bot Order | @{user_data.get('username', 'N/A')}{coupon_note}",
-            'items': items_data,
-            'subtotal': subtotal,
-            'shipping_cost': shipping,
-            'total_amount': total,
-            'payment_method': 'Cash on Delivery',
-            'status': 'Pending',
-            'payment_status': 'Unpaid',
-        }
-        order = Order.create(order_data)
-        if order:
-            return order.get('order_number') or order.get('id')
-        return None
+        with conn.cursor(cursor_factory=psycopg2.extras.DictCursor) as cur:
+            # Insert order header
+            cur.execute(
+                """INSERT INTO orders (
+                    order_number, user_id, status, payment_status, payment_method,
+                    subtotal, discount, shipping_fee, total,
+                    shipping_address, shipping_city, shipping_phone, notes
+                ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                RETURNING id""",
+                (
+                    order_number,
+                    None,                                        # guest / unlinked bot user
+                    user_data.get('status', 'Pending'),
+                    user_data.get('payment_status', 'Unpaid'),
+                    user_data.get('payment_method', 'Cash on Delivery'),
+                    round(subtotal, 2),
+                    round(discount_amt, 2),
+                    shipping,
+                    round(total, 2),
+                    user_data.get('address', ''),
+                    None,                                        # shipping_city
+                    user_data.get('phone', ''),
+                    f"Telegram Bot Order | @{user_data.get('username', 'N/A')}{coupon_note}",
+                )
+            )
+            row = cur.fetchone()
+            if not row:
+                conn.rollback()
+                log.error("[TelegramBot] place_order: INSERT returned no row for %s", order_number)
+                return None
+            order_id = row['id']
+
+            # Insert line items + update stock
+            for item in items_data:
+                cur.execute(
+                    """INSERT INTO order_items (order_id, product_id, quantity, price_at_time)
+                       VALUES (%s, %s, %s, %s)""",
+                    (order_id, item['product_id'], item['qty'], item['price'])
+                )
+                cur.execute(
+                    """UPDATE products
+                       SET stock_quantity = GREATEST(stock_quantity - %s, 0),
+                           sales_count    = sales_count + %s
+                       WHERE id = %s""",
+                    (item['qty'], item['qty'], item['product_id'])
+                )
+
+            # Optional: order_status_history (non-critical — skip if table absent)
+            try:
+                cur.execute(
+                    """INSERT INTO order_status_history (order_id, status, note)
+                       VALUES (%s, 'Pending', 'Telegram Bot Order')""",
+                    (order_id,)
+                )
+            except Exception as _hist_e:
+                log.debug("[TelegramBot] order_status_history insert skipped: %s", _hist_e)
+
+        conn.commit()
+        log.info("[TelegramBot] Order placed: %s (id=%s, total=%.2f ETB)",
+                 order_number, order_id, total)
+        return order_number
+
     except Exception as e:
-        log.error(f"[TelegramBot] place_order error: {e}")
+        try:
+            conn.rollback()
+        except Exception:
+            pass
+        log.error("[TelegramBot] place_order error: %s", e, exc_info=True)
         return None
+    finally:
+        try:
+            conn.close()
+        except Exception:
+            pass
 
 
 # ───────────────────────── message builders ─────────────────────────
@@ -2629,20 +2699,28 @@ async def on_coupon_input(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
     uid   = update.effective_user.id
     text  = update.message.text.strip()
     state = _get_state(uid)
-
-    if text.lower() != 'skip' and text:
-        coupon = _db_check_coupon(text)
-        if coupon:
-            pct = coupon.get('discount_percent', 0)
-            state['order']['coupon_code']     = text.upper()
-            state['order']['coupon_discount'] = pct
-            await update.message.reply_text(_(uid, 'coupon_ok', pct=pct))
+    try:
+        if text.lower() == 'skip' or not text:
+            # Explicitly skip coupon — clear any stale coupon data
+            state.setdefault('order', {}).pop('coupon_code', None)
+            state.setdefault('order', {}).pop('coupon_discount', None)
         else:
-            await update.message.reply_text(_(uid, 'coupon_bad'))
-    # Show order summary with confirm button
-    summary = _order_summary_text(uid)
-    await update.message.reply_text(summary, parse_mode=ParseMode.MARKDOWN,
-                                    reply_markup=_order_summary_keyboard(uid))
+            coupon = _db_check_coupon(text)
+            if coupon:
+                pct = coupon.get('discount_percent', 0)
+                state['order']['coupon_code']     = text.upper()
+                state['order']['coupon_discount'] = pct
+                await update.message.reply_text(_(uid, 'coupon_ok', pct=pct))
+            else:
+                await update.message.reply_text(_(uid, 'coupon_bad'))
+        # Show order summary with confirm button
+        summary = _order_summary_text(uid)
+        await update.message.reply_text(summary, parse_mode=ParseMode.MARKDOWN,
+                                        reply_markup=_order_summary_keyboard(uid))
+    except Exception as _ce:
+        log.error("[TelegramBot] on_coupon_input error uid=%s: %s", uid, _ce, exc_info=True)
+        await update.message.reply_text(_(uid, 'order_err'),
+                                        reply_markup=_main_menu_keyboard(uid))
     return ConversationHandler.END  # confirmation via callback
 
 
@@ -3127,6 +3205,11 @@ def build_application() -> Application:
             AWAIT_EDIT_PHONE: [
                 CallbackQueryHandler(on_callback),
                 MessageHandler(filters.TEXT & ~filters.COMMAND, on_edit_phone_input),
+            ],
+            AWAIT_RECEIPT: [
+                CallbackQueryHandler(on_callback),
+                MessageHandler(filters.PHOTO, on_receipt_input),
+                MessageHandler(filters.TEXT & ~filters.COMMAND, on_unknown_text),
             ],
         },
         fallbacks=[
