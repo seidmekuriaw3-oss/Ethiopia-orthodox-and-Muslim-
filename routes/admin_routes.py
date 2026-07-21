@@ -2197,8 +2197,12 @@ def settings():
     groq_configured = bool(
         os.environ.get('GROQ_API_KEY') or settings_data.get('groq_api_key')
     )
+    telegram_configured = bool(
+        os.environ.get('TELEGRAM_BOT_TOKEN') or settings_data.get('telegram_bot_token')
+    )
     return render_template('admin/settings.html', settings=settings_data,
-                           lang=lang, groq_configured=groq_configured)
+                           lang=lang, groq_configured=groq_configured,
+                           telegram_configured=telegram_configured)
 
 
 @admin_bp.route('/settings/change-password', methods=['POST'])
@@ -2519,6 +2523,46 @@ def save_ai_key():
         current_app.logger.error(f"save_ai_key error: {e}")
         flash('Error saving API key.', 'error')
     return redirect(url_for('admin.settings') + '#ai-settings')
+
+
+@admin_bp.route('/settings/telegram-token', methods=['POST'])
+@admin_required
+def save_telegram_token():
+    """Save or update TELEGRAM_BOT_TOKEN in the settings table and live environment."""
+    token = request.form.get('telegram_bot_token', '').strip()
+    if not token:
+        flash('ቶክን አልገቡም — ያለው ቶክን ይቀጥላል።', 'info')
+        return redirect(url_for('admin.settings') + '#telegram-settings')
+    try:
+        conn = get_db()
+        cursor = conn.cursor()
+        cursor.execute("""
+            INSERT INTO settings (key, value) VALUES (%s, %s)
+            ON CONFLICT(key) DO UPDATE SET value = %s
+        """, ('telegram_bot_token', token, token))
+        conn.commit()
+        os.environ['TELEGRAM_BOT_TOKEN'] = token
+        flash('✅ Telegram Bot Token ተቀምጧል! Bot ለመጀመር server ን restart ያድርጉ።', 'success')
+    except Exception as e:
+        current_app.logger.error(f"save_telegram_token error: {e}")
+        flash('ቶክን ሲቀምጥ ስህተት ተፈጠረ።', 'error')
+    return redirect(url_for('admin.settings') + '#telegram-settings')
+
+
+@admin_bp.route('/settings/remove-telegram-token', methods=['POST'])
+@admin_required
+def remove_telegram_token():
+    """Remove TELEGRAM_BOT_TOKEN from settings and environment."""
+    try:
+        conn = get_db()
+        cursor = conn.cursor()
+        cursor.execute("DELETE FROM settings WHERE key = %s", ('telegram_bot_token',))
+        conn.commit()
+        os.environ.pop('TELEGRAM_BOT_TOKEN', None)
+        return jsonify({'success': True})
+    except Exception as e:
+        current_app.logger.error(f"remove_telegram_token error: {e}")
+        return jsonify({'success': False, 'error': str(e)})
 
 
 @admin_bp.route('/settings/remove-ai-key', methods=['POST'])
