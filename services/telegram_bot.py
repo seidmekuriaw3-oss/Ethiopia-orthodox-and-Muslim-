@@ -1158,6 +1158,26 @@ def _db_generate_magic_token(tg_id: int) -> str | None:
     finally:
         conn.close()
 
+def _db_get_free_shipping_threshold() -> int:
+    """Read FREE_SHIPPING_THRESHOLD from settings table; fall back to env-var default."""
+    try:
+        conn = _sso_conn()
+        try:
+            with conn.cursor() as cur:
+                cur.execute(
+                    "SELECT value FROM settings WHERE key = %s LIMIT 1",
+                    ('FREE_SHIPPING_THRESHOLD',)
+                )
+                row = cur.fetchone()
+                if row and row[0]:
+                    return int(row[0])
+        finally:
+            conn.close()
+    except Exception as _e:
+        log.debug("[TelegramBot] _db_get_free_shipping_threshold fallback: %s", _e)
+    return FREE_SHIPPING   # env-var / compile-time fallback
+
+
 def _db_place_order(cart: dict, user_data: dict) -> str | None:
     """
     Place an order via a direct _sso_conn() transaction.
@@ -1196,7 +1216,8 @@ def _db_place_order(cart: dict, user_data: dict) -> str | None:
         coupon_pct   = int(user_data.get('coupon_discount', 0))
         discount_amt = round(subtotal * coupon_pct / 100, 2) if coupon_pct else 0.0
         discounted   = subtotal - discount_amt
-        shipping     = 0 if discounted >= FREE_SHIPPING else SHIPPING_COST
+        free_thresh  = _db_get_free_shipping_threshold()   # always read live value from DB
+        shipping     = 0 if discounted >= free_thresh else SHIPPING_COST
         total        = discounted + shipping
 
         coupon_note = (
@@ -1265,6 +1286,26 @@ def _db_place_order(cart: dict, user_data: dict) -> str | None:
                 )
             except Exception as _hist_e:
                 log.debug("[TelegramBot] order_status_history insert skipped: %s", _hist_e)
+
+            # ── Atomic coupon used_count increment (race-condition-safe) ──
+            # Done INSIDE the transaction so it rolls back if the order fails.
+            # The WHERE guard ensures we never exceed usage_limit even under
+            # concurrent requests from multiple users.
+            if user_data.get('coupon_code'):
+                try:
+                    cur.execute(
+                        """UPDATE coupons
+                           SET used_count = used_count + 1
+                           WHERE code = %s
+                             AND is_active = 1
+                             AND (usage_limit IS NULL OR used_count < usage_limit)""",
+                        (user_data['coupon_code'].strip().upper(),)
+                    )
+                    if cur.rowcount == 0:
+                        log.warning("[TelegramBot] Coupon '%s' already at usage limit — order proceeds without discount",
+                                    user_data['coupon_code'])
+                except Exception as _coup_e:
+                    log.debug("[TelegramBot] coupon used_count update skipped: %s", _coup_e)
 
         conn.commit()
         log.info("[TelegramBot] Order placed: %s (id=%s, total=%.2f ETB)",

@@ -1,10 +1,10 @@
-// ==================== ETHIOSADAT - MAIN JAVASCRIPT ====================
-// Professional Main JavaScript for ኢትዮሳዳት ፈርኒቸር ወድ ሰሚራ
+// ==================== SEMIRA FASHION - MAIN JAVASCRIPT ====================
+// Professional Main JavaScript for Semira Fashion E-Commerce
 // Part 1 of 2: Core Functions, UI Components, Form Validation, Loading States
 
 // ==================== App Initialization ====================
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('🚀 Ethiosadat App Loaded');
+    console.log('🛍️ Semira Fashion — Loaded');
     
     // Initialize all components
     initFlashMessages();

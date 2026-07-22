@@ -622,9 +622,11 @@ def product_update_stock(pid):
 def bulk_delete_products():
     try:
         data = request.get_json()
-        ids = data.get('ids', [])
+        raw_ids = data.get('ids', [])
+        # Validate: accept only integer product IDs to prevent injection
+        ids = [int(i) for i in raw_ids if str(i).lstrip('-').isdigit() and int(i) > 0]
         if not ids:
-            return jsonify({'success': False, 'error': 'No products selected'}), 400
+            return jsonify({'success': False, 'error': 'No valid products selected'}), 400
 
         conn = get_db()
         cursor = conn.cursor()

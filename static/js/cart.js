@@ -1,4 +1,4 @@
-// ==================== ETHIOSADAT - CART JAVASCRIPT ====================
+// ==================== SEMIRA FASHION - CART JAVASCRIPT ====================
 // Professional Shopping Cart Functionality
 
 // Helper: turn DB thumbnail path (e.g. "uploads/products/x.jpg") into a full URL
@@ -239,14 +239,20 @@ class CartManager {
         return str.length > length ? str.substring(0, length) + '...' : str;
     }
     
+    _postJSON(url, body) {
+        return fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
+            body: JSON.stringify(body)
+        }).then(res => res.text());
+    }
+
     addItem(productId, quantity = 1) {
         this.isLoading = true;
         const pid = parseInt(productId);
         const qty = parseInt(quantity);
         const fallback = () => { window.location.href = '/cart/go/add/' + pid + '?qty=' + qty; };
-        const url = CART_API.add + '?product_id=' + pid + '&quantity=' + qty;
-        return fetch(url, { method: 'GET', headers: { 'X-Requested-With': 'XMLHttpRequest' } })
-        .then(res => res.text())
+        return this._postJSON(CART_API.add, { product_id: pid, quantity: qty })
         .then(text => {
             if (!text || !text.trim()) { fallback(); return { success: true, message: 'Adding to cart...' }; }
             const data = JSON.parse(text);
@@ -267,15 +273,12 @@ class CartManager {
         })
         .finally(() => { this.isLoading = false; });
     }
-    
+
     updateItem(productId, quantity) {
         if (quantity < 1) {
             return this.removeItem(productId);
         }
-        
-        const url = CART_API.update + '?product_id=' + parseInt(productId) + '&quantity=' + parseInt(quantity);
-        return fetch(url, { method: 'GET', headers: { 'X-Requested-With': 'XMLHttpRequest' } })
-        .then(res => res.text())
+        return this._postJSON(CART_API.update, { product_id: parseInt(productId), quantity: parseInt(quantity) })
         .then(text => {
             if (!text || !text.trim()) { window.location.href = '/cart'; return { success: true }; }
             const data = JSON.parse(text);
@@ -290,11 +293,9 @@ class CartManager {
             return { success: false, message: error.message };
         });
     }
-    
+
     removeItem(productId) {
-        const url = CART_API.remove + '?product_id=' + parseInt(productId);
-        return fetch(url, { method: 'GET', headers: { 'X-Requested-With': 'XMLHttpRequest' } })
-        .then(res => res.text())
+        return this._postJSON(CART_API.remove, { product_id: parseInt(productId) })
         .then(text => {
             if (!text || !text.trim()) { window.location.href = '/cart'; return { success: true }; }
             const data = JSON.parse(text);

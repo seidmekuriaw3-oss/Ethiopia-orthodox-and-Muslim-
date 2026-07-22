@@ -253,16 +253,12 @@ def api_get_product(pid):
 
 # ==================== CART API ====================
 
-@api_bp.route('/cart/add', methods=['GET', 'POST'])
+@api_bp.route('/cart/add', methods=['POST'])
 def api_cart_add():
-    """Add product to cart"""
-    if request.method == 'GET':
-        product_id = request.args.get('product_id')
-        quantity = request.args.get('quantity', 1)
-    else:
-        data = request.get_json(silent=True) or {}
-        product_id = data.get('product_id')
-        quantity = data.get('quantity', 1)
+    """Add product to cart — POST only (CSRF-safe)"""
+    data = request.get_json(silent=True) or {}
+    product_id = data.get('product_id')
+    quantity = data.get('quantity', 1)
 
     if not product_id:
         return jsonify({'success': False, 'error': 'Invalid data'}), 400
@@ -400,15 +396,12 @@ def _get_cart_totals_data(product_id_removed=None):
     return totals
 
 
-@api_bp.route('/cart/remove', methods=['GET', 'POST'])
+@api_bp.route('/cart/remove', methods=['POST'])
 def api_cart_remove():
-    """Remove product from cart"""
+    """Remove product from cart — POST only (CSRF-safe)"""
     try:
-        if request.method == 'GET':
-            product_id = request.args.get('product_id')
-        else:
-            data = request.get_json(silent=True) or {}
-            product_id = data.get('product_id')
+        data = request.get_json(silent=True) or {}
+        product_id = data.get('product_id')
         try:
             product_id = int(product_id) if product_id else None
         except (ValueError, TypeError):
@@ -440,17 +433,13 @@ def api_cart_remove():
         return jsonify({'success': False, 'error': str(e)}), 500
 
 
-@api_bp.route('/cart/update', methods=['GET', 'POST'])
+@api_bp.route('/cart/update', methods=['POST'])
 def api_cart_update():
-    """Update product quantity in cart"""
+    """Update product quantity in cart — POST only (CSRF-safe)"""
     try:
-        if request.method == 'GET':
-            product_id = request.args.get('product_id')
-            quantity = request.args.get('quantity', 1)
-        else:
-            data = request.get_json(silent=True) or {}
-            product_id = data.get('product_id')
-            quantity = data.get('quantity', 1)
+        data = request.get_json(silent=True) or {}
+        product_id = data.get('product_id')
+        quantity = data.get('quantity', 1)
         try:
             product_id = int(product_id) if product_id else None
             quantity = int(quantity)

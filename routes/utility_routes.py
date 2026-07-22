@@ -164,8 +164,9 @@ def sitemap_xml():
 # ==================== DIAGNOSTIC ====================
 
 @utility_bp.route('/test-add/<int:product_id>', methods=['GET'])
+@admin_required
 def test_add_to_cart(product_id):
-    """Diagnostic GET route — no JSON body, no CSRF, no stock gate."""
+    """Diagnostic GET route — admin-only, protected."""
     try:
         conn = get_db()
         cursor = conn.cursor()

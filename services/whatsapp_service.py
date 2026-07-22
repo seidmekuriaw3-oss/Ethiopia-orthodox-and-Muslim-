@@ -18,14 +18,17 @@ def _send_callmebot(phone: str, message: str, api_key: str):
     try:
         import requests as _req
         encoded = urllib.parse.quote(message)
+        # NOTE: CallMeBot requires GET with query params — PII stays server-side only,
+        # never exposed to client. We deliberately avoid logging the full URL or message body.
         url = f"https://api.callmebot.com/whatsapp.php?phone={phone}&text={encoded}&apikey={api_key}"
         resp = _req.get(url, timeout=10)
         if resp.status_code == 200:
-            logger.warning(f"✅ WhatsApp notification sent to {phone}")
+            logger.info("✅ WhatsApp notification sent (status 200)")
         else:
-            logger.warning(f"⚠️  CallMeBot response {resp.status_code}: {resp.text[:200]}")
+            # Log status code only — never log resp.text (may echo back PII)
+            logger.warning("⚠️  CallMeBot response status: %d", resp.status_code)
     except Exception as e:
-        logger.warning(f"⚠️  WhatsApp notification failed: {e}")
+        logger.warning("⚠️  WhatsApp notification failed: %s", type(e).__name__)
 
 
 def send_owner_order_notification(order_number: str, customer_name: str,
