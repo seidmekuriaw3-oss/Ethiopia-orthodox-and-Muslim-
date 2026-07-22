@@ -235,9 +235,12 @@ T = {
                              '• خصم 10% على كل طلب\n'
                              '• سجل طلبات كامل\n'
                              '• نقاط مكافآت الولاء')},
-    'link_account':  {'am': '🔗 ስልክ ቁጥር ይስጡ (መለያ ለማገናኘት):',
-                      'en': '🔗 Enter your phone number to link your account:',
-                      'ar': '🔗 أدخل رقم هاتفك لربط حسابك:'},
+    'link_account':  {'am': '🔗 በድህረ-ገጽ ላይ ለተመዘገቡበት መለያ ስልክ ቁጥርዎን ወይም ኢሜይልዎን ያስገቡ:',
+                      'en': '🔗 Enter your website account phone number or email address to link:',
+                      'ar': '🔗 أدخل رقم هاتفك أو بريدك الإلكتروني المسجّل على الموقع لربط الحساب:'},
+    'link_not_found': {'am': '❌ ይህ ስልክ/ኢሜይል ካለ መለያ ጋር አልተገኘም። ትክክለኛ ስልክ ቁጥር ወይም ኢሜይል ያስገቡ:',
+                       'en': '❌ No account found with that phone/email. Please check and try again:',
+                       'ar': '❌ لم يتم العثور على حساب بهذا الرقم/البريد. تحقق وحاول مجدداً:'},
     'link_btn':      {'am': '🔗 ካለ መለያ አገናኝ',   'en': '🔗 Link Existing Account','ar': '🔗 ربط حساب موجود'},
     # ── extra UI strings ──
     'order_summary_title': {'am': 'የትዕዛዝ ማጠቃለያ',  'en': 'Order Summary',    'ar': 'ملخص الطلب'},
@@ -772,11 +775,15 @@ def _db_upsert_telegram_user(tg_id: int, tg_username: str | None,
         conn.close()
 
 
-def _db_get_profile_by_tg_id(tg_id: int) -> dict | None:
+def _db_get_profile_by_tg_id(tg_id: int, phone_fallback: str = None) -> dict | None:
     """
-    Return the users row for a Telegram user by telegram_id.
-    Includes is_registered so callers can gate profile display.
-    Returns None if the user has no row or an error occurs.
+    Return the users row for a Telegram user.
+
+    Primary lookup: telegram_id column.
+    Fallback lookup: if phone_fallback is provided and primary finds nothing,
+    try matching by phone number so web-registered users are found immediately.
+    When the phone fallback succeeds the row's telegram_id is written in the
+    same call so subsequent lookups use the fast primary path.
     """
     import psycopg2.extras
     tg_id_str = str(tg_id)
@@ -793,16 +800,58 @@ def _db_get_profile_by_tg_id(tg_id: int) -> dict | None:
                 (tg_id_str,)
             )
             row = cur.fetchone()
+
+        # ── Phone fallback: web-registered user whose telegram_id is not yet set ──
+        if not row and phone_fallback:
+            phone = phone_fallback.strip()
+            with conn.cursor(cursor_factory=psycopg2.extras.DictCursor) as cur:
+                cur.execute(
+                    """SELECT id, full_name, phone, email,
+                              loyalty_points, profile_photo,
+                              is_registered, created_at
+                       FROM users
+                       WHERE (phone = %s OR phone = %s) AND is_admin = 0
+                       LIMIT 1""",
+                    (phone, phone.lstrip('+'))
+                )
+                row = cur.fetchone()
+
+            if row:
+                # Auto-persist the link so future lookups use telegram_id
+                try:
+                    with conn.cursor() as cur:
+                        cur.execute(
+                            """UPDATE users
+                               SET telegram_id  = %s,
+                                   is_registered = 1,
+                                   updated_at   = NOW()
+                               WHERE id = %s AND is_admin = 0""",
+                            (tg_id_str, row['id'])
+                        )
+                    conn.commit()
+                    log.info("[TgLink] Auto-linked Telegram %s → user %s via phone fallback",
+                             tg_id, row['id'])
+                except Exception as link_err:
+                    conn.rollback()
+                    log.warning("[TgLink] Auto-link phone fallback error: %s", link_err)
+
         if not row:
             return None
+
         profile = dict(row)
-        # attach order count
-        with conn.cursor() as cur2:
-            cur2.execute(
-                "SELECT COUNT(*) FROM orders WHERE user_id = %s", (profile['id'],)
-            )
-            cnt = cur2.fetchone()
-            profile['order_count'] = int(cnt[0]) if cnt else 0
+        profile.setdefault('is_registered', 0)
+
+        # Attach order count
+        try:
+            with conn.cursor() as cur2:
+                cur2.execute(
+                    "SELECT COUNT(*) FROM orders WHERE user_id = %s", (profile['id'],)
+                )
+                cnt = cur2.fetchone()
+                profile['order_count'] = int(cnt[0]) if cnt else 0
+        except Exception:
+            profile['order_count'] = 0
+
         return profile
     except Exception as e:
         log.warning("[TgSSO] _db_get_profile_by_tg_id error: %s", e)
@@ -986,6 +1035,88 @@ def _db_link_phone_to_telegram(tg_id: int, phone: str) -> None:
     except Exception as e:
         conn.rollback()
         log.warning("[TgSSO] _db_link_phone_to_telegram error: %s", e)
+    finally:
+        conn.close()
+
+
+def _db_link_web_account_to_telegram(tg_id: int, credential: str) -> dict | None:
+    """
+    Link an existing web-registered account to this Telegram user.
+
+    Looks up the users row by phone number OR email address, then writes
+    telegram_id and sets is_registered = 1 on that exact row. Uses a
+    dedicated connection with an explicit commit so the write is durable.
+
+    Returns the updated profile dict on success, or None if no matching
+    account was found.
+    """
+    import psycopg2.extras
+    tg_id_str  = str(tg_id)
+    cred       = credential.strip()
+    cred_plain = cred.lstrip('+')   # normalise phone (0911… vs +251911…)
+
+    conn = _sso_conn()
+    try:
+        with conn.cursor(cursor_factory=psycopg2.extras.DictCursor) as cur:
+            # Find by phone (with/without country prefix) OR email
+            cur.execute(
+                """SELECT id, full_name, phone, email, loyalty_points,
+                          profile_photo, is_registered, created_at
+                   FROM users
+                   WHERE (phone = %s OR phone = %s OR email = %s)
+                     AND is_admin = 0
+                   LIMIT 1""",
+                (cred, cred_plain, cred.lower())
+            )
+            row = cur.fetchone()
+
+        if not row:
+            log.info("[TgLink] No web account matched credential '%s'", cred)
+            return None
+
+        user_id = row['id']
+
+        # Write telegram_id and mark as registered on the existing web row
+        with conn.cursor() as cur:
+            cur.execute(
+                """UPDATE users
+                   SET telegram_id  = %s,
+                       is_registered = 1,
+                       updated_at   = NOW()
+                   WHERE id = %s AND is_admin = 0""",
+                (tg_id_str, user_id)
+            )
+        conn.commit()   # explicit, thread-safe commit
+
+        # Return enriched profile (re-read so callers see is_registered = 1)
+        with conn.cursor(cursor_factory=psycopg2.extras.DictCursor) as cur:
+            cur.execute(
+                """SELECT id, full_name, phone, email, loyalty_points,
+                          profile_photo, is_registered, created_at
+                   FROM users WHERE id = %s LIMIT 1""",
+                (user_id,)
+            )
+            refreshed = cur.fetchone()
+
+        profile = dict(refreshed) if refreshed else dict(row)
+        profile['is_registered'] = 1   # guarantee
+
+        # Attach order count
+        try:
+            with conn.cursor() as cur:
+                cur.execute("SELECT COUNT(*) FROM orders WHERE user_id = %s", (user_id,))
+                cnt = cur.fetchone()
+                profile['order_count'] = int(cnt[0]) if cnt else 0
+        except Exception:
+            profile['order_count'] = 0
+
+        log.info("[TgLink] Linked Telegram %s → web user %s (%s)", tg_id, user_id, cred)
+        return profile
+
+    except Exception as e:
+        conn.rollback()
+        log.error("[TgLink] _db_link_web_account_to_telegram error: %s", e)
+        return None
     finally:
         conn.close()
 
@@ -1597,8 +1728,9 @@ async def on_callback(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
             return AWAIT_ORDERS_PHONE
 
     elif data == 'account:link':
+        _get_state(uid)['account_link_mode'] = True   # tells on_orders_phone_input to persist the DB link
         await _safe_edit_text(query, _(uid, 'link_account'), reply_markup=_back_home(uid))
-        return AWAIT_ORDERS_PHONE   # re-use phone-input state; handler checks & links
+        return AWAIT_ORDERS_PHONE
 
     elif data == 'reg:start':
         await _safe_edit_text(query, _(uid, 'reg_name'), reply_markup=_back_home(uid))
@@ -2172,8 +2304,15 @@ def _not_registered_kb(uid: int) -> tuple:
 
 # ── account display ──
 async def _show_account(query, uid: int):
-    """Show profile only if is_registered=1; otherwise show registration prompt."""
-    profile = _db_get_profile_by_tg_id(uid)
+    """Show profile only if is_registered=1; otherwise show registration prompt.
+
+    Lookup order:
+      1. Primary  — users.telegram_id (fast path, always tried)
+      2. Fallback — in-memory reg_phone matched against users.phone;
+                    auto-writes telegram_id so next lookup is instant.
+    """
+    phone_hint = _get_state(uid).get('reg_phone') or None
+    profile = _db_get_profile_by_tg_id(uid, phone_fallback=phone_hint)
     if profile and profile.get('is_registered'):
         if profile.get('phone'):
             _get_state(uid)['reg_phone'] = profile['phone']
@@ -2198,7 +2337,8 @@ async def _show_account(query, uid: int):
 
 async def _show_account_from_msg(msg, uid: int):
     """Same as _show_account but responds to a plain command message."""
-    profile = _db_get_profile_by_tg_id(uid)
+    phone_hint = _get_state(uid).get('reg_phone') or None
+    profile = _db_get_profile_by_tg_id(uid, phone_fallback=phone_hint)
     if profile and profile.get('is_registered'):
         if profile.get('phone'):
             _get_state(uid)['reg_phone'] = profile['phone']
@@ -2277,20 +2417,32 @@ async def _show_branches(query, uid: int):
 
 # ── new conversation handlers ──
 async def on_orders_phone_input(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
-    uid   = update.effective_user.id
-    phone = update.message.text.strip()
-    lang  = _get_state(uid).get('lang', 'am')
+    uid        = update.effective_user.id
+    credential = update.message.text.strip()
+    lang       = _get_state(uid).get('lang', 'am')
+    link_mode  = _get_state(uid).pop('account_link_mode', False)
 
-    # If called from account:link — try to link the account first
-    profile = _db_get_user_profile(phone)
-    if profile:
-        _get_state(uid)['reg_phone'] = phone
-        await update.message.reply_text(
-            f"✅ {_(uid, 'account_linked')}",
-            reply_markup=_main_menu_keyboard(uid)
-        )
+    if link_mode:
+        # ── account:link flow: find web account and write telegram_id to DB ──
+        profile = _db_link_web_account_to_telegram(uid, credential)
+        if profile:
+            _get_state(uid)['reg_phone'] = profile.get('phone') or credential
+            await update.message.reply_text(
+                f"✅ {_(uid, 'account_linked')}",
+                reply_markup=_main_menu_keyboard(uid)
+            )
+        else:
+            # No match — keep link_mode active and ask again
+            _get_state(uid)['account_link_mode'] = True
+            await update.message.reply_text(
+                _(uid, 'link_not_found'),
+                reply_markup=_back_home(uid)
+            )
+            return AWAIT_ORDERS_PHONE
         return ConversationHandler.END
 
+    # ── orders-by-phone flow ──
+    phone  = credential
     orders = _db_get_orders_by_phone(phone)
     if not orders:
         await update.message.reply_text(_(uid, 'no_orders'), reply_markup=_main_menu_keyboard(uid))
@@ -2817,8 +2969,15 @@ def _not_registered_kb(uid: int) -> tuple:
 
 # ── account display ──
 async def _show_account(query, uid: int):
-    """Show profile only if is_registered=1; otherwise show registration prompt."""
-    profile = _db_get_profile_by_tg_id(uid)
+    """Show profile only if is_registered=1; otherwise show registration prompt.
+
+    Lookup order:
+      1. Primary  — users.telegram_id (fast path, always tried)
+      2. Fallback — in-memory reg_phone matched against users.phone;
+                    auto-writes telegram_id so next lookup is instant.
+    """
+    phone_hint = _get_state(uid).get('reg_phone') or None
+    profile = _db_get_profile_by_tg_id(uid, phone_fallback=phone_hint)
     if profile and profile.get('is_registered'):
         if profile.get('phone'):
             _get_state(uid)['reg_phone'] = profile['phone']
@@ -2843,7 +3002,8 @@ async def _show_account(query, uid: int):
 
 async def _show_account_from_msg(msg, uid: int):
     """Same as _show_account but responds to a plain command message."""
-    profile = _db_get_profile_by_tg_id(uid)
+    phone_hint = _get_state(uid).get('reg_phone') or None
+    profile = _db_get_profile_by_tg_id(uid, phone_fallback=phone_hint)
     if profile and profile.get('is_registered'):
         if profile.get('phone'):
             _get_state(uid)['reg_phone'] = profile['phone']
@@ -2922,20 +3082,32 @@ async def _show_branches(query, uid: int):
 
 # ── new conversation handlers ──
 async def on_orders_phone_input(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
-    uid   = update.effective_user.id
-    phone = update.message.text.strip()
-    lang  = _get_state(uid).get('lang', 'am')
+    uid        = update.effective_user.id
+    credential = update.message.text.strip()
+    lang       = _get_state(uid).get('lang', 'am')
+    link_mode  = _get_state(uid).pop('account_link_mode', False)
 
-    # If called from account:link — try to link the account first
-    profile = _db_get_user_profile(phone)
-    if profile:
-        _get_state(uid)['reg_phone'] = phone
-        await update.message.reply_text(
-            f"✅ {_(uid, 'account_linked')}",
-            reply_markup=_main_menu_keyboard(uid)
-        )
+    if link_mode:
+        # ── account:link flow: find web account and write telegram_id to DB ──
+        profile = _db_link_web_account_to_telegram(uid, credential)
+        if profile:
+            _get_state(uid)['reg_phone'] = profile.get('phone') or credential
+            await update.message.reply_text(
+                f"✅ {_(uid, 'account_linked')}",
+                reply_markup=_main_menu_keyboard(uid)
+            )
+        else:
+            # No match — keep link_mode active and ask again
+            _get_state(uid)['account_link_mode'] = True
+            await update.message.reply_text(
+                _(uid, 'link_not_found'),
+                reply_markup=_back_home(uid)
+            )
+            return AWAIT_ORDERS_PHONE
         return ConversationHandler.END
 
+    # ── orders-by-phone flow ──
+    phone  = credential
     orders = _db_get_orders_by_phone(phone)
     if not orders:
         await update.message.reply_text(_(uid, 'no_orders'), reply_markup=_main_menu_keyboard(uid))
