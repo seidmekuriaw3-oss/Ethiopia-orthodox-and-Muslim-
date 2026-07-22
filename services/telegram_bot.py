@@ -13,7 +13,8 @@ from datetime import datetime
 
 from telegram import (
     Update, InlineKeyboardButton, InlineKeyboardMarkup,
-    InputMediaPhoto, Bot
+    InputMediaPhoto, Bot,
+    ReplyKeyboardMarkup, KeyboardButton, ReplyKeyboardRemove
 )
 from telegram.ext import (
     Application, CommandHandler, CallbackQueryHandler,
@@ -42,12 +43,49 @@ SHIPPING_COST = int(os.environ.get('SHIPPING_COST', 200))
 FREE_SHIPPING = int(os.environ.get('FREE_SHIPPING_THRESHOLD', 5000))
 PRODUCTS_PER_PAGE = 6
 
+
+# ───────────────────────── phone normalisation ─────────────────────────
+def _normalize_phone(raw: str) -> list:
+    """
+    Return all plausible storage variants of an Ethiopian phone number so
+    a single DB query matches regardless of how the number was first saved.
+
+    Canonical examples covered:
+      Input              → variants include
+      '0911234567'       → '0911234567', '251911234567', '+251911234567', '911234567'
+      '+251911234567'    → same set
+      '251911234567'     → same set
+      '911234567'        → same set
+    """
+    p = raw.strip().replace(' ', '').replace('-', '').replace('(', '').replace(')', '')
+    p_no_plus = p.lstrip('+')
+    variants: set = {p, p_no_plus}
+
+    if p_no_plus.startswith('251') and len(p_no_plus) >= 12:
+        # +251 or 251 prefix  → derive 09XX and 9XX forms
+        local = '0' + p_no_plus[3:]
+        short = p_no_plus[3:]
+        variants |= {local, short, '+' + p_no_plus}
+    elif p_no_plus.startswith('0') and len(p_no_plus) >= 10:
+        # 09XX form  → derive 251 and +251 forms
+        intl  = '251' + p_no_plus[1:]
+        short = p_no_plus[1:]
+        variants |= {intl, '+' + intl, short}
+    elif len(p_no_plus) == 9:
+        # bare 9XX form (no leading 0 or country code)
+        variants |= {'251' + p_no_plus, '+251' + p_no_plus, '0' + p_no_plus}
+
+    # Remove empties
+    return [v for v in variants if v]
+
+
 # ───────────────────────── conversation states ─────────────────────────
 (AWAIT_SEARCH, AWAIT_NAME, AWAIT_PHONE, AWAIT_ADDRESS, AWAIT_TRACK,
  AWAIT_ORDERS_PHONE, AWAIT_REG_NAME, AWAIT_REG_PHONE,
  AWAIT_REG_EMAIL, AWAIT_REG_PASS,
  AWAIT_EDIT_NAME, AWAIT_EDIT_PHONE, AWAIT_COUPON,
- AWAIT_PAYMENT_METHOD, AWAIT_RECEIPT) = range(15)
+ AWAIT_PAYMENT_METHOD, AWAIT_RECEIPT,
+ AWAIT_CONTACT) = range(16)
 
 # ───────────────────────── in-memory user state ─────────────────────────
 # { telegram_user_id: { 'lang': 'am', 'cart': {}, 'order': {}, 'wishlist': [] } }
@@ -803,16 +841,18 @@ def _db_get_profile_by_tg_id(tg_id: int, phone_fallback: str = None) -> dict | N
 
         # ── Phone fallback: web-registered user whose telegram_id is not yet set ──
         if not row and phone_fallback:
-            phone = phone_fallback.strip()
+            variants = _normalize_phone(phone_fallback)
+            placeholders = ','.join(['%s'] * len(variants))
             with conn.cursor(cursor_factory=psycopg2.extras.DictCursor) as cur:
                 cur.execute(
-                    """SELECT id, full_name, phone, email,
+                    f"""SELECT id, full_name, phone, email,
                               loyalty_points, profile_photo,
                               is_registered, created_at
                        FROM users
-                       WHERE (phone = %s OR phone = %s) AND is_admin = 0
+                       WHERE phone IN ({placeholders}) AND is_admin = 0
+                       ORDER BY is_registered DESC, id ASC
                        LIMIT 1""",
-                    (phone, phone.lstrip('+'))
+                    variants
                 )
                 row = cur.fetchone()
 
@@ -1043,52 +1083,73 @@ def _db_link_web_account_to_telegram(tg_id: int, credential: str) -> dict | None
     """
     Link an existing web-registered account to this Telegram user.
 
-    Looks up the users row by phone number OR email address, then writes
-    telegram_id and sets is_registered = 1 on that exact row. Uses a
-    dedicated connection with an explicit commit so the write is durable.
+    Looks up the users row by phone number OR email address using all
+    normalised phone variants (0911…, 251911…, +251911…, 9XX…) then writes
+    telegram_id and sets is_registered = 1. Cleans up any bot-stub orphan
+    rows that share the same telegram_id but have no phone/email.
 
     Returns the updated profile dict on success, or None if no matching
     account was found.
     """
     import psycopg2.extras
-    tg_id_str  = str(tg_id)
-    cred       = credential.strip()
-    cred_plain = cred.lstrip('+')   # normalise phone (0911… vs +251911…)
+    tg_id_str = str(tg_id)
+    cred      = credential.strip()
+    variants  = _normalize_phone(cred)   # all phone format variants
 
     conn = _sso_conn()
     try:
         with conn.cursor(cursor_factory=psycopg2.extras.DictCursor) as cur:
-            # Find by phone (with/without country prefix) OR email
+            # Match by any phone variant OR exact email
+            placeholders = ','.join(['%s'] * len(variants))
             cur.execute(
-                """SELECT id, full_name, phone, email, loyalty_points,
-                          profile_photo, is_registered, created_at
-                   FROM users
-                   WHERE (phone = %s OR phone = %s OR email = %s)
-                     AND is_admin = 0
-                   LIMIT 1""",
-                (cred, cred_plain, cred.lower())
+                f"""SELECT id, full_name, phone, email, loyalty_points,
+                           profile_photo, is_registered, created_at
+                    FROM users
+                    WHERE (phone IN ({placeholders}) OR email = %s)
+                      AND is_admin = 0
+                    ORDER BY is_registered DESC, id ASC
+                    LIMIT 1""",
+                variants + [cred.lower()]
             )
             row = cur.fetchone()
 
         if not row:
-            log.info("[TgLink] No web account matched credential '%s'", cred)
+            log.info("[TgLink] No web account matched credential '%s' (variants: %s)",
+                     cred, variants)
             return None
 
         user_id = row['id']
 
-        # Write telegram_id and mark as registered on the existing web row
+        # ── Clean up orphan bot-stub: a row with this telegram_id but no phone ──
+        # (created when user first messaged the bot before linking)
+        with conn.cursor() as cur:
+            cur.execute(
+                """DELETE FROM users
+                   WHERE telegram_id = %s
+                     AND id != %s
+                     AND is_admin = 0
+                     AND (phone IS NULL OR phone = '')
+                     AND (email IS NULL OR email = '')""",
+                (tg_id_str, user_id)
+            )
+            deleted = cur.rowcount
+            if deleted:
+                log.info("[TgLink] Removed %d orphan bot-stub row(s) for tg_id=%s",
+                         deleted, tg_id)
+
+        # ── Write telegram_id and mark as fully registered ──
         with conn.cursor() as cur:
             cur.execute(
                 """UPDATE users
-                   SET telegram_id  = %s,
+                   SET telegram_id   = %s,
                        is_registered = 1,
-                       updated_at   = NOW()
+                       updated_at    = NOW()
                    WHERE id = %s AND is_admin = 0""",
                 (tg_id_str, user_id)
             )
-        conn.commit()   # explicit, thread-safe commit
+        conn.commit()   # single explicit commit covers DELETE + UPDATE
 
-        # Return enriched profile (re-read so callers see is_registered = 1)
+        # Re-read so callers see is_registered = 1 and updated telegram_id
         with conn.cursor(cursor_factory=psycopg2.extras.DictCursor) as cur:
             cur.execute(
                 """SELECT id, full_name, phone, email, loyalty_points,
@@ -1099,18 +1160,20 @@ def _db_link_web_account_to_telegram(tg_id: int, credential: str) -> dict | None
             refreshed = cur.fetchone()
 
         profile = dict(refreshed) if refreshed else dict(row)
-        profile['is_registered'] = 1   # guarantee
+        profile['is_registered'] = 1   # guarantee even if re-read failed
 
-        # Attach order count
         try:
             with conn.cursor() as cur:
-                cur.execute("SELECT COUNT(*) FROM orders WHERE user_id = %s", (user_id,))
+                cur.execute(
+                    "SELECT COUNT(*) FROM orders WHERE user_id = %s", (user_id,)
+                )
                 cnt = cur.fetchone()
                 profile['order_count'] = int(cnt[0]) if cnt else 0
         except Exception:
             profile['order_count'] = 0
 
-        log.info("[TgLink] Linked Telegram %s → web user %s (%s)", tg_id, user_id, cred)
+        log.info("[TgLink] Linked Telegram %s → web user %s (%s)",
+                 tg_id, user_id, cred)
         return profile
 
     except Exception as e:
@@ -1769,9 +1832,23 @@ async def on_callback(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
             return AWAIT_ORDERS_PHONE
 
     elif data == 'account:link':
-        _get_state(uid)['account_link_mode'] = True   # tells on_orders_phone_input to persist the DB link
+        _get_state(uid)['account_link_mode'] = True
+        # Edit the inline message to a plain prompt, then send a NEW message
+        # with the native contact-sharing Reply Keyboard (can't attach Reply
+        # Keyboards to edited inline messages).
         await _safe_edit_text(query, _(uid, 'link_account'), reply_markup=_back_home(uid))
-        return AWAIT_ORDERS_PHONE
+        contact_kb = ReplyKeyboardMarkup(
+            [[KeyboardButton('📱 ስልክ ቁጥሬን አጋራ / Share My Contact',
+                             request_contact=True)]],
+            one_time_keyboard=True,
+            resize_keyboard=True,
+        )
+        await query.message.reply_text(
+            "📲 «ስልክ ቁጥሬን አጋራ» የሚለውን ይጫኑ፣ ወይም ስልክ ቁጥሩን በጽሑፍ ያስገቡ።\n"
+            "Press the button to share your contact, or type your phone number.",
+            reply_markup=contact_kb,
+        )
+        return AWAIT_CONTACT
 
     elif data == 'reg:start':
         await _safe_edit_text(query, _(uid, 'reg_name'), reply_markup=_back_home(uid))
@@ -2457,6 +2534,43 @@ async def _show_branches(query, uid: int):
 
 
 # ── new conversation handlers ──
+async def on_link_contact(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
+    """Handle a Telegram Contact shared via the native contact-sharing button."""
+    uid     = update.effective_user.id
+    contact = update.message.contact
+
+    # Remove the Reply Keyboard immediately
+    remove_kb = ReplyKeyboardRemove()
+
+    if not contact:
+        await update.message.reply_text(
+            _(uid, 'link_not_found'), reply_markup=remove_kb
+        )
+        _get_state(uid)['account_link_mode'] = True
+        return AWAIT_CONTACT
+
+    raw_phone = contact.phone_number or ''
+    profile   = _db_link_web_account_to_telegram(uid, raw_phone)
+
+    if profile:
+        _get_state(uid)['reg_phone'] = profile.get('phone') or raw_phone
+        _get_state(uid).pop('account_link_mode', None)
+        await update.message.reply_text(
+            f"✅ {_(uid, 'account_linked')}",
+            reply_markup=remove_kb,
+        )
+        # Immediately show the linked profile
+        await _show_account_from_msg(update.message, uid)
+    else:
+        _get_state(uid)['account_link_mode'] = True
+        await update.message.reply_text(
+            _(uid, 'link_not_found'), reply_markup=remove_kb
+        )
+        return AWAIT_CONTACT
+
+    return ConversationHandler.END
+
+
 async def on_orders_phone_input(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
     uid        = update.effective_user.id
     credential = update.message.text.strip()
@@ -2464,22 +2578,25 @@ async def on_orders_phone_input(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
     link_mode  = _get_state(uid).pop('account_link_mode', False)
 
     if link_mode:
-        # ── account:link flow: find web account and write telegram_id to DB ──
+        # ── account:link flow (typed phone fallback) ──
+        # Normalize input to match any storage format in DB
         profile = _db_link_web_account_to_telegram(uid, credential)
         if profile:
             _get_state(uid)['reg_phone'] = profile.get('phone') or credential
+            _get_state(uid).pop('account_link_mode', None)
             await update.message.reply_text(
                 f"✅ {_(uid, 'account_linked')}",
-                reply_markup=_main_menu_keyboard(uid)
+                reply_markup=ReplyKeyboardRemove(),
             )
+            await _show_account_from_msg(update.message, uid)
         else:
-            # No match — keep link_mode active and ask again
+            # No match — show all tried variants in log; ask again
             _get_state(uid)['account_link_mode'] = True
             await update.message.reply_text(
                 _(uid, 'link_not_found'),
                 reply_markup=_back_home(uid)
             )
-            return AWAIT_ORDERS_PHONE
+            return AWAIT_CONTACT
         return ConversationHandler.END
 
     # ── orders-by-phone flow ──
@@ -2740,6 +2857,12 @@ def build_application() -> Application:
             ],
             AWAIT_ORDERS_PHONE: [
                 CallbackQueryHandler(on_callback),
+                MessageHandler(filters.CONTACT, on_link_contact),
+                MessageHandler(filters.TEXT & ~filters.COMMAND, on_orders_phone_input),
+            ],
+            AWAIT_CONTACT: [
+                CallbackQueryHandler(on_callback),
+                MessageHandler(filters.CONTACT, on_link_contact),
                 MessageHandler(filters.TEXT & ~filters.COMMAND, on_orders_phone_input),
             ],
             AWAIT_REG_NAME: [
@@ -3129,22 +3252,25 @@ async def on_orders_phone_input(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
     link_mode  = _get_state(uid).pop('account_link_mode', False)
 
     if link_mode:
-        # ── account:link flow: find web account and write telegram_id to DB ──
+        # ── account:link flow (typed phone fallback) ──
+        # Normalize input to match any storage format in DB
         profile = _db_link_web_account_to_telegram(uid, credential)
         if profile:
             _get_state(uid)['reg_phone'] = profile.get('phone') or credential
+            _get_state(uid).pop('account_link_mode', None)
             await update.message.reply_text(
                 f"✅ {_(uid, 'account_linked')}",
-                reply_markup=_main_menu_keyboard(uid)
+                reply_markup=ReplyKeyboardRemove(),
             )
+            await _show_account_from_msg(update.message, uid)
         else:
-            # No match — keep link_mode active and ask again
+            # No match — show all tried variants in log; ask again
             _get_state(uid)['account_link_mode'] = True
             await update.message.reply_text(
                 _(uid, 'link_not_found'),
                 reply_markup=_back_home(uid)
             )
-            return AWAIT_ORDERS_PHONE
+            return AWAIT_CONTACT
         return ConversationHandler.END
 
     # ── orders-by-phone flow ──
@@ -3405,6 +3531,12 @@ def build_application() -> Application:
             ],
             AWAIT_ORDERS_PHONE: [
                 CallbackQueryHandler(on_callback),
+                MessageHandler(filters.CONTACT, on_link_contact),
+                MessageHandler(filters.TEXT & ~filters.COMMAND, on_orders_phone_input),
+            ],
+            AWAIT_CONTACT: [
+                CallbackQueryHandler(on_callback),
+                MessageHandler(filters.CONTACT, on_link_contact),
                 MessageHandler(filters.TEXT & ~filters.COMMAND, on_orders_phone_input),
             ],
             AWAIT_REG_NAME: [
