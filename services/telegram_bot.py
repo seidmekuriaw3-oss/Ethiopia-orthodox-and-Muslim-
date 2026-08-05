@@ -2996,6 +2996,21 @@ def _get_or_create_app() -> tuple[Application, asyncio.AbstractEventLoop]:
     return _application, _loop
 
 
+def reset_application():
+    """Reset the cached Telegram application so a new token can be loaded."""
+    global _application
+    with _lock:
+        if _application is None:
+            return
+        try:
+            future = asyncio.run_coroutine_threadsafe(_application.shutdown(), _loop)
+            future.result(timeout=15)
+        except Exception as e:
+            log.warning(f"[TelegramBot] reset_application shutdown error: {e}")
+        finally:
+            _application = None
+
+
 def process_update_sync(update_data: dict):
     """Called from the Flask webhook route — processes one Telegram update."""
     if not _get_token():

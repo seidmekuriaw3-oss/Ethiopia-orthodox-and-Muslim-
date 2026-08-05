@@ -9,6 +9,7 @@ from flask import (
     Blueprint, render_template, request, redirect, url_for,
     flash, session, jsonify, make_response, current_app
 )
+from werkzeug.exceptions import HTTPException
 from extensions import limiter
 from middleware.auth import user_login_required
 from middleware.platform import get_platform, is_android_app
@@ -261,8 +262,8 @@ def product_detail(product_id):
         product = cursor.fetchone()
 
         if not product:
-            flash('Product not found!', 'danger')
-            return redirect(url_for('customer.products'))
+            from flask import abort
+            abort(404)
 
         cursor.execute("UPDATE products SET views = views + 1 WHERE id = %s", (product_id,))
         conn.commit()
@@ -330,6 +331,8 @@ def product_detail(product_id):
                                recently_viewed_products=recently_viewed_list,
                                discount=discount, final_price=round(final_price, 2),
                                is_logged_in=is_logged_in, lang=lang)
+    except HTTPException:
+        raise
     except Exception as e:
         current_app.logger.error(f"Product detail error: {e}")
         flash('Error loading product.', 'error')

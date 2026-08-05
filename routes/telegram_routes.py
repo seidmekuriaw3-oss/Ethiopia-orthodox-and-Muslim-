@@ -27,6 +27,13 @@ def _site_url():
 def webhook(token: str):
     """Receive updates from Telegram."""
     expected = _token()
+    if not expected:
+        try:
+            from app import _load_telegram_token_from_db
+            _load_telegram_token_from_db()
+            expected = _token()
+        except Exception:
+            pass
     if not expected or token != expected:
         log.warning(f"[TelegramWebhook] 403 — token mismatch (got {token[:10]}...)")
         abort(403)

@@ -149,6 +149,8 @@ _CSRF_EXEMPT_PREFIXES = ('/api/', '/static/', '/telegram/')
 
 @app.before_request
 def csrf_protect():
+    if app.config.get('TESTING'):
+        return
     if request.method not in ('POST', 'PUT', 'PATCH', 'DELETE'):
         return
     for prefix in _CSRF_EXEMPT_PREFIXES:
@@ -953,27 +955,6 @@ def _run_daily_digest(app_ref):
             app_ref.logger.error(f"Daily digest error: {_e}")
 
 
-try:
-    from apscheduler.schedulers.background import BackgroundScheduler
-    import pytz
-
-    _scheduler = BackgroundScheduler(timezone=pytz.utc)
-    # Run at 05:00 UTC = 08:00 EAT (Ethiopia Africa/Addis_Ababa)
-    _scheduler.add_job(
-        func=_run_daily_digest,
-        args=[app],
-        trigger='cron',
-        hour=5, minute=0,
-        id='daily_digest',
-        replace_existing=True,
-        misfire_grace_time=3600,
-    )
-    _scheduler.start()
-    atexit.register(lambda: _scheduler.shutdown(wait=False))
-    app.logger.info("Daily digest scheduler started — runs at 05:00 UTC (08:00 EAT)")
-except Exception as _sched_err:
-    app.logger.warning(f"Scheduler could not start: {_sched_err}")
-
 # ==================== TELEGRAM BOT WEBHOOK AUTO-REGISTRATION ====================
 
 def _load_telegram_token_from_db():
@@ -990,8 +971,6 @@ def _load_telegram_token_from_db():
             app.logger.info("✅ Telegram token loaded from settings table.")
     except Exception as _e:
         app.logger.warning(f"⚠️  Could not load Telegram token from DB: {_e}")
-
-_load_telegram_token_from_db()
 
 
 def _register_telegram_webhook():
@@ -1021,10 +1000,45 @@ def _register_telegram_webhook():
         app.logger.warning(f"⚠️  Telegram webhook setup error: {_e}")
 
 import threading as _threading
-_threading.Thread(target=_register_telegram_webhook, daemon=True).start()
+
+
+def _start_background_services():
+    """Start optional background services only when the application is run directly."""
+    try:
+        from apscheduler.schedulers.background import BackgroundScheduler
+        import pytz
+
+        _scheduler = BackgroundScheduler(timezone=pytz.utc)
+        # Run at 05:00 UTC = 08:00 EAT (Ethiopia Africa/Addis_Ababa)
+        _scheduler.add_job(
+            func=_run_daily_digest,
+            args=[app],
+            trigger='cron',
+            hour=5, minute=0,
+            id='daily_digest',
+            replace_existing=True,
+            misfire_grace_time=3600,
+        )
+        _scheduler.start()
+        atexit.register(lambda: _scheduler.shutdown(wait=False))
+        app.logger.info("Daily digest scheduler started — runs at 05:00 UTC (08:00 EAT)")
+    except Exception as _sched_err:
+        app.logger.warning(f"Scheduler could not start: {_sched_err}")
+
+    _load_telegram_token_from_db()
+
+    def _register_telegram_webhook_in_thread():
+        _register_telegram_webhook()
+
+    _threading.Thread(target=_register_telegram_webhook_in_thread, daemon=True).start()
 
 
 # ==================== 14. MAIN ENTRY POINT ====================
+
+def create_app():
+    """Return the globally configured Flask application."""
+    return app
+
 
 def main():
     import argparse
@@ -1033,6 +1047,7 @@ def main():
     parser.add_argument('--port', type=int, default=5000)
     parser.add_argument('--debug', action='store_true')
     args = parser.parse_args()
+    _start_background_services()
     print(f"\nStarting Semira Fashion at http://{args.host}:{args.port}")
     app.run(host=args.host, port=args.port, debug=args.debug)
 
