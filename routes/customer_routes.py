@@ -1833,7 +1833,7 @@ def dashboard():
                                photo_history=db_photo_history,
                                active_tab=tab,
                                lang=lang,
-                               telegram_bot_url="https://t.me/semirafashionBot")
+                               telegram_bot_url=f"https://t.me/{current_app.config.get('TELEGRAM_BOT_USERNAME','semirafashionBot')}")
     except Exception as e:
         import traceback
         current_app.logger.error(f"Dashboard error: {e}\n{traceback.format_exc()}")

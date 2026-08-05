@@ -558,14 +558,18 @@ def _db_get_branches():
     ).fetchall()
 
 def _db_get_orders_by_phone(phone: str):
+    """Fetch orders for a customer using all normalised phone variants."""
     from database.db import get_db
     db = get_db()
-    phone = phone.strip()
+    variants = _normalize_phone(phone.strip())
+    if not variants:
+        return []
+    placeholders = ','.join(['%s'] * len(variants))
     rows = db.execute(
-        "SELECT order_number, status, total, created_at "
-        "FROM orders WHERE shipping_phone=%s OR shipping_phone=%s "
-        "ORDER BY created_at DESC LIMIT 10",
-        (phone, phone.replace('+', ''))
+        f"SELECT order_number, status, total, created_at "
+        f"FROM orders WHERE shipping_phone IN ({placeholders}) "
+        f"ORDER BY created_at DESC LIMIT 10",
+        variants
     ).fetchall()
     return rows
 
@@ -1607,10 +1611,15 @@ async def cmd_start(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
     state = _get_state(uid)
     state['username'] = update.effective_user.username or str(uid)
 
-    # Personalized greeting if the user already linked an account
-    phone   = state.get('reg_phone', '')
-    profile = _db_get_user_profile(phone) if phone else None
+    # ── Personalized greeting: primary = DB lookup by telegram_id (survives restart)
+    # Fallback = in-memory reg_phone for users not yet linked via telegram_id.
     lang    = state.get('lang', 'am')
+    profile = _db_get_profile_by_tg_id(uid)   # always read fresh from DB
+    if profile and profile.get('phone'):
+        state['reg_phone'] = profile['phone']  # refresh in-memory cache
+    if not profile:
+        phone = state.get('reg_phone', '')
+        profile = _db_get_user_profile(phone) if phone else None
 
     if profile:
         first_name = (profile.get('full_name') or '').split()[0]
@@ -3333,8 +3342,12 @@ async def on_reg_name_input(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
 
 
 async def on_reg_phone_input(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
-    uid  = update.effective_user.id
+    uid   = update.effective_user.id
     phone = update.message.text.strip()
+    # ── Validate Ethiopian phone before accepting ──
+    if not _is_valid_phone(phone):
+        await update.message.reply_text(_(uid, 'phone_invalid'))
+        return AWAIT_REG_PHONE
     ctx.user_data.setdefault('reg', {})['phone'] = phone
     _get_state(uid)['reg_phone'] = phone
     await update.message.reply_text(_(uid, 'reg_email'))
@@ -3342,9 +3355,11 @@ async def on_reg_phone_input(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
 
 
 async def on_reg_email_input(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
-    uid = update.effective_user.id
+    uid   = update.effective_user.id
     email = update.message.text.strip()
-    ctx.user_data.setdefault('reg', {})['email'] = email
+    # Normalise 'skip' → None so _db_register_user stores NULL
+    normalised_email = None if email.lower() == 'skip' else email
+    ctx.user_data.setdefault('reg', {})['email'] = normalised_email or ''
     await update.message.reply_text(_(uid, 'reg_pass'))
     return AWAIT_REG_PASS
 

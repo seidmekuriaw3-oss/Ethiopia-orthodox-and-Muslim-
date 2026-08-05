@@ -631,7 +631,7 @@ def bulk_delete_products():
         conn = get_db()
         cursor = conn.cursor()
         placeholders = ','.join(['%s'] * len(ids))
-        cursor.execute(f"SELECT id, thumbnail FROM products WHERE id IN ({placeholders})", ids)
+        cursor.execute(f"SELECT id, thumbnail FROM products WHERE id IN ({placeholders})", tuple(ids))
         products_rows = cursor.fetchall()
 
         for prod in products_rows:
@@ -644,7 +644,7 @@ def bulk_delete_products():
                     except Exception:
                         pass
 
-        cursor.execute(f"DELETE FROM products WHERE id IN ({placeholders})", ids)
+        cursor.execute(f"DELETE FROM products WHERE id IN ({placeholders})", tuple(ids))
         conn.commit()
         return jsonify({'success': True, 'deleted': len(ids)})
     except Exception as e:

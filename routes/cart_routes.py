@@ -227,7 +227,7 @@ def add_to_cart(product_id):
 
 # ====================== REMOVE FROM CART ====================
 
-@cart_bp.route('/remove/<int:product_id>')
+@cart_bp.route('/remove/<int:product_id>', methods=['POST', 'GET'])
 def remove_from_cart(product_id):
     """Remove product from cart"""
     if session.get('user_id'):
