@@ -1,3 +1,4 @@
+- [Telegram bot order flow](telegram-bot-order-flow.md) — cart:checkout was dead code (startswith bug); phone/name/addr validation added; file hit 4× duplication crisis; rebuild pattern documented.
 - [Islamic Corner data layer](islamic-corner-data.md) — database/islamic_data.py has 30-day rotating Quran Amharic + Hadith; served via /api/islamic/daily-content; index.html slider extended to 6 cards (idcTotal=6, 6 dots).
 - [WhatsApp low-stock alert](whatsapp-low-stock.md) — send_low_stock_alert() in whatsapp_service.py; always logs to console, sends WhatsApp only if CALLMEBOT_API_KEY is set.
 - [Stock race condition fix](stock-race-condition.md) — FOR UPDATE OF p on product SELECT + atomic UPDATE WHERE stock_quantity >= qty + rollback; both cart_routes.py and api_routes.py.

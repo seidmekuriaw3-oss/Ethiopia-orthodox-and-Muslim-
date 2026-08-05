@@ -512,11 +512,17 @@ class Order:
                     (order_id, item['product_id'], item['quantity'], item['price'])
                 )
                 
-                # Update product stock
-                db.execute(
-                    "UPDATE products SET stock_quantity = stock_quantity - %s, sales_count = sales_count + %s WHERE id = %s",
-                    (item['quantity'], item['quantity'], item['product_id'])
+                # Update product stock — atomic check prevents overselling
+                cursor2 = db.execute(
+                    """UPDATE products
+                       SET stock_quantity = stock_quantity - %s,
+                           sales_count    = COALESCE(sales_count, 0) + %s
+                       WHERE id = %s AND stock_quantity >= %s""",
+                    (item['quantity'], item['quantity'], item['product_id'], item['quantity'])
                 )
+                if cursor2.rowcount == 0:
+                    db.rollback()
+                    return None  # caller should treat None as "out of stock"
             
             # Clear user's cart
             db.execute("DELETE FROM cart_items WHERE user_id = %s", (order_data['user_id'],))
@@ -782,6 +788,10 @@ class User:
             db.commit()
         except Exception as e:
             print(f"Error updating last login for user {uid}: {e}")
+            try:
+                get_db().rollback()
+            except Exception:
+                pass
 
     @staticmethod
     def delete(uid):

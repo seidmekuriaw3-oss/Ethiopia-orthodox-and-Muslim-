@@ -65,6 +65,18 @@ def admin_login():
             _pw_ok = (username == admin_username and password == admin_password)
 
         if _pw_ok:
+            # Auto-upgrade: store hash in settings so next login uses bcrypt
+            if not (_row and _row[0]):
+                try:
+                    _hash = generate_password_hash(password)
+                    _conn.execute(
+                        "INSERT INTO settings (key, value) VALUES ('admin_password_hash', %s) "
+                        "ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value",
+                        (_hash,)
+                    )
+                    _conn.commit()
+                except Exception:
+                    pass
             session['admin'] = True
             session['admin_username'] = username
             flash('Logged in successfully!', 'success')
