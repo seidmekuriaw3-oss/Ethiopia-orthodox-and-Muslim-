@@ -1357,11 +1357,17 @@
     <div class="ads-crsl-viewport">
         <div class="ads-crsl-track" id="adsCrslTrack">
         {% for ad in ads %}
-            {% set is_video = (ad.image and ad.image|trim != '' and ad.image.lower().endswith(vid_exts)) or (ad.media_url and ad.media_url|trim != '' and ad.media_url.lower().endswith(vid_exts)) %}
-            {% set video_src = (resolved_img if (ad.image and ad.image|trim != '' and ad.image.lower().endswith(vid_exts)) else ad.media_url) if is_video else '' %}
-            {% set poster_src = url_for('static', filename=ad.image.replace('.mp4','_poster.jpg').replace('.webm','_poster.jpg').replace('.mov','_poster.jpg')) if (is_video and ad.image) else '' %}
-            {% set is_image = ad.image and ad.image|trim != '' and not is_video %}
-            {% set resolved_img = ad.image if (ad.image and ad.image[:4] == 'http') else (resolved_img if ad.image and ad.image|trim != '' else '') %}
+            {# ── resolve raw paths to proper URLs ── #}
+            {% set _raw_img = ad.image    if (ad.image     and ad.image|trim     != '') else '' %}
+            {% set _raw_med = ad.media_url if (ad.media_url and ad.media_url|trim != '') else '' %}
+            {% set is_video = (_raw_img != '' and _raw_img.lower().endswith(vid_exts))
+                           or (_raw_med != '' and _raw_med.lower().endswith(vid_exts)) %}
+            {% set resolved_img = (_raw_img if _raw_img[:4] == 'http' else url_for('static', filename=_raw_img)) if _raw_img != '' else '' %}
+            {% set resolved_med = (_raw_med if _raw_med[:4] == 'http' else url_for('static', filename=_raw_med)) if _raw_med != '' else '' %}
+            {# for video ads: media_url = .mp4, image = poster jpg #}
+            {% set video_src  = (resolved_img if (_raw_img != '' and _raw_img.lower().endswith(vid_exts)) else resolved_med) if is_video else '' %}
+            {% set poster_src = (resolved_img if (_raw_img != '' and not _raw_img.lower().endswith(vid_exts)) else resolved_med) if is_video else '' %}
+            {% set is_image   = _raw_img != '' and not is_video %}
             {% set ad_title = localized_ad_title(ad) or ('🎉 ' ~ t.promo) %}
             {% set ad_desc  = localized_ad_description(ad) %}
             {% set ad_link  = ad.link if ad.link else url_for('customer.products') %}
