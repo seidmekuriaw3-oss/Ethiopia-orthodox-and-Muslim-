@@ -1362,8 +1362,25 @@
             {% set _raw_med = ad.media_url if (ad.media_url and ad.media_url|trim != '') else '' %}
             {% set is_video = (_raw_img != '' and _raw_img.lower().endswith(vid_exts))
                            or (_raw_med != '' and _raw_med.lower().endswith(vid_exts)) %}
-            {% set resolved_img = (_raw_img if _raw_img[:4] == 'http' else url_for('static', filename=_raw_img)) if _raw_img != '' else '' %}
-            {% set resolved_med = (_raw_med if _raw_med[:4] == 'http' else url_for('static', filename=_raw_med)) if _raw_med != '' else '' %}
+            {# Always normalize local uploads through Flask's static route.
+               Explicit if blocks avoid Jinja's nested inline-expression
+               precedence from leaking uploads/... as a browser-relative URL. #}
+            {% set resolved_img = '' %}
+            {% if _raw_img != '' %}
+                {% if _raw_img[:7] == 'http://' or _raw_img[:8] == 'https://' %}
+                    {% set resolved_img = _raw_img %}
+                {% else %}
+                    {% set resolved_img = url_for('static', filename=_raw_img.lstrip('/')) %}
+                {% endif %}
+            {% endif %}
+            {% set resolved_med = '' %}
+            {% if _raw_med != '' %}
+                {% if _raw_med[:7] == 'http://' or _raw_med[:8] == 'https://' %}
+                    {% set resolved_med = _raw_med %}
+                {% else %}
+                    {% set resolved_med = url_for('static', filename=_raw_med.lstrip('/')) %}
+                {% endif %}
+            {% endif %}
             {# for video ads: media_url = .mp4, image = poster jpg #}
             {% set video_src  = (resolved_img if (_raw_img != '' and _raw_img.lower().endswith(vid_exts)) else resolved_med) if is_video else '' %}
             {% set poster_src = (resolved_img if (_raw_img != '' and not _raw_img.lower().endswith(vid_exts)) else resolved_med) if is_video else '' %}
