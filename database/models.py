@@ -84,10 +84,10 @@ class Product:
             search = f'%{query}%'
             return db.execute(
                 """SELECT * FROM products 
-                   WHERE (name LIKE %s OR name_am LIKE %s OR name_ar LIKE %s) 
+                   WHERE (name ILIKE %s OR name_am ILIKE %s OR name_ar ILIKE %s OR name_en ILIKE %s)
                    AND is_active = 1
                    ORDER BY id DESC""",
-                (search, search, search)
+                (search, search, search, search)
             ).fetchall()
         except Exception as e:
             print(f"Error searching products: {e}")
@@ -119,6 +119,20 @@ class Product:
                 else:
                     images_json = data['images']
             
+            category_id = data.get('category_id')
+            if category_id is None and data.get('category'):
+                category_value = str(data['category']).strip()
+                category_row = db.execute(
+                    """SELECT id FROM categories
+                       WHERE name = %s OR name_am = %s OR name_ar = %s
+                       ORDER BY is_active DESC, id ASC LIMIT 1""",
+                    (category_value, category_value, category_value)
+                ).fetchone()
+                category_id = category_row['id'] if category_row else None
+
+            if category_id is None:
+                raise ValueError('category_id (or a matching category name) is required')
+
             cursor = db.execute(
                 """INSERT INTO products (
                     name, name_am, name_ar, name_en,
@@ -157,7 +171,7 @@ class Product:
                     data.get('dimensions'),
                     data.get('material'),
                     data.get('color'),
-                    data['category_id'],
+                    category_id,
                     0,  # views
                     0,  # sales_count
                     data.get('meta_title', ''),

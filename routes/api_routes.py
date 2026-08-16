@@ -71,16 +71,36 @@ def api_search_products():
     })
 
 
+@api_bp.route('/products')
 @api_bp.route('/products/filter')
 @api_bp.route('/search-products')
 def api_filter_products():
     """Filter products by category, price range, etc."""
+    # The storefront's infinite-scroll client uses the shorter legacy query
+    # shape (/api/products?page=...&category=...&search=...&sort=...).
+    # Keep both query shapes supported so filtering does not depend on which
+    # page or component initiated the request.
     category_id = request.args.get('category_id', type=int)
+    category = request.args.get('category', '').strip()
+    category_name = None
+    if not category_id and category and category.lower() != 'all':
+        if category.isdigit():
+            category_id = int(category)
+        else:
+            category_name = category
+
+    search = request.args.get('search', '').strip()
     min_price = request.args.get('min_price', type=float)
     max_price = request.args.get('max_price', type=float)
-    sort_by = request.args.get('sort_by', 'newest')
+    sort_by = request.args.get('sort_by') or request.args.get('sort', 'newest')
     limit = request.args.get('limit', 50, type=int)
-    offset = request.args.get('offset', 0, type=int)
+    page = request.args.get('page', type=int)
+    offset = request.args.get('offset', type=int)
+    if page and offset is None:
+        offset = max(page - 1, 0) * limit
+    if offset is None:
+        offset = 0
+    limit = max(1, min(limit, 100))
     
     db = get_db()
     cursor = db.cursor()
@@ -107,6 +127,14 @@ def api_filter_products():
     if category_id:
         query += " AND p.category_id = %s"
         params.append(category_id)
+    elif category_name:
+        query += " AND (c.name = %s OR c.name_am = %s OR c.name_ar = %s)"
+        params.extend([category_name, category_name, category_name])
+
+    if search:
+        search_term = f'%{search}%'
+        query += " AND (p.name ILIKE %s OR p.name_am ILIKE %s OR p.name_ar ILIKE %s OR p.name_en ILIKE %s)"
+        params.extend([search_term] * 4)
     
     if min_price is not None:
         query += " AND p.price >= %s"
@@ -145,6 +173,18 @@ def api_filter_products():
     if category_id:
         count_query += " AND p.category_id = %s"
         count_params.append(category_id)
+    elif category_name:
+        count_query += """ AND EXISTS (
+            SELECT 1 FROM categories c
+            WHERE c.id = p.category_id
+              AND (c.name = %s OR c.name_am = %s OR c.name_ar = %s)
+        )"""
+        count_params.extend([category_name, category_name, category_name])
+
+    if search:
+        search_term = f'%{search}%'
+        count_query += " AND (p.name ILIKE %s OR p.name_am ILIKE %s OR p.name_ar ILIKE %s OR p.name_en ILIKE %s)"
+        count_params.extend([search_term] * 4)
     
     if min_price is not None:
         count_query += " AND p.price >= %s"
@@ -194,6 +234,7 @@ def api_filter_products():
 
 
 @api_bp.route('/products/<int:pid>')
+@api_bp.route('/product/<int:pid>')
 def api_get_product(pid):
     """Get single product details"""
     db = get_db()
