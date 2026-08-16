@@ -756,6 +756,7 @@ def api_logout():
     session.pop('user_name', None)
     session.pop('user_email', None)
     session.pop('user_phone', None)
+    session.pop('user_photo', None)
     
     return jsonify({'success': True, 'message': 'Logged out successfully'})
 

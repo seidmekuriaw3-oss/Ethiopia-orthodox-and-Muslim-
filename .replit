@@ -29,7 +29,7 @@ outputType = "webview"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "pkill -f 'python app.py' 2>/dev/null; sleep 2; while true; do python app.py; echo 'App exited, restarting in 3s...'; sleep 3; done"
+args = "gunicorn --bind=0.0.0.0:5000 --reuse-port --workers=2 --timeout=120 wsgi:app"
 waitForPort = 5000
 
 [agent]

@@ -810,6 +810,7 @@ def user_logout():
     session.pop('user_name', None)
     session.pop('user_email', None)
     session.pop('user_phone', None)
+    session.pop('user_photo', None)
     flash('Logged out successfully!', 'success')
     return redirect(url_for('customer.index'))
 
