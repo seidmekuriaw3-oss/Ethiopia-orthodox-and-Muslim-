@@ -13,6 +13,11 @@ import json
 from datetime import datetime
 from pathlib import Path
 
+# This file is a manually-invoked system checker, not a pytest module.
+# Prevent pytest from treating helper functions such as test_endpoint() as
+# test cases and attempting to resolve their runtime arguments as fixtures.
+__test__ = False
+
 # Configuration
 BASE_URL = os.environ.get('TEST_URL', 'http://127.0.0.1:5000')
 TIMEOUT = 10
