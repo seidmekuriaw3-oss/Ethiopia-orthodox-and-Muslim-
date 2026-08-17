@@ -39,6 +39,11 @@ from utils.csrf import generate_csrf, validate_csrf
 
 app = Flask(__name__)
 
+# Gunicorn loads this module once per worker. Keep the scheduler and webhook
+# registration owned by only one worker instead of starting duplicate jobs.
+_background_services_started = False
+_background_services_lock_handle = None
+
 
 # ---- Live Visitor Tracking (in-memory, 5-minute window) ----
 _visitor_lock = threading.Lock()
@@ -1002,8 +1007,61 @@ def _register_telegram_webhook():
 import threading as _threading
 
 
+def _release_background_services_lock():
+    global _background_services_lock_handle
+    handle = _background_services_lock_handle
+    _background_services_lock_handle = None
+    if handle is None:
+        return
+    try:
+        import fcntl
+        fcntl.flock(handle.fileno(), fcntl.LOCK_UN)
+    except (ImportError, OSError):
+        pass
+    try:
+        handle.close()
+    except OSError:
+        pass
+
+
+def _claim_background_services_lock():
+    global _background_services_lock_handle
+    try:
+        import fcntl
+        lock_path = os.environ.get(
+            'BACKGROUND_SERVICES_LOCKFILE',
+            '/tmp/semira-fashion-background-services.lock'
+        )
+        handle = open(lock_path, 'a+')
+        try:
+            fcntl.flock(handle.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
+        except BlockingIOError:
+            handle.close()
+            return False
+        _background_services_lock_handle = handle
+        atexit.register(_release_background_services_lock)
+        return True
+    except ImportError:
+        app.logger.warning(
+            "Background-service process locking is unavailable; "
+            "starting without the multi-worker guard."
+        )
+        return True
+    except OSError as lock_error:
+        app.logger.warning("Could not claim background-service lock: %s", lock_error)
+        return False
+
+
 def _start_background_services():
-    """Start optional background services only when the application is run directly."""
+    """Start scheduler/webhook services once for the application instance."""
+    global _background_services_started
+    if _background_services_started:
+        return
+    _background_services_started = True
+    if not _claim_background_services_lock():
+        app.logger.info("Background services are owned by another worker; skipping.")
+        return
+
     try:
         from apscheduler.schedulers.background import BackgroundScheduler
         import pytz
