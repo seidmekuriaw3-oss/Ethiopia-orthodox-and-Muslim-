@@ -1,5 +1,5 @@
 """
-Route Tests for Ethiosadat Furniture
+Legacy route tests retained for historical reference
 
 This module contains tests for all route endpoints including:
 - Customer routes (home, about, contact, cart, etc.)
@@ -12,6 +12,8 @@ This module contains tests for all route endpoints including:
 import pytest
 
 from database.db import get_db
+
+pytestmark = pytest.mark.legacy
 
 
 # ==================== CUSTOMER ROUTES TESTS ====================

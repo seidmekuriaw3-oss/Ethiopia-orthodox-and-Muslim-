@@ -1,5 +1,5 @@
 """
-File Handler Module for Ethiosadat Furniture
+File Handler Module for Semira Fashion
 
 This module provides functions for:
 - File upload handling

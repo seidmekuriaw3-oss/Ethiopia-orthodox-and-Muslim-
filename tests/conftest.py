@@ -1,5 +1,5 @@
 """
-Pytest Configuration and Fixtures for Ethiosadat Furniture
+Pytest Configuration and Fixtures for Semira Fashion
 
 This module contains all pytest fixtures and configuration for running tests.
 """
@@ -21,7 +21,7 @@ from config import Config
 # ==================== TEST CONFIGURATION ====================
 
 class TestConfig(Config):
-    """Test configuration with in-memory database"""
+    """Legacy fixture configuration retained for historical tests."""
     TESTING = True
     SECRET_KEY = 'test-secret-key'
     DATABASE_PATH = ':memory:'  # Use in-memory database for tests

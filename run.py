@@ -290,7 +290,7 @@ def show_info():
     # Load config
     try:
         from config import Config
-        print(f"📁 Database Path: {Config.DATABASE_PATH}")
+        print(f"🗄️  PostgreSQL configured: {'yes' if Config.DATABASE_URL else 'no'}")
         print(f"📁 Upload Folder: {Config.UPLOAD_FOLDER}")
         print(f"🌐 Default Language: {Config.DEFAULT_LANGUAGE}")
         print(f"📱 WhatsApp Number: {Config.WHATSAPP_NUMBER}")
@@ -334,7 +334,7 @@ def install_dependencies():
 def main():
     """Main entry point"""
     parser = argparse.ArgumentParser(
-        description='Ethiosadat Furniture Store - Application Runner',
+        description='Semira Fashion Store - Application Runner',
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:

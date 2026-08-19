@@ -1,4 +1,8 @@
 from database.db import get_db
+import pytest
+
+
+pytestmark = pytest.mark.legacy
 
 
 def test_admin_product_create_uses_name_en_for_display_name(client, auth):

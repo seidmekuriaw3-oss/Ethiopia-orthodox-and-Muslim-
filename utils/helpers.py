@@ -1,5 +1,5 @@
 """
-Helpers Module for Ethiosadat Furniture
+Helpers Module for Semira Fashion
 
 This module provides utility functions for:
 - Price formatting

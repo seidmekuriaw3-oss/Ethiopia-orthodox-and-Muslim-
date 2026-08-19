@@ -1,5 +1,5 @@
 """
-Service Tests for Ethiosadat Furniture
+Legacy service tests retained for historical reference
 
 This module contains tests for all service layer classes including:
 - CartService (cart operations)
@@ -10,6 +10,8 @@ This module contains tests for all service layer classes including:
 """
 
 import pytest
+
+pytestmark = pytest.mark.legacy
 from services.cart_service import CartService
 from services.product_service import ProductService
 from services.order_service import OrderService

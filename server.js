@@ -20,7 +20,7 @@ const server = http.createServer((req, res) => {
             <div class="container">
                 <h1>👗 SEMIRA FASHION</h1>
                 <p>✅ Server is running!</p>
-                <p>የቤት እቃዎች በምቹ ዋጋ | Quality Furniture</p>
+                <p>የሴቶች እና የልጆች ልብስ | Quality Fashion</p>
                 <hr>
                 <p>📞 <span class="phone">0987 957957</span></p>
                 <p>📍 Addis Ababa, Ethiopia</p>

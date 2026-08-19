@@ -1,5 +1,5 @@
 """
-Utils Package for Ethiosadat Furniture
+Utils Package for Semira Fashion
 
 This package provides utility functions for:
 - Price formatting

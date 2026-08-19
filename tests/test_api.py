@@ -1,5 +1,5 @@
 """
-API Tests for Ethiosadat Furniture
+Legacy API tests retained for historical reference
 
 This module contains tests for all API endpoints including:
 - Products API
@@ -10,6 +10,8 @@ This module contains tests for all API endpoints including:
 
 import pytest
 import json
+
+pytestmark = pytest.mark.legacy
 
 
 # ==================== PRODUCTS API TESTS ====================

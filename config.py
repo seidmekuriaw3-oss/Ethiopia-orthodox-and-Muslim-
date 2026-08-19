@@ -333,7 +333,6 @@ class TestingConfig(Config):
     """Testing environment configuration"""
     TESTING = True
     DEBUG = True
-    DATABASE_PATH = 'database/test.db'
     MAINTENANCE_MODE = False
 
 

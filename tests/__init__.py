@@ -1,7 +1,7 @@
 """
-Tests Package for Ethiosadat Furniture
+Tests Package for Semira Fashion
 
-This package contains all test modules for the Ethiosadat Furniture application.
+This package contains the Semira Fashion application tests.
 Tests include API testing, model testing, route testing, and service testing.
 
 To run all tests:

@@ -1016,6 +1016,7 @@ def api_categories():
             LEFT JOIN products p ON p.category_id = c.id AND p.is_active = 1
             WHERE c.is_active = 1
             GROUP BY c.id
+            HAVING COUNT(p.id) > 0
             ORDER BY c.sort_order ASC
         """)
         categories = cursor.fetchall()

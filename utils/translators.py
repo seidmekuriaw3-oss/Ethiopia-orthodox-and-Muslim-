@@ -1,5 +1,5 @@
 """
-Translators Module for Ethiosadat Furniture
+Translators Module for Semira Fashion
 
 This module provides translation functionality for:
 - Amharic to English translation

@@ -62,7 +62,16 @@ def index():
         """)
         ads = cursor.fetchall()
 
-        cursor.execute("SELECT * FROM categories WHERE is_active = 1 ORDER BY sort_order ASC")
+        cursor.execute("""
+            SELECT c.*
+            FROM categories c
+            WHERE c.is_active = 1
+              AND EXISTS (
+                  SELECT 1 FROM products p
+                  WHERE p.category_id = c.id AND p.is_active = 1
+              )
+            ORDER BY c.sort_order ASC
+        """)
         categories = cursor.fetchall()
 
         def row_to_dict(row):
@@ -224,7 +233,16 @@ def products():
         """)
         products_rows = cursor.fetchall()
 
-        cursor.execute("SELECT * FROM categories WHERE is_active = 1 ORDER BY sort_order ASC")
+        cursor.execute("""
+            SELECT c.*
+            FROM categories c
+            WHERE c.is_active = 1
+              AND EXISTS (
+                  SELECT 1 FROM products p
+                  WHERE p.category_id = c.id AND p.is_active = 1
+              )
+            ORDER BY c.sort_order ASC
+        """)
         categories = cursor.fetchall()
 
         products_list = [dict(p) for p in products_rows] if products_rows else []
@@ -350,8 +368,12 @@ def categories():
         cursor = conn.cursor()
         cursor.execute("""
             SELECT c.*, COUNT(p.id) as product_count
-            FROM categories c LEFT JOIN products p ON p.category_id = c.id AND p.is_active = 1
-            WHERE c.is_active = 1 GROUP BY c.id ORDER BY c.sort_order ASC
+            FROM categories c
+            LEFT JOIN products p ON p.category_id = c.id AND p.is_active = 1
+            WHERE c.is_active = 1
+            GROUP BY c.id
+            HAVING COUNT(p.id) > 0
+            ORDER BY c.sort_order ASC
         """)
         cats = cursor.fetchall()
         return render_template('customer/categories.html',
@@ -370,7 +392,16 @@ def category_products(category_id=None):
         conn = get_db()
         cursor = conn.cursor()
 
-        cursor.execute("SELECT * FROM categories WHERE is_active = 1 ORDER BY sort_order ASC")
+        cursor.execute("""
+            SELECT c.*
+            FROM categories c
+            WHERE c.is_active = 1
+              AND EXISTS (
+                  SELECT 1 FROM products p
+                  WHERE p.category_id = c.id AND p.is_active = 1
+              )
+            ORDER BY c.sort_order ASC
+        """)
         all_cats = cursor.fetchall()
 
         page_title = None
@@ -495,7 +526,17 @@ def search():
         """, (search_pattern,) * 7 + (search_pattern, search_pattern))
         products_rows = cursor.fetchall()
 
-        cursor.execute("SELECT * FROM categories WHERE is_active = 1 ORDER BY sort_order ASC LIMIT 6")
+        cursor.execute("""
+            SELECT c.*
+            FROM categories c
+            WHERE c.is_active = 1
+              AND EXISTS (
+                  SELECT 1 FROM products p
+                  WHERE p.category_id = c.id AND p.is_active = 1
+              )
+            ORDER BY c.sort_order ASC
+            LIMIT 6
+        """)
         cats = cursor.fetchall()
 
         return render_template('customer/search.html',

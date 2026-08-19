@@ -1,5 +1,5 @@
 """
-Validators Module for Ethiosadat Furniture
+Validators Module for Semira Fashion
 
 This module provides validation functions for:
 - Phone numbers (Ethiopian format)

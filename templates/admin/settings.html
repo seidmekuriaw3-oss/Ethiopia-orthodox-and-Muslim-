@@ -310,7 +310,7 @@
                 <div style="position:relative;">
                     <input type="password" name="groq_api_key" id="groqApiKey"
                            placeholder="{% if groq_configured %}gsk_•••••••••••••••• (key is set — enter new key to replace){% else %}gsk_xxxxxxxxxxxxxxxxxxxxxxxx{% endif %}"
-                           autocomplete="off"
+                           autocomplete="new-password"
                            style="padding-right:48px;">
                     <button type="button" onclick="toggleGroqKeyVisibility()" title="Show/hide key"
                             style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:#666;font-size:18px;padding:0;"
@@ -369,7 +369,7 @@
                 <div style="position:relative;">
                     <input type="password" name="telegram_bot_token" id="telegramBotToken"
                            placeholder="{% if telegram_configured %}••••••••:•••••••••••••••••••••••••••••• (ያለው token — አዲስ ለመቀየር ያስገቡ){% else %}1234567890:ABCDefgh... (@BotFather ይሰጠዋል){% endif %}"
-                           autocomplete="off"
+                           autocomplete="new-password"
                            style="padding-right:48px;">
                     <button type="button" onclick="toggleTelegramTokenVisibility()" title="Show/hide token"
                             style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:#666;font-size:18px;padding:0;"

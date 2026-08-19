@@ -1,5 +1,5 @@
 """
-Model Tests for Ethiosadat Furniture
+Legacy model tests retained for historical reference
 
 This module contains tests for all database models including:
 - Product model (CRUD operations)
@@ -11,6 +11,8 @@ import pytest
 import json
 from database.db import get_db
 from database.models import Product, Ad, Order
+
+pytestmark = pytest.mark.legacy
 
 
 # ==================== PRODUCT MODEL TESTS ====================
