@@ -191,7 +191,7 @@
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             <div class="form-group">
                 <label>📧 Email Address</label>
-                <input type="email" name="email" id="loginEmail" class="form-control" 
+                <input type="email" name="email" id="loginEmail" class="form-control" autocomplete="email"
                        placeholder="your@email.com" required autofocus>
                 <div class="error-message" id="emailError"></div>
             </div>
