@@ -22,9 +22,35 @@ import re
 api_bp = Blueprint('api', __name__)
 
 
+def _get_session_cart():
+    """Return the guest cart as the canonical product-id -> quantity mapping.
+
+    Older sessions stored cart rows as a list. Normalizing that shape here
+    keeps existing browser sessions usable after the cart format migration.
+    """
+    cart = session.get('cart', {})
+    if isinstance(cart, dict):
+        return cart
+    if isinstance(cart, list):
+        normalized = {}
+        for item in cart:
+            if not isinstance(item, dict):
+                continue
+            product_id = item.get('product_id', item.get('id'))
+            quantity = item.get('quantity', 0)
+            try:
+                if product_id is not None and int(quantity) > 0:
+                    normalized[str(int(product_id))] = int(quantity)
+            except (TypeError, ValueError):
+                continue
+        return normalized
+    return {}
+
+
 # ==================== PRODUCT API ====================
 
 @api_bp.route('/products/search')
+@api_bp.route('/search')
 def api_search_products():
     """Search products by query"""
     query = request.args.get('q', '').strip()
@@ -89,7 +115,9 @@ def api_filter_products():
         else:
             category_name = category
 
-    search = request.args.get('search', '').strip()
+    # ``q`` is retained for older storefront clients while ``search`` is
+    # used by the current infinite-scroll client.
+    search = (request.args.get('search') or request.args.get('q') or '').strip()
     min_price = request.args.get('min_price', type=float)
     max_price = request.args.get('max_price', type=float)
     sort_by = request.args.get('sort_by') or request.args.get('sort', 'newest')
@@ -226,6 +254,9 @@ def api_filter_products():
     return jsonify({
         'success': True,
         'products': product_list,
+        # Backward-compatible alias for clients that used the original
+        # response contract.
+        'count': total,
         'total': total,
         'limit': limit,
         'offset': offset,
@@ -330,7 +361,7 @@ def api_cart_add():
         if ex:
             existing_qty = ex['quantity']
     else:
-        existing_qty = session.get('cart', {}).get(str(product_id), 0)
+        existing_qty = _get_session_cart().get(str(product_id), 0)
 
     if existing_qty + quantity > prod_check['stock_quantity']:
         avail = prod_check['stock_quantity'] - existing_qty
@@ -366,7 +397,7 @@ def api_cart_add():
         db.commit()
     else:
         # Save to session cart
-        cart = session.get('cart', {})
+        cart = _get_session_cart()
         cart_key = str(product_id)
         
         if cart_key in cart:
@@ -386,7 +417,7 @@ def api_cart_add():
             row2 = cur2.fetchone()
             cart_count = int(row2['c']) if row2 else 0
         else:
-            cart_count = sum(int(v) for v in session.get('cart', {}).values())
+            cart_count = sum(int(v) for v in _get_session_cart().values())
     except Exception:
         cart_count = 0
 
@@ -418,7 +449,7 @@ def _get_cart_totals_data(product_id_removed=None):
             subtotal = float(row['s'] or 0)
             cart_count = int(row['c'] or 0)
         else:
-            cart = session.get('cart', {})
+            cart = _get_session_cart()
             if cart:
                 placeholders = ','.join(['%s'] * len(cart))
                 cursor.execute(
@@ -459,7 +490,7 @@ def api_cart_remove():
             """, (session['user_id'], product_id))
             db.commit()
         else:
-            cart = session.get('cart', {})
+            cart = _get_session_cart()
             cart_key = str(product_id)
             if cart_key in cart:
                 del cart[cart_key]
@@ -513,7 +544,7 @@ def api_cart_update():
             """, (quantity, session['user_id'], product_id))
             db.commit()
         else:
-            cart = session.get('cart', {})
+            cart = _get_session_cart()
             cart[str(product_id)] = quantity
             session['cart'] = cart
             session.modified = True
@@ -563,7 +594,7 @@ def api_get_cart():
                 'subtotal': item_subtotal
             })
     else:
-        cart = session.get('cart', {})
+        cart = _get_session_cart()
         if cart:
             db = get_db()
             cursor = db.cursor()
@@ -597,11 +628,15 @@ def api_get_cart():
     return jsonify({
         'success': True,
         'items': cart_items,
+        # Keep the original field names available for older UI scripts.
+        'cart': cart_items,
         'item_count': len(cart_items),
+        'count': sum(int(item['quantity']) for item in cart_items),
         'subtotal': totals['subtotal'],
         'discount': totals['discount'],
         'subtotal_after_discount': totals['subtotal_after_discount'],
         'shipping_cost': totals['shipping_cost'],
+        'shipping': totals['shipping_cost'],
         'total': totals['total'],
         'free_shipping': totals['free_shipping'],
         'free_shipping_threshold': totals['free_shipping_threshold'],
@@ -620,10 +655,10 @@ def api_cart_count():
         result = cursor.fetchone()
         count = result['total'] or 0
     else:
-        cart = session.get('cart', {})
+        cart = _get_session_cart()
         count = sum(cart.values())
     
-    return jsonify({'success': True, 'count': count})
+    return jsonify({'success': True, 'count': count, 'cart_count': int(count)})
 
 
 # ==================== USER AUTH API ====================
@@ -723,7 +758,7 @@ def api_login():
     session['user_phone'] = user['phone']
     
     # Merge guest cart with user cart
-    guest_cart = session.get('cart', {})
+    guest_cart = _get_session_cart()
     if guest_cart:
         for product_id, quantity in guest_cart.items():
             cursor.execute("SELECT id, quantity FROM cart_items WHERE user_id = %s AND product_id = %s", 
@@ -1384,7 +1419,7 @@ def api_submit_order():
             cart_items = cursor.fetchall()
         else:
             # Guest: load from session cart
-            session_cart = session.get('cart', {})
+            session_cart = _get_session_cart()
             if session_cart:
                 product_ids = [int(pid) for pid in session_cart.keys()]
                 placeholders = ','.join(['%s'] * len(product_ids))

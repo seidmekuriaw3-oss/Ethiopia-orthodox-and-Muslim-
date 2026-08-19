@@ -45,6 +45,7 @@ def set_language(lang):
 
 @utility_bp.route('/health')
 def health_check():
+    status = 'healthy'
     try:
         conn = get_db()
         cursor = conn.cursor()
@@ -52,11 +53,12 @@ def health_check():
         db_status = 'connected'
     except Exception as e:
         db_status = f'error: {str(e)}'
+        status = 'unhealthy'
     return jsonify({
-        'status': 'healthy',
+        'status': status,
         'database': db_status,
         'timestamp': datetime_.datetime.now().isoformat()
-    })
+    }), (200 if status == 'healthy' else 503)
 
 
 @utility_bp.route('/health/details')
