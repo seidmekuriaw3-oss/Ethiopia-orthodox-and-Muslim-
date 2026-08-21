@@ -22,3 +22,4 @@
 - [Live contract tests](live-contract-tests.md) — current PostgreSQL behavior is tested separately from explicitly marked retired SQLite/Furniture tests.
 - [Telegram runtime boundary](telegram-runtime-boundary.md) — bot handlers stay compatible while asyncio lifecycle and webhook plumbing live in a separate runtime module.
 - [Bot order persistence boundary](bot-order-persistence.md) — background Telegram orders must use their own DB connection and exact orders-column names, not Flask-context Order.create().
+- [Migration discipline](migration-discipline.md) — schema upgrades, indexes, and foreign keys belong in numbered SQL migrations, not app startup code.

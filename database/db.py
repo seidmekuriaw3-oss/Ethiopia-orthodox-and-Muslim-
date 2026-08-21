@@ -10,6 +10,8 @@ import psycopg2
 import psycopg2.extras
 from flask import g
 
+from database.migrations import run_migrations
+
 
 def _get_database_url():
     """Return the configured PostgreSQL connection URL and validate it."""
@@ -157,17 +159,6 @@ def close_db(e=None):
             pass
 
 
-def _safe_add_columns(cur, table: str, columns: list):
-    """Add columns to an existing table if they do not already exist (idempotent)."""
-    for col_name, col_def in columns:
-        try:
-            cur.execute(
-                f"ALTER TABLE {table} ADD COLUMN IF NOT EXISTS {col_name} {col_def}"
-            )
-        except Exception:
-            pass  # Column already exists or other non-fatal error
-
-
 def init_db():
     """Create all tables and seed default data (PostgreSQL DDL)."""
     conn = _raw_connect()
@@ -189,22 +180,6 @@ def init_db():
             updated_at TIMESTAMP DEFAULT NOW(),
             last_login TIMESTAMP
         )
-    """)
-
-    # ── Idempotent column additions (safe to run on every startup) ──
-    _safe_add_columns(cur, 'users', [
-        ('loyalty_points',          'INTEGER DEFAULT 0'),
-        ('profile_photo',           'TEXT'),
-        ('telegram_id',             'TEXT'),
-        ('telegram_token',          'TEXT'),
-        ('telegram_token_expires',  'TIMESTAMP'),
-        ('is_registered',           'SMALLINT DEFAULT 0'),
-    ])
-    # Full unique index (no WHERE clause) so ON CONFLICT (telegram_id) works.
-    # PostgreSQL allows multiple NULLs even with a full unique index.
-    cur.execute("""
-        CREATE UNIQUE INDEX IF NOT EXISTS users_telegram_id_uq
-        ON users (telegram_id)
     """)
 
     cur.execute("""
@@ -258,11 +233,6 @@ def init_db():
             updated_at TIMESTAMP DEFAULT NOW()
         )
     """)
-
-    # Fashion-specific columns — added after initial schema so existing DBs are upgraded
-    cur.execute("ALTER TABLE products ADD COLUMN IF NOT EXISTS sizes TEXT")
-    cur.execute("ALTER TABLE products ADD COLUMN IF NOT EXISTS gender TEXT")
-    cur.execute("ALTER TABLE products ADD COLUMN IF NOT EXISTS season TEXT")
 
     cur.execute("""
         CREATE TABLE IF NOT EXISTS cart_items (
@@ -406,27 +376,6 @@ def init_db():
             created_at TIMESTAMP DEFAULT NOW()
         )
     """)
-    cur.execute("ALTER TABLE advertisements ADD COLUMN IF NOT EXISTS media_url TEXT")
-    cur.execute("ALTER TABLE orders ADD COLUMN IF NOT EXISTS customer_name TEXT")
-    cur.execute("ALTER TABLE orders ADD COLUMN IF NOT EXISTS customer_email TEXT")
-    cur.execute("ALTER TABLE users ADD COLUMN IF NOT EXISTS loyalty_points INTEGER DEFAULT 0")
-    cur.execute("ALTER TABLE users ADD COLUMN IF NOT EXISTS profile_photo TEXT")
-    cur.execute("ALTER TABLE contact_messages ADD COLUMN IF NOT EXISTS admin_notes TEXT")
-    # contacts table was accidentally created by api_contact; migrate any data then drop it
-    cur.execute("""
-        SELECT EXISTS (
-            SELECT 1 FROM information_schema.tables
-            WHERE table_name = 'contacts' AND table_schema = 'public'
-        )
-    """)
-    if cur.fetchone()[0]:
-        cur.execute("""
-            INSERT INTO contact_messages (name, email, phone, message, created_at)
-            SELECT name, email, phone, message, created_at FROM contacts
-            ON CONFLICT DO NOTHING
-        """)
-        cur.execute("DROP TABLE contacts")
-
     cur.execute("""
         CREATE TABLE IF NOT EXISTS newsletter (
             id SERIAL PRIMARY KEY,
@@ -458,14 +407,6 @@ def init_db():
             UNIQUE (user_id, product_id)
         )
     """)
-    # Migrate existing installations that lack the column
-    cur.execute("ALTER TABLE wishlist ADD COLUMN IF NOT EXISTS price_at_add NUMERIC(10,2)")
-
-    cur.execute("CREATE INDEX IF NOT EXISTS idx_reviews_product ON reviews(product_id)")
-    cur.execute("CREATE INDEX IF NOT EXISTS idx_reviews_user ON reviews(user_id)")
-    cur.execute("CREATE INDEX IF NOT EXISTS idx_wishlist_user ON wishlist(user_id)")
-    cur.execute("CREATE INDEX IF NOT EXISTS idx_newsletter_email ON newsletter(email)")
-
     cur.execute("""
         CREATE TABLE IF NOT EXISTS loyalty_transactions (
             id SERIAL PRIMARY KEY,
@@ -522,8 +463,6 @@ def init_db():
             created_at TIMESTAMP DEFAULT NOW()
         )
     """)
-    cur.execute("CREATE INDEX IF NOT EXISTS idx_coupons_code ON coupons(code)")
-
     cur.execute("""
         CREATE TABLE IF NOT EXISTS order_status_history (
             id SERIAL PRIMARY KEY,
@@ -533,9 +472,6 @@ def init_db():
             changed_at TIMESTAMP DEFAULT NOW()
         )
     """)
-    cur.execute("CREATE INDEX IF NOT EXISTS idx_osh_order ON order_status_history(order_id, changed_at)")
-    cur.execute("CREATE INDEX IF NOT EXISTS idx_coupons_active ON coupons(is_active)")
-
     cur.execute("""
         CREATE TABLE IF NOT EXISTS ai_conversations (
             id SERIAL PRIMARY KEY,
@@ -549,50 +485,9 @@ def init_db():
             created_at TIMESTAMP DEFAULT NOW()
         )
     """)
-    cur.execute("CREATE INDEX IF NOT EXISTS idx_ai_conv_created ON ai_conversations(created_at DESC)")
-    cur.execute("CREATE INDEX IF NOT EXISTS idx_ai_conv_user ON ai_conversations(user_id)")
-
-    cur.execute("CREATE INDEX IF NOT EXISTS idx_user_notif_user ON user_notifications(user_id)")
-    cur.execute("CREATE INDEX IF NOT EXISTS idx_user_notif_read ON user_notifications(is_read)")
-    cur.execute("CREATE INDEX IF NOT EXISTS idx_admin_alerts_read ON admin_alerts(is_read)")
-
-    cur.execute("CREATE INDEX IF NOT EXISTS idx_products_category ON products(category_id)")
-    cur.execute("CREATE INDEX IF NOT EXISTS idx_products_featured ON products(is_featured)")
-    cur.execute("CREATE INDEX IF NOT EXISTS idx_products_active ON products(is_active)")
-    cur.execute("CREATE INDEX IF NOT EXISTS idx_orders_user ON orders(user_id)")
-    cur.execute("CREATE INDEX IF NOT EXISTS idx_orders_status ON orders(status)")
-    cur.execute("CREATE INDEX IF NOT EXISTS idx_orders_number ON orders(order_number)")
-    cur.execute("CREATE INDEX IF NOT EXISTS idx_users_email ON users(email)")
-    cur.execute("CREATE INDEX IF NOT EXISTS idx_cart_user ON cart_items(user_id)")
-    cur.execute("CREATE INDEX IF NOT EXISTS idx_contact_messages_created ON contact_messages(created_at)")
-    cur.execute("CREATE INDEX IF NOT EXISTS idx_password_reset_token ON password_reset_tokens(token)")
-    cur.execute("CREATE INDEX IF NOT EXISTS idx_password_reset_email ON password_reset_tokens(email)")
-
-    # --- Foreign-key constraints (idempotent: skip if already present) ---
-    _fk_specs = [
-        ('fk_products_category',    'products',    'category_id',  'categories', 'id', 'SET NULL'),
-        ('fk_order_items_order',     'order_items', 'order_id',     'orders',     'id', 'CASCADE'),
-        ('fk_order_items_product',   'order_items', 'product_id',   'products',   'id', 'SET NULL'),
-        ('fk_wishlist_product',      'wishlist',    'product_id',   'products',   'id', 'CASCADE'),
-        ('fk_reviews_product',       'reviews',     'product_id',   'products',   'id', 'CASCADE'),
-    ]
-    for name, tbl, col, ref_tbl, ref_col, on_delete in _fk_specs:
-        cur.execute("""
-            SELECT 1 FROM information_schema.table_constraints
-            WHERE constraint_name = %s
-              AND table_name      = %s
-              AND constraint_type = 'FOREIGN KEY'
-        """, (name, tbl))
-        if not cur.fetchone():
-            try:
-                cur.execute(
-                    f"ALTER TABLE {tbl} ADD CONSTRAINT {name} "
-                    f"FOREIGN KEY ({col}) REFERENCES {ref_tbl}({ref_col}) "
-                    f"ON DELETE {on_delete} NOT VALID"
-                )
-            except Exception as _fk_err:
-                import logging as _log
-                _log.getLogger(__name__).warning("Could not add FK %s: %s", name, _fk_err)
+    # All schema upgrades, indexes, and foreign keys are applied from tracked
+    # SQL files before seed data is read or written.
+    run_migrations(conn)
 
     cur.execute("SELECT COUNT(*) FROM categories")
     if cur.fetchone()[0] == 0:
@@ -680,27 +575,6 @@ def init_db():
                 b
             )
         print(f"✅ Seeded {len(branches)} branches")
-
-    # ── Performance indexes (idempotent) ────────────────────────────────────
-    _indexes = [
-        ("idx_users_phone",             "CREATE INDEX IF NOT EXISTS idx_users_phone ON users(phone)"),
-        ("idx_orders_shipping_phone",   "CREATE INDEX IF NOT EXISTS idx_orders_shipping_phone ON orders(shipping_phone)"),
-        ("idx_orders_order_number",     "CREATE INDEX IF NOT EXISTS idx_orders_order_number ON orders(order_number)"),
-        ("idx_orders_user_id",          "CREATE INDEX IF NOT EXISTS idx_orders_user_id ON orders(user_id)"),
-        ("idx_orders_status",           "CREATE INDEX IF NOT EXISTS idx_orders_status ON orders(status)"),
-        ("idx_cart_items_user_id",      "CREATE INDEX IF NOT EXISTS idx_cart_items_user_id ON cart_items(user_id)"),
-        ("idx_cart_items_product_id",   "CREATE INDEX IF NOT EXISTS idx_cart_items_product_id ON cart_items(product_id)"),
-        ("idx_order_items_order_id",    "CREATE INDEX IF NOT EXISTS idx_order_items_order_id ON order_items(order_id)"),
-        ("idx_order_items_product_id",  "CREATE INDEX IF NOT EXISTS idx_order_items_product_id ON order_items(product_id)"),
-        ("idx_products_is_active",      "CREATE INDEX IF NOT EXISTS idx_products_is_active ON products(is_active)"),
-        ("idx_products_is_featured",    "CREATE INDEX IF NOT EXISTS idx_products_is_featured ON products(is_featured)"),
-        ("idx_products_category_id",    "CREATE INDEX IF NOT EXISTS idx_products_category_id ON products(category_id)"),
-    ]
-    for _name, _sql in _indexes:
-        try:
-            cur.execute(_sql)
-        except Exception as _idx_err:
-            print(f"⚠️  Index {_name} skipped: {_idx_err}")
 
     conn.commit()
     cur.close()
