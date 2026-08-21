@@ -4,6 +4,8 @@ import pytest
 
 from database import db
 
+pytestmark = pytest.mark.postgres
+
 
 def test_requires_postgresql_database_url(monkeypatch):
     monkeypatch.delenv('DATABASE_URL', raising=False)

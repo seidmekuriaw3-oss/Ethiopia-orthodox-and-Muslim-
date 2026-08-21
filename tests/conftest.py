@@ -7,50 +7,43 @@ This module contains all pytest fixtures and configuration for running tests.
 import sys
 import os
 import pytest
-import tempfile
-from flask import session
 
 # Add parent directory to path for imports
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from app import app as flask_app
-from database.db import init_db, get_db, close_db
-from config import Config
-
-
-# ==================== TEST CONFIGURATION ====================
-
-class TestConfig(Config):
-    """Legacy fixture configuration retained for historical tests."""
-    TESTING = True
-    SECRET_KEY = 'test-secret-key'
-    DATABASE_PATH = ':memory:'  # Use in-memory database for tests
-    WTF_CSRF_ENABLED = False
-    DEBUG = False
-    ADMIN_PASSWORD = 'test1234'
+from database.db import init_db, get_db
 
 
 # ==================== FIXTURES ====================
 
 @pytest.fixture(scope='session')
 def app():
-    """Create test Flask application instance."""
-    # Override configuration
-    flask_app.config.from_object(TestConfig)
-    
-    # Set additional test config
+    """Use the current PostgreSQL application for live-contract tests.
+
+    The application is PostgreSQL-only. A separate database can be supplied
+    with TEST_DATABASE_URL before pytest starts; otherwise DATABASE_URL is
+    used. This fixture deliberately does not create an in-memory SQLite DB.
+    """
+    test_database_url = os.environ.get('TEST_DATABASE_URL')
+    if test_database_url:
+        if not test_database_url.startswith(('postgresql://', 'postgres://')):
+            raise RuntimeError('TEST_DATABASE_URL must be a PostgreSQL URL')
+        os.environ['DATABASE_URL'] = test_database_url
+        flask_app.config['DATABASE_URL'] = test_database_url
+
     flask_app.config.update({
         'TESTING': True,
-        'SERVER_NAME': 'localhost.test'
+        'SECRET_KEY': 'test-secret-key',
+        'WTF_CSRF_ENABLED': False,
+        'DEBUG': False,
+        'ADMIN_PASSWORD': os.environ.get('TEST_ADMIN_PASSWORD', 'test1234'),
+        'SERVER_NAME': 'localhost.test',
     })
-    
-    with flask_app.app_context():
-        # Initialize database for testing
-        init_db()
-        yield flask_app
-        
-        # Clean up after tests
-        # Note: in-memory database will be destroyed automatically
+
+    # init_db opens its own PostgreSQL connection and is idempotent.
+    init_db()
+    yield flask_app
 
 
 @pytest.fixture(scope='function')
@@ -67,11 +60,9 @@ def runner(app):
 
 @pytest.fixture(scope='function')
 def db(app):
-    """Get database connection for direct database testing."""
+    """Get a request-scoped PostgreSQL connection for direct tests."""
     with app.app_context():
-        db = get_db()
-        yield db
-        # No need to close, Flask will handle it
+        yield get_db()
 
 
 @pytest.fixture

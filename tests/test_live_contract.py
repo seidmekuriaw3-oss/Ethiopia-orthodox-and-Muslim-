@@ -3,7 +3,11 @@
 import os
 import re
 
+import pytest
+
 from database.db import get_db
+
+pytestmark = pytest.mark.postgres
 
 
 def test_public_pages_load(client):
