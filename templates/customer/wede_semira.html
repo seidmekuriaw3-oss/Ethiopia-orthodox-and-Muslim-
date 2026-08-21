@@ -282,7 +282,7 @@
                 <a href="{{ url_for('customer.product_detail', product_id=product.id) }}" class="ws-product-card">
                     <div class="ws-product-img">
                         {% if product.thumbnail and product.thumbnail != '' %}
-                            <img src="{{ url_for('static', filename=product.thumbnail) }}"
+                            <img src="{{ product_image_src(product.thumbnail) }}"
                                  alt="{{ product.name_am or product.name }}" loading="lazy"
                                  onerror="this.onerror=null;this.style.display='none';this.parentElement.querySelector('.ws-fb').style.display='flex';">
                             <div class="ws-fb" style="display:none;position:absolute;inset:0;align-items:center;justify-content:center;font-size:44px;">

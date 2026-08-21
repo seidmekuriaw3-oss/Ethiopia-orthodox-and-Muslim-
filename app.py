@@ -33,6 +33,7 @@ from middleware.platform import get_platform, is_android_app
 from utils.translation_cache import translate_text, batch_translate, clear_translation_cache, get_translation_stats, FALLBACK_TEXTS
 from routes.shared import WHATSAPP_NUMBER, USER_DISCOUNT_RATE
 from utils.csrf import generate_csrf, validate_csrf
+from utils.image_urls import product_image_src
 
 
 # ==================== 2. APP INITIALIZATION ====================
@@ -63,6 +64,9 @@ class SafeJSONEncoder(json.JSONEncoder):
 
 
 app.json_encoder = SafeJSONEncoder
+app.jinja_env.globals['product_image_src'] = (
+    lambda value: product_image_src(value, lambda filename: url_for('static', filename=filename))
+)
 
 
 def format_price_number(value):

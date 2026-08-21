@@ -208,7 +208,7 @@
             </div>
             {% endif %}
             {% if item.thumbnail and item.thumbnail != '' %}
-                <img src="{{ url_for('static', filename=item.thumbnail) }}"
+                <img src="{{ product_image_src(item.thumbnail) }}"
                      alt="{{ item.name_am if lang == 'am' else item.name }}"
                      loading="lazy"
                      onerror="this.onerror=null;this.parentElement.innerHTML='<div class=\'wl-img-placeholder\'>👗</div>'">
