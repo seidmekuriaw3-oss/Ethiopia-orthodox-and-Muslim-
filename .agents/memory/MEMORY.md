@@ -21,3 +21,4 @@
 - [Gunicorn background services](gunicorn-background-services.md) — WSGI imports must start one locked scheduler/webhook owner; direct app startup alone skips production background work.
 - [Live contract tests](live-contract-tests.md) — current PostgreSQL behavior is tested separately from explicitly marked retired SQLite/Furniture tests.
 - [Telegram runtime boundary](telegram-runtime-boundary.md) — bot handlers stay compatible while asyncio lifecycle and webhook plumbing live in a separate runtime module.
+- [Bot order persistence boundary](bot-order-persistence.md) — background Telegram orders must use their own DB connection and exact orders-column names, not Flask-context Order.create().
