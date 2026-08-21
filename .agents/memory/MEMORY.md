@@ -20,3 +20,4 @@
 - [Workspace frontend installs](workspace-frontend-installs.md) — when dependencies already exist in the pnpm lockfile, run pnpm install; the package installer can hit the workspace-root guard.
 - [Gunicorn background services](gunicorn-background-services.md) — WSGI imports must start one locked scheduler/webhook owner; direct app startup alone skips production background work.
 - [Live contract tests](live-contract-tests.md) — current PostgreSQL behavior is tested separately from explicitly marked retired SQLite/Furniture tests.
+- [Telegram runtime boundary](telegram-runtime-boundary.md) — bot handlers stay compatible while asyncio lifecycle and webhook plumbing live in a separate runtime module.
