@@ -167,7 +167,7 @@
         const csrfToken = csrfMeta?.getAttribute('content');
         
         if (csrfToken) {
-            // Add CSRF token to all fetch requests
+            // Add CSRF token to all state-changing fetch requests.
             const originalFetch = window.fetch;
             window.fetch = function(...args) {
                 const request = args[1] || {};

@@ -23,7 +23,7 @@ from werkzeug.utils import secure_filename
 from werkzeug.security import generate_password_hash, check_password_hash
 from extensions import limiter
 
-from config import Config
+from config import AppConfig
 from database.db import get_db, init_db, commit_or_rollback, _get_database_url
 from database.models import (
     User, Category, Product, CartItem, Order, OrderItem, Advertisement, Branch, Notification
@@ -90,7 +90,8 @@ app.jinja_env.filters["format_price"] = format_price
 app.jinja_env.globals["format_price"] = format_price
 app.jinja_env.globals["format_price_number"] = format_price_number
 
-app.config.from_object(Config)
+app.config.from_object(AppConfig)
+AppConfig.init_app(app)
 app.config['DATABASE_URL'] = _get_database_url()
 _secret_key = os.environ.get('SECRET_KEY') or os.environ.get('SESSION_SECRET')
 if not _secret_key:
@@ -122,14 +123,25 @@ def allowed_file(filename):
 
 
 # Logging setup
+def _configure_utf8_stream(stream):
+    """Keep Windows console logging from failing on non-CP1252 characters."""
+    try:
+        stream.reconfigure(encoding='utf-8', errors='backslashreplace')
+    except (AttributeError, OSError):
+        pass
+
+
+_configure_utf8_stream(sys.stdout)
+_configure_utf8_stream(sys.stderr)
+
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 )
-file_handler = logging.FileHandler('logs/app.log')
+file_handler = logging.FileHandler('logs/app.log', encoding='utf-8', errors='backslashreplace')
 file_handler.setLevel(logging.INFO)
 file_handler.setFormatter(logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s'))
-security_handler = logging.FileHandler('logs/security.log')
+security_handler = logging.FileHandler('logs/security.log', encoding='utf-8', errors='backslashreplace')
 security_handler.setLevel(logging.WARNING)
 security_handler.setFormatter(logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s'))
 app.logger.addHandler(file_handler)
@@ -153,7 +165,7 @@ if ADMIN_PASSWORD == '1234':
 # ── CSRF Protection ──────────────────────────────────────────────────────────
 app.jinja_env.globals['csrf_token'] = generate_csrf
 
-_CSRF_EXEMPT_PREFIXES = ('/api/', '/static/', '/telegram/')
+_CSRF_EXEMPT_PREFIXES = ('/static/', '/telegram/')
 
 
 @app.before_request
@@ -991,8 +1003,13 @@ def _register_telegram_webhook():
             app.logger.info("ℹ️  Telegram token or domain not set — skipping webhook registration.")
             return
         from services.telegram_bot import set_webhook_sync, get_bot_info
-        webhook_url = f"https://{_tg_domain}/telegram/webhook/{_tg_token}"
-        result = set_webhook_sync(webhook_url)
+        webhook_url = f"https://{_tg_domain}/telegram/webhook"
+        webhook_secret = os.environ.get('TELEGRAM_WEBHOOK_SECRET', '')
+        if not webhook_secret:
+            import secrets as _secrets
+            webhook_secret = _secrets.token_urlsafe(32)
+            os.environ['TELEGRAM_WEBHOOK_SECRET'] = webhook_secret
+        result = set_webhook_sync(webhook_url, webhook_secret)
         if result.get('ok'):
             app.logger.info(f"✅ Telegram webhook registered: {result.get('webhook_url','')[:60]}...")
         else:
@@ -1092,7 +1109,11 @@ def _start_background_services():
     def _register_telegram_webhook_in_thread():
         _register_telegram_webhook()
 
-    _threading.Thread(target=_register_telegram_webhook_in_thread, daemon=True).start()
+    if os.environ.get('TELEGRAM_BOT_TOKEN') and os.environ.get('REPLIT_DEV_DOMAIN'):
+        _threading.Thread(target=_register_telegram_webhook_in_thread, daemon=True).start()
+    elif os.environ.get('TELEGRAM_BOT_TOKEN'):
+        from services.telegram_runtime import start_polling_sync
+        start_polling_sync(app)
 
 
 # ==================== 14. MAIN ENTRY POINT ====================

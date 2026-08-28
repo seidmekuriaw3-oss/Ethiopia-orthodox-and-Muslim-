@@ -246,14 +246,16 @@ def test_update_cart(client):
 
 
 def test_remove_from_cart(client):
-    """Test GET /cart/remove/<id> - removes item from cart"""
-    response = client.get('/cart/remove/1', follow_redirects=True)
+    """Test POST /cart/remove/<id> - removes item from cart"""
+    assert client.get('/cart/remove/1').status_code == 405
+    response = client.post('/cart/remove/1', data={'csrf_token': 'test-csrf-token'}, follow_redirects=True)
     assert response.status_code == 200
 
 
 def test_clear_cart(client):
-    """Test GET /cart/clear - clears all cart items"""
-    response = client.get('/cart/clear', follow_redirects=True)
+    """Test POST /cart/clear - clears all cart items"""
+    assert client.get('/cart/clear').status_code == 405
+    response = client.post('/cart/clear', data={'csrf_token': 'test-csrf-token'}, follow_redirects=True)
     assert response.status_code == 200
 
 

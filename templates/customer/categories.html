@@ -4,40 +4,51 @@
 {% block extra_css %}
 <style>
     .cats-wrap { max-width: 900px; margin: 0 auto; padding: 24px 16px 80px; }
-    .cats-hero {
-        background: linear-gradient(135deg, #c2185b, #880e4f);
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+        gap: 12px;
         border-radius: 20px;
-        padding: 32px 24px;
-        color: white;
-        text-align: center;
-        margin-bottom: 28px;
-    }
-    .cats-hero h1 { margin: 0 0 6px; font-size: 1.7rem; }
-    .cats-hero p  { margin: 0; opacity: .85; font-size: .95rem; }
-    .cats-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-        gap: 18px;
-    }
-    .cat-card {
-        background: white;
-        border-radius: 18px;
-        box-shadow: 0 4px 18px rgba(0,0,0,.08);
+        box-shadow: 0 5px 0 #ead7df, 0 9px 16px rgba(65, 25, 42, .13);
+        padding: 16px 10px;
+        box-shadow: 0 8px 0 #ead7df, 0 15px 22px rgba(65, 25, 42, .18);
+        box-shadow: 0 2px 0 #ead7df, 0 5px 10px rgba(65, 25, 42, .12);
+    .cat-name { font-size: .9rem; font-weight: 800; color: #222; margin: 0; }
+        .cats-grid { grid-template-columns: repeat(2, 1fr); gap: 9px; }
+        .cat-card { padding: 12px 8px; }
+        box-shadow: 0 10px 0 #ead7df, 0 16px 28px rgba(65, 25, 42, .16);
         padding: 28px 16px 22px;
-        text-align: center;
-        text-decoration: none;
-        color: inherit;
-        transition: transform .2s, box-shadow .2s;
-        display: block;
-        border: 2px solid transparent;
+    }
+    .cat-card::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        z-index: -1;
+        background: radial-gradient(circle at 50% 0%, rgba(9, 97, 58, 0.96), transparent 48%),
+                    linear-gradient(145deg, #0c533a 0%, #115d3c 100%);
+    }
+    .cat-card::after {
+        content: '';
+        position: absolute;
+        top: -80%;
+        left: -35%;
+        width: 38%;
+        height: 260%;
+        z-index: 2;
+        background: rgba(37, 157, 218, 0.45);
+        transform: rotate(24deg);
+        transition: left .55s ease;
+        pointer-events: none;
     }
     .cat-card:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 10px 32px rgba(194,24,91,.15);
-        border-color: #c2185b;
+        transform: translateY(-8px);
+        box-shadow: 0 14px 0 #ead7df, 0 24px 36px rgba(65, 25, 42, .2);
+        border-color: rgba(194, 24, 91, .38);
     }
-    .cat-icon { font-size: 3rem; margin-bottom: 14px; display: block; }
-    .cat-name { font-size: 1.05rem; font-weight: 700; color: #222; margin-bottom: 4px; }
+    .cat-card:hover::after { left: 125%; }
+    .cat-card:active {
+        transform: translateY(2px);
+        box-shadow: 0 4px 0 #ead7df, 0 8px 16px rgba(65, 25, 42, .15);
+    }
+    .cat-name { font-size: 1.05rem; font-weight: 800; color: #222; margin-bottom: 4px; }
     .cat-name-en { font-size: .8rem; color: #555555; margin-bottom: 10px; }
     .cat-count {
         display: inline-block;
@@ -47,13 +58,17 @@
         font-weight: 700;
         padding: 3px 12px;
         border-radius: 50px;
+        box-shadow: inset 0 1px 2px rgba(255,255,255,.8);
     }
     .empty-state { text-align: center; padding: 60px 24px; color: #555555; }
     .empty-state .icon { font-size: 4rem; margin-bottom: 16px; }
     @media (max-width: 480px) {
         .cats-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
-        .cat-icon { font-size: 2.4rem; }
+        .cat-card { padding: 22px 10px 18px; }
         .cats-hero h1 { font-size: 1.3rem; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+        .cat-card, .cat-card::after { transition: none; }
     }
 </style>
 {% endblock %}
@@ -71,7 +86,6 @@
     <div class="cats-grid">
         {% for cat in categories %}
         <a href="{{ url_for('customer.category_products', category_id=cat.id) }}" class="cat-card">
-            <span class="cat-icon">{{ cat.icon or '👗' }}</span>
             <div class="cat-name">{{ cat.name_am or cat.name }}</div>
             {% if cat.name and cat.name != cat.name_am %}
             <div class="cat-name-en">{{ cat.name }}</div>

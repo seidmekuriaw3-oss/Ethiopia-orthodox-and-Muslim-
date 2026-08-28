@@ -33,7 +33,7 @@ def run_integration_tests():
             print("TEST 1: Payment Method Validation...")
             try:
                 # Add item to cart first
-                client.get('/cart/go/add/1?qty=1')
+                client.post('/cart/go/add/1', data={'quantity': '1'})
                 
                 # Try invalid payment method
                 response = client.post('/cart/place-order', data={
@@ -59,7 +59,7 @@ def run_integration_tests():
             # Test 2: Phone Number Validation
             print("\nTEST 2: Phone Number Validation...")
             try:
-                client.get('/cart/go/add/1?qty=1')
+                client.post('/cart/go/add/1', data={'quantity': '1'})
                 response = client.post('/cart/place-order', data={
                     'customer_name': 'Test',
                     'shipping_address': 'Test Address 12345',
@@ -81,7 +81,7 @@ def run_integration_tests():
             # Test 3: Email Validation
             print("\nTEST 3: Email Validation...")
             try:
-                client.get('/cart/go/add/1?qty=1')
+                client.post('/cart/go/add/1', data={'quantity': '1'})
                 response = client.post('/cart/place-order', data={
                     'customer_name': 'Test Customer',
                     'shipping_address': 'Test Address 12345',
@@ -104,7 +104,7 @@ def run_integration_tests():
             # Test 4: Duplicate Order Prevention
             print("\nTEST 4: Duplicate Order Prevention...")
             try:
-                client.get('/cart/go/add/1?qty=1')
+                client.post('/cart/go/add/1', data={'quantity': '1'})
                 
                 # Place first order
                 resp1 = client.post('/cart/place-order', data={
@@ -116,7 +116,7 @@ def run_integration_tests():
                 }, follow_redirects=True)
                 
                 # Try to place same order again immediately
-                client.get('/cart/go/add/1?qty=1')
+                client.post('/cart/go/add/1', data={'quantity': '1'})
                 resp2 = client.post('/cart/place-order', data={
                     'customer_name': 'Duplicate Test',
                     'shipping_address': 'Duplicate Test Address 12345',
@@ -139,7 +139,7 @@ def run_integration_tests():
             # Test 5: Guest Order Token System
             print("\nTEST 5: Guest Order Token Security...")
             try:
-                client.get('/cart/go/add/1?qty=1')
+                client.post('/cart/go/add/1', data={'quantity': '1'})
                 
                 response = client.post('/cart/place-order', data={
                     'customer_name': 'Token Test',
@@ -164,7 +164,7 @@ def run_integration_tests():
             # Test 6: Cart Display
             print("\nTEST 6: Cart Pricing Display...")
             try:
-                client.get('/cart/go/add/1?qty=1')
+                client.post('/cart/go/add/1', data={'quantity': '1'})
                 response = client.get('/cart/')
                 
                 if b'ETB' in response.data or b'cart' in response.data.lower():

@@ -719,7 +719,7 @@
     (function() {
         const _csrfToken = document.querySelector('meta[name="csrf-token"]')?.content || '';
         const _origFetch = window.fetch.bind(window);
-        const _exemptPrefixes = ['/api/', '/static/'];
+        const _exemptPrefixes = ['/static/'];
         window.fetch = function(url, opts) {
             opts = opts || {};
             const method = (opts.method || 'GET').toUpperCase();

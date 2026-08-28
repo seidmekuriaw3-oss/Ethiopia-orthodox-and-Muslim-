@@ -218,19 +218,66 @@ def products():
     lang = get_lang()
     page = max(1, request.args.get('page', 1, type=int))
     per_page = 12
-    offset = (page - 1) * per_page
 
     try:
         conn = get_db()
         cursor = conn.cursor()
 
-        # Fetch ALL products for client-side filtering/pagination in JS
-        cursor.execute("""
+        category_id = request.args.get('category', type=int)
+        min_price = request.args.get('min_price', type=float)
+        max_price = request.args.get('max_price', type=float)
+        min_rating = request.args.get('rating', type=float)
+        in_stock = request.args.get('in_stock') == '1'
+        sort_by = request.args.get('sort', 'newest')
+
+        where = ['p.is_active = 1']
+        params = []
+        if category_id:
+            where.append('p.category_id = %s')
+            params.append(category_id)
+        if min_price is not None:
+            where.append('p.price >= %s')
+            params.append(min_price)
+        if max_price is not None:
+            where.append('p.price <= %s')
+            params.append(max_price)
+        if min_rating:
+            where.append("""COALESCE((
+                SELECT AVG(r.rating) FROM reviews r
+                WHERE r.product_id = p.id AND r.is_approved = 1
+            ), 0) >= %s""")
+            params.append(min_rating)
+        if in_stock:
+            where.append('p.stock_quantity > 0')
+
+        order_by = {
+            'price_asc': 'p.price ASC',
+            'price_desc': 'p.price DESC',
+            'name_asc': 'p.name_am ASC',
+            'name_desc': 'p.name_am DESC',
+            'popularity': 'p.sales_count DESC, p.id DESC',
+            'oldest': 'p.id ASC',
+        }.get(sort_by, 'p.id DESC')
+        where_sql = ' AND '.join(where)
+
+        cursor.execute(f"""
+            SELECT COUNT(*) AS total
+            FROM products p
+            WHERE {where_sql}
+        """, params)
+        total = cursor.fetchone()['total']
+        total_pages = max(1, (total + per_page - 1) // per_page)
+        page = min(page, total_pages)
+        offset = (page - 1) * per_page
+
+        cursor.execute(f"""
             SELECT p.*, c.name as category_name, c.name_am as category_name_am,
                    c.id as cat_id
             FROM products p LEFT JOIN categories c ON p.category_id = c.id
-            WHERE p.is_active = 1 ORDER BY p.id DESC
-        """)
+            WHERE {where_sql}
+            ORDER BY {order_by}
+            LIMIT %s OFFSET %s
+        """, params + [per_page, offset])
         products_rows = cursor.fetchall()
 
         cursor.execute("""
@@ -247,15 +294,11 @@ def products():
 
         products_list = [dict(p) for p in products_rows] if products_rows else []
         categories_list = [dict(cat) for cat in categories] if categories else []
-        total = len(products_list)
-
-        import math
-        per_page = 12
-        total_pages = max(1, math.ceil(total / per_page))
 
         return render_template('customer/product_grid.html',
                                products=products_list, categories=categories_list,
-                               page=1, total_pages=total_pages, total=total, lang=lang)
+                               page=page, total_pages=total_pages, total=total,
+                               lang=lang)
     except Exception as e:
         import traceback
         current_app.logger.error(f"Products page error: {e}\n{traceback.format_exc()}")
@@ -707,20 +750,12 @@ def user_login():
                         for pid_str, qty in guest_cart.items():
                             pid = int(pid_str)
                             cursor.execute(
-                                "SELECT id, quantity FROM cart_items WHERE user_id=%s AND product_id=%s",
-                                (user['id'], pid)
+                                """INSERT INTO cart_items (user_id, product_id, quantity)
+                                   VALUES (%s, %s, %s)
+                                   ON CONFLICT (user_id, product_id)
+                                   DO UPDATE SET quantity = cart_items.quantity + EXCLUDED.quantity""",
+                                (user['id'], pid, qty)
                             )
-                            existing = cursor.fetchone()
-                            if existing:
-                                cursor.execute(
-                                    "UPDATE cart_items SET quantity = quantity + %s WHERE id = %s",
-                                    (qty, existing['id'])
-                                )
-                            else:
-                                cursor.execute(
-                                    "INSERT INTO cart_items (user_id, product_id, quantity) VALUES (%s,%s,%s)",
-                                    (user['id'], pid, qty)
-                                )
                         conn.commit()
                         session.pop('cart', None)
                     except Exception as _me:
@@ -808,7 +843,10 @@ def user_register():
                     for pid_str, qty in guest_cart.items():
                         pid = int(pid_str)
                         cursor.execute(
-                            "INSERT INTO cart_items (user_id, product_id, quantity) VALUES (%s,%s,%s)",
+                            """INSERT INTO cart_items (user_id, product_id, quantity)
+                               VALUES (%s, %s, %s)
+                               ON CONFLICT (user_id, product_id)
+                               DO UPDATE SET quantity = cart_items.quantity + EXCLUDED.quantity""",
                             (user_id, pid, qty)
                         )
                     conn.commit()

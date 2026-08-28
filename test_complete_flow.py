@@ -49,8 +49,8 @@ def test_3_product_detail_page(client):
 
 def test_4_add_to_cart_guest(client):
     """Test 4: Add product to cart as guest"""
-    # First, add a product to cart via GET endpoint
-    response = client.get('/cart/go/add/1?qty=1')
+    # First, add a product to cart via the POST-only fallback endpoint
+    response = client.post('/cart/go/add/1', data={'quantity': '1'})
     # Should redirect or show success
     assert response.status_code in [200, 302]
     print("✅ Test 4 PASSED: Add to cart endpoint works")
@@ -65,7 +65,7 @@ def test_5_view_cart(client):
 def test_6_checkout_page(client):
     """Test 6: Checkout page loads"""
     # Add item to cart first
-    client.get('/cart/go/add/1?qty=1')
+    client.post('/cart/go/add/1', data={'quantity': '1'})
     
     response = client.get('/cart/checkout')
     assert response.status_code in [200, 302]  # Might redirect if no items
@@ -74,7 +74,7 @@ def test_6_checkout_page(client):
 def test_7_checkout_form_validation(client):
     """Test 7: Checkout form validates required fields"""
     # Add item to cart
-    client.get('/cart/go/add/1?qty=1')
+    client.post('/cart/go/add/1', data={'quantity': '1'})
     
     # Try to place order with empty fields
     response = client.post('/cart/place-order', data={
@@ -91,7 +91,7 @@ def test_7_checkout_form_validation(client):
 def test_8_place_order_guest(client):
     """Test 8: Place order as guest with valid data"""
     # Add item to cart
-    client.get('/cart/go/add/1?qty=1')
+    client.post('/cart/go/add/1', data={'quantity': '1'})
     
     # Place order with valid data
     response = client.post('/cart/place-order', data={

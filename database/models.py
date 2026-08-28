@@ -917,20 +917,13 @@ class CartItem:
     def add(user_id, product_id, quantity=1):
         try:
             db = get_db()
-            existing = db.execute(
-                "SELECT id, quantity FROM cart_items WHERE user_id=%s AND product_id=%s",
-                (user_id, product_id)
-            ).fetchone()
-            if existing:
-                db.execute(
-                    "UPDATE cart_items SET quantity=quantity+%s WHERE id=%s",
-                    (quantity, existing['id'])
-                )
-            else:
-                db.execute(
-                    "INSERT INTO cart_items (user_id, product_id, quantity) VALUES (%s,%s,%s)",
-                    (user_id, product_id, quantity)
-                )
+            db.execute(
+                """INSERT INTO cart_items (user_id, product_id, quantity)
+                   VALUES (%s, %s, %s)
+                   ON CONFLICT (user_id, product_id)
+                   DO UPDATE SET quantity = cart_items.quantity + EXCLUDED.quantity""",
+                (user_id, product_id, quantity)
+            )
             db.commit()
             return True
         except Exception as e:

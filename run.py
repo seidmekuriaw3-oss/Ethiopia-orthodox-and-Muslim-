@@ -35,8 +35,13 @@ def print_banner():
     print(banner)
 
 def check_environment():
-    """Check if all required environment variables are set"""
-    required_vars = []
+    """Require deployment credentials before attempting to start the app."""
+    required_vars = [
+        'SECRET_KEY',
+        'ADMIN_USERNAME',
+        'ADMIN_PASSWORD',
+        'DATABASE_URL',
+    ]
     
     missing = []
     for var in required_vars:
@@ -44,27 +49,14 @@ def check_environment():
             missing.append(var)
     
     if missing:
-        print(f"⚠️  Warning: Missing optional environment variables: {', '.join(missing)}")
-        print("   Using default values.\n")
+        raise RuntimeError(
+            "Missing required environment variables: " + ', '.join(missing)
+        )
     
-    # Create .env file if it doesn't exist
+    # Do not create a file containing credentials or insecure development defaults.
     env_file = Path('.env')
     if not env_file.exists():
-        print("📝 Creating default .env file...")
-        with open(env_file, 'w') as f:
-            f.write("""# SEMIRA FASHION Environment Configuration
-FLASK_ENV=development
-SECRET_KEY=semirafashion_default_secret_key_2026
-ADMIN_PASSWORD=1234
-WHATSAPP_NUMBER=251987957957
-DEBUG=True
-HOST=0.0.0.0
-PORT=5000
-FREE_SHIPPING_THRESHOLD=5000
-SHIPPING_COST=200
-MAINTENANCE_MODE=False
-""")
-        print("✅ .env file created successfully!\n")
+        print("⚠️  .env is missing. Configure secrets in the environment before starting.")
 
 def check_database():
     """Check PostgreSQL database connectivity and required tables."""

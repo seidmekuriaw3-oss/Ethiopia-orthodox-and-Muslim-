@@ -549,12 +549,7 @@
 <div class="categories-grid">
     {% for cat in categories %}
     <a href="{{ url_for('customer.products', category=cat.id) }}" class="category-card">
-        {% if cat.image %}
-            <img class="cat-img" src="{{ url_for('static', filename=cat.image) }}" alt="{{ cat.name_am }}" loading="lazy">
-        {% else %}
-            <div class="cat-emoji-bg">{{ cat.icon or '👗' }}</div>
-        {% endif %}
-        <div class="cat-overlay"></div>
+        <div class="cat-emoji-bg">{{ cat.icon or '👗' }}</div>
         {% if cat.icon %}<span class="cat-icon-badge">{{ cat.icon }}</span>{% endif %}
         <div class="cat-name">{{ cat.name_am }}</div>
     </a>

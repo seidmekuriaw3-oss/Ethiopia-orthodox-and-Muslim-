@@ -68,6 +68,20 @@ def allowed_mime_type(file):
     return allowed_file(getattr(file, 'filename', ''))
 
 
+def validate_image_content(file):
+    """Verify that an upload contains a decodable image, not only an image extension."""
+    try:
+        from PIL import Image as PilImage
+        file.seek(0)
+        with PilImage.open(file) as image:
+            image.verify()
+        file.seek(0)
+        return True
+    except Exception:
+        file.seek(0)
+        return False
+
+
 def validate_file_size(file, is_image=True):
     """
     Validate file size.
@@ -165,6 +179,10 @@ def save_image(file, subfolder='products', app=None, max_width=1200, max_height=
     is_valid, error = validate_file_size(file, is_image=True)
     if not is_valid:
         print(f"❌ {error}")
+        return None
+
+    if not validate_image_content(file):
+        print("❌ Uploaded file is not a valid image")
         return None
 
     filename = save_file(file, subfolder, app)

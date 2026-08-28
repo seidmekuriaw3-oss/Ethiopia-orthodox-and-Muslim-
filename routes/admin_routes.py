@@ -27,6 +27,7 @@ from services.notification_service import (
     notify_user, notify_admin,
     get_admin_alerts, get_admin_unread_count, mark_admin_alerts_read
 )
+from utils.file_handler import validate_image_content
 
 admin_bp = Blueprint('admin', __name__)
 
@@ -293,7 +294,7 @@ def product_create():
                 return redirect(url_for('admin.product_create'))
             material = request.form.get('material', '')
             color = request.form.get('color', '')
-            sku = request.form.get('sku', '')
+            sku = request.form.get('sku', '').strip() or None
             gender = request.form.get('gender', '')
             season = request.form.get('season', '')
             import json as _json
@@ -320,6 +321,8 @@ def product_create():
                 ext = fname.rsplit('.', 1)[1].lower() if '.' in fname else ''
                 if ext not in _ALLOWED_IMG_EXT:
                     raise ValueError(f"File type '.{ext}' is not allowed. Use jpg, jpeg, png, webp or gif.")
+                if not validate_image_content(file_obj):
+                    raise ValueError('Uploaded file is not a valid image')
                 unique = f"product_{uuid.uuid4().hex[:8]}.{ext}"
                 file_obj.save(os.path.join(upload_dir, unique))
                 return f'uploads/products/{unique}'
@@ -424,6 +427,8 @@ def product_edit(pid):
                 ext = fname.rsplit('.', 1)[1].lower() if '.' in fname else ''
                 if ext not in _ALLOWED_IMG_EXT:
                     raise ValueError(f"File type '.{ext}' is not allowed. Use jpg, jpeg, png, webp or gif.")
+                if not validate_image_content(file_obj):
+                    raise ValueError('Uploaded file is not a valid image')
                 unique = f"product_{uuid.uuid4().hex[:8]}.{ext}"
                 file_obj.save(os.path.join(upload_dir, unique))
                 return f'uploads/products/{unique}'
@@ -2239,7 +2244,7 @@ def change_password():
         return redirect(url_for('admin.settings') + '#change-password')
 
     try:
-        current_admin_password = os.environ.get('ADMIN_PASSWORD', '1234')
+        current_admin_password = os.environ.get('ADMIN_PASSWORD', '')
 
         # Check settings table for a stored hash override first
         conn = get_db()
@@ -2569,8 +2574,13 @@ def save_telegram_token():
                 import os as _os
                 domain = _os.environ.get('REPLIT_DEV_DOMAIN', '')
                 if domain:
-                    url = f"https://{domain}/telegram/webhook/{token}"
-                    result = set_webhook_sync(url)
+                    url = f"https://{domain}/telegram/webhook"
+                    secret = _os.environ.get('TELEGRAM_WEBHOOK_SECRET', '')
+                    if not secret:
+                        import secrets as _secrets
+                        secret = _secrets.token_urlsafe(32)
+                        _os.environ['TELEGRAM_WEBHOOK_SECRET'] = secret
+                    result = set_webhook_sync(url, secret)
                     current_app.logger.info(f"[TG] Auto-register webhook: {result}")
                     info = get_bot_info()
                     if info and info.username:

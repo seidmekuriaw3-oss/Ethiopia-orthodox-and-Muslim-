@@ -1,6 +1,7 @@
 import os
 import logging
 from flask import session
+from routes.shared import calc_cart_totals
 
 logger = logging.getLogger(__name__)
 
@@ -92,10 +93,7 @@ class CartService:
             float: Shipping cost
         """
         try:
-            subtotal = CartService.get_subtotal()
-            threshold = float(os.environ.get('FREE_SHIPPING_THRESHOLD', '5000'))
-            shipping_cost = float(os.environ.get('SHIPPING_COST', '200'))
-            return 0 if subtotal >= threshold else shipping_cost
+            return CartService.get_totals()['shipping_cost']
         except Exception:
             return 200
     
@@ -109,12 +107,15 @@ class CartService:
         """
         from flask import session
         try:
-            subtotal = CartService.get_subtotal()
-            if session.get('user_id'):
-                return subtotal * 0.1
-            return 0
+            return CartService.get_totals()['discount']
         except Exception:
             return 0
+
+    @staticmethod
+    def get_totals():
+        """Return the canonical cart totals used by all cart consumers."""
+        subtotal = CartService.get_subtotal()
+        return calc_cart_totals(subtotal, is_logged_in=bool(session.get('user_id')))
     
     @staticmethod
     def get_total():
@@ -124,10 +125,7 @@ class CartService:
         Returns:
             float: Total amount (subtotal - discount + shipping)
         """
-        subtotal = CartService.get_subtotal()
-        discount = CartService.get_discount()
-        shipping = CartService.get_shipping_cost()
-        return subtotal - discount + shipping
+        return CartService.get_totals()['total']
     
     @staticmethod
     def get_items():
@@ -393,17 +391,12 @@ class CartService:
             
             # Merge carts (session cart takes priority)
             for product_id, quantity in session_cart.items():
-                if product_id in db_cart:
-                    new_quantity = db_cart[product_id] + quantity
-                    cursor.execute("""
-                        UPDATE cart_items SET quantity = %s
-                        WHERE user_id = %s AND product_id = %s
-                    """, (new_quantity, user_id, product_id))
-                else:
-                    cursor.execute("""
-                        INSERT INTO cart_items (user_id, product_id, quantity)
-                        VALUES (%s, %s, %s)
-                    """, (user_id, product_id, quantity))
+                cursor.execute("""
+                    INSERT INTO cart_items (user_id, product_id, quantity)
+                    VALUES (%s, %s, %s)
+                    ON CONFLICT (user_id, product_id)
+                    DO UPDATE SET quantity = cart_items.quantity + EXCLUDED.quantity
+                """, (user_id, product_id, quantity))
             
             db.commit()
             

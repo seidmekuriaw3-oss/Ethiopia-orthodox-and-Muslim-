@@ -181,20 +181,12 @@ def test_add_to_cart(product_id):
             return jsonify({'success': False, 'error': f'Product {product_id} not found'}), 404
         if session.get('user_id'):
             cursor.execute(
-                "SELECT id, quantity FROM cart_items WHERE user_id = %s AND product_id = %s",
-                (session['user_id'], product_id)
+                """INSERT INTO cart_items (user_id, product_id, quantity)
+                   VALUES (%s, %s, %s)
+                   ON CONFLICT (user_id, product_id)
+                   DO UPDATE SET quantity = cart_items.quantity + EXCLUDED.quantity""",
+                (session['user_id'], product_id, 1)
             )
-            existing = cursor.fetchone()
-            if existing:
-                cursor.execute(
-                    "UPDATE cart_items SET quantity = %s WHERE id = %s",
-                    (existing[1] + 1, existing[0])
-                )
-            else:
-                cursor.execute(
-                    "INSERT INTO cart_items (user_id, product_id, quantity) VALUES (%s, %s, %s)",
-                    (session['user_id'], product_id, 1)
-                )
             conn.commit()
             source = 'database'
         else:

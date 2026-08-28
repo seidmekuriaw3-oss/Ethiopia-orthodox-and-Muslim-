@@ -342,80 +342,64 @@
             rgba(212,175,55,0.35) 70%, transparent);
     }
     
-    /* ── Category photo grid ── */
+    /* ── Compact category pills ── */
     .cat-photo-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-        gap: 12px;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 8px 10px;
         margin-bottom: 36px;
     }
     .cat-photo-card {
         position: relative;
-        border-radius: 16px;
-        overflow: hidden;
-        aspect-ratio: 3/4;
+        isolation: isolate;
+        min-height: 0;
         text-decoration: none;
-        color: white;
+        color: #173b2a;
         cursor: pointer;
-        box-shadow: 0 4px 14px rgba(0,0,0,0.14);
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-        display: block;
+        background: linear-gradient(145deg, #ffffff, #e8f5ee);
+        border: 2px solid #b8ddc8;
+        border-radius: 999px;
+        box-shadow: 0 3px 0 #a7cdb7, 0 6px 12px rgba(26,80,49,.11);
+        transition: transform .18s ease, box-shadow .18s ease, background .18s ease;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 7px 14px;
+        overflow: hidden;
     }
     .cat-photo-card:hover {
-        transform: translateY(-5px) scale(1.03);
-        box-shadow: 0 12px 32px rgba(0,0,0,0.24);
+        transform: translateY(-2px);
+        background: linear-gradient(145deg, #f8fffb, #d9f0e2);
+        box-shadow: 0 5px 0 #a7cdb7, 0 10px 16px rgba(26,80,49,.15);
     }
-    .cat-photo-img {
-        position: absolute;
-        inset: 0; width: 100%; height: 100%;
-        object-fit: cover;
-        transition: transform 0.45s ease;
+    .cat-photo-card:active {
+        transform: translateY(2px);
+        box-shadow: 0 1px 0 #a7cdb7, 0 3px 7px rgba(26,80,49,.11);
     }
-    .cat-photo-card:hover .cat-photo-img { transform: scale(1.1); }
-    .cat-photo-emoji {
+    .cat-photo-card::before {
+        content: '';
         position: absolute;
         inset: 0;
-        background: linear-gradient(135deg, #1a7a4a, #0f5232);
-        display: flex; align-items: center; justify-content: center;
-        font-size: 46px;
+        z-index: -1;
+        background: radial-gradient(circle at 50% 0, rgba(255,255,255,.95), transparent 52%);
     }
-    .cat-photo-overlay {
-        position: absolute; inset: 0;
-        background: linear-gradient(to top,
-            rgba(0,0,0,0.80) 0%, rgba(0,0,0,0.16) 55%, transparent 100%);
-        transition: background 0.3s;
-    }
-    .cat-photo-card:hover .cat-photo-overlay {
-        background: linear-gradient(to top,
-            rgba(10,62,34,0.90) 0%, rgba(10,62,34,0.32) 55%, transparent 100%);
-    }
-    .cat-photo-card::after {
-        content: '';
-        position: absolute; top: 0; left: 0; right: 0; height: 2px;
-        background: linear-gradient(90deg, transparent, #d4af37, transparent);
-        opacity: 0; transition: opacity 0.3s; z-index: 2;
-    }
-    .cat-photo-card:hover::after { opacity: 1; }
+    .cat-photo-card::after { display: none; }
+    .cat-photo-emoji, .cat-photo-badge { display: none; }
     .cat-photo-name {
-        position: absolute; bottom: 0; left: 0; right: 0;
-        padding: 8px 6px 10px;
-        font-size: 11px; font-weight: 700;
-        text-align: center; line-height: 1.3;
-        text-shadow: 0 1px 8px rgba(0,0,0,0.95);
-        z-index: 1;
+        position: relative;
+        padding: 0;
+        font-size: 12px;
+        font-weight: 800;
+        text-align: center;
+        line-height: 1.2;
+        z-index: 3;
+        white-space: nowrap;
     }
-    .cat-photo-badge {
-        position: absolute; top: 6px; left: 7px;
-        font-size: 18px; z-index: 1;
-        text-shadow: 0 1px 4px rgba(0,0,0,0.7);
-    }
-    @media (max-width: 768px) {
-        .cat-photo-grid { grid-template-columns: repeat(3, 1fr); gap: 9px; }
-        .cat-photo-name { font-size: 10px; }
-    }
-    @media (min-width: 769px) {
-        .cat-photo-grid { grid-template-columns: repeat(5, 1fr); gap: 16px; }
-        .cat-photo-name { font-size: 13px; }
+    @media (max-width: 480px) {
+        .cat-photo-grid { gap: 7px 8px; }
+        .cat-photo-card { padding: 6px 11px; }
+        .cat-photo-name { font-size: 11px; }
     }
 
     .btn-outline {
@@ -1392,7 +1376,7 @@
             {% if is_video %}
             {# ── VIDEO slide ── #}
             <div class="ads-crsl-slide"
-                 onclick="adsStoriesOpen({{ loop.index0 }})"
+                  data-story-index="{{ loop.index0 }}"
                  data-type="video"
                  data-src="{{ video_src }}"
                  data-poster="{{ poster_src }}"
@@ -1415,7 +1399,7 @@
             {% elif is_image %}
             {# ── IMAGE slide ── #}
             <div class="ads-crsl-slide"
-                 onclick="adsStoriesOpen({{ loop.index0 }})"
+                  data-story-index="{{ loop.index0 }}"
                  data-type="image"
                  data-src="{{ resolved_img }}"
                  data-poster=""
@@ -1436,7 +1420,7 @@
             {% else %}
             {# ── GRADIENT slide ── #}
             <div class="ads-crsl-slide"
-                 onclick="adsStoriesOpen({{ loop.index0 }})"
+                  data-story-index="{{ loop.index0 }}"
                  data-type="gradient"
                  data-src=""
                  data-poster=""
@@ -1444,8 +1428,7 @@
                  data-desc="{{ ad_desc | e if ad_desc else '' }}"
                  data-link="{{ ad_link }}"
                  data-gradient="{{ grad_list[loop.index0 % grad_list|length] }}"
-                 data-icon="{{ icon_list[loop.index0 % icon_list|length] }}"
-                 style="background:linear-gradient({{ grad_list[loop.index0 % grad_list|length] }});">
+                 data-icon="{{ icon_list[loop.index0 % icon_list|length] }}">
                 <div class="ads-crsl-grad-icon">{{ icon_list[loop.index0 % icon_list|length] }}</div>
                 <div class="ads-crsl-overlay"></div>
                 <div class="ads-crsl-caption">
@@ -1490,19 +1473,10 @@
 <div class="cat-photo-grid">
     {% for cat in categories %}
     <a href="{{ url_for('customer.category_products', category_id=cat.id) }}" class="cat-photo-card">
-        {% if cat.image %}
-            <img class="cat-photo-img" src="{{ url_for('static', filename=cat.image) }}" alt="{{ category_name(cat) }}" loading="lazy">
-        {% else %}
-            <div class="cat-photo-emoji">{{ cat.icon or '👗' }}</div>
-        {% endif %}
-        <div class="cat-photo-overlay"></div>
-        {% if cat.icon %}<span class="cat-photo-badge">{{ cat.icon }}</span>{% endif %}
         <div class="cat-photo-name">{{ category_name(cat) }}</div>
     </a>
     {% endfor %}
     <a href="{{ url_for('customer.products') }}" class="cat-photo-card">
-        <div class="cat-photo-emoji" style="background:linear-gradient(135deg,#d4af37,#8b6914);">🛍️</div>
-        <div class="cat-photo-overlay"></div>
         <div class="cat-photo-name">{{ t.all }}</div>
     </a>
 </div>
@@ -1726,7 +1700,7 @@
                     <div class="idc-card-icon">🌿</div>
                     <span class="idc-card-lbl">የአማርኛ ትርጉም</span>
                 </div>
-                <div class="idc-ayah-body" style="min-h-[140px]">
+                <div class="idc-ayah-body" style="min-height:140px">
                     <div class="idc-ayah-text" id="idc-quran-am-ar" style="font-size:clamp(14px,2.2vw,18px);line-height:1.9;min-height:52px;">
                         ﷽
                     </div>
@@ -1767,12 +1741,12 @@
     </div>
 
     <div class="idc-slider-dots" id="idc-dots">
-        <div class="idc-slider-dot on" onclick="idcGoTo(0)"></div>
-        <div class="idc-slider-dot" onclick="idcGoTo(1)"></div>
-        <div class="idc-slider-dot" onclick="idcGoTo(2)"></div>
-        <div class="idc-slider-dot" onclick="idcGoTo(3)"></div>
-        <div class="idc-slider-dot" onclick="idcGoTo(4)"></div>
-        <div class="idc-slider-dot" onclick="idcGoTo(5)"></div>
+        <button type="button" class="idc-slider-dot on" onclick="idcGoTo(0)" aria-label="Prayer times"></button>
+        <button type="button" class="idc-slider-dot" onclick="idcGoTo(1)" aria-label="Hijri calendar"></button>
+        <button type="button" class="idc-slider-dot" onclick="idcGoTo(2)" aria-label="Qibla direction"></button>
+        <button type="button" class="idc-slider-dot" onclick="idcGoTo(3)" aria-label="Daily ayah"></button>
+        <button type="button" class="idc-slider-dot" onclick="idcGoTo(4)" aria-label="Amharic Quran translation"></button>
+        <button type="button" class="idc-slider-dot" onclick="idcGoTo(5)" aria-label="Hadith"></button>
     </div>
 
     <div class="idc-cta">
@@ -1867,10 +1841,10 @@
     </div>
 
     <div class="otc-slider-dots" id="otc-dots">
-        <div class="otc-slider-dot on" onclick="otcGoTo(0)"></div>
-        <div class="otc-slider-dot" onclick="otcGoTo(1)"></div>
-        <div class="otc-slider-dot" onclick="otcGoTo(2)"></div>
-        <div class="otc-slider-dot" onclick="otcGoTo(3)"></div>
+        <button type="button" class="otc-slider-dot on" onclick="otcGoTo(0)" aria-label="Ethiopian date"></button>
+        <button type="button" class="otc-slider-dot" onclick="otcGoTo(1)" aria-label="Feast of the day"></button>
+        <button type="button" class="otc-slider-dot" onclick="otcGoTo(2)" aria-label="Saint of the day"></button>
+        <button type="button" class="otc-slider-dot" onclick="otcGoTo(3)" aria-label="Fasting status"></button>
     </div>
 
     <div class="otc-cta">
@@ -1928,8 +1902,8 @@
     </div>
 
     <div class="prt-slider-dots" id="prt-dots">
-        <div class="prt-slider-dot on" onclick="prtGoTo(0)"></div>
-        <div class="prt-slider-dot" onclick="prtGoTo(1)"></div>
+        <button type="button" class="prt-slider-dot on" onclick="prtGoTo(0)" aria-label="Daily Bible verse"></button>
+        <button type="button" class="prt-slider-dot" onclick="prtGoTo(1)" aria-label="Spiritual song"></button>
     </div>
 
     <div class="prt-cta">
@@ -1988,8 +1962,8 @@
     </div>
 
     <div class="ctc-slider-dots" id="ctc-dots">
-        <div class="ctc-slider-dot on" onclick="ctcGoTo(0)"></div>
-        <div class="ctc-slider-dot" onclick="ctcGoTo(1)"></div>
+        <button type="button" class="ctc-slider-dot on" onclick="ctcGoTo(0)" aria-label="Liturgical reading"></button>
+        <button type="button" class="ctc-slider-dot" onclick="ctcGoTo(1)" aria-label="Saint prayer"></button>
     </div>
 
     <div class="ctc-cta">
@@ -2128,7 +2102,7 @@ function hscrollNav(trackId, dir) {
             .catch(function(){});
     }
     var idcIdx = 0;
-    var idcTotal = 6;
+    var idcTotal = document.querySelectorAll('#idc-track .idc-card').length || 1;
     var idcTimer;
     function idcGoTo(n) {
         idcIdx = (n + idcTotal) % idcTotal;
@@ -2191,7 +2165,7 @@ function hscrollNav(trackId, dir) {
 /* ══ ORTHODOX TEWAHEDO CORNER SLIDER (mirrors Islamic Corner slider) ══ */
 (function() {
     var otcIdx = 0;
-    var otcTotal = 4;
+    var otcTotal = document.querySelectorAll('#otc-track .otc-card').length || 1;
     var otcTimer;
     function otcGoTo(n) {
         otcIdx = (n + otcTotal) % otcTotal;
@@ -2222,7 +2196,7 @@ function hscrollNav(trackId, dir) {
 /* ══ PROTESTANT CORNER SLIDER ══ */
 (function() {
     var prtIdx = 0;
-    var prtTotal = 2;
+    var prtTotal = document.querySelectorAll('#prt-track .prt-card').length || 1;
     var prtTimer;
     function prtGoTo(n) {
         prtIdx = (n + prtTotal) % prtTotal;
@@ -2253,7 +2227,7 @@ function hscrollNav(trackId, dir) {
 /* ══ CATHOLIC CORNER SLIDER ══ */
 (function() {
     var ctcIdx = 0;
-    var ctcTotal = 2;
+    var ctcTotal = document.querySelectorAll('#ctc-track .ctc-card').length || 1;
     var ctcTimer;
     function ctcGoTo(n) {
         ctcIdx = (n + ctcTotal) % ctcTotal;
@@ -2299,6 +2273,17 @@ function hscrollNav(trackId, dir) {
             d.addEventListener('click', function() { goTo(i); resetAuto(); });
             dotsWrap.appendChild(d);
             return d;
+        });
+
+        slides.forEach(function(slide, i) {
+            if (slide.dataset.gradient) {
+                slide.style.background = 'linear-gradient(' + slide.dataset.gradient + ')';
+            }
+            slide.addEventListener('click', function(e) {
+                if (didDrag) { e.stopImmediatePropagation(); e.preventDefault(); return; }
+                if (e.target.closest('a, button')) return;
+                window.adsStoriesOpen(i);
+            }, true);
         });
 
         function slideW() {
@@ -2352,13 +2337,6 @@ function hscrollNav(trackId, dir) {
             resetAuto();
             setTimeout(function(){ didDrag = false; }, 100);
         }, {passive:true});
-
-        /* intercept slide click — ignore if it was a drag */
-        slides.forEach(function(slide, i) {
-            slide.addEventListener('click', function(e) {
-                if (didDrag) { e.stopImmediatePropagation(); e.preventDefault(); }
-            }, true);
-        });
 
         track.addEventListener('mouseenter', stopAuto);
         track.addEventListener('mouseleave', startAuto);

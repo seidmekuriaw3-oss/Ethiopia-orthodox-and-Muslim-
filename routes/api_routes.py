@@ -347,7 +347,7 @@ def api_cart_add():
     # Check product exists and has enough stock
     db_check = get_db()
     cur_check = db_check.cursor()
-    cur_check.execute("SELECT id, stock_quantity, is_active FROM products WHERE id = %s", (product_id,))
+    cur_check.execute("SELECT id, stock_quantity, is_active FROM products WHERE id = %s FOR UPDATE", (product_id,))
     prod_check = cur_check.fetchone()
     if not prod_check or not prod_check['is_active']:
         return jsonify({'success': False, 'error': 'Product not available'}), 404
@@ -375,24 +375,12 @@ def api_cart_add():
         db = get_db()
         cursor = db.cursor()
         
-        # Check if product already in cart
         cursor.execute("""
-            SELECT id, quantity FROM cart_items 
-            WHERE user_id = %s AND product_id = %s
-        """, (session['user_id'], product_id))
-        
-        existing = cursor.fetchone()
-        
-        if existing:
-            new_quantity = existing['quantity'] + quantity
-            cursor.execute("""
-                UPDATE cart_items SET quantity = %s WHERE id = %s
-            """, (new_quantity, existing['id']))
-        else:
-            cursor.execute("""
-                INSERT INTO cart_items (user_id, product_id, quantity)
-                VALUES (%s, %s, %s)
-            """, (session['user_id'], product_id, quantity))
+            INSERT INTO cart_items (user_id, product_id, quantity)
+            VALUES (%s, %s, %s)
+            ON CONFLICT (user_id, product_id)
+            DO UPDATE SET quantity = cart_items.quantity + EXCLUDED.quantity
+        """, (session['user_id'], product_id, quantity))
         
         db.commit()
     else:
@@ -761,15 +749,12 @@ def api_login():
     guest_cart = _get_session_cart()
     if guest_cart:
         for product_id, quantity in guest_cart.items():
-            cursor.execute("SELECT id, quantity FROM cart_items WHERE user_id = %s AND product_id = %s", 
-                          (user['id'], product_id))
-            existing = cursor.fetchone()
-            if existing:
-                cursor.execute("UPDATE cart_items SET quantity = quantity + %s WHERE id = %s",
-                             (quantity, existing['id']))
-            else:
-                cursor.execute("INSERT INTO cart_items (user_id, product_id, quantity) VALUES (%s, %s, %s)",
-                             (user['id'], product_id, quantity))
+            cursor.execute("""
+                INSERT INTO cart_items (user_id, product_id, quantity)
+                VALUES (%s, %s, %s)
+                ON CONFLICT (user_id, product_id)
+                DO UPDATE SET quantity = cart_items.quantity + EXCLUDED.quantity
+            """, (user['id'], product_id, quantity))
         db.commit()
         session.pop('cart', None)
     

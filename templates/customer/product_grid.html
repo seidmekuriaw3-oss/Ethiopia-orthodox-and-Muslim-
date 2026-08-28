@@ -351,73 +351,38 @@
 </div>
 
 <script>
-    // Products loaded directly from server — no fetch needed
+    // The server sends one page; filtering and pagination reload the current query.
     let allProducts = {{ products | tojson }};
-    // Enrich with discount field for client-side use
-    allProducts = allProducts.map(function(p) {
-        if (p.compare_price && p.compare_price > p.price) {
-            p.discount = Math.round((p.compare_price - p.price) / p.compare_price * 100);
-        } else {
-            p.discount = null;
-        }
-        return p;
-    });
-    let filteredProducts = [];
-    let currentPage = 1;
+    let currentPage = {{ page }};
     const productsPerPage = 12;
+    const totalProducts = {{ total }};
+    const totalPages = {{ total_pages }};
 
     document.addEventListener('DOMContentLoaded', function() {
-        applyFilters();
+        initializeFiltersFromUrl();
+        document.getElementById('productsCount').textContent = `${totalProducts} product(s) found`;
+        renderProducts();
     });
     
     function applyFilters() {
+        const params = new URLSearchParams();
         const category = document.querySelector('input[name="category"]:checked')?.value || 'all';
         const minPrice = parseInt(document.getElementById('minPrice').value) || 0;
         const maxPrice = parseInt(document.getElementById('maxPrice').value) || 100000;
         const rating = parseInt(document.querySelector('input[name="rating"]:checked')?.value) || 0;
-        const inStockOnly = document.getElementById('inStockOnly').checked;
         const sortBy = document.getElementById('sortSelect').value;
-        
-        filteredProducts = allProducts.filter(product => {
-            // Category filter
-            if (category !== 'all' && product.category_id != category) return false;
-            
-            // Price filter
-            const price = parseFloat(product.price);
-            if (price < minPrice || price > maxPrice) return false;
-            
-            // Rating filter
-            const productRating = product.rating || 0;
-            if (productRating < rating) return false;
-            
-            // Stock filter
-            const stock = product.stock_quantity || 0;
-            if (inStockOnly && stock === 0) return false;
-            
-            return true;
-        });
-        
-        // Sort products
-        filteredProducts.sort((a, b) => {
-            switch(sortBy) {
-                case 'price_asc': return parseFloat(a.price) - parseFloat(b.price);
-                case 'price_desc': return parseFloat(b.price) - parseFloat(a.price);
-                case 'name_asc': return (a.name_am || '').localeCompare(b.name_am || '');
-                case 'name_desc': return (b.name_am || '').localeCompare(a.name_am || '');
-                case 'popularity': return (b.sales_count || 0) - (a.sales_count || 0);
-                default: return b.id - a.id;
-            }
-        });
-        
-        document.getElementById('productsCount').textContent = `${filteredProducts.length} product(s) found`;
-        currentPage = 1;
-        renderProducts();
+
+        if (category !== 'all') params.set('category', category);
+        if (minPrice > 0) params.set('min_price', minPrice);
+        if (maxPrice < 100000) params.set('max_price', maxPrice);
+        if (rating > 0) params.set('rating', rating);
+        if (document.getElementById('inStockOnly').checked) params.set('in_stock', '1');
+        if (sortBy !== 'newest') params.set('sort', sortBy);
+        window.location.search = params.toString();
     }
     
     function renderProducts() {
-        const start = (currentPage - 1) * productsPerPage;
-        const end = start + productsPerPage;
-        const pageProducts = filteredProducts.slice(start, end);
+        const pageProducts = allProducts;
         const grid = document.getElementById('productsGrid');
         
         if (pageProducts.length === 0) {
@@ -500,7 +465,6 @@
     }
     
     function updatePagination() {
-        const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
         const paginationDiv = document.getElementById('pagination');
         
         if (totalPages <= 1) {
@@ -525,11 +489,25 @@
     }
     
     function changePage(page) {
-        const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
         if (page < 1 || page > totalPages) return;
-        currentPage = page;
-        renderProducts();
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        const params = new URLSearchParams(window.location.search);
+        params.set('page', page);
+        window.location.search = params.toString();
+    }
+
+    function initializeFiltersFromUrl() {
+        const params = new URLSearchParams(window.location.search);
+        const category = params.get('category') || 'all';
+        const categoryInput = document.querySelector(`input[name="category"][value="${category}"]`);
+        if (categoryInput) categoryInput.checked = true;
+        document.getElementById('minPrice').value = params.get('min_price') || 0;
+        document.getElementById('maxPrice').value = params.get('max_price') || 100000;
+        document.getElementById('priceSlider').value = params.get('max_price') || 100000;
+        const rating = params.get('rating') || '0';
+        const ratingInput = document.querySelector(`input[name="rating"][value="${rating}"]`);
+        if (ratingInput) ratingInput.checked = true;
+        document.getElementById('inStockOnly').checked = params.get('in_stock') === '1';
+        document.getElementById('sortSelect').value = params.get('sort') || 'newest';
     }
     
     function clearAllFilters() {

@@ -13,7 +13,7 @@ class TestConfig(Config):
     SECRET_KEY = 'test-secret-key'
     WTF_CSRF_ENABLED = False
     DEBUG = False
-    ADMIN_PASSWORD = 'test1234'
+    ADMIN_PASSWORD = os.environ.get('TEST_ADMIN_PASSWORD', 'test-only-password')
 
 app.config.from_object(TestConfig)
 app.config.update({'TESTING': True, 'SERVER_NAME': 'localhost.test'})
@@ -28,7 +28,7 @@ with client.session_transaction() as sess:
 
 login_resp = client.post('/admin/login', data={
     'username': 'admin',
-    'password': 'test1234',
+    'password': TestConfig.ADMIN_PASSWORD,
     'csrf_token': 'test-csrf-token',
 }, follow_redirects=True)
 

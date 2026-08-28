@@ -154,6 +154,11 @@ def sample_product_db(app, sample_product):
     from database.models import Product
     
     with app.app_context():
+        cursor = get_db().cursor()
+        cursor.execute("SELECT id FROM categories WHERE is_active = 1 ORDER BY id LIMIT 1")
+        category = cursor.fetchone()
+        if category:
+            sample_product['category_id'] = category['id']
         product_id = Product.create(sample_product)
         return product_id
 

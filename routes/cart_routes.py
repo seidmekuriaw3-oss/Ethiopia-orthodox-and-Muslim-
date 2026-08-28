@@ -110,34 +110,34 @@ def view_cart():
 
 # ==================== ADD TO CART ====================
 
-@cart_bp.route('/go/add/<int:product_id>', methods=['GET'])
+@cart_bp.route('/go/add/<int:product_id>', methods=['POST'])
 def go_add_to_cart(product_id):
-    """GET-friendly fallback: add to cart then redirect to cart page"""
-    quantity = int(request.args.get('qty', 1))
+    """Fallback add-to-cart endpoint for clients that cannot use the JSON API."""
+    try:
+        quantity = max(1, int(request.form.get('quantity', 1)))
+    except (TypeError, ValueError):
+        flash('Invalid quantity.', 'danger')
+        return redirect(url_for('cart.view_cart'))
     db = get_db()
     cursor = db.cursor()
-    cursor.execute("SELECT id, stock_quantity FROM products WHERE id = %s AND is_active = 1", (product_id,))
+    cursor.execute("SELECT id, stock_quantity FROM products WHERE id = %s AND is_active = 1 FOR UPDATE", (product_id,))
     product = cursor.fetchone()
     if not product:
         flash('Product not found!', 'danger')
         return redirect(url_for('customer.index'))
     if session.get('user_id'):
-        cursor.execute("SELECT id, quantity FROM cart_items WHERE user_id = %s AND product_id = %s",
+        cursor.execute("SELECT COALESCE(SUM(quantity), 0) AS quantity FROM cart_items WHERE user_id = %s AND product_id = %s",
                        (session['user_id'], product_id))
-        existing = cursor.fetchone()
-        if existing:
-            new_qty = existing['quantity'] + quantity
-            if new_qty > product['stock_quantity']:
-                flash(f'Sorry, only {product["stock_quantity"]} items available in stock!', 'warning')
-                return redirect(url_for('cart.view_cart'))
-            cursor.execute("UPDATE cart_items SET quantity = %s WHERE id = %s",
-                           (new_qty, existing['id']))
-        else:
-            if quantity > product['stock_quantity']:
-                flash(f'Sorry, only {product["stock_quantity"]} items available in stock!', 'warning')
-                return redirect(url_for('cart.view_cart'))
-            cursor.execute("INSERT INTO cart_items (user_id, product_id, quantity) VALUES (%s, %s, %s)",
-                           (session['user_id'], product_id, quantity))
+        existing_quantity = cursor.fetchone()['quantity']
+        if existing_quantity + quantity > product['stock_quantity']:
+            flash(f'Sorry, only {product["stock_quantity"]} items available in stock!', 'warning')
+            return redirect(url_for('cart.view_cart'))
+        cursor.execute("""
+            INSERT INTO cart_items (user_id, product_id, quantity)
+            VALUES (%s, %s, %s)
+            ON CONFLICT (user_id, product_id)
+            DO UPDATE SET quantity = cart_items.quantity + EXCLUDED.quantity
+        """, (session['user_id'], product_id, quantity))
         db.commit()
     else:
         cart = session.get('cart', {})
@@ -161,7 +161,7 @@ def add_to_cart(product_id):
     # Check if product exists and has stock
     db = get_db()
     cursor = db.cursor()
-    cursor.execute("SELECT id, stock_quantity FROM products WHERE id = %s AND is_active = 1", (product_id,))
+    cursor.execute("SELECT id, stock_quantity FROM products WHERE id = %s AND is_active = 1 FOR UPDATE", (product_id,))
     product = cursor.fetchone()
     
     if not product:
@@ -174,26 +174,17 @@ def add_to_cart(product_id):
     
     if session.get('user_id'):
         # Add to database cart
-        cursor.execute("""
-            SELECT id, quantity FROM cart_items 
-            WHERE user_id = %s AND product_id = %s
-        """, (session['user_id'], product_id))
-        
-        existing = cursor.fetchone()
-        
-        if existing:
-            new_quantity = existing['quantity'] + quantity
-            if product['stock_quantity'] >= new_quantity:
-                cursor.execute("""
-                    UPDATE cart_items SET quantity = %s WHERE id = %s
-                """, (new_quantity, existing['id']))
-                flash('Cart updated successfully!', 'success')
-            else:
-                flash(f'Sorry, only {product["stock_quantity"]} items available in stock!', 'warning')
+        cursor.execute("SELECT COALESCE(SUM(quantity), 0) AS quantity FROM cart_items WHERE user_id = %s AND product_id = %s",
+                       (session['user_id'], product_id))
+        existing_quantity = cursor.fetchone()['quantity']
+        if product['stock_quantity'] < existing_quantity + quantity:
+            flash(f'Sorry, only {product["stock_quantity"]} items available in stock!', 'warning')
         else:
             cursor.execute("""
                 INSERT INTO cart_items (user_id, product_id, quantity)
                 VALUES (%s, %s, %s)
+                ON CONFLICT (user_id, product_id)
+                DO UPDATE SET quantity = cart_items.quantity + EXCLUDED.quantity
             """, (session['user_id'], product_id, quantity))
             flash('Product added to cart!', 'success')
         
@@ -227,7 +218,7 @@ def add_to_cart(product_id):
 
 # ====================== REMOVE FROM CART ====================
 
-@cart_bp.route('/remove/<int:product_id>', methods=['POST', 'GET'])
+@cart_bp.route('/remove/<int:product_id>', methods=['POST'])
 def remove_from_cart(product_id):
     """Remove product from cart"""
     if session.get('user_id'):
@@ -293,7 +284,7 @@ def update_cart():
 
 # ==================== CLEAR CART ====================
 
-@cart_bp.route('/clear', methods=['GET', 'POST'])
+@cart_bp.route('/clear', methods=['POST'])
 def clear_cart():
     """Clear entire cart"""
     if session.get('user_id'):

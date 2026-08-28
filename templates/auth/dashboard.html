@@ -1095,10 +1095,11 @@
                         {% endif %}
                     </div>
                     <div class="wl-actions">
-                        <a class="wl-btn wl-btn-cart"
-                           href="{{ url_for('cart.go_add_to_cart', product_id=item.product_id) }}">
-                            🛒 Add to Cart
-                        </a>
+                        <form method="post" action="{{ url_for('cart.go_add_to_cart', product_id=item.product_id) }}">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            <input type="hidden" name="quantity" value="1">
+                            <button class="wl-btn wl-btn-cart" type="submit">🛒 Add to Cart</button>
+                        </form>
                     </div>
                 </div>
             </div>

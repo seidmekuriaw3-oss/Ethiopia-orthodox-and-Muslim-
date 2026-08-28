@@ -4,6 +4,7 @@ Telegram webhook + admin routes for SemiraFashionBot.
 
 import os
 import logging
+import secrets
 from flask import Blueprint, request, jsonify, render_template_string, abort, current_app
 
 log = logging.getLogger(__name__)
@@ -20,22 +21,25 @@ def _site_url():
     return os.environ.get('REPLIT_DEV_DOMAIN', '')
 
 
+def _webhook_secret():
+    """Return the secret shared with Telegram for webhook authentication."""
+    secret = os.environ.get('TELEGRAM_WEBHOOK_SECRET', '')
+    if not secret:
+        secret = secrets.token_urlsafe(32)
+        os.environ['TELEGRAM_WEBHOOK_SECRET'] = secret
+    return secret
+
+
 # ─────────────────────────────────────────────────────────────
 # Webhook endpoint  — Telegram POSTs every update here
 # ─────────────────────────────────────────────────────────────
-@telegram_bp.route('/telegram/webhook/<string:token>', methods=['POST'])
-def webhook(token: str):
+@telegram_bp.route('/telegram/webhook', methods=['POST'])
+def webhook():
     """Receive updates from Telegram."""
-    expected = _token()
-    if not expected:
-        try:
-            from app import _load_telegram_token_from_db
-            _load_telegram_token_from_db()
-            expected = _token()
-        except Exception:
-            pass
-    if not expected or token != expected:
-        log.warning(f"[TelegramWebhook] 403 — token mismatch (got {token[:10]}...)")
+    expected = _webhook_secret()
+    submitted = request.headers.get('X-Telegram-Bot-Api-Secret-Token', '')
+    if not submitted or not secrets.compare_digest(submitted, expected):
+        log.warning('[TelegramWebhook] 403 — secret header mismatch')
         abort(403)
     update_data = request.get_json(force=True, silent=True) or {}
     # Process inside Flask app context so DB helpers work
@@ -66,8 +70,8 @@ def telegram_setup():
     if request.method == 'POST':
         action = request.form.get('action')
         if action == 'set':
-            webhook_url = f"https://{site}/telegram/webhook/{tok}"
-            result = set_webhook_sync(webhook_url)
+          webhook_url = f"https://{site}/telegram/webhook"
+          result = set_webhook_sync(webhook_url, _webhook_secret())
         elif action == 'delete':
             ok = delete_webhook_sync()
             result = {'ok': ok, 'webhook_url': '(removed)'}

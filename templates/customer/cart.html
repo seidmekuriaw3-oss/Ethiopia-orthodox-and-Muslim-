@@ -376,10 +376,11 @@ function changeQty(btn, delta) {
     siblingBtns.forEach(function(b) { b.disabled = true; });
     input.style.opacity = '0.5';
 
-    fetch(CART_UPDATE_URL + '?product_id=' + pid + '&quantity=' + newQty, {
-        method: 'GET',
+    fetch(CART_UPDATE_URL, {
+        method: 'POST',
         credentials: 'same-origin',
-        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
+        body: JSON.stringify({ product_id: pid, quantity: newQty })
     })
     .then(function(r) { return r.json(); })
     .then(function(data) {
@@ -428,10 +429,11 @@ function removeCartItem(el, productId) {
     el.style.opacity = '0.4';
     el.style.pointerEvents = 'none';
 
-    fetch(CART_REMOVE_URL + '?product_id=' + pid, {
-        method: 'GET',
+    fetch(CART_REMOVE_URL, {
+        method: 'POST',
         credentials: 'same-origin',
-        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
+        body: JSON.stringify({ product_id: pid })
     })
     .then(function(r) { return r.json(); })
     .then(function(data) {

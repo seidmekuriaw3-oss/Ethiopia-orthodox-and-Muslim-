@@ -226,7 +226,7 @@ def init_db():
             color TEXT,
             views INTEGER DEFAULT 0,
             sales_count INTEGER DEFAULT 0,
-            category_id INTEGER NOT NULL,
+            category_id INTEGER,
             meta_title TEXT,
             meta_description TEXT,
             created_at TIMESTAMP DEFAULT NOW(),

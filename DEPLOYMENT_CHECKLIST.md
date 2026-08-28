@@ -69,7 +69,8 @@ python app.py
 - [ ] Can add item to cart: 
   ```bash
   curl -b cookies.txt -c cookies.txt \
-    http://localhost:5000/cart/go/add/1?qty=1
+    curl -X POST -b cookies.txt -c cookies.txt \
+      -d "quantity=1" http://localhost:5000/cart/go/add/1
   ```
 - [ ] Checkout form loads: `curl http://localhost:5000/cart/checkout`
 - [ ] Invalid payment method rejected:

@@ -23,6 +23,7 @@ log = logging.getLogger(__name__)
 _loop: asyncio.AbstractEventLoop | None = None
 _application: Application | None = None
 _lock = threading.Lock()
+_polling_thread: threading.Thread | None = None
 
 
 def build_application() -> Application:
@@ -170,7 +171,47 @@ def process_update_sync(update_data: dict):
         log.error("[TelegramBot] process_update error: %s", exc)
 
 
-async def _set_webhook_async(webhook_url: str) -> dict:
+def start_polling_sync(flask_app):
+    """Start Telegram polling for local runs where no public webhook exists."""
+    global _polling_thread
+    from services import telegram_bot as botmod
+
+    if not botmod._get_token() or _polling_thread is not None:
+        return
+
+    def _poll():
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+
+        async def _run():
+            application = build_application()
+            await application.initialize()
+            await application.start()
+            await application.updater.start_polling(
+                allowed_updates=Update.ALL_TYPES,
+                drop_pending_updates=True,
+            )
+            await asyncio.Event().wait()
+
+        try:
+            # Handlers use Flask's database helpers, so keep the app context
+            # active on the same thread as the Telegram event loop.
+            with flask_app.app_context():
+                loop.run_until_complete(_run())
+        except Exception as exc:
+            log.error("[TelegramBot] polling stopped: %s", exc)
+        finally:
+            loop.close()
+
+    _polling_thread = threading.Thread(
+        target=_poll,
+        name='telegram-polling',
+        daemon=True,
+    )
+    _polling_thread.start()
+
+
+async def _set_webhook_async(webhook_url: str, secret_token: str = '') -> dict:
     from services import telegram_bot as botmod
 
     token = botmod._get_token()
@@ -179,6 +220,7 @@ async def _set_webhook_async(webhook_url: str) -> dict:
     async with Bot(token=token) as bot:
         result = await bot.set_webhook(
             url=webhook_url,
+            secret_token=secret_token or None,
             allowed_updates=Update.ALL_TYPES,
             drop_pending_updates=True,
         )
@@ -190,8 +232,8 @@ async def _set_webhook_async(webhook_url: str) -> dict:
         }
 
 
-def set_webhook_sync(webhook_url: str) -> dict:
-    return asyncio.run(_set_webhook_async(webhook_url))
+def set_webhook_sync(webhook_url: str, secret_token: str = '') -> dict:
+    return asyncio.run(_set_webhook_async(webhook_url, secret_token))
 
 
 async def _delete_webhook_async():

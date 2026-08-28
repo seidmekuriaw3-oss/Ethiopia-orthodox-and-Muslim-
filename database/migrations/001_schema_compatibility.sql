@@ -74,16 +74,16 @@ CREATE INDEX IF NOT EXISTS idx_products_is_active ON products(is_active);
 CREATE INDEX IF NOT EXISTS idx_products_is_featured ON products(is_featured);
 CREATE INDEX IF NOT EXISTS idx_products_category_id ON products(category_id);
 
+ALTER TABLE products ALTER COLUMN category_id DROP NOT NULL;
+
+ALTER TABLE products DROP CONSTRAINT IF EXISTS fk_products_category;
+ALTER TABLE products
+    ADD CONSTRAINT fk_products_category
+    FOREIGN KEY (category_id) REFERENCES categories(id)
+    ON DELETE SET NULL;
+
 DO $$
 BEGIN
-    IF NOT EXISTS (
-        SELECT 1 FROM pg_constraint WHERE conname = 'fk_products_category'
-    ) THEN
-        ALTER TABLE products
-            ADD CONSTRAINT fk_products_category
-            FOREIGN KEY (category_id) REFERENCES categories(id)
-            ON DELETE SET NULL NOT VALID;
-    END IF;
     IF NOT EXISTS (
         SELECT 1 FROM pg_constraint WHERE conname = 'fk_order_items_order'
     ) THEN

@@ -10,6 +10,7 @@ import logging
 import asyncio
 import threading
 from datetime import datetime
+from pathlib import Path
 
 from telegram import (
     Update, InlineKeyboardButton, InlineKeyboardMarkup,
@@ -384,10 +385,8 @@ def _status_label(lang: str, status: str) -> str:
 
 # ───────────────────────── helpers ─────────────────────────
 def _product_image_url(product) -> str | None:
-    """Return the first product image as a full URL, or None."""
+    """Return a Telegram-readable URL, or an existing local image path."""
     site = os.environ.get('REPLIT_DEV_DOMAIN', '') or SITE_URL
-    if not site:
-        return None
     try:
         # Prefer thumbnail; fall back to first entry in images JSON
         thumb = product.get('thumbnail') or ''
@@ -410,10 +409,37 @@ def _product_image_url(product) -> str | None:
             path = f"static/{path}"                  # prepend static/ only
         else:
             path = f"static/uploads/products/{path}" # bare filename
-        return f"https://{site}/{path}"
+        local_path = Path(__file__).resolve().parents[1] / path
+        if local_path.is_file():
+            return str(local_path)
+        if site:
+            return f"https://{site}/{path}"
     except Exception:
         pass
     return None
+
+
+def _website_url() -> str:
+    """Return the public website URL used by Telegram buttons and links."""
+    configured = (
+        os.environ.get('TELEGRAM_WEBAPP_URL', '').strip()
+        or os.environ.get('PUBLIC_SITE_URL', '').strip()
+        or os.environ.get('REPLIT_DEV_DOMAIN', '').strip()
+        or SITE_URL.strip()
+    )
+    if not configured:
+        return ''
+    if not configured.startswith(('http://', 'https://')):
+        configured = f'https://{configured}'
+    return configured.rstrip('/')
+
+
+async def _reply_product_photo(message, photo_source: str, **kwargs):
+    """Send local product files directly, or let Telegram fetch public URLs."""
+    if photo_source and os.path.isfile(photo_source):
+        with open(photo_source, 'rb') as photo_file:
+            return await message.reply_photo(photo=photo_file, **kwargs)
+    return await message.reply_photo(photo=photo_source, **kwargs)
 
 
 def _fmt_price(price) -> str:
@@ -426,15 +452,15 @@ def _fmt_price(price) -> str:
 def _main_menu_keyboard(uid: int) -> InlineKeyboardMarkup:
     lang = _get_state(uid).get('lang', 'am')
     def t(k): return _(uid, k)
-    site = os.environ.get('REPLIT_DEV_DOMAIN', '') or SITE_URL
+    site = _website_url()
     rows = []
     # Website button — prominent at the very top with SSO magic link
     if site:
         magic_token = _db_generate_magic_token(uid)
         if magic_token:
-            webapp_url = f'https://{site}/auth/telegram?tg_id={uid}&token={magic_token}'
+            webapp_url = f'{site}/auth/telegram?tg_id={uid}&token={magic_token}'
         else:
-            webapp_url = f'https://{site}'
+            webapp_url = site
         rows.append([InlineKeyboardButton(
             '🌐 ' + t('open_webapp'), url=webapp_url
         )])
@@ -2023,8 +2049,8 @@ async def _edit_products_page(query, uid: int, page: int, kind: str, cat_id=None
     text, kb, photo_url = _products_page_kb_and_text(uid, products, page, kind, cat_id or 0)
     try:
         if photo_url:
-            await query.message.reply_photo(photo=photo_url, caption=text,
-                                            parse_mode=ParseMode.MARKDOWN, reply_markup=kb)
+            await _reply_product_photo(query.message, photo_url, caption=text,
+                                       parse_mode=ParseMode.MARKDOWN, reply_markup=kb)
             try:
                 await query.message.delete()
             except Exception:
@@ -2046,8 +2072,8 @@ async def _show_products_page(msg, uid: int, page: int, kind: str, cat_id=None):
     text, kb, photo_url = _products_page_kb_and_text(uid, products, page, kind, cat_id or 0)
     try:
         if photo_url:
-            await msg.reply_photo(photo=photo_url, caption=text,
-                                  parse_mode=ParseMode.MARKDOWN, reply_markup=kb)
+            await _reply_product_photo(msg, photo_url, caption=text,
+                                       parse_mode=ParseMode.MARKDOWN, reply_markup=kb)
         else:
             await msg.reply_text(text, parse_mode=ParseMode.MARKDOWN, reply_markup=kb)
     except TelegramError:
@@ -2090,8 +2116,8 @@ async def _edit_product_detail(query, uid: int, pid: int,
     img_url = _product_image_url(p)
     try:
         if img_url:
-            await query.message.reply_photo(photo=img_url, caption=text,
-                                            parse_mode=ParseMode.MARKDOWN, reply_markup=kb)
+            await _reply_product_photo(query.message, img_url, caption=text,
+                                       parse_mode=ParseMode.MARKDOWN, reply_markup=kb)
             try:
                 await query.message.delete()
             except Exception:
@@ -2216,8 +2242,8 @@ async def on_search_input(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
     photo_url = _product_image_url(results[0]) if results else None
     try:
         if photo_url:
-            await update.message.reply_photo(photo=photo_url, caption=text,
-                                             parse_mode=ParseMode.MARKDOWN, reply_markup=kb)
+            await _reply_product_photo(update.message, photo_url, caption=text,
+                                       parse_mode=ParseMode.MARKDOWN, reply_markup=kb)
         else:
             await update.message.reply_text(text, parse_mode=ParseMode.MARKDOWN, reply_markup=kb)
     except TelegramError:

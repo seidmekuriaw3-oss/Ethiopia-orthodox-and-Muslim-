@@ -251,7 +251,16 @@ class CartManager {
         this.isLoading = true;
         const pid = parseInt(productId);
         const qty = parseInt(quantity);
-        const fallback = () => { window.location.href = '/cart/go/add/' + pid + '?qty=' + qty; };
+        const fallback = () => {
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = '/cart/go/add/' + pid;
+            const token = document.querySelector('meta[name="csrf-token"]')?.content || '';
+            form.innerHTML = '<input type="hidden" name="quantity" value="' + qty + '">' +
+                '<input type="hidden" name="csrf_token" value="' + token + '">';
+            document.body.appendChild(form);
+            form.submit();
+        };
         return this._postJSON(CART_API.add, { product_id: pid, quantity: qty })
         .then(text => {
             if (!text || !text.trim()) { fallback(); return { success: true, message: 'Adding to cart...' }; }
@@ -313,7 +322,7 @@ class CartManager {
     
     clearCart() {
         return fetch(CART_API.clear, {
-            method: 'GET',
+            method: 'POST',
             headers: {
                 'X-Requested-With': 'XMLHttpRequest'
             }

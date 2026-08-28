@@ -351,8 +351,3 @@ config_map = {
 
 # Default to the base Config (DEBUG=False) when FLASK_ENV is unrecognised
 AppConfig = config_map.get(FLASK_ENV, Config)
-
-# Ensure configuration is initialized when imported
-if __name__ != '__main__':
-    # Initialize basic directories on import
-    AppConfig.init_app(None)
